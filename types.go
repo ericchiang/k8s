@@ -54,7 +54,7 @@ func (c *CoreV1) DeleteBinding(ctx context.Context, namespace, name string) (err
 }
 
 func (c *CoreV1) GetBinding(ctx context.Context, namespace, name string) (*apiv1.Binding, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -93,7 +93,7 @@ func (c *CoreV1) DeleteComponentStatus(ctx context.Context, name string) (error)
 
 func (c *CoreV1) GetComponentStatus(ctx context.Context, name string) (*apiv1.ComponentStatus, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -140,7 +140,7 @@ func (c *CoreV1) DeleteConfigMap(ctx context.Context, namespace, name string) (e
 }
 
 func (c *CoreV1) GetConfigMap(ctx context.Context, namespace, name string) (*apiv1.ConfigMap, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -186,7 +186,7 @@ func (c *CoreV1) DeleteEndpoints(ctx context.Context, namespace, name string) (e
 }
 
 func (c *CoreV1) GetEndpoints(ctx context.Context, namespace, name string) (*apiv1.Endpoints, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -232,7 +232,7 @@ func (c *CoreV1) DeleteEvent(ctx context.Context, namespace, name string) (error
 }
 
 func (c *CoreV1) GetEvent(ctx context.Context, namespace, name string) (*apiv1.Event, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -278,7 +278,7 @@ func (c *CoreV1) DeleteLimitRange(ctx context.Context, namespace, name string) (
 }
 
 func (c *CoreV1) GetLimitRange(ctx context.Context, namespace, name string) (*apiv1.LimitRange, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -326,7 +326,7 @@ func (c *CoreV1) DeleteNamespace(ctx context.Context, name string) (error) {
 
 func (c *CoreV1) GetNamespace(ctx context.Context, name string) (*apiv1.Namespace, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -375,7 +375,7 @@ func (c *CoreV1) DeleteNode(ctx context.Context, name string) (error) {
 
 func (c *CoreV1) GetNode(ctx context.Context, name string) (*apiv1.Node, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -424,7 +424,7 @@ func (c *CoreV1) DeletePersistentVolume(ctx context.Context, name string) (error
 
 func (c *CoreV1) GetPersistentVolume(ctx context.Context, name string) (*apiv1.PersistentVolume, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -471,7 +471,7 @@ func (c *CoreV1) DeletePersistentVolumeClaim(ctx context.Context, namespace, nam
 }
 
 func (c *CoreV1) GetPersistentVolumeClaim(ctx context.Context, namespace, name string) (*apiv1.PersistentVolumeClaim, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -517,7 +517,7 @@ func (c *CoreV1) DeletePod(ctx context.Context, namespace, name string) (error) 
 }
 
 func (c *CoreV1) GetPod(ctx context.Context, namespace, name string) (*apiv1.Pod, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -563,7 +563,7 @@ func (c *CoreV1) DeletePodStatusResult(ctx context.Context, namespace, name stri
 }
 
 func (c *CoreV1) GetPodStatusResult(ctx context.Context, namespace, name string) (*apiv1.PodStatusResult, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -600,7 +600,7 @@ func (c *CoreV1) DeletePodTemplate(ctx context.Context, namespace, name string) 
 }
 
 func (c *CoreV1) GetPodTemplate(ctx context.Context, namespace, name string) (*apiv1.PodTemplate, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -646,7 +646,7 @@ func (c *CoreV1) DeletePodTemplateSpec(ctx context.Context, namespace, name stri
 }
 
 func (c *CoreV1) GetPodTemplateSpec(ctx context.Context, namespace, name string) (*apiv1.PodTemplateSpec, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -683,7 +683,7 @@ func (c *CoreV1) DeleteRangeAllocation(ctx context.Context, namespace, name stri
 }
 
 func (c *CoreV1) GetRangeAllocation(ctx context.Context, namespace, name string) (*apiv1.RangeAllocation, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -720,7 +720,7 @@ func (c *CoreV1) DeleteReplicationController(ctx context.Context, namespace, nam
 }
 
 func (c *CoreV1) GetReplicationController(ctx context.Context, namespace, name string) (*apiv1.ReplicationController, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -766,7 +766,7 @@ func (c *CoreV1) DeleteResourceQuota(ctx context.Context, namespace, name string
 }
 
 func (c *CoreV1) GetResourceQuota(ctx context.Context, namespace, name string) (*apiv1.ResourceQuota, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -812,7 +812,7 @@ func (c *CoreV1) DeleteSecret(ctx context.Context, namespace, name string) (erro
 }
 
 func (c *CoreV1) GetSecret(ctx context.Context, namespace, name string) (*apiv1.Secret, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -858,7 +858,7 @@ func (c *CoreV1) DeleteService(ctx context.Context, namespace, name string) (err
 }
 
 func (c *CoreV1) GetService(ctx context.Context, namespace, name string) (*apiv1.Service, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -904,7 +904,7 @@ func (c *CoreV1) DeleteServiceAccount(ctx context.Context, namespace, name strin
 }
 
 func (c *CoreV1) GetServiceAccount(ctx context.Context, namespace, name string) (*apiv1.ServiceAccount, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -961,7 +961,7 @@ func (c *AppsV1) DeletePetSet(ctx context.Context, namespace, name string) (erro
 }
 
 func (c *AppsV1) GetPetSet(ctx context.Context, namespace, name string) (*appsv1alpha1.PetSet, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1020,7 +1020,7 @@ func (c *AuthenticationV1) DeleteTokenReview(ctx context.Context, name string) (
 
 func (c *AuthenticationV1) GetTokenReview(ctx context.Context, name string) (*authenticationv1beta1.TokenReview, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -1068,7 +1068,7 @@ func (c *AuthorizationV1) DeleteLocalSubjectAccessReview(ctx context.Context, na
 }
 
 func (c *AuthorizationV1) GetLocalSubjectAccessReview(ctx context.Context, namespace, name string) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1107,7 +1107,7 @@ func (c *AuthorizationV1) DeleteSelfSubjectAccessReview(ctx context.Context, nam
 
 func (c *AuthorizationV1) GetSelfSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -1146,7 +1146,7 @@ func (c *AuthorizationV1) DeleteSubjectAccessReview(ctx context.Context, name st
 
 func (c *AuthorizationV1) GetSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SubjectAccessReview, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -1194,7 +1194,7 @@ func (c *AutoscalingV1) DeleteHorizontalPodAutoscaler(ctx context.Context, names
 }
 
 func (c *AutoscalingV1) GetHorizontalPodAutoscaler(ctx context.Context, namespace, name string) (*autoscalingv1.HorizontalPodAutoscaler, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1240,7 +1240,7 @@ func (c *AutoscalingV1) DeleteScale(ctx context.Context, namespace, name string)
 }
 
 func (c *AutoscalingV1) GetScale(ctx context.Context, namespace, name string) (*autoscalingv1.Scale, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1288,7 +1288,7 @@ func (c *BatchV1) DeleteJob(ctx context.Context, namespace, name string) (error)
 }
 
 func (c *BatchV1) GetJob(ctx context.Context, namespace, name string) (*batchv1.Job, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1345,7 +1345,7 @@ func (c *BatchV2) DeleteJob(ctx context.Context, namespace, name string) (error)
 }
 
 func (c *BatchV2) GetJob(ctx context.Context, namespace, name string) (*batchv2alpha1.Job, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1391,7 +1391,7 @@ func (c *BatchV2) DeleteJobTemplate(ctx context.Context, namespace, name string)
 }
 
 func (c *BatchV2) GetJobTemplate(ctx context.Context, namespace, name string) (*batchv2alpha1.JobTemplate, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1428,7 +1428,7 @@ func (c *BatchV2) DeleteScheduledJob(ctx context.Context, namespace, name string
 }
 
 func (c *BatchV2) GetScheduledJob(ctx context.Context, namespace, name string) (*batchv2alpha1.ScheduledJob, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1487,7 +1487,7 @@ func (c *CertificatesV1) DeleteCertificateSigningRequest(ctx context.Context, na
 
 func (c *CertificatesV1) GetCertificateSigningRequest(ctx context.Context, name string) (*certificatesv1alpha1.CertificateSigningRequest, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -1545,7 +1545,7 @@ func (c *ExtensionsV1) DeleteDaemonSet(ctx context.Context, namespace, name stri
 }
 
 func (c *ExtensionsV1) GetDaemonSet(ctx context.Context, namespace, name string) (*extensionsv1beta1.DaemonSet, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1591,7 +1591,7 @@ func (c *ExtensionsV1) DeleteDeployment(ctx context.Context, namespace, name str
 }
 
 func (c *ExtensionsV1) GetDeployment(ctx context.Context, namespace, name string) (*extensionsv1beta1.Deployment, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1637,7 +1637,7 @@ func (c *ExtensionsV1) DeleteHorizontalPodAutoscaler(ctx context.Context, namesp
 }
 
 func (c *ExtensionsV1) GetHorizontalPodAutoscaler(ctx context.Context, namespace, name string) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1683,7 +1683,7 @@ func (c *ExtensionsV1) DeleteIngress(ctx context.Context, namespace, name string
 }
 
 func (c *ExtensionsV1) GetIngress(ctx context.Context, namespace, name string) (*extensionsv1beta1.Ingress, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1729,7 +1729,7 @@ func (c *ExtensionsV1) DeleteJob(ctx context.Context, namespace, name string) (e
 }
 
 func (c *ExtensionsV1) GetJob(ctx context.Context, namespace, name string) (*extensionsv1beta1.Job, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1775,7 +1775,7 @@ func (c *ExtensionsV1) DeleteNetworkPolicy(ctx context.Context, namespace, name 
 }
 
 func (c *ExtensionsV1) GetNetworkPolicy(ctx context.Context, namespace, name string) (*extensionsv1beta1.NetworkPolicy, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1823,7 +1823,7 @@ func (c *ExtensionsV1) DeletePodSecurityPolicy(ctx context.Context, name string)
 
 func (c *ExtensionsV1) GetPodSecurityPolicy(ctx context.Context, name string) (*extensionsv1beta1.PodSecurityPolicy, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -1870,7 +1870,7 @@ func (c *ExtensionsV1) DeleteReplicaSet(ctx context.Context, namespace, name str
 }
 
 func (c *ExtensionsV1) GetReplicaSet(ctx context.Context, namespace, name string) (*extensionsv1beta1.ReplicaSet, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1916,7 +1916,7 @@ func (c *ExtensionsV1) DeleteScale(ctx context.Context, namespace, name string) 
 }
 
 func (c *ExtensionsV1) GetScale(ctx context.Context, namespace, name string) (*extensionsv1beta1.Scale, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -1955,7 +1955,7 @@ func (c *ExtensionsV1) DeleteThirdPartyResource(ctx context.Context, name string
 
 func (c *ExtensionsV1) GetThirdPartyResource(ctx context.Context, name string) (*extensionsv1beta1.ThirdPartyResource, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -2002,7 +2002,7 @@ func (c *ExtensionsV1) DeleteThirdPartyResourceData(ctx context.Context, namespa
 }
 
 func (c *ExtensionsV1) GetThirdPartyResourceData(ctx context.Context, namespace, name string) (*extensionsv1beta1.ThirdPartyResourceData, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -2061,7 +2061,7 @@ func (c *ImagepolicyV1) DeleteImageReview(ctx context.Context, name string) (err
 
 func (c *ImagepolicyV1) GetImageReview(ctx context.Context, name string) (*imagepolicyv1alpha1.ImageReview, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -2109,7 +2109,7 @@ func (c *PolicyV1) DeleteEviction(ctx context.Context, namespace, name string) (
 }
 
 func (c *PolicyV1) GetEviction(ctx context.Context, namespace, name string) (*policyv1alpha1.Eviction, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -2146,7 +2146,7 @@ func (c *PolicyV1) DeletePodDisruptionBudget(ctx context.Context, namespace, nam
 }
 
 func (c *PolicyV1) GetPodDisruptionBudget(ctx context.Context, namespace, name string) (*policyv1alpha1.PodDisruptionBudget, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -2205,7 +2205,7 @@ func (c *RBACV1) DeleteClusterRole(ctx context.Context, name string) (error) {
 
 func (c *RBACV1) GetClusterRole(ctx context.Context, name string) (*rbacv1alpha1.ClusterRole, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -2254,7 +2254,7 @@ func (c *RBACV1) DeleteClusterRoleBinding(ctx context.Context, name string) (err
 
 func (c *RBACV1) GetClusterRoleBinding(ctx context.Context, name string) (*rbacv1alpha1.ClusterRoleBinding, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
@@ -2301,7 +2301,7 @@ func (c *RBACV1) DeleteRole(ctx context.Context, namespace, name string) (error)
 }
 
 func (c *RBACV1) GetRole(ctx context.Context, namespace, name string) (*rbacv1alpha1.Role, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -2347,7 +2347,7 @@ func (c *RBACV1) DeleteRoleBinding(ctx context.Context, namespace, name string) 
 }
 
 func (c *RBACV1) GetRoleBinding(ctx context.Context, namespace, name string) (*rbacv1alpha1.RoleBinding, error) {
-	if name == "" {
+	if true && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, true)
@@ -2406,7 +2406,7 @@ func (c *StorageV1) DeleteStorageClass(ctx context.Context, name string) (error)
 
 func (c *StorageV1) GetStorageClass(ctx context.Context, name string) (*storagev1beta1.StorageClass, error) {
 	namespace := ""
-	if name == "" {
+	if false && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, false)
