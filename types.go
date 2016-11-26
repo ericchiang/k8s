@@ -50,7 +50,7 @@ func (c *CoreV1) DeleteBinding(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "bindings", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetBinding(ctx context.Context, name string) (*apiv1.Binding, error) {
@@ -87,7 +87,7 @@ func (c *CoreV1) DeleteComponentStatus(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("", "v1", ns, "componentstatuses", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetComponentStatus(ctx context.Context, name string) (*apiv1.ComponentStatus, error) {
@@ -134,7 +134,7 @@ func (c *CoreV1) DeleteConfigMap(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "configmaps", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetConfigMap(ctx context.Context, name string) (*apiv1.ConfigMap, error) {
@@ -181,7 +181,7 @@ func (c *CoreV1) DeleteEndpoints(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "endpointses", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetEndpoints(ctx context.Context, name string) (*apiv1.Endpoints, error) {
@@ -228,7 +228,7 @@ func (c *CoreV1) DeleteEvent(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "events", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetEvent(ctx context.Context, name string) (*apiv1.Event, error) {
@@ -275,7 +275,7 @@ func (c *CoreV1) DeleteLimitRange(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "limitranges", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetLimitRange(ctx context.Context, name string) (*apiv1.LimitRange, error) {
@@ -322,7 +322,7 @@ func (c *CoreV1) DeleteNamespace(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("", "v1", ns, "namespaces", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetNamespace(ctx context.Context, name string) (*apiv1.Namespace, error) {
@@ -369,7 +369,7 @@ func (c *CoreV1) DeleteNode(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("", "v1", ns, "nodes", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetNode(ctx context.Context, name string) (*apiv1.Node, error) {
@@ -416,7 +416,7 @@ func (c *CoreV1) DeletePersistentVolume(ctx context.Context, name string) error 
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("", "v1", ns, "persistentvolumes", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetPersistentVolume(ctx context.Context, name string) (*apiv1.PersistentVolume, error) {
@@ -463,7 +463,7 @@ func (c *CoreV1) DeletePersistentVolumeClaim(ctx context.Context, name string) e
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "persistentvolumeclaims", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetPersistentVolumeClaim(ctx context.Context, name string) (*apiv1.PersistentVolumeClaim, error) {
@@ -510,7 +510,7 @@ func (c *CoreV1) DeletePod(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "pods", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetPod(ctx context.Context, name string) (*apiv1.Pod, error) {
@@ -557,7 +557,7 @@ func (c *CoreV1) DeletePodStatusResult(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "podstatusresults", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetPodStatusResult(ctx context.Context, name string) (*apiv1.PodStatusResult, error) {
@@ -594,7 +594,7 @@ func (c *CoreV1) DeletePodTemplate(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "podtemplates", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetPodTemplate(ctx context.Context, name string) (*apiv1.PodTemplate, error) {
@@ -641,7 +641,7 @@ func (c *CoreV1) DeletePodTemplateSpec(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "podtemplatespecs", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetPodTemplateSpec(ctx context.Context, name string) (*apiv1.PodTemplateSpec, error) {
@@ -678,7 +678,7 @@ func (c *CoreV1) DeleteRangeAllocation(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "rangeallocations", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetRangeAllocation(ctx context.Context, name string) (*apiv1.RangeAllocation, error) {
@@ -715,7 +715,7 @@ func (c *CoreV1) DeleteReplicationController(ctx context.Context, name string) e
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "replicationcontrollers", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetReplicationController(ctx context.Context, name string) (*apiv1.ReplicationController, error) {
@@ -762,7 +762,7 @@ func (c *CoreV1) DeleteResourceQuota(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "resourcequotas", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetResourceQuota(ctx context.Context, name string) (*apiv1.ResourceQuota, error) {
@@ -809,7 +809,7 @@ func (c *CoreV1) DeleteSecret(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "secrets", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetSecret(ctx context.Context, name string) (*apiv1.Secret, error) {
@@ -856,7 +856,7 @@ func (c *CoreV1) DeleteService(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "services", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetService(ctx context.Context, name string) (*apiv1.Service, error) {
@@ -903,7 +903,7 @@ func (c *CoreV1) DeleteServiceAccount(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("", "v1", ns, "serviceaccounts", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CoreV1) GetServiceAccount(ctx context.Context, name string) (*apiv1.ServiceAccount, error) {
@@ -961,7 +961,7 @@ func (c *AppsV1) DeletePetSet(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *AppsV1) GetPetSet(ctx context.Context, name string) (*appsv1alpha1.PetSet, error) {
@@ -1019,7 +1019,7 @@ func (c *AuthenticationV1) DeleteTokenReview(ctx context.Context, name string) e
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("authentication.k8s.io", "v1beta1", ns, "tokenreviews", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *AuthenticationV1) GetTokenReview(ctx context.Context, name string) (*authenticationv1beta1.TokenReview, error) {
@@ -1067,7 +1067,7 @@ func (c *AuthorizationV1) DeleteLocalSubjectAccessReview(ctx context.Context, na
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("authorization.k8s.io", "v1beta1", ns, "localsubjectaccessreviews", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *AuthorizationV1) GetLocalSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
@@ -1104,7 +1104,7 @@ func (c *AuthorizationV1) DeleteSelfSubjectAccessReview(ctx context.Context, nam
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("authorization.k8s.io", "v1beta1", ns, "selfsubjectaccessreviews", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *AuthorizationV1) GetSelfSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
@@ -1141,7 +1141,7 @@ func (c *AuthorizationV1) DeleteSubjectAccessReview(ctx context.Context, name st
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("authorization.k8s.io", "v1beta1", ns, "subjectaccessreviews", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *AuthorizationV1) GetSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SubjectAccessReview, error) {
@@ -1189,7 +1189,7 @@ func (c *AutoscalingV1) DeleteHorizontalPodAutoscaler(ctx context.Context, name 
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("autoscaling", "v1", ns, "horizontalpodautoscalers", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *AutoscalingV1) GetHorizontalPodAutoscaler(ctx context.Context, name string) (*autoscalingv1.HorizontalPodAutoscaler, error) {
@@ -1236,7 +1236,7 @@ func (c *AutoscalingV1) DeleteScale(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("autoscaling", "v1", ns, "scales", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *AutoscalingV1) GetScale(ctx context.Context, name string) (*autoscalingv1.Scale, error) {
@@ -1284,7 +1284,7 @@ func (c *BatchV1) DeleteJob(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("batch", "v1", ns, "jobs", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *BatchV1) GetJob(ctx context.Context, name string) (*batchv1.Job, error) {
@@ -1342,7 +1342,7 @@ func (c *BatchV2) DeleteJob(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("batch", "v2alpha1", ns, "jobs", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *BatchV2) GetJob(ctx context.Context, name string) (*batchv2alpha1.Job, error) {
@@ -1389,7 +1389,7 @@ func (c *BatchV2) DeleteJobTemplate(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("batch", "v2alpha1", ns, "jobtemplates", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *BatchV2) GetJobTemplate(ctx context.Context, name string) (*batchv2alpha1.JobTemplate, error) {
@@ -1426,7 +1426,7 @@ func (c *BatchV2) DeleteScheduledJob(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *BatchV2) GetScheduledJob(ctx context.Context, name string) (*batchv2alpha1.ScheduledJob, error) {
@@ -1484,7 +1484,7 @@ func (c *CertificatesV1) DeleteCertificateSigningRequest(ctx context.Context, na
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", ns, "certificatesigningrequests", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *CertificatesV1) GetCertificateSigningRequest(ctx context.Context, name string) (*certificatesv1alpha1.CertificateSigningRequest, error) {
@@ -1542,7 +1542,7 @@ func (c *ExtensionsV1) DeleteDaemonSet(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "daemonsets", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetDaemonSet(ctx context.Context, name string) (*extensionsv1beta1.DaemonSet, error) {
@@ -1589,7 +1589,7 @@ func (c *ExtensionsV1) DeleteDeployment(ctx context.Context, name string) error 
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "deployments", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetDeployment(ctx context.Context, name string) (*extensionsv1beta1.Deployment, error) {
@@ -1636,7 +1636,7 @@ func (c *ExtensionsV1) DeleteHorizontalPodAutoscaler(ctx context.Context, name s
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "horizontalpodautoscalers", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetHorizontalPodAutoscaler(ctx context.Context, name string) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
@@ -1683,7 +1683,7 @@ func (c *ExtensionsV1) DeleteIngress(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "ingresses", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetIngress(ctx context.Context, name string) (*extensionsv1beta1.Ingress, error) {
@@ -1730,7 +1730,7 @@ func (c *ExtensionsV1) DeleteJob(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "jobs", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetJob(ctx context.Context, name string) (*extensionsv1beta1.Job, error) {
@@ -1777,7 +1777,7 @@ func (c *ExtensionsV1) DeleteNetworkPolicy(ctx context.Context, name string) err
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "networkpolicies", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetNetworkPolicy(ctx context.Context, name string) (*extensionsv1beta1.NetworkPolicy, error) {
@@ -1824,7 +1824,7 @@ func (c *ExtensionsV1) DeletePodSecurityPolicy(ctx context.Context, name string)
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "podsecuritypolicies", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetPodSecurityPolicy(ctx context.Context, name string) (*extensionsv1beta1.PodSecurityPolicy, error) {
@@ -1871,7 +1871,7 @@ func (c *ExtensionsV1) DeleteReplicaSet(ctx context.Context, name string) error 
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "replicasets", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetReplicaSet(ctx context.Context, name string) (*extensionsv1beta1.ReplicaSet, error) {
@@ -1918,7 +1918,7 @@ func (c *ExtensionsV1) DeleteScale(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "scales", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetScale(ctx context.Context, name string) (*extensionsv1beta1.Scale, error) {
@@ -1955,7 +1955,7 @@ func (c *ExtensionsV1) DeleteThirdPartyResource(ctx context.Context, name string
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresources", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetThirdPartyResource(ctx context.Context, name string) (*extensionsv1beta1.ThirdPartyResource, error) {
@@ -2002,7 +2002,7 @@ func (c *ExtensionsV1) DeleteThirdPartyResourceData(ctx context.Context, name st
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresourcedatas", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ExtensionsV1) GetThirdPartyResourceData(ctx context.Context, name string) (*extensionsv1beta1.ThirdPartyResourceData, error) {
@@ -2060,7 +2060,7 @@ func (c *ImagepolicyV1) DeleteImageReview(ctx context.Context, name string) erro
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("imagepolicy", "v1alpha1", ns, "imagereviews", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *ImagepolicyV1) GetImageReview(ctx context.Context, name string) (*imagepolicyv1alpha1.ImageReview, error) {
@@ -2108,7 +2108,7 @@ func (c *PolicyV1) DeleteEviction(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("policy", "v1alpha1", ns, "evictions", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *PolicyV1) GetEviction(ctx context.Context, name string) (*policyv1alpha1.Eviction, error) {
@@ -2145,7 +2145,7 @@ func (c *PolicyV1) DeletePodDisruptionBudget(ctx context.Context, name string) e
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *PolicyV1) GetPodDisruptionBudget(ctx context.Context, name string) (*policyv1alpha1.PodDisruptionBudget, error) {
@@ -2203,7 +2203,7 @@ func (c *RBACV1) DeleteClusterRole(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterroles", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *RBACV1) GetClusterRole(ctx context.Context, name string) (*rbacv1alpha1.ClusterRole, error) {
@@ -2250,7 +2250,7 @@ func (c *RBACV1) DeleteClusterRoleBinding(ctx context.Context, name string) erro
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterrolebindings", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *RBACV1) GetClusterRoleBinding(ctx context.Context, name string) (*rbacv1alpha1.ClusterRoleBinding, error) {
@@ -2297,7 +2297,7 @@ func (c *RBACV1) DeleteRole(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "roles", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *RBACV1) GetRole(ctx context.Context, name string) (*rbacv1alpha1.Role, error) {
@@ -2344,7 +2344,7 @@ func (c *RBACV1) DeleteRoleBinding(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "rolebindings", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *RBACV1) GetRoleBinding(ctx context.Context, name string) (*rbacv1alpha1.RoleBinding, error) {
@@ -2402,7 +2402,7 @@ func (c *StorageV1) DeleteStorageClass(ctx context.Context, name string) error {
 	}
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("storage.k8s.io", "v1beta1", ns, "storageclasses", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *StorageV1) GetStorageClass(ctx context.Context, name string) (*storagev1beta1.StorageClass, error) {
