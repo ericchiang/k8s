@@ -39,7 +39,11 @@ const contentTypePB = "application/vnd.kubernetes.protobuf"
 
 var magicBytes = []byte{0x6b, 0x38, 0x73, 0x00}
 
-func unmarshal(b []byte, obj proto.Unmarshaler) error {
+func unmarshal(b []byte, obj interface{}) error {
+	message, ok := obj.(proto.Message)
+	if !ok {
+		return fmt.Errorf("expected obj of type proto.Message, got %T", obj)
+	}
 	if len(b) < len(magicBytes) {
 		return errors.New("payload is not a kubernetes protobuf object")
 	}
@@ -51,11 +55,15 @@ func unmarshal(b []byte, obj proto.Unmarshaler) error {
 	if err := u.Unmarshal(b[len(magicBytes):]); err != nil {
 		return fmt.Errorf("unmarshal unknown: %v", err)
 	}
-	return obj.Unmarshal(u.Raw)
+	return proto.Unmarshal(u.Raw, message)
 }
 
-func marshal(obj proto.Marshaler) ([]byte, error) {
-	payload, err := obj.Marshal()
+func marshal(obj interface{}) ([]byte, error) {
+	message, ok := obj.(proto.Message)
+	if !ok {
+		return nil, fmt.Errorf("expected obj of type proto.Message, got %T", obj)
+	}
+	payload, err := proto.Marshal(message)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +79,23 @@ func marshal(obj proto.Marshaler) ([]byte, error) {
 	copy(d[:len(magicBytes)], magicBytes)
 	copy(d[len(magicBytes):], body)
 	return d, nil
+}
+
+type codec struct {
+	contentType string
+	marshal     func(interface{}) ([]byte, error)
+	unmarshal   func([]byte, interface{}) error
+}
+
+var pbCodec = &codec{
+	contentType: contentTypePB,
+	marshal:     marshal,
+	unmarshal:   unmarshal,
+}
+
+// Object is an instance of a Kubernetes resource.
+type Object interface {
+	GetMetadata() *v1.ObjectMeta
 }
 
 // NamespaceContext returns a new Context that carries the provided namespace.
@@ -164,20 +189,16 @@ type Error struct {
 
 func (e *Error) Error() string { return e.Status.Message }
 
-func checkStatusCode(statusCode, gotStatusCode int, body []byte) error {
+func checkStatusCode(c *codec, statusCode, gotStatusCode int, body []byte) error {
 	if statusCode == gotStatusCode {
 		return nil
 	}
 
 	status := new(unversioned.Status)
-	if err := unmarshal(body, status); err != nil {
+	if err := c.unmarshal(body, status); err != nil {
 		return fmt.Errorf("decode error status: %v", err)
 	}
 	return &Error{status}
-}
-
-type object interface {
-	GetMetadata() *v1.ObjectMeta
 }
 
 func (c *Client) client() *http.Client {
@@ -229,8 +250,8 @@ func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string) 
 	return c.Endpoint + "/" + p
 }
 
-func (c *Client) create(ctx context.Context, url string, req proto.Marshaler, resp proto.Unmarshaler) error {
-	body, err := marshal(req)
+func (c *Client) create(ctx context.Context, codec *codec, url string, req, resp interface{}) error {
+	body, err := codec.marshal(req)
 	if err != nil {
 		return err
 	}
@@ -239,8 +260,8 @@ func (c *Client) create(ctx context.Context, url string, req proto.Marshaler, re
 	if err != nil {
 		return err
 	}
-	r.Header.Set("Content-Type", contentTypePB)
-	r.Header.Set("Accept", contentTypePB)
+	r.Header.Set("Content-Type", codec.contentType)
+	r.Header.Set("Accept", codec.contentType)
 
 	re, err := c.client().Do(r)
 	if err != nil {
@@ -253,18 +274,18 @@ func (c *Client) create(ctx context.Context, url string, req proto.Marshaler, re
 		return fmt.Errorf("read body: %v", err)
 	}
 
-	if err := checkStatusCode(re.StatusCode, http.StatusCreated, respBody); err != nil {
+	if err := checkStatusCode(codec, re.StatusCode, http.StatusCreated, respBody); err != nil {
 		return err
 	}
-	return unmarshal(respBody, resp)
+	return codec.unmarshal(respBody, resp)
 }
 
-func (c *Client) delete(ctx context.Context, url string, name string) error {
+func (c *Client) delete(ctx context.Context, codec *codec, url, name string) error {
 	r, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
 	}
-	r.Header.Set("Accept", contentTypePB)
+	r.Header.Set("Accept", codec.contentType)
 	re, err := c.client().Do(r)
 	if err != nil {
 		return err
@@ -276,19 +297,19 @@ func (c *Client) delete(ctx context.Context, url string, name string) error {
 		return fmt.Errorf("read body: %v", err)
 	}
 
-	if err := checkStatusCode(re.StatusCode, http.StatusOK, respBody); err != nil {
+	if err := checkStatusCode(codec, re.StatusCode, http.StatusOK, respBody); err != nil {
 		return err
 	}
 	return nil
 }
 
 // get can be used to either get or list a given resource.
-func (c *Client) get(ctx context.Context, url string, resp proto.Unmarshaler) error {
+func (c *Client) get(ctx context.Context, codec *codec, url string, resp interface{}) error {
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
 	}
-	r.Header.Set("Accept", contentTypePB)
+	r.Header.Set("Accept", codec.contentType)
 	re, err := c.client().Do(r)
 	if err != nil {
 		return err
@@ -300,8 +321,8 @@ func (c *Client) get(ctx context.Context, url string, resp proto.Unmarshaler) er
 		return fmt.Errorf("read body: %v", err)
 	}
 
-	if err := checkStatusCode(re.StatusCode, http.StatusOK, respBody); err != nil {
+	if err := checkStatusCode(codec, re.StatusCode, http.StatusOK, respBody); err != nil {
 		return err
 	}
-	return unmarshal(respBody, resp)
+	return codec.unmarshal(respBody, resp)
 }

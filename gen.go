@@ -106,20 +106,20 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 	md.Namespace = c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
-	err := c.client.create(ctx, url, obj, resp)
+	err := c.client.create(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, name string) (error) {
+func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
-	return c.client.delete(ctx, url, name)
+	return c.client.delete(ctx, pbCodec, url, name)
 }
 
 func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
@@ -129,22 +129,24 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $
 	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
-	if err := c.client.get(ctx, url, resp); err != nil {
+	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-{{ if $r.HasList -}}
+{{- if $r.HasList }}
+
 func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
 	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }}List)
-	if err := c.client.get(ctx, url, resp); err != nil {
+	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
-}{{ end }}{{ end }}
+}{{ end }}
+{{ end }}
 `))
 
 var (
@@ -212,9 +214,9 @@ func load() error {
 	if !ok {
 		return errors.New("could not find this package")
 	}
-	obj := thisPkg.Pkg.Scope().Lookup("object")
+	obj := thisPkg.Pkg.Scope().Lookup("Object")
 	if obj == nil {
-		return errors.New("failed to find object")
+		return errors.New("failed to lookup Object interface")
 	}
 	intr, ok := isInterface(obj)
 	if !ok {
