@@ -280,7 +280,7 @@ func (c *Client) create(ctx context.Context, codec *codec, url string, req, resp
 	return codec.unmarshal(respBody, resp)
 }
 
-func (c *Client) delete(ctx context.Context, codec *codec, url, name string) error {
+func (c *Client) delete(ctx context.Context, codec *codec, url string) error {
 	r, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err

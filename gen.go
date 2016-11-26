@@ -119,7 +119,7 @@ func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, name string) err
 	}
 	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
-	return c.client.delete(ctx, pbCodec, url, name)
+	return c.client.delete(ctx, pbCodec, url)
 }
 
 func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
