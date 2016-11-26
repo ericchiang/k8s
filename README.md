@@ -6,7 +6,7 @@ This package holds a slimmed down Kubernetes client. It imports a [single extern
 
 The client uses Kubernetes' new support for [protobuf][protobuf] serialization. Are types are generated from canonical `.proto` files in the Kubernetes repo, and this package understands the custom wire format used to talk to the API server. However, the package API looks similar to the official client:
 
-```
+```go
 import (
     "context"
     "fmt"
@@ -40,20 +40,20 @@ func main() {
 
 Clients are initialized with a default namespace. For in-cluster clients, this is the namespace the pod was deployed in.
 
-```
+```go
 pods, err := client.ListPods(ctx) // Pods in the current namespace.
 ```
 
 Clients that wish to query a different namespace can do so using a context key.
 
-```
+```go
 ctxWithNamespace = k8s.NamespaceContext(ctx, "custom-namespace")
 pods, err := client.ListPods(ctxWithNamespace) // Pods from the "custom-namespace"
 ```
 
 Out-of-cluster clients can be constructed by creating a `Client` manually. The following is an example of creating a client which uses TLS client auth:
 
-```
+```go
 // Load client cert.
 clientCert, err := tls.LoadX509KeyPair("client.crt", "client.key")
 if err != nil {
@@ -89,7 +89,7 @@ client := &k8s.Client{
 
 Errors returned by the Kubernetes API are formatted as [`unversioned.Status`][unversioned-status] objects and surfaced by clients as [`*k8s.Error`][k8s-error]s. Programs that need to inspect error codes or failure details can use a type cast to access this information.
 
-```
+```go
 configMap := &v1.ConfigMap{
     Metadata: &v1.ObjectMeta{
         Name:      "test",
