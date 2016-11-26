@@ -100,11 +100,11 @@ type {{ .Name }} struct {
 {{ range $i, $r := .Resources }}
 func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.ImportName }}.{{ $r.Name }}) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if {{ $r.Namespaced }} && md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(md.Namespace, {{ $r.Namespaced }})
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", md.Name)
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	err := c.client.create(ctx, url, obj, resp)
 	if err != nil {
@@ -112,8 +112,11 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 	}
 	return resp, nil
 }
-
+{{ if $r.Namespaced }}
 func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, namespace, name string) (error) {
+{{- else }}
+func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, name string) (error) {
+	namespace := ""{{ end }}
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -121,8 +124,11 @@ func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, namespace, name 
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	return c.client.delete(ctx, url, name)
 }
-
+{{ if $r.Namespaced }}
 func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, namespace, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
+{{- else }}
+func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
+	namespace := ""{{ end }}
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -134,8 +140,11 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, namespace, name str
 	}
 	return resp, nil
 }
-{{ if $r.HasList }}
+{{ if $r.HasList }}{{ if $r.Namespaced }}
 func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context, namespace string) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
+{{- else }}
+func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
+	namespace := ""{{ end }}
 	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }}List)
@@ -154,6 +163,29 @@ var (
 		"certificates":   "certificates.k8s.io",
 		"rbac":           "rbac.authorization.k8s.io",
 		"storage":        "storage.k8s.io",
+	}
+	notNamespaced = map[string]bool{
+		"ClusterRole":        true,
+		"ClusterRoleBinding": true,
+
+		"ComponentStatus":  true,
+		"Node":             true,
+		"Namespace":        true,
+		"PersistentVolume": true,
+
+		"PodSecurityPolicy":  true,
+		"ThirdPartyResource": true,
+
+		"CertificateSigningRequest": true,
+
+		"TokenReview": true,
+
+		"SubjectAccessReview":     true,
+		"SelfSubjectAccessReview": true,
+
+		"ImageReview": true,
+
+		"StorageClass": true,
 	}
 )
 
@@ -230,8 +262,8 @@ func load() error {
 			pkg.Resources = append(pkg.Resources, Resource{
 				Name:       tn.Name(),
 				Pluralized: pluralize(strings.ToLower(tn.Name())),
-				Namespaced: true,
 				HasList:    pkgInfo.Pkg.Scope().Lookup(tn.Name()+"List") != nil,
+				Namespaced: !notNamespaced[tn.Name()],
 			})
 		}
 		pkgs = append(pkgs, pkg)
