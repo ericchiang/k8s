@@ -100,10 +100,10 @@ type {{ .Name }} struct {
 {{ range $i, $r := .Resources }}
 func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.ImportName }}.{{ $r.Name }}) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
 	md := obj.GetMetadata()
-	if {{ $r.Namespaced }} && md.Name == "" {
+	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(md.Namespace, {{ $r.Namespaced }})
+	md.Namespace = c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	err := c.client.create(ctx, url, obj, resp)
@@ -112,27 +112,21 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 	}
 	return resp, nil
 }
-{{ if $r.Namespaced }}
-func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, namespace, name string) (error) {
-{{- else }}
+
 func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, name string) (error) {
-	namespace := ""{{ end }}
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
-	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
+	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	return c.client.delete(ctx, url, name)
 }
-{{ if $r.Namespaced }}
-func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, namespace, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
-{{- else }}
+
 func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
-	namespace := ""{{ end }}
-	if {{ $r.Namespaced }} && name == "" {
+	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
+	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	if err := c.client.get(ctx, url, resp); err != nil {
@@ -140,12 +134,10 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $
 	}
 	return resp, nil
 }
-{{ if $r.HasList }}{{ if $r.Namespaced }}
-func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context, namespace string) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
-{{- else }}
+
+{{ if $r.HasList -}}
 func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
-	namespace := ""{{ end }}
-	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
+	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }}List)
 	if err := c.client.get(ctx, url, resp); err != nil {

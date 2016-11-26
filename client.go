@@ -1,3 +1,6 @@
+/*
+package k8s implements a Kubernetes client.
+*/
 package k8s
 
 import (
@@ -19,21 +22,31 @@ import (
 
 	"github.com/ericchiang/k8s/api/unversioned"
 	"github.com/ericchiang/k8s/api/v1"
+	"github.com/ericchiang/k8s/internal"
 	"github.com/ericchiang/k8s/runtime"
 )
 
+// Kubernetes implements its own custom protobuf format to allow clients (and possibly servers)
+// to use either JSON or protocol buffers. The protocol introduces a custom content type and
+// magic bytes to signal the use of protobufs, while wrapping each object with API group, version
+// and resource data.
+//
+// The protocol spec which this client implements can be found here:
+//
+//   https://github.com/kubernetes/kubernetes/blob/master/docs/proposals/protobuf.md
+//
 const contentTypePB = "application/vnd.kubernetes.protobuf"
 
-// https://github.com/kubernetes/kubernetes/blob/master/docs/proposals/protobuf.md#wire-format
 var magicBytes = []byte{0x6b, 0x38, 0x73, 0x00}
 
 func unmarshal(b []byte, obj proto.Unmarshaler) error {
 	if len(b) < len(magicBytes) {
-		return errors.New("magic bytes not present")
+		return errors.New("payload is not a kubernetes protobuf object")
 	}
 	if !bytes.Equal(b[:len(magicBytes)], magicBytes) {
-		return errors.New("magic bytes not present")
+		return errors.New("payload is not a kubernetes protobuf object")
 	}
+
 	u := new(runtime.Unknown)
 	if err := u.Unmarshal(b[len(magicBytes):]); err != nil {
 		return fmt.Errorf("unmarshal unknown: %v", err)
@@ -46,14 +59,24 @@ func marshal(obj proto.Marshaler) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// The URL path informs the API server what the API group, version, and resource
+	// of the object. We don't need to specify it here to talk to the API server.
 	body, err := (&runtime.Unknown{Raw: payload}).Marshal()
 	if err != nil {
 		return nil, err
 	}
+
 	d := make([]byte, len(magicBytes)+len(body))
 	copy(d[:len(magicBytes)], magicBytes)
 	copy(d[len(magicBytes):], body)
 	return d, nil
+}
+
+// NamespaceContext returns a new Context that carries the provided namespace.
+// The Context can be used to override the default namespace on the client.
+func NamespaceContext(ctx context.Context, namespace string) context.Context {
+	return context.WithValue(ctx, internal.NamespaceKey{}, namespace)
 }
 
 // Client is a Kuberntes client.
@@ -68,9 +91,9 @@ type Client struct {
 	Client *http.Client
 }
 
-// InCluster returns a client that uses the service account bearer token mounted
+// InClusterClient returns a client that uses the service account bearer token mounted
 // into Kubernetes pods.
-func InCluster() (*Client, error) {
+func InClusterClient() (*Client, error) {
 	host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
 	if len(host) == 0 || len(port) == 0 {
 		return nil, errors.New("unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined")
@@ -164,18 +187,29 @@ func (c *Client) client() *http.Client {
 	return c.Client
 }
 
-func (c *Client) namespaceFor(ns string, namespaced bool) string {
+func (c *Client) namespaceFor(ctx context.Context, namespaced bool) string {
 	if !namespaced {
 		return ""
 	}
-	if ns != "" {
+
+	ns, ok := ctx.Value(internal.NamespaceKey{}).(string)
+	if ok && ns != "" {
 		return ns
 	}
+
 	if c.Namespace != "" {
 		return c.Namespace
 	}
 	return "default"
 }
+
+// The following methods hold the logic for interacting with the Kubernetes API. Generated
+// clients are thin wrappers on top of these methods.
+//
+// This client implements specs in the "API Conventions" developer document, which can be
+// found here:
+//
+//   https://github.com/kubernetes/kubernetes/blob/master/docs/devel/api-conventions.md
 
 func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string) string {
 	basePath := "apis/"
@@ -248,6 +282,7 @@ func (c *Client) delete(ctx context.Context, url string, name string) error {
 	return nil
 }
 
+// get can be used to either get or list a given resource.
 func (c *Client) get(ctx context.Context, url string, resp proto.Unmarshaler) error {
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {
