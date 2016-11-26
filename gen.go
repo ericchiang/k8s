@@ -129,7 +129,7 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, namespace, name str
 {{- else }}
 func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
 	namespace := ""{{ end }}
-	if name == "" {
+	if {{ $r.Namespaced }} && name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
