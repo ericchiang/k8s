@@ -43,6 +43,7 @@ type Resource struct {
 	Name       string
 	Namespaced bool
 	HasList    bool
+	Pluralized string
 }
 
 type byName []Resource
@@ -86,7 +87,8 @@ func pluralize(s string) string {
 
 var tmpl = template.Must(template.New("").Funcs(template.FuncMap{
 	"pluralize": pluralize,
-}).Parse(`// {{ .Name }} returns a client for interacting with the {{ .APIGroup }}/{{ .APIVersion }} API group.
+}).Parse(`
+// {{ .Name }} returns a client for interacting with the {{ .APIGroup }}/{{ .APIVersion }} API group.
 func (c *Client) {{ .Name }}() *{{ .Name }} {
 	return &{{ .Name }}{c}
 }
@@ -102,7 +104,7 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(md.Namespace, {{ $r.Namespaced }})
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "", md.Name)
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", md.Name)
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	err := c.client.create(ctx, url, obj, resp)
 	if err != nil {
@@ -116,7 +118,7 @@ func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, namespace, name 
 		return fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "", name)
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	return c.client.delete(ctx, url, name)
 }
 
@@ -125,7 +127,7 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, namespace, name str
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "", name)
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	if err := c.client.get(ctx, url, resp); err != nil {
 		return nil, err
@@ -135,15 +137,13 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, namespace, name str
 {{ if $r.HasList }}
 func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context, namespace string) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
 	ns := c.client.namespaceFor(namespace, {{ $r.Namespaced }})
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "", "")
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }}List)
 	if err := c.client.get(ctx, url, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
-}
-{{ end }}
-{{ end }}
+}{{ end }}{{ end }}
 `))
 
 var (
@@ -229,6 +229,7 @@ func load() error {
 
 			pkg.Resources = append(pkg.Resources, Resource{
 				Name:       tn.Name(),
+				Pluralized: pluralize(strings.ToLower(tn.Name())),
 				Namespaced: true,
 				HasList:    pkgInfo.Pkg.Scope().Lookup(tn.Name()+"List") != nil,
 			})
@@ -249,7 +250,7 @@ func load() error {
 		}
 		fmt.Fprintf(buff, "\t%s \"%s\"\n", pkg.ImportName, pkg.ImportPath)
 	}
-	buff.WriteString(")\n\n")
+	buff.WriteString(")\n")
 
 	for _, pkg := range pkgs {
 		sort.Sort(byName(pkg.Resources))
