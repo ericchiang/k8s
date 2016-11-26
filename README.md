@@ -1,4 +1,4 @@
-# A Simple Go Client for Kubernetes
+# A simple Go client for Kubernetes
 
 [![GoDoc](https://godoc.org/github.com/ericchiang/k8s?status.svg)](https://godoc.org/github.com/ericchiang/k8s)
 
@@ -36,7 +36,7 @@ func main() {
 * Go 1.7+ (this package uses "context" features added in 1.7)
 * Kubernetes 1.3+ (protobuf support was added in 1.3)
 
-## Configurability
+## Configuration
 
 Clients are initialized with a default namespace. For in-cluster clients, this is the namespace the pod was deployed in.
 
