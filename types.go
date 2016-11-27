@@ -930,17 +930,17 @@ func (c *CoreV1) ListServiceAccounts(ctx context.Context) (*apiv1.ServiceAccount
 }
 
 
-// AppsV1 returns a client for interacting with the apps/v1alpha1 API group.
-func (c *Client) AppsV1() *AppsV1 {
-	return &AppsV1{c}
+// AppsV1Alpha1 returns a client for interacting with the apps/v1alpha1 API group.
+func (c *Client) AppsV1Alpha1() *AppsV1Alpha1 {
+	return &AppsV1Alpha1{c}
 }
 
-// AppsV1 is a client for interacting with the apps/v1alpha1 API group.
-type AppsV1 struct {
+// AppsV1Alpha1 is a client for interacting with the apps/v1alpha1 API group.
+type AppsV1Alpha1 struct {
 	client *Client
 }
 
-func (c *AppsV1) CreatePetSet(ctx context.Context, obj *appsv1alpha1.PetSet) (*appsv1alpha1.PetSet, error) {
+func (c *AppsV1Alpha1) CreatePetSet(ctx context.Context, obj *appsv1alpha1.PetSet) (*appsv1alpha1.PetSet, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -955,7 +955,7 @@ func (c *AppsV1) CreatePetSet(ctx context.Context, obj *appsv1alpha1.PetSet) (*a
 	return resp, nil
 }
 
-func (c *AppsV1) DeletePetSet(ctx context.Context, name string) error {
+func (c *AppsV1Alpha1) DeletePetSet(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -964,7 +964,7 @@ func (c *AppsV1) DeletePetSet(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *AppsV1) GetPetSet(ctx context.Context, name string) (*appsv1alpha1.PetSet, error) {
+func (c *AppsV1Alpha1) GetPetSet(ctx context.Context, name string) (*appsv1alpha1.PetSet, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -977,7 +977,7 @@ func (c *AppsV1) GetPetSet(ctx context.Context, name string) (*appsv1alpha1.PetS
 	return resp, nil
 }
 
-func (c *AppsV1) ListPetSets(ctx context.Context) (*appsv1alpha1.PetSetList, error) {
+func (c *AppsV1Alpha1) ListPetSets(ctx context.Context) (*appsv1alpha1.PetSetList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", "")
 	resp := new(appsv1alpha1.PetSetList)
@@ -988,17 +988,17 @@ func (c *AppsV1) ListPetSets(ctx context.Context) (*appsv1alpha1.PetSetList, err
 }
 
 
-// AuthenticationV1 returns a client for interacting with the authentication.k8s.io/v1beta1 API group.
-func (c *Client) AuthenticationV1() *AuthenticationV1 {
-	return &AuthenticationV1{c}
+// AuthenticationV1Beta1 returns a client for interacting with the authentication.k8s.io/v1beta1 API group.
+func (c *Client) AuthenticationV1Beta1() *AuthenticationV1Beta1 {
+	return &AuthenticationV1Beta1{c}
 }
 
-// AuthenticationV1 is a client for interacting with the authentication.k8s.io/v1beta1 API group.
-type AuthenticationV1 struct {
+// AuthenticationV1Beta1 is a client for interacting with the authentication.k8s.io/v1beta1 API group.
+type AuthenticationV1Beta1 struct {
 	client *Client
 }
 
-func (c *AuthenticationV1) CreateTokenReview(ctx context.Context, obj *authenticationv1beta1.TokenReview) (*authenticationv1beta1.TokenReview, error) {
+func (c *AuthenticationV1Beta1) CreateTokenReview(ctx context.Context, obj *authenticationv1beta1.TokenReview) (*authenticationv1beta1.TokenReview, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1013,7 +1013,7 @@ func (c *AuthenticationV1) CreateTokenReview(ctx context.Context, obj *authentic
 	return resp, nil
 }
 
-func (c *AuthenticationV1) DeleteTokenReview(ctx context.Context, name string) error {
+func (c *AuthenticationV1Beta1) DeleteTokenReview(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1022,7 +1022,7 @@ func (c *AuthenticationV1) DeleteTokenReview(ctx context.Context, name string) e
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *AuthenticationV1) GetTokenReview(ctx context.Context, name string) (*authenticationv1beta1.TokenReview, error) {
+func (c *AuthenticationV1Beta1) GetTokenReview(ctx context.Context, name string) (*authenticationv1beta1.TokenReview, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1036,17 +1036,17 @@ func (c *AuthenticationV1) GetTokenReview(ctx context.Context, name string) (*au
 }
 
 
-// AuthorizationV1 returns a client for interacting with the authorization.k8s.io/v1beta1 API group.
-func (c *Client) AuthorizationV1() *AuthorizationV1 {
-	return &AuthorizationV1{c}
+// AuthorizationV1Beta1 returns a client for interacting with the authorization.k8s.io/v1beta1 API group.
+func (c *Client) AuthorizationV1Beta1() *AuthorizationV1Beta1 {
+	return &AuthorizationV1Beta1{c}
 }
 
-// AuthorizationV1 is a client for interacting with the authorization.k8s.io/v1beta1 API group.
-type AuthorizationV1 struct {
+// AuthorizationV1Beta1 is a client for interacting with the authorization.k8s.io/v1beta1 API group.
+type AuthorizationV1Beta1 struct {
 	client *Client
 }
 
-func (c *AuthorizationV1) CreateLocalSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.LocalSubjectAccessReview) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
+func (c *AuthorizationV1Beta1) CreateLocalSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.LocalSubjectAccessReview) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1061,7 +1061,7 @@ func (c *AuthorizationV1) CreateLocalSubjectAccessReview(ctx context.Context, ob
 	return resp, nil
 }
 
-func (c *AuthorizationV1) DeleteLocalSubjectAccessReview(ctx context.Context, name string) error {
+func (c *AuthorizationV1Beta1) DeleteLocalSubjectAccessReview(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1070,7 +1070,7 @@ func (c *AuthorizationV1) DeleteLocalSubjectAccessReview(ctx context.Context, na
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *AuthorizationV1) GetLocalSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
+func (c *AuthorizationV1Beta1) GetLocalSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1083,7 +1083,7 @@ func (c *AuthorizationV1) GetLocalSubjectAccessReview(ctx context.Context, name 
 	return resp, nil
 }
 
-func (c *AuthorizationV1) CreateSelfSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SelfSubjectAccessReview) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
+func (c *AuthorizationV1Beta1) CreateSelfSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SelfSubjectAccessReview) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1098,7 +1098,7 @@ func (c *AuthorizationV1) CreateSelfSubjectAccessReview(ctx context.Context, obj
 	return resp, nil
 }
 
-func (c *AuthorizationV1) DeleteSelfSubjectAccessReview(ctx context.Context, name string) error {
+func (c *AuthorizationV1Beta1) DeleteSelfSubjectAccessReview(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1107,7 +1107,7 @@ func (c *AuthorizationV1) DeleteSelfSubjectAccessReview(ctx context.Context, nam
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *AuthorizationV1) GetSelfSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
+func (c *AuthorizationV1Beta1) GetSelfSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1120,7 +1120,7 @@ func (c *AuthorizationV1) GetSelfSubjectAccessReview(ctx context.Context, name s
 	return resp, nil
 }
 
-func (c *AuthorizationV1) CreateSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SubjectAccessReview) (*authorizationv1beta1.SubjectAccessReview, error) {
+func (c *AuthorizationV1Beta1) CreateSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SubjectAccessReview) (*authorizationv1beta1.SubjectAccessReview, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1135,7 +1135,7 @@ func (c *AuthorizationV1) CreateSubjectAccessReview(ctx context.Context, obj *au
 	return resp, nil
 }
 
-func (c *AuthorizationV1) DeleteSubjectAccessReview(ctx context.Context, name string) error {
+func (c *AuthorizationV1Beta1) DeleteSubjectAccessReview(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1144,7 +1144,7 @@ func (c *AuthorizationV1) DeleteSubjectAccessReview(ctx context.Context, name st
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *AuthorizationV1) GetSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SubjectAccessReview, error) {
+func (c *AuthorizationV1Beta1) GetSubjectAccessReview(ctx context.Context, name string) (*authorizationv1beta1.SubjectAccessReview, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1311,17 +1311,17 @@ func (c *BatchV1) ListJobs(ctx context.Context) (*batchv1.JobList, error) {
 }
 
 
-// BatchV2 returns a client for interacting with the batch/v2alpha1 API group.
-func (c *Client) BatchV2() *BatchV2 {
-	return &BatchV2{c}
+// BatchV2Alpha1 returns a client for interacting with the batch/v2alpha1 API group.
+func (c *Client) BatchV2Alpha1() *BatchV2Alpha1 {
+	return &BatchV2Alpha1{c}
 }
 
-// BatchV2 is a client for interacting with the batch/v2alpha1 API group.
-type BatchV2 struct {
+// BatchV2Alpha1 is a client for interacting with the batch/v2alpha1 API group.
+type BatchV2Alpha1 struct {
 	client *Client
 }
 
-func (c *BatchV2) CreateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batchv2alpha1.Job, error) {
+func (c *BatchV2Alpha1) CreateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batchv2alpha1.Job, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1336,7 +1336,7 @@ func (c *BatchV2) CreateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batch
 	return resp, nil
 }
 
-func (c *BatchV2) DeleteJob(ctx context.Context, name string) error {
+func (c *BatchV2Alpha1) DeleteJob(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1345,7 +1345,7 @@ func (c *BatchV2) DeleteJob(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *BatchV2) GetJob(ctx context.Context, name string) (*batchv2alpha1.Job, error) {
+func (c *BatchV2Alpha1) GetJob(ctx context.Context, name string) (*batchv2alpha1.Job, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1358,7 +1358,7 @@ func (c *BatchV2) GetJob(ctx context.Context, name string) (*batchv2alpha1.Job, 
 	return resp, nil
 }
 
-func (c *BatchV2) ListJobs(ctx context.Context) (*batchv2alpha1.JobList, error) {
+func (c *BatchV2Alpha1) ListJobs(ctx context.Context) (*batchv2alpha1.JobList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("batch", "v2alpha1", ns, "jobs", "")
 	resp := new(batchv2alpha1.JobList)
@@ -1368,7 +1368,7 @@ func (c *BatchV2) ListJobs(ctx context.Context) (*batchv2alpha1.JobList, error) 
 	return resp, nil
 }
 
-func (c *BatchV2) CreateJobTemplate(ctx context.Context, obj *batchv2alpha1.JobTemplate) (*batchv2alpha1.JobTemplate, error) {
+func (c *BatchV2Alpha1) CreateJobTemplate(ctx context.Context, obj *batchv2alpha1.JobTemplate) (*batchv2alpha1.JobTemplate, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1383,7 +1383,7 @@ func (c *BatchV2) CreateJobTemplate(ctx context.Context, obj *batchv2alpha1.JobT
 	return resp, nil
 }
 
-func (c *BatchV2) DeleteJobTemplate(ctx context.Context, name string) error {
+func (c *BatchV2Alpha1) DeleteJobTemplate(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1392,7 +1392,7 @@ func (c *BatchV2) DeleteJobTemplate(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *BatchV2) GetJobTemplate(ctx context.Context, name string) (*batchv2alpha1.JobTemplate, error) {
+func (c *BatchV2Alpha1) GetJobTemplate(ctx context.Context, name string) (*batchv2alpha1.JobTemplate, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1405,7 +1405,7 @@ func (c *BatchV2) GetJobTemplate(ctx context.Context, name string) (*batchv2alph
 	return resp, nil
 }
 
-func (c *BatchV2) CreateScheduledJob(ctx context.Context, obj *batchv2alpha1.ScheduledJob) (*batchv2alpha1.ScheduledJob, error) {
+func (c *BatchV2Alpha1) CreateScheduledJob(ctx context.Context, obj *batchv2alpha1.ScheduledJob) (*batchv2alpha1.ScheduledJob, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1420,7 +1420,7 @@ func (c *BatchV2) CreateScheduledJob(ctx context.Context, obj *batchv2alpha1.Sch
 	return resp, nil
 }
 
-func (c *BatchV2) DeleteScheduledJob(ctx context.Context, name string) error {
+func (c *BatchV2Alpha1) DeleteScheduledJob(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1429,7 +1429,7 @@ func (c *BatchV2) DeleteScheduledJob(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *BatchV2) GetScheduledJob(ctx context.Context, name string) (*batchv2alpha1.ScheduledJob, error) {
+func (c *BatchV2Alpha1) GetScheduledJob(ctx context.Context, name string) (*batchv2alpha1.ScheduledJob, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1442,7 +1442,7 @@ func (c *BatchV2) GetScheduledJob(ctx context.Context, name string) (*batchv2alp
 	return resp, nil
 }
 
-func (c *BatchV2) ListScheduledJobs(ctx context.Context) (*batchv2alpha1.ScheduledJobList, error) {
+func (c *BatchV2Alpha1) ListScheduledJobs(ctx context.Context) (*batchv2alpha1.ScheduledJobList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", "")
 	resp := new(batchv2alpha1.ScheduledJobList)
@@ -1453,17 +1453,17 @@ func (c *BatchV2) ListScheduledJobs(ctx context.Context) (*batchv2alpha1.Schedul
 }
 
 
-// CertificatesV1 returns a client for interacting with the certificates.k8s.io/v1alpha1 API group.
-func (c *Client) CertificatesV1() *CertificatesV1 {
-	return &CertificatesV1{c}
+// CertificatesV1Alpha1 returns a client for interacting with the certificates.k8s.io/v1alpha1 API group.
+func (c *Client) CertificatesV1Alpha1() *CertificatesV1Alpha1 {
+	return &CertificatesV1Alpha1{c}
 }
 
-// CertificatesV1 is a client for interacting with the certificates.k8s.io/v1alpha1 API group.
-type CertificatesV1 struct {
+// CertificatesV1Alpha1 is a client for interacting with the certificates.k8s.io/v1alpha1 API group.
+type CertificatesV1Alpha1 struct {
 	client *Client
 }
 
-func (c *CertificatesV1) CreateCertificateSigningRequest(ctx context.Context, obj *certificatesv1alpha1.CertificateSigningRequest) (*certificatesv1alpha1.CertificateSigningRequest, error) {
+func (c *CertificatesV1Alpha1) CreateCertificateSigningRequest(ctx context.Context, obj *certificatesv1alpha1.CertificateSigningRequest) (*certificatesv1alpha1.CertificateSigningRequest, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1478,7 +1478,7 @@ func (c *CertificatesV1) CreateCertificateSigningRequest(ctx context.Context, ob
 	return resp, nil
 }
 
-func (c *CertificatesV1) DeleteCertificateSigningRequest(ctx context.Context, name string) error {
+func (c *CertificatesV1Alpha1) DeleteCertificateSigningRequest(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1487,7 +1487,7 @@ func (c *CertificatesV1) DeleteCertificateSigningRequest(ctx context.Context, na
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *CertificatesV1) GetCertificateSigningRequest(ctx context.Context, name string) (*certificatesv1alpha1.CertificateSigningRequest, error) {
+func (c *CertificatesV1Alpha1) GetCertificateSigningRequest(ctx context.Context, name string) (*certificatesv1alpha1.CertificateSigningRequest, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1500,7 +1500,7 @@ func (c *CertificatesV1) GetCertificateSigningRequest(ctx context.Context, name 
 	return resp, nil
 }
 
-func (c *CertificatesV1) ListCertificateSigningRequests(ctx context.Context) (*certificatesv1alpha1.CertificateSigningRequestList, error) {
+func (c *CertificatesV1Alpha1) ListCertificateSigningRequests(ctx context.Context) (*certificatesv1alpha1.CertificateSigningRequestList, error) {
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", ns, "certificatesigningrequests", "")
 	resp := new(certificatesv1alpha1.CertificateSigningRequestList)
@@ -1511,17 +1511,17 @@ func (c *CertificatesV1) ListCertificateSigningRequests(ctx context.Context) (*c
 }
 
 
-// ExtensionsV1 returns a client for interacting with the extensions/v1beta1 API group.
-func (c *Client) ExtensionsV1() *ExtensionsV1 {
-	return &ExtensionsV1{c}
+// ExtensionsV1Beta1 returns a client for interacting with the extensions/v1beta1 API group.
+func (c *Client) ExtensionsV1Beta1() *ExtensionsV1Beta1 {
+	return &ExtensionsV1Beta1{c}
 }
 
-// ExtensionsV1 is a client for interacting with the extensions/v1beta1 API group.
-type ExtensionsV1 struct {
+// ExtensionsV1Beta1 is a client for interacting with the extensions/v1beta1 API group.
+type ExtensionsV1Beta1 struct {
 	client *Client
 }
 
-func (c *ExtensionsV1) CreateDaemonSet(ctx context.Context, obj *extensionsv1beta1.DaemonSet) (*extensionsv1beta1.DaemonSet, error) {
+func (c *ExtensionsV1Beta1) CreateDaemonSet(ctx context.Context, obj *extensionsv1beta1.DaemonSet) (*extensionsv1beta1.DaemonSet, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1536,7 +1536,7 @@ func (c *ExtensionsV1) CreateDaemonSet(ctx context.Context, obj *extensionsv1bet
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteDaemonSet(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteDaemonSet(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1545,7 +1545,7 @@ func (c *ExtensionsV1) DeleteDaemonSet(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetDaemonSet(ctx context.Context, name string) (*extensionsv1beta1.DaemonSet, error) {
+func (c *ExtensionsV1Beta1) GetDaemonSet(ctx context.Context, name string) (*extensionsv1beta1.DaemonSet, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1558,7 +1558,7 @@ func (c *ExtensionsV1) GetDaemonSet(ctx context.Context, name string) (*extensio
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListDaemonSets(ctx context.Context) (*extensionsv1beta1.DaemonSetList, error) {
+func (c *ExtensionsV1Beta1) ListDaemonSets(ctx context.Context) (*extensionsv1beta1.DaemonSetList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "daemonsets", "")
 	resp := new(extensionsv1beta1.DaemonSetList)
@@ -1568,7 +1568,7 @@ func (c *ExtensionsV1) ListDaemonSets(ctx context.Context) (*extensionsv1beta1.D
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateDeployment(ctx context.Context, obj *extensionsv1beta1.Deployment) (*extensionsv1beta1.Deployment, error) {
+func (c *ExtensionsV1Beta1) CreateDeployment(ctx context.Context, obj *extensionsv1beta1.Deployment) (*extensionsv1beta1.Deployment, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1583,7 +1583,7 @@ func (c *ExtensionsV1) CreateDeployment(ctx context.Context, obj *extensionsv1be
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteDeployment(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteDeployment(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1592,7 +1592,7 @@ func (c *ExtensionsV1) DeleteDeployment(ctx context.Context, name string) error 
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetDeployment(ctx context.Context, name string) (*extensionsv1beta1.Deployment, error) {
+func (c *ExtensionsV1Beta1) GetDeployment(ctx context.Context, name string) (*extensionsv1beta1.Deployment, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1605,7 +1605,7 @@ func (c *ExtensionsV1) GetDeployment(ctx context.Context, name string) (*extensi
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListDeployments(ctx context.Context) (*extensionsv1beta1.DeploymentList, error) {
+func (c *ExtensionsV1Beta1) ListDeployments(ctx context.Context) (*extensionsv1beta1.DeploymentList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "deployments", "")
 	resp := new(extensionsv1beta1.DeploymentList)
@@ -1615,7 +1615,7 @@ func (c *ExtensionsV1) ListDeployments(ctx context.Context) (*extensionsv1beta1.
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *extensionsv1beta1.HorizontalPodAutoscaler) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
+func (c *ExtensionsV1Beta1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *extensionsv1beta1.HorizontalPodAutoscaler) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1630,7 +1630,7 @@ func (c *ExtensionsV1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *e
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteHorizontalPodAutoscaler(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteHorizontalPodAutoscaler(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1639,7 +1639,7 @@ func (c *ExtensionsV1) DeleteHorizontalPodAutoscaler(ctx context.Context, name s
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetHorizontalPodAutoscaler(ctx context.Context, name string) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
+func (c *ExtensionsV1Beta1) GetHorizontalPodAutoscaler(ctx context.Context, name string) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1652,7 +1652,7 @@ func (c *ExtensionsV1) GetHorizontalPodAutoscaler(ctx context.Context, name stri
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListHorizontalPodAutoscalers(ctx context.Context) (*extensionsv1beta1.HorizontalPodAutoscalerList, error) {
+func (c *ExtensionsV1Beta1) ListHorizontalPodAutoscalers(ctx context.Context) (*extensionsv1beta1.HorizontalPodAutoscalerList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "horizontalpodautoscalers", "")
 	resp := new(extensionsv1beta1.HorizontalPodAutoscalerList)
@@ -1662,7 +1662,7 @@ func (c *ExtensionsV1) ListHorizontalPodAutoscalers(ctx context.Context) (*exten
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateIngress(ctx context.Context, obj *extensionsv1beta1.Ingress) (*extensionsv1beta1.Ingress, error) {
+func (c *ExtensionsV1Beta1) CreateIngress(ctx context.Context, obj *extensionsv1beta1.Ingress) (*extensionsv1beta1.Ingress, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1677,7 +1677,7 @@ func (c *ExtensionsV1) CreateIngress(ctx context.Context, obj *extensionsv1beta1
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteIngress(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteIngress(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1686,7 +1686,7 @@ func (c *ExtensionsV1) DeleteIngress(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetIngress(ctx context.Context, name string) (*extensionsv1beta1.Ingress, error) {
+func (c *ExtensionsV1Beta1) GetIngress(ctx context.Context, name string) (*extensionsv1beta1.Ingress, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1699,7 +1699,7 @@ func (c *ExtensionsV1) GetIngress(ctx context.Context, name string) (*extensions
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListIngresses(ctx context.Context) (*extensionsv1beta1.IngressList, error) {
+func (c *ExtensionsV1Beta1) ListIngresses(ctx context.Context) (*extensionsv1beta1.IngressList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "ingresses", "")
 	resp := new(extensionsv1beta1.IngressList)
@@ -1709,7 +1709,7 @@ func (c *ExtensionsV1) ListIngresses(ctx context.Context) (*extensionsv1beta1.In
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateJob(ctx context.Context, obj *extensionsv1beta1.Job) (*extensionsv1beta1.Job, error) {
+func (c *ExtensionsV1Beta1) CreateJob(ctx context.Context, obj *extensionsv1beta1.Job) (*extensionsv1beta1.Job, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1724,7 +1724,7 @@ func (c *ExtensionsV1) CreateJob(ctx context.Context, obj *extensionsv1beta1.Job
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteJob(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteJob(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1733,7 +1733,7 @@ func (c *ExtensionsV1) DeleteJob(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetJob(ctx context.Context, name string) (*extensionsv1beta1.Job, error) {
+func (c *ExtensionsV1Beta1) GetJob(ctx context.Context, name string) (*extensionsv1beta1.Job, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1746,7 +1746,7 @@ func (c *ExtensionsV1) GetJob(ctx context.Context, name string) (*extensionsv1be
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListJobs(ctx context.Context) (*extensionsv1beta1.JobList, error) {
+func (c *ExtensionsV1Beta1) ListJobs(ctx context.Context) (*extensionsv1beta1.JobList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "jobs", "")
 	resp := new(extensionsv1beta1.JobList)
@@ -1756,7 +1756,7 @@ func (c *ExtensionsV1) ListJobs(ctx context.Context) (*extensionsv1beta1.JobList
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateNetworkPolicy(ctx context.Context, obj *extensionsv1beta1.NetworkPolicy) (*extensionsv1beta1.NetworkPolicy, error) {
+func (c *ExtensionsV1Beta1) CreateNetworkPolicy(ctx context.Context, obj *extensionsv1beta1.NetworkPolicy) (*extensionsv1beta1.NetworkPolicy, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1771,7 +1771,7 @@ func (c *ExtensionsV1) CreateNetworkPolicy(ctx context.Context, obj *extensionsv
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteNetworkPolicy(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteNetworkPolicy(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1780,7 +1780,7 @@ func (c *ExtensionsV1) DeleteNetworkPolicy(ctx context.Context, name string) err
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetNetworkPolicy(ctx context.Context, name string) (*extensionsv1beta1.NetworkPolicy, error) {
+func (c *ExtensionsV1Beta1) GetNetworkPolicy(ctx context.Context, name string) (*extensionsv1beta1.NetworkPolicy, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1793,7 +1793,7 @@ func (c *ExtensionsV1) GetNetworkPolicy(ctx context.Context, name string) (*exte
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListNetworkPolicies(ctx context.Context) (*extensionsv1beta1.NetworkPolicyList, error) {
+func (c *ExtensionsV1Beta1) ListNetworkPolicies(ctx context.Context) (*extensionsv1beta1.NetworkPolicyList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "networkpolicies", "")
 	resp := new(extensionsv1beta1.NetworkPolicyList)
@@ -1803,7 +1803,7 @@ func (c *ExtensionsV1) ListNetworkPolicies(ctx context.Context) (*extensionsv1be
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreatePodSecurityPolicy(ctx context.Context, obj *extensionsv1beta1.PodSecurityPolicy) (*extensionsv1beta1.PodSecurityPolicy, error) {
+func (c *ExtensionsV1Beta1) CreatePodSecurityPolicy(ctx context.Context, obj *extensionsv1beta1.PodSecurityPolicy) (*extensionsv1beta1.PodSecurityPolicy, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1818,7 +1818,7 @@ func (c *ExtensionsV1) CreatePodSecurityPolicy(ctx context.Context, obj *extensi
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeletePodSecurityPolicy(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeletePodSecurityPolicy(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1827,7 +1827,7 @@ func (c *ExtensionsV1) DeletePodSecurityPolicy(ctx context.Context, name string)
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetPodSecurityPolicy(ctx context.Context, name string) (*extensionsv1beta1.PodSecurityPolicy, error) {
+func (c *ExtensionsV1Beta1) GetPodSecurityPolicy(ctx context.Context, name string) (*extensionsv1beta1.PodSecurityPolicy, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1840,7 +1840,7 @@ func (c *ExtensionsV1) GetPodSecurityPolicy(ctx context.Context, name string) (*
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListPodSecurityPolicies(ctx context.Context) (*extensionsv1beta1.PodSecurityPolicyList, error) {
+func (c *ExtensionsV1Beta1) ListPodSecurityPolicies(ctx context.Context) (*extensionsv1beta1.PodSecurityPolicyList, error) {
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "podsecuritypolicies", "")
 	resp := new(extensionsv1beta1.PodSecurityPolicyList)
@@ -1850,7 +1850,7 @@ func (c *ExtensionsV1) ListPodSecurityPolicies(ctx context.Context) (*extensions
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateReplicaSet(ctx context.Context, obj *extensionsv1beta1.ReplicaSet) (*extensionsv1beta1.ReplicaSet, error) {
+func (c *ExtensionsV1Beta1) CreateReplicaSet(ctx context.Context, obj *extensionsv1beta1.ReplicaSet) (*extensionsv1beta1.ReplicaSet, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1865,7 +1865,7 @@ func (c *ExtensionsV1) CreateReplicaSet(ctx context.Context, obj *extensionsv1be
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteReplicaSet(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteReplicaSet(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1874,7 +1874,7 @@ func (c *ExtensionsV1) DeleteReplicaSet(ctx context.Context, name string) error 
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetReplicaSet(ctx context.Context, name string) (*extensionsv1beta1.ReplicaSet, error) {
+func (c *ExtensionsV1Beta1) GetReplicaSet(ctx context.Context, name string) (*extensionsv1beta1.ReplicaSet, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1887,7 +1887,7 @@ func (c *ExtensionsV1) GetReplicaSet(ctx context.Context, name string) (*extensi
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListReplicaSets(ctx context.Context) (*extensionsv1beta1.ReplicaSetList, error) {
+func (c *ExtensionsV1Beta1) ListReplicaSets(ctx context.Context) (*extensionsv1beta1.ReplicaSetList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "replicasets", "")
 	resp := new(extensionsv1beta1.ReplicaSetList)
@@ -1897,7 +1897,7 @@ func (c *ExtensionsV1) ListReplicaSets(ctx context.Context) (*extensionsv1beta1.
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateScale(ctx context.Context, obj *extensionsv1beta1.Scale) (*extensionsv1beta1.Scale, error) {
+func (c *ExtensionsV1Beta1) CreateScale(ctx context.Context, obj *extensionsv1beta1.Scale) (*extensionsv1beta1.Scale, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1912,7 +1912,7 @@ func (c *ExtensionsV1) CreateScale(ctx context.Context, obj *extensionsv1beta1.S
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteScale(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteScale(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1921,7 +1921,7 @@ func (c *ExtensionsV1) DeleteScale(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetScale(ctx context.Context, name string) (*extensionsv1beta1.Scale, error) {
+func (c *ExtensionsV1Beta1) GetScale(ctx context.Context, name string) (*extensionsv1beta1.Scale, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1934,7 +1934,7 @@ func (c *ExtensionsV1) GetScale(ctx context.Context, name string) (*extensionsv1
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateThirdPartyResource(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResource) (*extensionsv1beta1.ThirdPartyResource, error) {
+func (c *ExtensionsV1Beta1) CreateThirdPartyResource(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResource) (*extensionsv1beta1.ThirdPartyResource, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1949,7 +1949,7 @@ func (c *ExtensionsV1) CreateThirdPartyResource(ctx context.Context, obj *extens
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteThirdPartyResource(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteThirdPartyResource(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -1958,7 +1958,7 @@ func (c *ExtensionsV1) DeleteThirdPartyResource(ctx context.Context, name string
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetThirdPartyResource(ctx context.Context, name string) (*extensionsv1beta1.ThirdPartyResource, error) {
+func (c *ExtensionsV1Beta1) GetThirdPartyResource(ctx context.Context, name string) (*extensionsv1beta1.ThirdPartyResource, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -1971,7 +1971,7 @@ func (c *ExtensionsV1) GetThirdPartyResource(ctx context.Context, name string) (
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListThirdPartyResources(ctx context.Context) (*extensionsv1beta1.ThirdPartyResourceList, error) {
+func (c *ExtensionsV1Beta1) ListThirdPartyResources(ctx context.Context) (*extensionsv1beta1.ThirdPartyResourceList, error) {
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresources", "")
 	resp := new(extensionsv1beta1.ThirdPartyResourceList)
@@ -1981,7 +1981,7 @@ func (c *ExtensionsV1) ListThirdPartyResources(ctx context.Context) (*extensions
 	return resp, nil
 }
 
-func (c *ExtensionsV1) CreateThirdPartyResourceData(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResourceData) (*extensionsv1beta1.ThirdPartyResourceData, error) {
+func (c *ExtensionsV1Beta1) CreateThirdPartyResourceData(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResourceData) (*extensionsv1beta1.ThirdPartyResourceData, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -1996,7 +1996,7 @@ func (c *ExtensionsV1) CreateThirdPartyResourceData(ctx context.Context, obj *ex
 	return resp, nil
 }
 
-func (c *ExtensionsV1) DeleteThirdPartyResourceData(ctx context.Context, name string) error {
+func (c *ExtensionsV1Beta1) DeleteThirdPartyResourceData(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2005,7 +2005,7 @@ func (c *ExtensionsV1) DeleteThirdPartyResourceData(ctx context.Context, name st
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ExtensionsV1) GetThirdPartyResourceData(ctx context.Context, name string) (*extensionsv1beta1.ThirdPartyResourceData, error) {
+func (c *ExtensionsV1Beta1) GetThirdPartyResourceData(ctx context.Context, name string) (*extensionsv1beta1.ThirdPartyResourceData, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2018,7 +2018,7 @@ func (c *ExtensionsV1) GetThirdPartyResourceData(ctx context.Context, name strin
 	return resp, nil
 }
 
-func (c *ExtensionsV1) ListThirdPartyResourceDatas(ctx context.Context) (*extensionsv1beta1.ThirdPartyResourceDataList, error) {
+func (c *ExtensionsV1Beta1) ListThirdPartyResourceDatas(ctx context.Context) (*extensionsv1beta1.ThirdPartyResourceDataList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresourcedatas", "")
 	resp := new(extensionsv1beta1.ThirdPartyResourceDataList)
@@ -2029,17 +2029,17 @@ func (c *ExtensionsV1) ListThirdPartyResourceDatas(ctx context.Context) (*extens
 }
 
 
-// ImagepolicyV1 returns a client for interacting with the imagepolicy/v1alpha1 API group.
-func (c *Client) ImagepolicyV1() *ImagepolicyV1 {
-	return &ImagepolicyV1{c}
+// ImagepolicyV1Alpha1 returns a client for interacting with the imagepolicy/v1alpha1 API group.
+func (c *Client) ImagepolicyV1Alpha1() *ImagepolicyV1Alpha1 {
+	return &ImagepolicyV1Alpha1{c}
 }
 
-// ImagepolicyV1 is a client for interacting with the imagepolicy/v1alpha1 API group.
-type ImagepolicyV1 struct {
+// ImagepolicyV1Alpha1 is a client for interacting with the imagepolicy/v1alpha1 API group.
+type ImagepolicyV1Alpha1 struct {
 	client *Client
 }
 
-func (c *ImagepolicyV1) CreateImageReview(ctx context.Context, obj *imagepolicyv1alpha1.ImageReview) (*imagepolicyv1alpha1.ImageReview, error) {
+func (c *ImagepolicyV1Alpha1) CreateImageReview(ctx context.Context, obj *imagepolicyv1alpha1.ImageReview) (*imagepolicyv1alpha1.ImageReview, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2054,7 +2054,7 @@ func (c *ImagepolicyV1) CreateImageReview(ctx context.Context, obj *imagepolicyv
 	return resp, nil
 }
 
-func (c *ImagepolicyV1) DeleteImageReview(ctx context.Context, name string) error {
+func (c *ImagepolicyV1Alpha1) DeleteImageReview(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2063,7 +2063,7 @@ func (c *ImagepolicyV1) DeleteImageReview(ctx context.Context, name string) erro
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *ImagepolicyV1) GetImageReview(ctx context.Context, name string) (*imagepolicyv1alpha1.ImageReview, error) {
+func (c *ImagepolicyV1Alpha1) GetImageReview(ctx context.Context, name string) (*imagepolicyv1alpha1.ImageReview, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2077,17 +2077,17 @@ func (c *ImagepolicyV1) GetImageReview(ctx context.Context, name string) (*image
 }
 
 
-// PolicyV1 returns a client for interacting with the policy/v1alpha1 API group.
-func (c *Client) PolicyV1() *PolicyV1 {
-	return &PolicyV1{c}
+// PolicyV1Alpha1 returns a client for interacting with the policy/v1alpha1 API group.
+func (c *Client) PolicyV1Alpha1() *PolicyV1Alpha1 {
+	return &PolicyV1Alpha1{c}
 }
 
-// PolicyV1 is a client for interacting with the policy/v1alpha1 API group.
-type PolicyV1 struct {
+// PolicyV1Alpha1 is a client for interacting with the policy/v1alpha1 API group.
+type PolicyV1Alpha1 struct {
 	client *Client
 }
 
-func (c *PolicyV1) CreateEviction(ctx context.Context, obj *policyv1alpha1.Eviction) (*policyv1alpha1.Eviction, error) {
+func (c *PolicyV1Alpha1) CreateEviction(ctx context.Context, obj *policyv1alpha1.Eviction) (*policyv1alpha1.Eviction, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2102,7 +2102,7 @@ func (c *PolicyV1) CreateEviction(ctx context.Context, obj *policyv1alpha1.Evict
 	return resp, nil
 }
 
-func (c *PolicyV1) DeleteEviction(ctx context.Context, name string) error {
+func (c *PolicyV1Alpha1) DeleteEviction(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2111,7 +2111,7 @@ func (c *PolicyV1) DeleteEviction(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *PolicyV1) GetEviction(ctx context.Context, name string) (*policyv1alpha1.Eviction, error) {
+func (c *PolicyV1Alpha1) GetEviction(ctx context.Context, name string) (*policyv1alpha1.Eviction, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2124,7 +2124,7 @@ func (c *PolicyV1) GetEviction(ctx context.Context, name string) (*policyv1alpha
 	return resp, nil
 }
 
-func (c *PolicyV1) CreatePodDisruptionBudget(ctx context.Context, obj *policyv1alpha1.PodDisruptionBudget) (*policyv1alpha1.PodDisruptionBudget, error) {
+func (c *PolicyV1Alpha1) CreatePodDisruptionBudget(ctx context.Context, obj *policyv1alpha1.PodDisruptionBudget) (*policyv1alpha1.PodDisruptionBudget, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2139,7 +2139,7 @@ func (c *PolicyV1) CreatePodDisruptionBudget(ctx context.Context, obj *policyv1a
 	return resp, nil
 }
 
-func (c *PolicyV1) DeletePodDisruptionBudget(ctx context.Context, name string) error {
+func (c *PolicyV1Alpha1) DeletePodDisruptionBudget(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2148,7 +2148,7 @@ func (c *PolicyV1) DeletePodDisruptionBudget(ctx context.Context, name string) e
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *PolicyV1) GetPodDisruptionBudget(ctx context.Context, name string) (*policyv1alpha1.PodDisruptionBudget, error) {
+func (c *PolicyV1Alpha1) GetPodDisruptionBudget(ctx context.Context, name string) (*policyv1alpha1.PodDisruptionBudget, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2161,7 +2161,7 @@ func (c *PolicyV1) GetPodDisruptionBudget(ctx context.Context, name string) (*po
 	return resp, nil
 }
 
-func (c *PolicyV1) ListPodDisruptionBudgets(ctx context.Context) (*policyv1alpha1.PodDisruptionBudgetList, error) {
+func (c *PolicyV1Alpha1) ListPodDisruptionBudgets(ctx context.Context) (*policyv1alpha1.PodDisruptionBudgetList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", "")
 	resp := new(policyv1alpha1.PodDisruptionBudgetList)
@@ -2172,17 +2172,17 @@ func (c *PolicyV1) ListPodDisruptionBudgets(ctx context.Context) (*policyv1alpha
 }
 
 
-// RBACV1 returns a client for interacting with the rbac.authorization.k8s.io/v1alpha1 API group.
-func (c *Client) RBACV1() *RBACV1 {
-	return &RBACV1{c}
+// RBACV1Alpha1 returns a client for interacting with the rbac.authorization.k8s.io/v1alpha1 API group.
+func (c *Client) RBACV1Alpha1() *RBACV1Alpha1 {
+	return &RBACV1Alpha1{c}
 }
 
-// RBACV1 is a client for interacting with the rbac.authorization.k8s.io/v1alpha1 API group.
-type RBACV1 struct {
+// RBACV1Alpha1 is a client for interacting with the rbac.authorization.k8s.io/v1alpha1 API group.
+type RBACV1Alpha1 struct {
 	client *Client
 }
 
-func (c *RBACV1) CreateClusterRole(ctx context.Context, obj *rbacv1alpha1.ClusterRole) (*rbacv1alpha1.ClusterRole, error) {
+func (c *RBACV1Alpha1) CreateClusterRole(ctx context.Context, obj *rbacv1alpha1.ClusterRole) (*rbacv1alpha1.ClusterRole, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2197,7 +2197,7 @@ func (c *RBACV1) CreateClusterRole(ctx context.Context, obj *rbacv1alpha1.Cluste
 	return resp, nil
 }
 
-func (c *RBACV1) DeleteClusterRole(ctx context.Context, name string) error {
+func (c *RBACV1Alpha1) DeleteClusterRole(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2206,7 +2206,7 @@ func (c *RBACV1) DeleteClusterRole(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *RBACV1) GetClusterRole(ctx context.Context, name string) (*rbacv1alpha1.ClusterRole, error) {
+func (c *RBACV1Alpha1) GetClusterRole(ctx context.Context, name string) (*rbacv1alpha1.ClusterRole, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2219,7 +2219,7 @@ func (c *RBACV1) GetClusterRole(ctx context.Context, name string) (*rbacv1alpha1
 	return resp, nil
 }
 
-func (c *RBACV1) ListClusterRoles(ctx context.Context) (*rbacv1alpha1.ClusterRoleList, error) {
+func (c *RBACV1Alpha1) ListClusterRoles(ctx context.Context) (*rbacv1alpha1.ClusterRoleList, error) {
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterroles", "")
 	resp := new(rbacv1alpha1.ClusterRoleList)
@@ -2229,7 +2229,7 @@ func (c *RBACV1) ListClusterRoles(ctx context.Context) (*rbacv1alpha1.ClusterRol
 	return resp, nil
 }
 
-func (c *RBACV1) CreateClusterRoleBinding(ctx context.Context, obj *rbacv1alpha1.ClusterRoleBinding) (*rbacv1alpha1.ClusterRoleBinding, error) {
+func (c *RBACV1Alpha1) CreateClusterRoleBinding(ctx context.Context, obj *rbacv1alpha1.ClusterRoleBinding) (*rbacv1alpha1.ClusterRoleBinding, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2244,7 +2244,7 @@ func (c *RBACV1) CreateClusterRoleBinding(ctx context.Context, obj *rbacv1alpha1
 	return resp, nil
 }
 
-func (c *RBACV1) DeleteClusterRoleBinding(ctx context.Context, name string) error {
+func (c *RBACV1Alpha1) DeleteClusterRoleBinding(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2253,7 +2253,7 @@ func (c *RBACV1) DeleteClusterRoleBinding(ctx context.Context, name string) erro
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *RBACV1) GetClusterRoleBinding(ctx context.Context, name string) (*rbacv1alpha1.ClusterRoleBinding, error) {
+func (c *RBACV1Alpha1) GetClusterRoleBinding(ctx context.Context, name string) (*rbacv1alpha1.ClusterRoleBinding, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2266,7 +2266,7 @@ func (c *RBACV1) GetClusterRoleBinding(ctx context.Context, name string) (*rbacv
 	return resp, nil
 }
 
-func (c *RBACV1) ListClusterRoleBindings(ctx context.Context) (*rbacv1alpha1.ClusterRoleBindingList, error) {
+func (c *RBACV1Alpha1) ListClusterRoleBindings(ctx context.Context) (*rbacv1alpha1.ClusterRoleBindingList, error) {
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterrolebindings", "")
 	resp := new(rbacv1alpha1.ClusterRoleBindingList)
@@ -2276,7 +2276,7 @@ func (c *RBACV1) ListClusterRoleBindings(ctx context.Context) (*rbacv1alpha1.Clu
 	return resp, nil
 }
 
-func (c *RBACV1) CreateRole(ctx context.Context, obj *rbacv1alpha1.Role) (*rbacv1alpha1.Role, error) {
+func (c *RBACV1Alpha1) CreateRole(ctx context.Context, obj *rbacv1alpha1.Role) (*rbacv1alpha1.Role, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2291,7 +2291,7 @@ func (c *RBACV1) CreateRole(ctx context.Context, obj *rbacv1alpha1.Role) (*rbacv
 	return resp, nil
 }
 
-func (c *RBACV1) DeleteRole(ctx context.Context, name string) error {
+func (c *RBACV1Alpha1) DeleteRole(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2300,7 +2300,7 @@ func (c *RBACV1) DeleteRole(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *RBACV1) GetRole(ctx context.Context, name string) (*rbacv1alpha1.Role, error) {
+func (c *RBACV1Alpha1) GetRole(ctx context.Context, name string) (*rbacv1alpha1.Role, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2313,7 +2313,7 @@ func (c *RBACV1) GetRole(ctx context.Context, name string) (*rbacv1alpha1.Role, 
 	return resp, nil
 }
 
-func (c *RBACV1) ListRoles(ctx context.Context) (*rbacv1alpha1.RoleList, error) {
+func (c *RBACV1Alpha1) ListRoles(ctx context.Context) (*rbacv1alpha1.RoleList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "roles", "")
 	resp := new(rbacv1alpha1.RoleList)
@@ -2323,7 +2323,7 @@ func (c *RBACV1) ListRoles(ctx context.Context) (*rbacv1alpha1.RoleList, error) 
 	return resp, nil
 }
 
-func (c *RBACV1) CreateRoleBinding(ctx context.Context, obj *rbacv1alpha1.RoleBinding) (*rbacv1alpha1.RoleBinding, error) {
+func (c *RBACV1Alpha1) CreateRoleBinding(ctx context.Context, obj *rbacv1alpha1.RoleBinding) (*rbacv1alpha1.RoleBinding, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2338,7 +2338,7 @@ func (c *RBACV1) CreateRoleBinding(ctx context.Context, obj *rbacv1alpha1.RoleBi
 	return resp, nil
 }
 
-func (c *RBACV1) DeleteRoleBinding(ctx context.Context, name string) error {
+func (c *RBACV1Alpha1) DeleteRoleBinding(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2347,7 +2347,7 @@ func (c *RBACV1) DeleteRoleBinding(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *RBACV1) GetRoleBinding(ctx context.Context, name string) (*rbacv1alpha1.RoleBinding, error) {
+func (c *RBACV1Alpha1) GetRoleBinding(ctx context.Context, name string) (*rbacv1alpha1.RoleBinding, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2360,7 +2360,7 @@ func (c *RBACV1) GetRoleBinding(ctx context.Context, name string) (*rbacv1alpha1
 	return resp, nil
 }
 
-func (c *RBACV1) ListRoleBindings(ctx context.Context) (*rbacv1alpha1.RoleBindingList, error) {
+func (c *RBACV1Alpha1) ListRoleBindings(ctx context.Context) (*rbacv1alpha1.RoleBindingList, error) {
 	ns := c.client.namespaceFor(ctx, true)
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "rolebindings", "")
 	resp := new(rbacv1alpha1.RoleBindingList)
@@ -2371,17 +2371,17 @@ func (c *RBACV1) ListRoleBindings(ctx context.Context) (*rbacv1alpha1.RoleBindin
 }
 
 
-// StorageV1 returns a client for interacting with the storage.k8s.io/v1beta1 API group.
-func (c *Client) StorageV1() *StorageV1 {
-	return &StorageV1{c}
+// StorageV1Beta1 returns a client for interacting with the storage.k8s.io/v1beta1 API group.
+func (c *Client) StorageV1Beta1() *StorageV1Beta1 {
+	return &StorageV1Beta1{c}
 }
 
-// StorageV1 is a client for interacting with the storage.k8s.io/v1beta1 API group.
-type StorageV1 struct {
+// StorageV1Beta1 is a client for interacting with the storage.k8s.io/v1beta1 API group.
+type StorageV1Beta1 struct {
 	client *Client
 }
 
-func (c *StorageV1) CreateStorageClass(ctx context.Context, obj *storagev1beta1.StorageClass) (*storagev1beta1.StorageClass, error) {
+func (c *StorageV1Beta1) CreateStorageClass(ctx context.Context, obj *storagev1beta1.StorageClass) (*storagev1beta1.StorageClass, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
@@ -2396,7 +2396,7 @@ func (c *StorageV1) CreateStorageClass(ctx context.Context, obj *storagev1beta1.
 	return resp, nil
 }
 
-func (c *StorageV1) DeleteStorageClass(ctx context.Context, name string) error {
+func (c *StorageV1Beta1) DeleteStorageClass(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
@@ -2405,7 +2405,7 @@ func (c *StorageV1) DeleteStorageClass(ctx context.Context, name string) error {
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *StorageV1) GetStorageClass(ctx context.Context, name string) (*storagev1beta1.StorageClass, error) {
+func (c *StorageV1Beta1) GetStorageClass(ctx context.Context, name string) (*storagev1beta1.StorageClass, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
@@ -2418,7 +2418,7 @@ func (c *StorageV1) GetStorageClass(ctx context.Context, name string) (*storagev
 	return resp, nil
 }
 
-func (c *StorageV1) ListStorageClasses(ctx context.Context) (*storagev1beta1.StorageClassList, error) {
+func (c *StorageV1Beta1) ListStorageClasses(ctx context.Context) (*storagev1beta1.StorageClassList, error) {
 	ns := c.client.namespaceFor(ctx, false)
 	url := c.client.urlFor("storage.k8s.io", "v1beta1", ns, "storageclasses", "")
 	resp := new(storagev1beta1.StorageClassList)
