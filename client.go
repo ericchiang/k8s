@@ -181,13 +181,13 @@ func (t *bearerTokenTransport) RoundTrip(req *http.Request) (resp *http.Response
 	return t.base.RoundTrip(r)
 }
 
-// Error is an error from a unexpected status code.
-type Error struct {
+// APIError is an error from a unexpected status code.
+type APIError struct {
 	// The status object returned by the Kubernetes API,
 	Status *unversioned.Status
 }
 
-func (e *Error) Error() string { return e.Status.Message }
+func (e *APIError) Error() string { return "kubernetes api: " + e.Status.Message }
 
 func checkStatusCode(c *codec, statusCode, gotStatusCode int, body []byte) error {
 	if statusCode == gotStatusCode {
@@ -198,7 +198,7 @@ func checkStatusCode(c *codec, statusCode, gotStatusCode int, body []byte) error
 	if err := c.unmarshal(body, status); err != nil {
 		return fmt.Errorf("decode error status: %v", err)
 	}
-	return &Error{status}
+	return &APIError{status}
 }
 
 func (c *Client) client() *http.Client {

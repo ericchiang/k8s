@@ -87,7 +87,7 @@ client := &k8s.Client{
 
 ## Errors
 
-Errors returned by the Kubernetes API are formatted as [`unversioned.Status`][unversioned-status] objects and surfaced by clients as [`*k8s.Error`][k8s-error]s. Programs that need to inspect error codes or failure details can use a type cast to access this information.
+Errors returned by the Kubernetes API are formatted as [`unversioned.Status`][unversioned-status] objects and surfaced by clients as [`*k8s.APIError`][k8s-error]s. Programs that need to inspect error codes or failure details can use a type cast to access this information.
 
 ```go
 configMap := &v1.ConfigMap{
@@ -100,9 +100,9 @@ configMap := &v1.ConfigMap{
 
 _, err := client.CoreV1().CreateConfigMap(ctx, configMap)
 if err != nil {
-    if k8sErr, ok := err.(*k8s.Error); ok {
+    if apiErr, ok := err.(*k8s.APIError); ok {
         // Resource already exists. Carry on.
-        if k8sErr.Status.Code == http.StatusConflict {
+        if apiErr.Status.Code == http.StatusConflict {
             return nil
         }
     }
@@ -114,4 +114,4 @@ return nil
 [gogo-proto]: https://godoc.org/github.com/gogo/protobuf/proto
 [protobuf]: https://developers.google.com/protocol-buffers/
 [unversioned-status]: https://godoc.org/github.com/ericchiang/k8s/api/unversioned#Status
-[k8s-error]: https://godoc.org/github.com/ericchiang/k8s#Error
+[k8s-error]: https://godoc.org/github.com/ericchiang/k8s#APIError
