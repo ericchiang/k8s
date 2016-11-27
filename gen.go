@@ -11,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"regexp"
 	"sort"
 	"strings"
 	"text/template"
@@ -150,7 +149,6 @@ func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context) (*{{ $
 `))
 
 var (
-	release      = regexp.MustCompile(`(alpha|beta)[0123456789]+$`)
 	apiGroupName = map[string]string{
 		"authentication": "authentication.k8s.io",
 		"authorization":  "authorization.k8s.io",
@@ -192,7 +190,8 @@ func clientName(apiGroup, apiVersion string) string {
 	default:
 		apiGroup = strings.Title(apiGroup)
 	}
-	return apiGroup + strings.Title(release.ReplaceAllString(apiVersion, ""))
+	r := strings.NewReplacer("alpha", "Alpha", "beta", "Beta")
+	return apiGroup + r.Replace(strings.Title(apiVersion))
 }
 
 func load() error {
