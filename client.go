@@ -18,91 +18,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
-
 	"github.com/ericchiang/k8s/api/unversioned"
-	"github.com/ericchiang/k8s/api/v1"
-	"github.com/ericchiang/k8s/internal"
-	"github.com/ericchiang/k8s/runtime"
 )
-
-// Kubernetes implements its own custom protobuf format to allow clients (and possibly servers)
-// to use either JSON or protocol buffers. The protocol introduces a custom content type and
-// magic bytes to signal the use of protobufs, while wrapping each object with API group, version
-// and resource data.
-//
-// The protocol spec which this client implements can be found here:
-//
-//   https://github.com/kubernetes/kubernetes/blob/master/docs/proposals/protobuf.md
-//
-const contentTypePB = "application/vnd.kubernetes.protobuf"
-
-var magicBytes = []byte{0x6b, 0x38, 0x73, 0x00}
-
-func unmarshal(b []byte, obj interface{}) error {
-	message, ok := obj.(proto.Message)
-	if !ok {
-		return fmt.Errorf("expected obj of type proto.Message, got %T", obj)
-	}
-	if len(b) < len(magicBytes) {
-		return errors.New("payload is not a kubernetes protobuf object")
-	}
-	if !bytes.Equal(b[:len(magicBytes)], magicBytes) {
-		return errors.New("payload is not a kubernetes protobuf object")
-	}
-
-	u := new(runtime.Unknown)
-	if err := u.Unmarshal(b[len(magicBytes):]); err != nil {
-		return fmt.Errorf("unmarshal unknown: %v", err)
-	}
-	return proto.Unmarshal(u.Raw, message)
-}
-
-func marshal(obj interface{}) ([]byte, error) {
-	message, ok := obj.(proto.Message)
-	if !ok {
-		return nil, fmt.Errorf("expected obj of type proto.Message, got %T", obj)
-	}
-	payload, err := proto.Marshal(message)
-	if err != nil {
-		return nil, err
-	}
-
-	// The URL path informs the API server what the API group, version, and resource
-	// of the object. We don't need to specify it here to talk to the API server.
-	body, err := (&runtime.Unknown{Raw: payload}).Marshal()
-	if err != nil {
-		return nil, err
-	}
-
-	d := make([]byte, len(magicBytes)+len(body))
-	copy(d[:len(magicBytes)], magicBytes)
-	copy(d[len(magicBytes):], body)
-	return d, nil
-}
-
-type codec struct {
-	contentType string
-	marshal     func(interface{}) ([]byte, error)
-	unmarshal   func([]byte, interface{}) error
-}
-
-var pbCodec = &codec{
-	contentType: contentTypePB,
-	marshal:     marshal,
-	unmarshal:   unmarshal,
-}
-
-// Object is an instance of a Kubernetes resource.
-type Object interface {
-	GetMetadata() *v1.ObjectMeta
-}
-
-// NamespaceContext returns a new Context that carries the provided namespace.
-// The Context can be used to override the default namespace on the client.
-func NamespaceContext(ctx context.Context, namespace string) context.Context {
-	return context.WithValue(ctx, internal.NamespaceKey{}, namespace)
-}
 
 // Client is a Kuberntes client.
 type Client struct {
@@ -110,58 +27,194 @@ type Client struct {
 	Endpoint string
 
 	// Default namespaces for objects that don't supply a namespace in
-	// their object metadata. If empty the "default" namespace is used.
+	// their object metadata.
 	Namespace string
 
 	Client *http.Client
 }
 
-// InClusterClient returns a client that uses the service account bearer token mounted
+// NewClient initializes a client from a client config.
+func NewClient(config *Config) (*Client, error) {
+	if len(config.Contexts) == 0 {
+		if config.CurrentContext != "" {
+			return nil, fmt.Errorf("no contexts with name %q", config.CurrentContext)
+		}
+
+		if n := len(config.Clusters); n == 0 {
+			return nil, errors.New("no clusters provided")
+		} else if n > 1 {
+			return nil, errors.New("multiple clusters but no current context")
+		}
+		if n := len(config.AuthInfos); n == 0 {
+			return nil, errors.New("no users provided")
+		} else if n > 1 {
+			return nil, errors.New("multiple users but no current context")
+		}
+
+		return newClient(config.Clusters[0].Cluster, config.AuthInfos[0].AuthInfo, "")
+	}
+
+	var ctx Context
+	if config.CurrentContext == "" {
+		if n := len(config.Contexts); n == 0 {
+			return nil, errors.New("no contexts provided")
+		} else if n > 1 {
+			return nil, errors.New("multiple contexts but no current context")
+		}
+		ctx = config.Contexts[0].Context
+	} else {
+		for _, c := range config.Contexts {
+			if c.Name == config.CurrentContext {
+				ctx = c.Context
+				goto configFound
+			}
+		}
+		return nil, fmt.Errorf("no config named %q", config.CurrentContext)
+	configFound:
+	}
+
+	if ctx.Cluster == "" {
+		return nil, fmt.Errorf("context doesn't have a cluster")
+	}
+	if ctx.AuthInfo == "" {
+		return nil, fmt.Errorf("context doesn't have a user")
+	}
+	var (
+		user    AuthInfo
+		cluster Cluster
+	)
+
+	for _, u := range config.AuthInfos {
+		if u.Name == ctx.AuthInfo {
+			user = u.AuthInfo
+			goto userFound
+		}
+	}
+	return nil, fmt.Errorf("no user named %q", ctx.AuthInfo)
+userFound:
+
+	for _, c := range config.Clusters {
+		if c.Name == ctx.Cluster {
+			cluster = c.Cluster
+			goto clusterFound
+		}
+	}
+	return nil, fmt.Errorf("no cluster named %q", ctx.Cluster)
+clusterFound:
+
+	return newClient(cluster, user, ctx.Namespace)
+}
+
+// NewInClusterClient returns a client that uses the service account bearer token mounted
 // into Kubernetes pods.
-func InClusterClient() (*Client, error) {
+func NewInClusterClient() (*Client, error) {
 	host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
 	if len(host) == 0 || len(port) == 0 {
 		return nil, errors.New("unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined")
-	}
-
-	caData, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
-	if err != nil {
-		return nil, err
-	}
-	rootCAs := x509.NewCertPool()
-	if !rootCAs.AppendCertsFromPEM(caData) {
-		return nil, errors.New("service account certiifcate file doesn't contain any certificates")
-	}
-
-	token, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
-	if err != nil {
-		return nil, err
 	}
 	namespace, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
 	if err != nil {
 		return nil, err
 	}
+
+	cluster := Cluster{
+		Server:               "https://" + host + ":" + port,
+		CertificateAuthority: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
+	}
+	user := AuthInfo{TokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"}
+	return newClient(cluster, user, string(namespace))
+}
+
+func load(filepath string, data []byte) (out []byte, err error) {
+	if filepath != "" {
+		data, err = ioutil.ReadFile(filepath)
+	}
+	return data, err
+}
+
+func newClient(cluster Cluster, user AuthInfo, namespace string) (*Client, error) {
+	if cluster.Server == "" {
+		// NOTE: kubectl defaults to localhost:8080, but it's probably better to just
+		// be strict.
+		return nil, fmt.Errorf("no cluster endpoint provided")
+	}
+
+	ca, err := load(cluster.CertificateAuthority, cluster.CertificateAuthorityData)
+	if err != nil {
+		return nil, fmt.Errorf("loading certificate authority: %v", err)
+	}
+
+	clientCert, err := load(user.ClientCertificate, user.ClientCertificateData)
+	if err != nil {
+		return nil, fmt.Errorf("load client cert: %v", err)
+	}
+	clientKey, err := load(user.ClientKey, user.ClientKeyData)
+	if err != nil {
+		return nil, fmt.Errorf("load client cert: %v", err)
+	}
+
+	// See https://github.com/gtank/cryptopasta
+	tlsConfig := &tls.Config{MinVersion: tls.VersionTLS12}
+
+	if len(ca) != 0 {
+		tlsConfig.RootCAs = x509.NewCertPool()
+		if !tlsConfig.RootCAs.AppendCertsFromPEM(ca) {
+			return nil, errors.New("certificate authority doesn't contain any certificates")
+		}
+	}
+	if len(clientCert) != 0 {
+		cert, err := tls.X509KeyPair(clientCert, clientKey)
+		if err != nil {
+			return nil, fmt.Errorf("invalid client cert and key pair: %v", err)
+		}
+		tlsConfig.Certificates = []tls.Certificate{cert}
+	}
+
+	token := user.Token
+	if user.TokenFile != "" {
+		data, err := ioutil.ReadFile(user.TokenFile)
+		if err != nil {
+			return nil, fmt.Errorf("load token file: %v", err)
+		}
+		token = string(data)
+	}
+
+	var transport http.RoundTripper = &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		TLSClientConfig:       tlsConfig,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+
+	if token != "" {
+		transport = &bearerTokenTransport{transport, token}
+	}
+	if user.Username != "" && user.Password != "" {
+		transport = &basicAuthTransport{transport, user.Username, user.Password}
+	}
+
 	return &Client{
-		Endpoint:  "https://" + host + ":" + port,
-		Namespace: string(namespace),
-		Client: &http.Client{
-			Transport: &bearerTokenTransport{
-				token: string(token),
-				base: &http.Transport{
-					Proxy: http.ProxyFromEnvironment,
-					DialContext: (&net.Dialer{
-						Timeout:   30 * time.Second,
-						KeepAlive: 30 * time.Second,
-					}).DialContext,
-					TLSClientConfig:       &tls.Config{RootCAs: rootCAs},
-					MaxIdleConns:          100,
-					IdleConnTimeout:       90 * time.Second,
-					TLSHandshakeTimeout:   10 * time.Second,
-					ExpectContinueTimeout: 1 * time.Second,
-				},
-			},
-		},
+		Endpoint:  cluster.Server,
+		Namespace: namespace,
+		Client:    &http.Client{Transport: transport},
 	}, nil
+}
+
+// copyReq creates a shallow copy of an http.Request while.
+func copyReq(req *http.Request) *http.Request {
+	r := new(http.Request)
+	*r = *req
+	r.Header = make(http.Header, len(req.Header)+1) // assume that a header will be added.
+	for k, s := range req.Header {
+		r.Header[k] = append([]string(nil), s...)
+	}
+	return r
 }
 
 type bearerTokenTransport struct {
@@ -170,14 +223,20 @@ type bearerTokenTransport struct {
 }
 
 func (t *bearerTokenTransport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
-	// Per http.RoundTripper contract don't modify the underlying request.
-	r := new(http.Request)
-	*r = *req
-	r.Header = make(http.Header, len(req.Header)+1)
-	for k, s := range req.Header {
-		r.Header[k] = append([]string(nil), s...)
-	}
+	r := copyReq(req)
 	r.Header.Set("Authorization", "Bearer "+t.token)
+	return t.base.RoundTrip(r)
+}
+
+type basicAuthTransport struct {
+	base     http.RoundTripper
+	username string
+	password string
+}
+
+func (t *basicAuthTransport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
+	r := copyReq(req)
+	r.SetBasicAuth(t.username, t.password)
 	return t.base.RoundTrip(r)
 }
 
@@ -208,20 +267,15 @@ func (c *Client) client() *http.Client {
 	return c.Client
 }
 
-func (c *Client) namespaceFor(ctx context.Context, namespaced bool) string {
-	if !namespaced {
-		return ""
-	}
-
-	ns, ok := ctx.Value(internal.NamespaceKey{}).(string)
-	if ok && ns != "" {
-		return ns
+func (c *Client) namespaceFor(namespace string) string {
+	if namespace != "" {
+		return namespace
 	}
 
 	if c.Namespace != "" {
 		return c.Namespace
 	}
-	return "default"
+	return ""
 }
 
 // The following methods hold the logic for interacting with the Kubernetes API. Generated

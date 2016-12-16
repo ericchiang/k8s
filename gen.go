@@ -100,9 +100,16 @@ type {{ .Name }} struct {
 func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.ImportName }}.{{ $r.Name }}) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
 	md := obj.GetMetadata()
 	if md.Name == "" {
-		return nil, fmt.Errorf("create: no name for given object")
+		return nil, fmt.Errorf("no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, {{ $r.Namespaced }})
+	if !{{ $r.Namespaced }} && md.Namespace != "" {
+		return nil, fmt.Errorf("resource isn't namespaced")
+	}
+	
+	md.Namespace = c.client.namespaceFor(md.Namespace)
+	if {{ $r.Namespaced }} && md.Namespace == "" {
+		return nil, fmt.Errorf("no resource namespace provided")
+	}
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
@@ -112,20 +119,28 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 	return resp, nil
 }
 
-func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, name string) error {
+func (c *{{ $.Name }}) Delete{{ $r.Name }}(ctx context.Context, name string{{ if $r.Namespaced }}, namespace string{{ end }}) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
-	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
+	{{ if $r.Namespaced -}}
+	ns := c.client.namespaceFor(namespace)
+	{{ else -}}
+	ns := ""
+	{{ end }}
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
+func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name{{ if $r.Namespaced }}, namespace{{ end }} string) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
+	{{ if $r.Namespaced -}}
+	ns := c.client.namespaceFor(namespace)
+	{{ else -}}
+	ns := ""
+	{{ end }}
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", name)
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
@@ -136,8 +151,12 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name string) (*{{ $
 
 {{- if $r.HasList }}
 
-func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
-	ns := c.client.namespaceFor(ctx, {{ $r.Namespaced }})
+func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
+	{{ if $r.Namespaced -}}
+	ns := c.client.namespaceFor(namespace)
+	{{ else -}}
+	ns := ""
+	{{ end }}
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }}List)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
@@ -213,9 +232,9 @@ func load() error {
 	if !ok {
 		return errors.New("could not find this package")
 	}
-	obj := thisPkg.Pkg.Scope().Lookup("Object")
+	obj := thisPkg.Pkg.Scope().Lookup("object")
 	if obj == nil {
-		return errors.New("failed to lookup Object interface")
+		return errors.New("failed to lookup object interface")
 	}
 	intr, ok := isInterface(obj)
 	if !ok {

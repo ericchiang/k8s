@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 VERSION=1.4.6
 
@@ -12,7 +12,7 @@ if [ ! -d assets/k8s.io/kubernetes ]; then
     rm v1.4.6.zip
 fi
 
-rm -rf api apis runtime util types.go
+rm -rf api apis config.go runtime util types.go
 
 PKG=$PWD
 
@@ -28,9 +28,14 @@ cd -
 
 mv k8s.io/kubernetes/pkg/* .
 rm -rf k8s.io
-sed -i 's|"k8s.io/kubernetes/pkg|"github.com/ericchiang/k8s|g' $( find {api,apis,util,runtime} -name '*.go' )
-sed -i 's|"k8s.io.kubernetes.pkg.|"github.com/ericchiang.k8s.|g' $( find {api,apis,util,runtime} -name '*.go' )
 
-rm -rf assets
+client_dir="client/unversioned/clientcmd/api/v1"
+cp assets/k8s.io/kubernetes/pkg/${client_dir}/types.go config.go
+sed -i 's|package v1|package k8s|g' config.go
+
+sed -i 's|"k8s.io/kubernetes/pkg|"github.com/ericchiang/k8s|g' $( find {api,apis,config.go,util,runtime} -name '*.go' )
+sed -i 's|"k8s.io.kubernetes.pkg.|"github.com/ericchiang.k8s.|g' $( find {api,apis,config.go,util,runtime} -name '*.go' )
+
+# rm -rf assets
 
 go run gen.go
