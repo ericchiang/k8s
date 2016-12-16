@@ -28,9 +28,11 @@ cd -
 
 mv k8s.io/kubernetes/pkg/* .
 rm -rf k8s.io
-sed -i 's|"k8s.io/kubernetes/pkg|"github.com/ericchiang/k8s|g' $( find {api,apis,util,runtime} -name '*.go' )
-sed -i 's|"k8s.io.kubernetes.pkg.|"github.com/ericchiang.k8s.|g' $( find {api,apis,util,runtime} -name '*.go' )
+sed -i '' 's|"k8s.io/kubernetes/pkg|"github.com/ericchiang/k8s|g' $(find {api,apis,util,runtime} -name '*.go')
+sed -i '' 's|"k8s.io.kubernetes.pkg.|"github.com/ericchiang.k8s.|g' $(find {api,apis,util,runtime} -name '*.go')
 
 rm -rf assets
 
-go run gen.go
+cd .gobuild/src/github.com/ericchiang/k8s && go run gen.go
+cd -
+

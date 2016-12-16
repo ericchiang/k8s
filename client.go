@@ -280,6 +280,36 @@ func (c *Client) create(ctx context.Context, codec *codec, url string, req, resp
 	return codec.unmarshal(respBody, resp)
 }
 
+func (c *Client) update(ctx context.Context, codec *codec, url string, req, resp interface{}) error {
+	body, err := codec.marshal(req)
+	if err != nil {
+		return err
+	}
+
+	r, err := http.NewRequest("PUT", url, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	r.Header.Set("Content-Type", codec.contentType)
+	r.Header.Set("Accept", codec.contentType)
+
+	re, err := c.client().Do(r)
+	if err != nil {
+		return err
+	}
+	defer re.Body.Close()
+
+	respBody, err := ioutil.ReadAll(re.Body)
+	if err != nil {
+		return fmt.Errorf("read body: %v", err)
+	}
+
+	if err := checkStatusCode(codec, re.StatusCode, http.StatusCreated, respBody); err != nil {
+		return err
+	}
+	return codec.unmarshal(respBody, resp)
+}
+
 func (c *Client) delete(ctx context.Context, codec *codec, url string) error {
 	r, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
