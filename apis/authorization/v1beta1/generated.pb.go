@@ -30,13 +30,6 @@ import k8s_io_kubernetes_pkg_api_v1 "github.com/ericchiang/k8s/api/v1"
 import _ "github.com/ericchiang/k8s/runtime"
 import _ "github.com/ericchiang/k8s/util/intstr"
 
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
-import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
-
 import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -54,10 +47,12 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 // +protobuf.nullable=true
 // +protobuf.options.(gogoproto.goproto_stringer)=false
 type ExtraValue struct {
-	Items []string `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+	Items            []string `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *ExtraValue) Reset()                    { *m = ExtraValue{} }
+func (m *ExtraValue) String() string            { return proto.CompactTextString(m) }
 func (*ExtraValue) ProtoMessage()               {}
 func (*ExtraValue) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
@@ -72,16 +67,20 @@ func (m *ExtraValue) GetItems() []string {
 // Having a namespace scoped resource makes it much easier to grant namespace scoped policy that includes permissions
 // checking.
 type LocalSubjectAccessReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the request being evaluated.  spec.namespace must be equal to the namespace
 	// you made the request against.  If empty, it is defaulted.
 	Spec *SubjectAccessReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request is allowed or not
-	Status *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	// +optional
+	Status           *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                     `json:"-"`
 }
 
-func (m *LocalSubjectAccessReview) Reset()      { *m = LocalSubjectAccessReview{} }
-func (*LocalSubjectAccessReview) ProtoMessage() {}
+func (m *LocalSubjectAccessReview) Reset()         { *m = LocalSubjectAccessReview{} }
+func (m *LocalSubjectAccessReview) String() string { return proto.CompactTextString(m) }
+func (*LocalSubjectAccessReview) ProtoMessage()    {}
 func (*LocalSubjectAccessReview) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{1}
 }
@@ -110,25 +109,29 @@ func (m *LocalSubjectAccessReview) GetStatus() *SubjectAccessReviewStatus {
 // NonResourceAttributes includes the authorization attributes available for non-resource requests to the Authorizer interface
 type NonResourceAttributes struct {
 	// Path is the URL path of the request
-	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
+	// +optional
+	Path *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
 	// Verb is the standard HTTP verb
-	Verb string `protobuf:"bytes,2,opt,name=verb" json:"verb"`
+	// +optional
+	Verb             *string `protobuf:"bytes,2,opt,name=verb" json:"verb,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *NonResourceAttributes) Reset()                    { *m = NonResourceAttributes{} }
+func (m *NonResourceAttributes) String() string            { return proto.CompactTextString(m) }
 func (*NonResourceAttributes) ProtoMessage()               {}
 func (*NonResourceAttributes) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
 
 func (m *NonResourceAttributes) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
 
 func (m *NonResourceAttributes) GetVerb() string {
-	if m != nil {
-		return m.Verb
+	if m != nil && m.Verb != nil {
+		return *m.Verb
 	}
 	return ""
 }
@@ -139,70 +142,79 @@ type ResourceAttributes struct {
 	// "" (empty) is defaulted for LocalSubjectAccessReviews
 	// "" (empty) is empty for cluster-scoped resources
 	// "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview
-	Namespace string `protobuf:"bytes,1,opt,name=namespace" json:"namespace"`
+	// +optional
+	Namespace *string `protobuf:"bytes,1,opt,name=namespace" json:"namespace,omitempty"`
 	// Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.  "*" means all.
-	Verb string `protobuf:"bytes,2,opt,name=verb" json:"verb"`
+	// +optional
+	Verb *string `protobuf:"bytes,2,opt,name=verb" json:"verb,omitempty"`
 	// Group is the API Group of the Resource.  "*" means all.
-	Group string `protobuf:"bytes,3,opt,name=group" json:"group"`
+	// +optional
+	Group *string `protobuf:"bytes,3,opt,name=group" json:"group,omitempty"`
 	// Version is the API Version of the Resource.  "*" means all.
-	Version string `protobuf:"bytes,4,opt,name=version" json:"version"`
+	// +optional
+	Version *string `protobuf:"bytes,4,opt,name=version" json:"version,omitempty"`
 	// Resource is one of the existing resource types.  "*" means all.
-	Resource string `protobuf:"bytes,5,opt,name=resource" json:"resource"`
+	// +optional
+	Resource *string `protobuf:"bytes,5,opt,name=resource" json:"resource,omitempty"`
 	// Subresource is one of the existing resource types.  "" means none.
-	Subresource string `protobuf:"bytes,6,opt,name=subresource" json:"subresource"`
+	// +optional
+	Subresource *string `protobuf:"bytes,6,opt,name=subresource" json:"subresource,omitempty"`
 	// Name is the name of the resource being requested for a "get" or deleted for a "delete". "" (empty) means all.
-	Name string `protobuf:"bytes,7,opt,name=name" json:"name"`
+	// +optional
+	Name             *string `protobuf:"bytes,7,opt,name=name" json:"name,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ResourceAttributes) Reset()                    { *m = ResourceAttributes{} }
+func (m *ResourceAttributes) String() string            { return proto.CompactTextString(m) }
 func (*ResourceAttributes) ProtoMessage()               {}
 func (*ResourceAttributes) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
 
 func (m *ResourceAttributes) GetNamespace() string {
-	if m != nil {
-		return m.Namespace
+	if m != nil && m.Namespace != nil {
+		return *m.Namespace
 	}
 	return ""
 }
 
 func (m *ResourceAttributes) GetVerb() string {
-	if m != nil {
-		return m.Verb
+	if m != nil && m.Verb != nil {
+		return *m.Verb
 	}
 	return ""
 }
 
 func (m *ResourceAttributes) GetGroup() string {
-	if m != nil {
-		return m.Group
+	if m != nil && m.Group != nil {
+		return *m.Group
 	}
 	return ""
 }
 
 func (m *ResourceAttributes) GetVersion() string {
-	if m != nil {
-		return m.Version
+	if m != nil && m.Version != nil {
+		return *m.Version
 	}
 	return ""
 }
 
 func (m *ResourceAttributes) GetResource() string {
-	if m != nil {
-		return m.Resource
+	if m != nil && m.Resource != nil {
+		return *m.Resource
 	}
 	return ""
 }
 
 func (m *ResourceAttributes) GetSubresource() string {
-	if m != nil {
-		return m.Subresource
+	if m != nil && m.Subresource != nil {
+		return *m.Subresource
 	}
 	return ""
 }
 
 func (m *ResourceAttributes) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
@@ -211,14 +223,18 @@ func (m *ResourceAttributes) GetName() string {
 // spec.namespace means "in all namespaces".  Self is a special case, because users should always be able
 // to check whether they can perform an action
 type SelfSubjectAccessReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the request being evaluated.  user and groups must be empty
 	Spec *SelfSubjectAccessReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request is allowed or not
-	Status *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	// +optional
+	Status           *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                     `json:"-"`
 }
 
 func (m *SelfSubjectAccessReview) Reset()                    { *m = SelfSubjectAccessReview{} }
+func (m *SelfSubjectAccessReview) String() string            { return proto.CompactTextString(m) }
 func (*SelfSubjectAccessReview) ProtoMessage()               {}
 func (*SelfSubjectAccessReview) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
 
@@ -247,13 +263,17 @@ func (m *SelfSubjectAccessReview) GetStatus() *SubjectAccessReviewStatus {
 // and NonResourceAuthorizationAttributes must be set
 type SelfSubjectAccessReviewSpec struct {
 	// ResourceAuthorizationAttributes describes information for a resource access request
+	// +optional
 	ResourceAttributes *ResourceAttributes `protobuf:"bytes,1,opt,name=resourceAttributes" json:"resourceAttributes,omitempty"`
 	// NonResourceAttributes describes information for a non-resource access request
+	// +optional
 	NonResourceAttributes *NonResourceAttributes `protobuf:"bytes,2,opt,name=nonResourceAttributes" json:"nonResourceAttributes,omitempty"`
+	XXX_unrecognized      []byte                 `json:"-"`
 }
 
-func (m *SelfSubjectAccessReviewSpec) Reset()      { *m = SelfSubjectAccessReviewSpec{} }
-func (*SelfSubjectAccessReviewSpec) ProtoMessage() {}
+func (m *SelfSubjectAccessReviewSpec) Reset()         { *m = SelfSubjectAccessReviewSpec{} }
+func (m *SelfSubjectAccessReviewSpec) String() string { return proto.CompactTextString(m) }
+func (*SelfSubjectAccessReviewSpec) ProtoMessage()    {}
 func (*SelfSubjectAccessReviewSpec) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{5}
 }
@@ -274,14 +294,18 @@ func (m *SelfSubjectAccessReviewSpec) GetNonResourceAttributes() *NonResourceAtt
 
 // SubjectAccessReview checks whether or not a user or group can perform an action.
 type SubjectAccessReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the request being evaluated
 	Spec *SubjectAccessReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request is allowed or not
-	Status *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	// +optional
+	Status           *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                     `json:"-"`
 }
 
 func (m *SubjectAccessReview) Reset()                    { *m = SubjectAccessReview{} }
+func (m *SubjectAccessReview) String() string            { return proto.CompactTextString(m) }
 func (*SubjectAccessReview) ProtoMessage()               {}
 func (*SubjectAccessReview) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{6} }
 
@@ -310,20 +334,27 @@ func (m *SubjectAccessReview) GetStatus() *SubjectAccessReviewStatus {
 // and NonResourceAuthorizationAttributes must be set
 type SubjectAccessReviewSpec struct {
 	// ResourceAuthorizationAttributes describes information for a resource access request
+	// +optional
 	ResourceAttributes *ResourceAttributes `protobuf:"bytes,1,opt,name=resourceAttributes" json:"resourceAttributes,omitempty"`
 	// NonResourceAttributes describes information for a non-resource access request
+	// +optional
 	NonResourceAttributes *NonResourceAttributes `protobuf:"bytes,2,opt,name=nonResourceAttributes" json:"nonResourceAttributes,omitempty"`
 	// User is the user you're testing for.
 	// If you specify "User" but not "Group", then is it interpreted as "What if User were not a member of any groups
-	Verb string `protobuf:"bytes,3,opt,name=verb" json:"verb"`
+	// +optional
+	Verb *string `protobuf:"bytes,3,opt,name=verb" json:"verb,omitempty"`
 	// Groups is the groups you're testing for.
+	// +optional
 	Group []string `protobuf:"bytes,4,rep,name=group" json:"group,omitempty"`
 	// Extra corresponds to the user.Info.GetExtra() method from the authenticator.  Since that is input to the authorizer
 	// it needs a reflection here.
-	Extra map[string]*ExtraValue `protobuf:"bytes,5,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// +optional
+	Extra            map[string]*ExtraValue `protobuf:"bytes,5,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized []byte                 `json:"-"`
 }
 
 func (m *SubjectAccessReviewSpec) Reset()                    { *m = SubjectAccessReviewSpec{} }
+func (m *SubjectAccessReviewSpec) String() string            { return proto.CompactTextString(m) }
 func (*SubjectAccessReviewSpec) ProtoMessage()               {}
 func (*SubjectAccessReviewSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{7} }
 
@@ -342,8 +373,8 @@ func (m *SubjectAccessReviewSpec) GetNonResourceAttributes() *NonResourceAttribu
 }
 
 func (m *SubjectAccessReviewSpec) GetVerb() string {
-	if m != nil {
-		return m.Verb
+	if m != nil && m.Verb != nil {
+		return *m.Verb
 	}
 	return ""
 }
@@ -365,38 +396,42 @@ func (m *SubjectAccessReviewSpec) GetExtra() map[string]*ExtraValue {
 // SubjectAccessReviewStatus
 type SubjectAccessReviewStatus struct {
 	// Allowed is required.  True if the action would be allowed, false otherwise.
-	Allowed bool `protobuf:"varint,1,opt,name=allowed" json:"allowed"`
+	Allowed *bool `protobuf:"varint,1,opt,name=allowed" json:"allowed,omitempty"`
 	// Reason is optional.  It indicates why a request was allowed or denied.
-	Reason string `protobuf:"bytes,2,opt,name=reason" json:"reason"`
+	// +optional
+	Reason *string `protobuf:"bytes,2,opt,name=reason" json:"reason,omitempty"`
 	// EvaluationError is an indication that some error occurred during the authorization check.
 	// It is entirely possible to get an error and be able to continue determine authorization status in spite of it.
 	// For instance, RBAC can be missing a role, but enough roles are still present and bound to reason about the request.
-	EvaluationError string `protobuf:"bytes,3,opt,name=evaluationError" json:"evaluationError"`
+	// +optional
+	EvaluationError  *string `protobuf:"bytes,3,opt,name=evaluationError" json:"evaluationError,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *SubjectAccessReviewStatus) Reset()      { *m = SubjectAccessReviewStatus{} }
-func (*SubjectAccessReviewStatus) ProtoMessage() {}
+func (m *SubjectAccessReviewStatus) Reset()         { *m = SubjectAccessReviewStatus{} }
+func (m *SubjectAccessReviewStatus) String() string { return proto.CompactTextString(m) }
+func (*SubjectAccessReviewStatus) ProtoMessage()    {}
 func (*SubjectAccessReviewStatus) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{8}
 }
 
 func (m *SubjectAccessReviewStatus) GetAllowed() bool {
-	if m != nil {
-		return m.Allowed
+	if m != nil && m.Allowed != nil {
+		return *m.Allowed
 	}
 	return false
 }
 
 func (m *SubjectAccessReviewStatus) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *SubjectAccessReviewStatus) GetEvaluationError() string {
-	if m != nil {
-		return m.EvaluationError
+	if m != nil && m.EvaluationError != nil {
+		return *m.EvaluationError
 	}
 	return ""
 }
@@ -411,529 +446,6 @@ func init() {
 	proto.RegisterType((*SubjectAccessReview)(nil), "github.com/ericchiang.k8s.apis.authorization.v1beta1.SubjectAccessReview")
 	proto.RegisterType((*SubjectAccessReviewSpec)(nil), "github.com/ericchiang.k8s.apis.authorization.v1beta1.SubjectAccessReviewSpec")
 	proto.RegisterType((*SubjectAccessReviewStatus)(nil), "github.com/ericchiang.k8s.apis.authorization.v1beta1.SubjectAccessReviewStatus")
-}
-func (this *ExtraValue) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ExtraValue)
-	if !ok {
-		that2, ok := that.(ExtraValue)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if this.Items[i] != that1.Items[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *LocalSubjectAccessReview) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LocalSubjectAccessReview)
-	if !ok {
-		that2, ok := that.(LocalSubjectAccessReview)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *NonResourceAttributes) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NonResourceAttributes)
-	if !ok {
-		that2, ok := that.(NonResourceAttributes)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if this.Verb != that1.Verb {
-		return false
-	}
-	return true
-}
-func (this *ResourceAttributes) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ResourceAttributes)
-	if !ok {
-		that2, ok := that.(ResourceAttributes)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Namespace != that1.Namespace {
-		return false
-	}
-	if this.Verb != that1.Verb {
-		return false
-	}
-	if this.Group != that1.Group {
-		return false
-	}
-	if this.Version != that1.Version {
-		return false
-	}
-	if this.Resource != that1.Resource {
-		return false
-	}
-	if this.Subresource != that1.Subresource {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	return true
-}
-func (this *SelfSubjectAccessReview) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SelfSubjectAccessReview)
-	if !ok {
-		that2, ok := that.(SelfSubjectAccessReview)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *SelfSubjectAccessReviewSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SelfSubjectAccessReviewSpec)
-	if !ok {
-		that2, ok := that.(SelfSubjectAccessReviewSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.ResourceAttributes.Equal(that1.ResourceAttributes) {
-		return false
-	}
-	if !this.NonResourceAttributes.Equal(that1.NonResourceAttributes) {
-		return false
-	}
-	return true
-}
-func (this *SubjectAccessReview) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SubjectAccessReview)
-	if !ok {
-		that2, ok := that.(SubjectAccessReview)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *SubjectAccessReviewSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SubjectAccessReviewSpec)
-	if !ok {
-		that2, ok := that.(SubjectAccessReviewSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.ResourceAttributes.Equal(that1.ResourceAttributes) {
-		return false
-	}
-	if !this.NonResourceAttributes.Equal(that1.NonResourceAttributes) {
-		return false
-	}
-	if this.Verb != that1.Verb {
-		return false
-	}
-	if len(this.Group) != len(that1.Group) {
-		return false
-	}
-	for i := range this.Group {
-		if this.Group[i] != that1.Group[i] {
-			return false
-		}
-	}
-	if len(this.Extra) != len(that1.Extra) {
-		return false
-	}
-	for i := range this.Extra {
-		if !this.Extra[i].Equal(that1.Extra[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *SubjectAccessReviewStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SubjectAccessReviewStatus)
-	if !ok {
-		that2, ok := that.(SubjectAccessReviewStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Allowed != that1.Allowed {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.EvaluationError != that1.EvaluationError {
-		return false
-	}
-	return true
-}
-func (this *ExtraValue) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1beta1.ExtraValue{")
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LocalSubjectAccessReview) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1beta1.LocalSubjectAccessReview{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NonResourceAttributes) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1beta1.NonResourceAttributes{")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "Verb: "+fmt.Sprintf("%#v", this.Verb)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ResourceAttributes) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 11)
-	s = append(s, "&v1beta1.ResourceAttributes{")
-	s = append(s, "Namespace: "+fmt.Sprintf("%#v", this.Namespace)+",\n")
-	s = append(s, "Verb: "+fmt.Sprintf("%#v", this.Verb)+",\n")
-	s = append(s, "Group: "+fmt.Sprintf("%#v", this.Group)+",\n")
-	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
-	s = append(s, "Resource: "+fmt.Sprintf("%#v", this.Resource)+",\n")
-	s = append(s, "Subresource: "+fmt.Sprintf("%#v", this.Subresource)+",\n")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SelfSubjectAccessReview) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1beta1.SelfSubjectAccessReview{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SelfSubjectAccessReviewSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1beta1.SelfSubjectAccessReviewSpec{")
-	if this.ResourceAttributes != nil {
-		s = append(s, "ResourceAttributes: "+fmt.Sprintf("%#v", this.ResourceAttributes)+",\n")
-	}
-	if this.NonResourceAttributes != nil {
-		s = append(s, "NonResourceAttributes: "+fmt.Sprintf("%#v", this.NonResourceAttributes)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SubjectAccessReview) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1beta1.SubjectAccessReview{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SubjectAccessReviewSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1beta1.SubjectAccessReviewSpec{")
-	if this.ResourceAttributes != nil {
-		s = append(s, "ResourceAttributes: "+fmt.Sprintf("%#v", this.ResourceAttributes)+",\n")
-	}
-	if this.NonResourceAttributes != nil {
-		s = append(s, "NonResourceAttributes: "+fmt.Sprintf("%#v", this.NonResourceAttributes)+",\n")
-	}
-	s = append(s, "Verb: "+fmt.Sprintf("%#v", this.Verb)+",\n")
-	if this.Group != nil {
-		s = append(s, "Group: "+fmt.Sprintf("%#v", this.Group)+",\n")
-	}
-	keysForExtra := make([]string, 0, len(this.Extra))
-	for k, _ := range this.Extra {
-		keysForExtra = append(keysForExtra, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForExtra)
-	mapStringForExtra := "map[string]*ExtraValue{"
-	for _, k := range keysForExtra {
-		mapStringForExtra += fmt.Sprintf("%#v: %#v,", k, this.Extra[k])
-	}
-	mapStringForExtra += "}"
-	if this.Extra != nil {
-		s = append(s, "Extra: "+mapStringForExtra+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SubjectAccessReviewStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1beta1.SubjectAccessReviewStatus{")
-	s = append(s, "Allowed: "+fmt.Sprintf("%#v", this.Allowed)+",\n")
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "EvaluationError: "+fmt.Sprintf("%#v", this.EvaluationError)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *ExtraValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -964,6 +476,9 @@ func (m *ExtraValue) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -1013,6 +528,9 @@ func (m *LocalSubjectAccessReview) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1031,14 +549,21 @@ func (m *NonResourceAttributes) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Verb)))
-	i += copy(dAtA[i:], m.Verb)
+	if m.Path != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.Verb != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Verb)))
+		i += copy(dAtA[i:], *m.Verb)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1057,34 +582,51 @@ func (m *ResourceAttributes) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Namespace)))
-	i += copy(dAtA[i:], m.Namespace)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Verb)))
-	i += copy(dAtA[i:], m.Verb)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Group)))
-	i += copy(dAtA[i:], m.Group)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Version)))
-	i += copy(dAtA[i:], m.Version)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Resource)))
-	i += copy(dAtA[i:], m.Resource)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Subresource)))
-	i += copy(dAtA[i:], m.Subresource)
-	dAtA[i] = 0x3a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
+	if m.Namespace != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Namespace)))
+		i += copy(dAtA[i:], *m.Namespace)
+	}
+	if m.Verb != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Verb)))
+		i += copy(dAtA[i:], *m.Verb)
+	}
+	if m.Group != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Group)))
+		i += copy(dAtA[i:], *m.Group)
+	}
+	if m.Version != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Version)))
+		i += copy(dAtA[i:], *m.Version)
+	}
+	if m.Resource != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Resource)))
+		i += copy(dAtA[i:], *m.Resource)
+	}
+	if m.Subresource != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Subresource)))
+		i += copy(dAtA[i:], *m.Subresource)
+	}
+	if m.Name != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1133,6 +675,9 @@ func (m *SelfSubjectAccessReview) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n6
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1170,6 +715,9 @@ func (m *SelfSubjectAccessReviewSpec) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n8
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -1219,6 +767,9 @@ func (m *SubjectAccessReview) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n11
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1257,10 +808,12 @@ func (m *SubjectAccessReviewSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n13
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Verb)))
-	i += copy(dAtA[i:], m.Verb)
+	if m.Verb != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Verb)))
+		i += copy(dAtA[i:], *m.Verb)
+	}
 	if len(m.Group) > 0 {
 		for _, s := range m.Group {
 			dAtA[i] = 0x22
@@ -1304,6 +857,9 @@ func (m *SubjectAccessReviewSpec) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1322,22 +878,31 @@ func (m *SubjectAccessReviewStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	if m.Allowed {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Allowed != nil {
+		dAtA[i] = 0x8
+		i++
+		if *m.Allowed {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.EvaluationError)))
-	i += copy(dAtA[i:], m.EvaluationError)
+	if m.Reason != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.EvaluationError != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.EvaluationError)))
+		i += copy(dAtA[i:], *m.EvaluationError)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1377,6 +942,9 @@ func (m *ExtraValue) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1395,36 +963,63 @@ func (m *LocalSubjectAccessReview) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NonResourceAttributes) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Verb)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Verb != nil {
+		l = len(*m.Verb)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ResourceAttributes) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Namespace)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Verb)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Group)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Version)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Resource)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Subresource)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Namespace != nil {
+		l = len(*m.Namespace)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Verb != nil {
+		l = len(*m.Verb)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Group != nil {
+		l = len(*m.Group)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Version != nil {
+		l = len(*m.Version)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Resource != nil {
+		l = len(*m.Resource)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Subresource != nil {
+		l = len(*m.Subresource)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1443,6 +1038,9 @@ func (m *SelfSubjectAccessReview) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1456,6 +1054,9 @@ func (m *SelfSubjectAccessReviewSpec) Size() (n int) {
 	if m.NonResourceAttributes != nil {
 		l = m.NonResourceAttributes.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1475,6 +1076,9 @@ func (m *SubjectAccessReview) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1489,8 +1093,10 @@ func (m *SubjectAccessReviewSpec) Size() (n int) {
 		l = m.NonResourceAttributes.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Verb)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Verb != nil {
+		l = len(*m.Verb)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Group) > 0 {
 		for _, s := range m.Group {
 			l = len(s)
@@ -1510,17 +1116,29 @@ func (m *SubjectAccessReviewSpec) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *SubjectAccessReviewStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 2
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.EvaluationError)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Allowed != nil {
+		n += 2
+	}
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.EvaluationError != nil {
+		l = len(*m.EvaluationError)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1536,134 +1154,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *ExtraValue) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ExtraValue{`,
-		`Items:` + fmt.Sprintf("%v", this.Items) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LocalSubjectAccessReview) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LocalSubjectAccessReview{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "SubjectAccessReviewSpec", "SubjectAccessReviewSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "SubjectAccessReviewStatus", "SubjectAccessReviewStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NonResourceAttributes) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NonResourceAttributes{`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`Verb:` + fmt.Sprintf("%v", this.Verb) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ResourceAttributes) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ResourceAttributes{`,
-		`Namespace:` + fmt.Sprintf("%v", this.Namespace) + `,`,
-		`Verb:` + fmt.Sprintf("%v", this.Verb) + `,`,
-		`Group:` + fmt.Sprintf("%v", this.Group) + `,`,
-		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
-		`Resource:` + fmt.Sprintf("%v", this.Resource) + `,`,
-		`Subresource:` + fmt.Sprintf("%v", this.Subresource) + `,`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SelfSubjectAccessReview) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SelfSubjectAccessReview{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "SelfSubjectAccessReviewSpec", "SelfSubjectAccessReviewSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "SubjectAccessReviewStatus", "SubjectAccessReviewStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SelfSubjectAccessReviewSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SelfSubjectAccessReviewSpec{`,
-		`ResourceAttributes:` + strings.Replace(fmt.Sprintf("%v", this.ResourceAttributes), "ResourceAttributes", "ResourceAttributes", 1) + `,`,
-		`NonResourceAttributes:` + strings.Replace(fmt.Sprintf("%v", this.NonResourceAttributes), "NonResourceAttributes", "NonResourceAttributes", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SubjectAccessReview) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SubjectAccessReview{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "SubjectAccessReviewSpec", "SubjectAccessReviewSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "SubjectAccessReviewStatus", "SubjectAccessReviewStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SubjectAccessReviewSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForExtra := make([]string, 0, len(this.Extra))
-	for k, _ := range this.Extra {
-		keysForExtra = append(keysForExtra, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForExtra)
-	mapStringForExtra := "map[string]*ExtraValue{"
-	for _, k := range keysForExtra {
-		mapStringForExtra += fmt.Sprintf("%v: %v,", k, this.Extra[k])
-	}
-	mapStringForExtra += "}"
-	s := strings.Join([]string{`&SubjectAccessReviewSpec{`,
-		`ResourceAttributes:` + strings.Replace(fmt.Sprintf("%v", this.ResourceAttributes), "ResourceAttributes", "ResourceAttributes", 1) + `,`,
-		`NonResourceAttributes:` + strings.Replace(fmt.Sprintf("%v", this.NonResourceAttributes), "NonResourceAttributes", "NonResourceAttributes", 1) + `,`,
-		`Verb:` + fmt.Sprintf("%v", this.Verb) + `,`,
-		`Group:` + fmt.Sprintf("%v", this.Group) + `,`,
-		`Extra:` + mapStringForExtra + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SubjectAccessReviewStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SubjectAccessReviewStatus{`,
-		`Allowed:` + fmt.Sprintf("%v", this.Allowed) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`EvaluationError:` + fmt.Sprintf("%v", this.EvaluationError) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *ExtraValue) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1735,6 +1225,7 @@ func (m *ExtraValue) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1884,6 +1375,7 @@ func (m *LocalSubjectAccessReview) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1949,7 +1441,8 @@ func (m *NonResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1978,7 +1471,8 @@ func (m *NonResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Verb = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Verb = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1992,6 +1486,7 @@ func (m *NonResourceAttributes) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2057,7 +1552,8 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Namespace = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Namespace = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -2086,7 +1582,8 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Verb = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Verb = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -2115,7 +1612,8 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Group = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Group = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -2144,7 +1642,8 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Version = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Version = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -2173,7 +1672,8 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Resource = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Resource = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -2202,7 +1702,8 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Subresource = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Subresource = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
@@ -2231,7 +1732,8 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2245,6 +1747,7 @@ func (m *ResourceAttributes) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2394,6 +1897,7 @@ func (m *SelfSubjectAccessReview) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2510,6 +2014,7 @@ func (m *SelfSubjectAccessReviewSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2659,6 +2164,7 @@ func (m *SubjectAccessReview) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2790,7 +2296,8 @@ func (m *SubjectAccessReviewSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Verb = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Verb = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -2954,6 +2461,7 @@ func (m *SubjectAccessReviewSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -3011,7 +2519,8 @@ func (m *SubjectAccessReviewStatus) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Allowed = bool(v != 0)
+			b := bool(v != 0)
+			m.Allowed = &b
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
@@ -3039,7 +2548,8 @@ func (m *SubjectAccessReviewStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -3068,7 +2578,8 @@ func (m *SubjectAccessReviewStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.EvaluationError = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.EvaluationError = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3082,6 +2593,7 @@ func (m *SubjectAccessReviewStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -3201,50 +2713,47 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 716 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xec, 0x55, 0x4f, 0x6f, 0xd3, 0x4e,
-	0x10, 0x8d, 0xf3, 0xa7, 0x7f, 0xa6, 0x87, 0x9f, 0xb4, 0xbf, 0x96, 0x9a, 0x80, 0x4c, 0xe4, 0x03,
-	0xca, 0x01, 0xd6, 0xa4, 0x52, 0xa5, 0x0a, 0x71, 0xa0, 0x55, 0x2b, 0x84, 0x4a, 0x41, 0x72, 0x11,
-	0x07, 0x24, 0x0e, 0x1b, 0x67, 0x48, 0xdd, 0x24, 0xb6, 0xb5, 0xbb, 0x4e, 0x29, 0x02, 0x89, 0x2b,
-	0x37, 0xc4, 0x17, 0xe0, 0x82, 0x44, 0x3f, 0x4a, 0x8f, 0x3d, 0x72, 0x42, 0x34, 0x5c, 0x38, 0x56,
-	0x7c, 0x02, 0xe4, 0xb5, 0x93, 0xc6, 0x8d, 0x53, 0x29, 0xa8, 0x70, 0xea, 0xd1, 0x6f, 0x76, 0xde,
-	0x3c, 0xcf, 0xbe, 0x9d, 0x81, 0xfb, 0xad, 0x15, 0x41, 0x5d, 0xdf, 0x6a, 0x85, 0x75, 0xe4, 0x1e,
-	0x4a, 0x14, 0x56, 0xd0, 0x6a, 0x5a, 0x2c, 0x70, 0x85, 0xc5, 0x42, 0xb9, 0xe3, 0x73, 0xf7, 0x35,
-	0x93, 0xae, 0xef, 0x59, 0xdd, 0x5a, 0x1d, 0x25, 0xab, 0x59, 0x4d, 0xf4, 0x90, 0x33, 0x89, 0x0d,
-	0x1a, 0x70, 0x5f, 0xfa, 0xe4, 0x4e, 0xcc, 0x40, 0x4f, 0x19, 0x68, 0xd0, 0x6a, 0xd2, 0x88, 0x81,
-	0xa6, 0x18, 0x68, 0xc2, 0x50, 0x5e, 0x1a, 0x5b, 0xd3, 0xe2, 0x28, 0xfc, 0x90, 0x3b, 0x78, 0xb6,
-	0x4a, 0x79, 0x79, 0x7c, 0x4e, 0xe8, 0x75, 0x91, 0x0b, 0xd7, 0xf7, 0xb0, 0x31, 0x92, 0x76, 0x6b,
-	0x7c, 0x5a, 0x77, 0xe4, 0x57, 0xca, 0xb7, 0xb3, 0x4f, 0xf3, 0xd0, 0x93, 0x6e, 0x67, 0x54, 0x53,
-	0x2d, 0xfb, 0x78, 0x28, 0xdd, 0xb6, 0xe5, 0x7a, 0x52, 0x48, 0x7e, 0x36, 0xc5, 0x34, 0x01, 0x36,
-	0x5e, 0x49, 0xce, 0x9e, 0xb1, 0x76, 0x88, 0x64, 0x1e, 0x4a, 0xae, 0xc4, 0x8e, 0xd0, 0xb5, 0x4a,
-	0xa1, 0x3a, 0x6b, 0xc7, 0x1f, 0xe6, 0xe7, 0x3c, 0xe8, 0x8f, 0x7c, 0x87, 0xb5, 0xb7, 0xc3, 0xfa,
-	0x2e, 0x3a, 0x72, 0xd5, 0x71, 0x50, 0x08, 0x1b, 0xbb, 0x2e, 0xee, 0x91, 0x75, 0x98, 0xe9, 0xa0,
-	0x64, 0x0d, 0x26, 0x99, 0xae, 0x55, 0xb4, 0xea, 0xdc, 0x52, 0x95, 0x8e, 0xbd, 0x00, 0xda, 0xad,
-	0xd1, 0x27, 0x8a, 0x63, 0x0b, 0x25, 0xb3, 0x07, 0x99, 0xe4, 0x05, 0x14, 0x45, 0x80, 0x8e, 0x9e,
-	0x57, 0x0c, 0x0f, 0xe9, 0xa4, 0x57, 0x48, 0x33, 0xa4, 0x6d, 0x07, 0xe8, 0xd8, 0x8a, 0x96, 0x38,
-	0x30, 0x25, 0x24, 0x93, 0xa1, 0xd0, 0x0b, 0xaa, 0xc0, 0xe6, 0xc5, 0x14, 0x50, 0x94, 0x76, 0x42,
-	0x6d, 0x6e, 0xc2, 0xc2, 0x63, 0xdf, 0xb3, 0x13, 0xc3, 0xac, 0x4a, 0xc9, 0xdd, 0x7a, 0x28, 0x51,
-	0x10, 0x1d, 0x8a, 0x01, 0x93, 0x3b, 0xaa, 0x3d, 0xb3, 0x6b, 0xc5, 0xc3, 0x6f, 0x37, 0x72, 0xb6,
-	0x42, 0xa2, 0x48, 0x17, 0x79, 0x5d, 0xfd, 0xf6, 0x20, 0x12, 0x21, 0xe6, 0x2f, 0x0d, 0x48, 0x06,
-	0x95, 0x09, 0xb3, 0x1e, 0xeb, 0xa0, 0x08, 0x98, 0x83, 0x29, 0xbe, 0x53, 0x78, 0x3c, 0x29, 0x29,
-	0x43, 0xa9, 0xc9, 0xfd, 0x30, 0x50, 0x5d, 0xe8, 0x87, 0x62, 0x88, 0x18, 0x30, 0x9d, 0xb8, 0x56,
-	0x2f, 0x0e, 0x45, 0xfb, 0x20, 0xa9, 0xc0, 0x4c, 0xff, 0x2d, 0xe8, 0xa5, 0xa1, 0x03, 0x03, 0x94,
-	0xdc, 0x84, 0x39, 0x11, 0xd6, 0x07, 0x87, 0xa6, 0x86, 0x0e, 0x0d, 0x07, 0x22, 0x7d, 0x91, 0x58,
-	0x7d, 0x7a, 0x58, 0x5f, 0x84, 0x98, 0x5f, 0xf2, 0xb0, 0xb8, 0x8d, 0xed, 0x97, 0x7f, 0xcf, 0x67,
-	0x2c, 0xe5, 0xb3, 0xad, 0x3f, 0xb0, 0x41, 0xb6, 0xbc, 0x7f, 0xed, 0xb5, 0x8f, 0x79, 0xb8, 0x76,
-	0x8e, 0x14, 0x22, 0x81, 0xf0, 0x11, 0xf7, 0x24, 0x7d, 0x5b, 0x9f, 0x5c, 0xd0, 0xa8, 0x13, 0xed,
-	0x0c, 0x7e, 0xf2, 0x16, 0x16, 0xbc, 0xac, 0x17, 0x90, 0xb4, 0xfb, 0xc1, 0xe4, 0x85, 0x33, 0x1f,
-	0x94, 0x9d, 0x5d, 0xc5, 0xfc, 0x94, 0x87, 0xff, 0x2f, 0x47, 0xd4, 0x79, 0xb6, 0x39, 0x28, 0xc2,
-	0xe2, 0xa5, 0x65, 0xd2, 0xa3, 0x59, 0xcd, 0xca, 0xc2, 0xc8, 0xac, 0x9c, 0xef, 0xcf, 0xca, 0x62,
-	0xbc, 0x0a, 0xe3, 0x29, 0xb9, 0x0b, 0x25, 0x8c, 0xd6, 0xa5, 0x5e, 0xaa, 0x14, 0xaa, 0x73, 0x4b,
-	0x4f, 0x2f, 0xcc, 0x05, 0x54, 0x6d, 0xe1, 0x0d, 0x4f, 0xf2, 0x7d, 0x3b, 0x2e, 0x51, 0x7e, 0x93,
-	0xac, 0x66, 0x05, 0x92, 0x2b, 0x50, 0x68, 0xe1, 0x7e, 0x6a, 0xe6, 0x47, 0x00, 0xb1, 0xa1, 0xd4,
-	0x8d, 0x76, 0x77, 0xd2, 0xb0, 0x7b, 0x93, 0x2b, 0x3a, 0xdd, 0xff, 0x76, 0x4c, 0x75, 0x37, 0xbf,
-	0xa2, 0x99, 0xef, 0x35, 0xb8, 0x3a, 0xd6, 0x50, 0xd1, 0xb6, 0x60, 0xed, 0xb6, 0xbf, 0x87, 0x0d,
-	0xa5, 0x68, 0xa6, 0xbf, 0x2d, 0x12, 0x90, 0x5c, 0x87, 0x29, 0x8e, 0x4c, 0xf8, 0x5e, 0x6a, 0x0b,
-	0x25, 0x18, 0xa1, 0xf0, 0x1f, 0x46, 0x95, 0x94, 0x8e, 0x0d, 0xce, 0x7d, 0x9e, 0xba, 0x80, 0xb3,
-	0xc1, 0xb5, 0xe5, 0xa3, 0x63, 0x23, 0xf7, 0xf5, 0xd8, 0xc8, 0x9d, 0x1c, 0x1b, 0xda, 0xbb, 0x9e,
-	0xa1, 0x1d, 0xf4, 0x0c, 0xed, 0xb0, 0x67, 0x68, 0x47, 0x3d, 0x43, 0xfb, 0xde, 0x33, 0xb4, 0x9f,
-	0x3d, 0x23, 0x77, 0xd2, 0x33, 0xb4, 0x0f, 0x3f, 0x8c, 0xdc, 0xf3, 0xe9, 0xe4, 0xc7, 0x7e, 0x07,
-	0x00, 0x00, 0xff, 0xff, 0xed, 0x2a, 0x50, 0xf0, 0x4b, 0x0a, 0x00, 0x00,
+	// 658 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xec, 0x55, 0xcf, 0x6a, 0x14, 0x4f,
+	0x10, 0x66, 0xf6, 0x4f, 0x92, 0xad, 0x1c, 0x7e, 0x3f, 0x5a, 0x63, 0xc6, 0x55, 0xc2, 0x32, 0xa7,
+	0x3d, 0x68, 0x8f, 0x1b, 0x10, 0x82, 0x08, 0x1a, 0x49, 0x10, 0xd1, 0x28, 0x74, 0xc4, 0x83, 0xe0,
+	0xa1, 0x77, 0xb6, 0xdc, 0x4c, 0x76, 0x76, 0x7a, 0xe8, 0x3f, 0x13, 0x23, 0xf8, 0x12, 0x9e, 0x05,
+	0x2f, 0x82, 0xaf, 0x92, 0xa3, 0x8f, 0x20, 0x79, 0x12, 0x99, 0x9e, 0x4e, 0x62, 0x76, 0x67, 0x03,
+	0x2b, 0xd1, 0x53, 0x6e, 0x5d, 0xd5, 0x53, 0x5f, 0x7d, 0x5d, 0xf5, 0x4d, 0x15, 0x3c, 0x1e, 0x6d,
+	0x28, 0x1a, 0x8b, 0x70, 0x64, 0xfa, 0x28, 0x53, 0xd4, 0xa8, 0xc2, 0x6c, 0x34, 0x0c, 0x79, 0x16,
+	0xab, 0x90, 0x1b, 0xbd, 0x27, 0x64, 0xfc, 0x91, 0xeb, 0x58, 0xa4, 0x61, 0xde, 0xeb, 0xa3, 0xe6,
+	0xbd, 0x70, 0x88, 0x29, 0x4a, 0xae, 0x71, 0x40, 0x33, 0x29, 0xb4, 0x20, 0xf7, 0x4a, 0x04, 0x7a,
+	0x86, 0x40, 0xb3, 0xd1, 0x90, 0x16, 0x08, 0xf4, 0x1c, 0x02, 0x75, 0x08, 0xed, 0xf5, 0x99, 0x39,
+	0x43, 0x89, 0x4a, 0x18, 0x19, 0xe1, 0x64, 0x96, 0xf6, 0xfd, 0xd9, 0x31, 0x26, 0xcd, 0x51, 0xaa,
+	0x58, 0xa4, 0x38, 0x98, 0x0a, 0xbb, 0x33, 0x3b, 0x2c, 0x9f, 0x7a, 0x4a, 0xfb, 0x6e, 0xf5, 0xd7,
+	0xd2, 0xa4, 0x3a, 0x1e, 0x4f, 0x73, 0xea, 0x55, 0x7f, 0x6e, 0x74, 0x9c, 0x84, 0x71, 0xaa, 0x95,
+	0x96, 0x93, 0x21, 0x41, 0x00, 0xb0, 0xfd, 0x41, 0x4b, 0xfe, 0x86, 0x27, 0x06, 0xc9, 0x75, 0x68,
+	0xc6, 0x1a, 0xc7, 0xca, 0xf7, 0x3a, 0xf5, 0x6e, 0x8b, 0x95, 0x46, 0xf0, 0xad, 0x06, 0xfe, 0x0b,
+	0x11, 0xf1, 0x64, 0xd7, 0xf4, 0xf7, 0x31, 0xd2, 0x9b, 0x51, 0x84, 0x4a, 0x31, 0xcc, 0x63, 0x3c,
+	0x20, 0x5b, 0xb0, 0x34, 0x46, 0xcd, 0x07, 0x5c, 0x73, 0xdf, 0xeb, 0x78, 0xdd, 0xe5, 0xf5, 0x2e,
+	0x9d, 0xd9, 0x00, 0x9a, 0xf7, 0xe8, 0x2b, 0x8b, 0xb1, 0x83, 0x9a, 0xb3, 0xd3, 0x48, 0xf2, 0x0e,
+	0x1a, 0x2a, 0xc3, 0xc8, 0xaf, 0x59, 0x84, 0x67, 0x74, 0xde, 0x16, 0xd2, 0x0a, 0x6a, 0xbb, 0x19,
+	0x46, 0xcc, 0xc2, 0x92, 0x08, 0x16, 0x94, 0xe6, 0xda, 0x28, 0xbf, 0x6e, 0x13, 0x3c, 0xbf, 0x9c,
+	0x04, 0x16, 0x92, 0x39, 0xe8, 0xe0, 0x11, 0xac, 0xbc, 0x14, 0x29, 0x73, 0x82, 0xd9, 0xd4, 0x5a,
+	0xc6, 0x7d, 0xa3, 0x51, 0x11, 0x02, 0x8d, 0x8c, 0xeb, 0x3d, 0x5b, 0x9e, 0x16, 0xb3, 0xe7, 0xc2,
+	0x97, 0xa3, 0xec, 0xdb, 0x07, 0xb7, 0x98, 0x3d, 0x07, 0x47, 0x1e, 0x90, 0x8a, 0xf0, 0xdb, 0xd0,
+	0x4a, 0xf9, 0x18, 0x55, 0xc6, 0x23, 0x74, 0x18, 0x67, 0x8e, 0x2a, 0xa0, 0xa2, 0x8d, 0x43, 0x29,
+	0x4c, 0x66, 0x5f, 0xdb, 0x62, 0xa5, 0x41, 0x7c, 0x58, 0x74, 0xba, 0xf4, 0x1b, 0xd6, 0x7f, 0x62,
+	0x92, 0x36, 0x2c, 0x9d, 0xe8, 0xdc, 0x6f, 0xda, 0xab, 0x53, 0x9b, 0x74, 0x60, 0x59, 0x99, 0xfe,
+	0xe9, 0xf5, 0x82, 0xbd, 0xfe, 0xdd, 0x55, 0x30, 0x28, 0xe8, 0xf8, 0x8b, 0x25, 0x83, 0xe2, 0x1c,
+	0x7c, 0xaf, 0xc1, 0xea, 0x2e, 0x26, 0xef, 0xff, 0x9e, 0x62, 0xf8, 0x39, 0xc5, 0xec, 0xfc, 0x41,
+	0x43, 0xab, 0xe9, 0xfd, 0x6b, 0xd5, 0x7c, 0xae, 0xc1, 0xad, 0x0b, 0xa8, 0x10, 0x0d, 0x44, 0x4e,
+	0x69, 0xc2, 0xd5, 0x6d, 0x6b, 0x7e, 0x42, 0xd3, 0xfa, 0x62, 0x15, 0xf8, 0xe4, 0x13, 0xac, 0xa4,
+	0x55, 0x5a, 0x76, 0xe5, 0x7e, 0x3a, 0x7f, 0xe2, 0xca, 0x5f, 0x83, 0x55, 0x67, 0x09, 0xbe, 0xd6,
+	0xe0, 0xda, 0xd5, 0xb0, 0xb9, 0x48, 0x36, 0x5f, 0x1a, 0xb0, 0x7a, 0x25, 0x99, 0xf3, 0x43, 0xd6,
+	0xce, 0xc1, 0x7a, 0xd5, 0x1c, 0x6c, 0x94, 0xeb, 0xac, 0x9c, 0x83, 0xfb, 0xd0, 0xc4, 0x62, 0xe5,
+	0xf9, 0xcd, 0x4e, 0xbd, 0xbb, 0xbc, 0xfe, 0xfa, 0xd2, 0xfa, 0x4f, 0xed, 0x26, 0xdd, 0x4e, 0xb5,
+	0x3c, 0x64, 0x65, 0x8a, 0x76, 0xee, 0xd6, 0xab, 0x75, 0x92, 0xff, 0xa1, 0x3e, 0xc2, 0x43, 0x37,
+	0xc3, 0x8b, 0x23, 0x61, 0xd0, 0xcc, 0x8b, 0xcd, 0xeb, 0x8a, 0xf4, 0x70, 0x7e, 0x2e, 0x67, 0xdb,
+	0x9b, 0x95, 0x50, 0x0f, 0x6a, 0x1b, 0x5e, 0x70, 0x00, 0x37, 0x67, 0x6a, 0xa8, 0x58, 0x04, 0x3c,
+	0x49, 0xc4, 0x01, 0x0e, 0x2c, 0x95, 0x25, 0x76, 0x62, 0x92, 0x1b, 0xb0, 0x20, 0x91, 0x2b, 0x91,
+	0xba, 0x75, 0xe2, 0x2c, 0xd2, 0x85, 0xff, 0xb0, 0x00, 0xb7, 0xa9, 0xb7, 0xa5, 0x14, 0xd2, 0xd5,
+	0x79, 0xd2, 0xfd, 0x64, 0xe5, 0xe8, 0x78, 0xcd, 0xfb, 0x71, 0xbc, 0xe6, 0xfd, 0x3c, 0x5e, 0xf3,
+	0xde, 0x2e, 0x3a, 0x96, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0x9e, 0xf2, 0xac, 0x6b, 0xd6, 0x09,
+	0x00, 0x00,
 }

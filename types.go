@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	apiv1 "github.com/ericchiang/k8s/api/v1"
-	appsv1alpha1 "github.com/ericchiang/k8s/apis/apps/v1alpha1"
+	appsv1beta1 "github.com/ericchiang/k8s/apis/apps/v1beta1"
 	authenticationv1beta1 "github.com/ericchiang/k8s/apis/authentication/v1beta1"
 	authorizationv1beta1 "github.com/ericchiang/k8s/apis/authorization/v1beta1"
 	autoscalingv1 "github.com/ericchiang/k8s/apis/autoscaling/v1"
@@ -14,7 +14,7 @@ import (
 	certificatesv1alpha1 "github.com/ericchiang/k8s/apis/certificates/v1alpha1"
 	extensionsv1beta1 "github.com/ericchiang/k8s/apis/extensions/v1beta1"
 	imagepolicyv1alpha1 "github.com/ericchiang/k8s/apis/imagepolicy/v1alpha1"
-	policyv1alpha1 "github.com/ericchiang/k8s/apis/policy/v1alpha1"
+	policyv1beta1 "github.com/ericchiang/k8s/apis/policy/v1beta1"
 	rbacv1alpha1 "github.com/ericchiang/k8s/apis/rbac/v1alpha1"
 	storagev1beta1 "github.com/ericchiang/k8s/apis/storage/v1beta1"
 )
@@ -31,13 +31,28 @@ type CoreV1 struct {
 
 func (c *CoreV1) CreateBinding(ctx context.Context, obj *apiv1.Binding) (*apiv1.Binding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "bindings", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "bindings", "")
 	resp := new(apiv1.Binding)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateBinding(ctx context.Context, obj *apiv1.Binding) (*apiv1.Binding, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "bindings", String(md.Name))
+	resp := new(apiv1.Binding)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -68,13 +83,28 @@ func (c *CoreV1) GetBinding(ctx context.Context, name string) (*apiv1.Binding, e
 
 func (c *CoreV1) CreateComponentStatus(ctx context.Context, obj *apiv1.ComponentStatus) (*apiv1.ComponentStatus, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "componentstatuses", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "componentstatuses", "")
 	resp := new(apiv1.ComponentStatus)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateComponentStatus(ctx context.Context, obj *apiv1.ComponentStatus) (*apiv1.ComponentStatus, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "componentstatuses", String(md.Name))
+	resp := new(apiv1.ComponentStatus)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -115,13 +145,28 @@ func (c *CoreV1) ListComponentStatuses(ctx context.Context) (*apiv1.ComponentSta
 
 func (c *CoreV1) CreateConfigMap(ctx context.Context, obj *apiv1.ConfigMap) (*apiv1.ConfigMap, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "configmaps", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "configmaps", "")
 	resp := new(apiv1.ConfigMap)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateConfigMap(ctx context.Context, obj *apiv1.ConfigMap) (*apiv1.ConfigMap, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "configmaps", String(md.Name))
+	resp := new(apiv1.ConfigMap)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -162,13 +207,28 @@ func (c *CoreV1) ListConfigMaps(ctx context.Context) (*apiv1.ConfigMapList, erro
 
 func (c *CoreV1) CreateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*apiv1.Endpoints, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "endpointses", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "endpointses", "")
 	resp := new(apiv1.Endpoints)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*apiv1.Endpoints, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "endpointses", String(md.Name))
+	resp := new(apiv1.Endpoints)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -209,13 +269,28 @@ func (c *CoreV1) ListEndpointses(ctx context.Context) (*apiv1.EndpointsList, err
 
 func (c *CoreV1) CreateEvent(ctx context.Context, obj *apiv1.Event) (*apiv1.Event, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "events", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "events", "")
 	resp := new(apiv1.Event)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateEvent(ctx context.Context, obj *apiv1.Event) (*apiv1.Event, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "events", String(md.Name))
+	resp := new(apiv1.Event)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -256,13 +331,28 @@ func (c *CoreV1) ListEvents(ctx context.Context) (*apiv1.EventList, error) {
 
 func (c *CoreV1) CreateLimitRange(ctx context.Context, obj *apiv1.LimitRange) (*apiv1.LimitRange, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "limitranges", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "limitranges", "")
 	resp := new(apiv1.LimitRange)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateLimitRange(ctx context.Context, obj *apiv1.LimitRange) (*apiv1.LimitRange, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "limitranges", String(md.Name))
+	resp := new(apiv1.LimitRange)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -303,13 +393,28 @@ func (c *CoreV1) ListLimitRanges(ctx context.Context) (*apiv1.LimitRangeList, er
 
 func (c *CoreV1) CreateNamespace(ctx context.Context, obj *apiv1.Namespace) (*apiv1.Namespace, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "namespaces", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "namespaces", "")
 	resp := new(apiv1.Namespace)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateNamespace(ctx context.Context, obj *apiv1.Namespace) (*apiv1.Namespace, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "namespaces", String(md.Name))
+	resp := new(apiv1.Namespace)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -350,13 +455,28 @@ func (c *CoreV1) ListNamespaces(ctx context.Context) (*apiv1.NamespaceList, erro
 
 func (c *CoreV1) CreateNode(ctx context.Context, obj *apiv1.Node) (*apiv1.Node, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "nodes", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "nodes", "")
 	resp := new(apiv1.Node)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateNode(ctx context.Context, obj *apiv1.Node) (*apiv1.Node, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "nodes", String(md.Name))
+	resp := new(apiv1.Node)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -397,13 +517,28 @@ func (c *CoreV1) ListNodes(ctx context.Context) (*apiv1.NodeList, error) {
 
 func (c *CoreV1) CreatePersistentVolume(ctx context.Context, obj *apiv1.PersistentVolume) (*apiv1.PersistentVolume, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumes", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "persistentvolumes", "")
 	resp := new(apiv1.PersistentVolume)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdatePersistentVolume(ctx context.Context, obj *apiv1.PersistentVolume) (*apiv1.PersistentVolume, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "persistentvolumes", String(md.Name))
+	resp := new(apiv1.PersistentVolume)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -444,13 +579,28 @@ func (c *CoreV1) ListPersistentVolumes(ctx context.Context) (*apiv1.PersistentVo
 
 func (c *CoreV1) CreatePersistentVolumeClaim(ctx context.Context, obj *apiv1.PersistentVolumeClaim) (*apiv1.PersistentVolumeClaim, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumeclaims", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "persistentvolumeclaims", "")
 	resp := new(apiv1.PersistentVolumeClaim)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdatePersistentVolumeClaim(ctx context.Context, obj *apiv1.PersistentVolumeClaim) (*apiv1.PersistentVolumeClaim, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "persistentvolumeclaims", String(md.Name))
+	resp := new(apiv1.PersistentVolumeClaim)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -491,13 +641,28 @@ func (c *CoreV1) ListPersistentVolumeClaims(ctx context.Context) (*apiv1.Persist
 
 func (c *CoreV1) CreatePod(ctx context.Context, obj *apiv1.Pod) (*apiv1.Pod, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "pods", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "pods", "")
 	resp := new(apiv1.Pod)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdatePod(ctx context.Context, obj *apiv1.Pod) (*apiv1.Pod, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "pods", String(md.Name))
+	resp := new(apiv1.Pod)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -538,13 +703,28 @@ func (c *CoreV1) ListPods(ctx context.Context) (*apiv1.PodList, error) {
 
 func (c *CoreV1) CreatePodStatusResult(ctx context.Context, obj *apiv1.PodStatusResult) (*apiv1.PodStatusResult, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "podstatusresults", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "podstatusresults", "")
 	resp := new(apiv1.PodStatusResult)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdatePodStatusResult(ctx context.Context, obj *apiv1.PodStatusResult) (*apiv1.PodStatusResult, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "podstatusresults", String(md.Name))
+	resp := new(apiv1.PodStatusResult)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -575,13 +755,28 @@ func (c *CoreV1) GetPodStatusResult(ctx context.Context, name string) (*apiv1.Po
 
 func (c *CoreV1) CreatePodTemplate(ctx context.Context, obj *apiv1.PodTemplate) (*apiv1.PodTemplate, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplates", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "podtemplates", "")
 	resp := new(apiv1.PodTemplate)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdatePodTemplate(ctx context.Context, obj *apiv1.PodTemplate) (*apiv1.PodTemplate, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "podtemplates", String(md.Name))
+	resp := new(apiv1.PodTemplate)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -622,13 +817,28 @@ func (c *CoreV1) ListPodTemplates(ctx context.Context) (*apiv1.PodTemplateList, 
 
 func (c *CoreV1) CreatePodTemplateSpec(ctx context.Context, obj *apiv1.PodTemplateSpec) (*apiv1.PodTemplateSpec, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplatespecs", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "podtemplatespecs", "")
 	resp := new(apiv1.PodTemplateSpec)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdatePodTemplateSpec(ctx context.Context, obj *apiv1.PodTemplateSpec) (*apiv1.PodTemplateSpec, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "podtemplatespecs", String(md.Name))
+	resp := new(apiv1.PodTemplateSpec)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -659,13 +869,28 @@ func (c *CoreV1) GetPodTemplateSpec(ctx context.Context, name string) (*apiv1.Po
 
 func (c *CoreV1) CreateRangeAllocation(ctx context.Context, obj *apiv1.RangeAllocation) (*apiv1.RangeAllocation, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "rangeallocations", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "rangeallocations", "")
 	resp := new(apiv1.RangeAllocation)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateRangeAllocation(ctx context.Context, obj *apiv1.RangeAllocation) (*apiv1.RangeAllocation, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "rangeallocations", String(md.Name))
+	resp := new(apiv1.RangeAllocation)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -696,13 +921,28 @@ func (c *CoreV1) GetRangeAllocation(ctx context.Context, name string) (*apiv1.Ra
 
 func (c *CoreV1) CreateReplicationController(ctx context.Context, obj *apiv1.ReplicationController) (*apiv1.ReplicationController, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "replicationcontrollers", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "replicationcontrollers", "")
 	resp := new(apiv1.ReplicationController)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateReplicationController(ctx context.Context, obj *apiv1.ReplicationController) (*apiv1.ReplicationController, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "replicationcontrollers", String(md.Name))
+	resp := new(apiv1.ReplicationController)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -743,13 +983,28 @@ func (c *CoreV1) ListReplicationControllers(ctx context.Context) (*apiv1.Replica
 
 func (c *CoreV1) CreateResourceQuota(ctx context.Context, obj *apiv1.ResourceQuota) (*apiv1.ResourceQuota, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "resourcequotas", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "resourcequotas", "")
 	resp := new(apiv1.ResourceQuota)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateResourceQuota(ctx context.Context, obj *apiv1.ResourceQuota) (*apiv1.ResourceQuota, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "resourcequotas", String(md.Name))
+	resp := new(apiv1.ResourceQuota)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -790,13 +1045,28 @@ func (c *CoreV1) ListResourceQuotas(ctx context.Context) (*apiv1.ResourceQuotaLi
 
 func (c *CoreV1) CreateSecret(ctx context.Context, obj *apiv1.Secret) (*apiv1.Secret, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "secrets", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "secrets", "")
 	resp := new(apiv1.Secret)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateSecret(ctx context.Context, obj *apiv1.Secret) (*apiv1.Secret, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "secrets", String(md.Name))
+	resp := new(apiv1.Secret)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -837,13 +1107,28 @@ func (c *CoreV1) ListSecrets(ctx context.Context) (*apiv1.SecretList, error) {
 
 func (c *CoreV1) CreateService(ctx context.Context, obj *apiv1.Service) (*apiv1.Service, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "services", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "services", "")
 	resp := new(apiv1.Service)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateService(ctx context.Context, obj *apiv1.Service) (*apiv1.Service, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "services", String(md.Name))
+	resp := new(apiv1.Service)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -884,13 +1169,28 @@ func (c *CoreV1) ListServices(ctx context.Context) (*apiv1.ServiceList, error) {
 
 func (c *CoreV1) CreateServiceAccount(ctx context.Context, obj *apiv1.ServiceAccount) (*apiv1.ServiceAccount, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "serviceaccounts", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "serviceaccounts", "")
 	resp := new(apiv1.ServiceAccount)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CoreV1) UpdateServiceAccount(ctx context.Context, obj *apiv1.ServiceAccount) (*apiv1.ServiceAccount, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("", "v1", String(md.Namespace), "serviceaccounts", String(md.Name))
+	resp := new(apiv1.ServiceAccount)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -930,24 +1230,24 @@ func (c *CoreV1) ListServiceAccounts(ctx context.Context) (*apiv1.ServiceAccount
 }
 
 
-// AppsV1Alpha1 returns a client for interacting with the apps/v1alpha1 API group.
-func (c *Client) AppsV1Alpha1() *AppsV1Alpha1 {
-	return &AppsV1Alpha1{c}
+// AppsV1Beta1 returns a client for interacting with the apps/v1beta1 API group.
+func (c *Client) AppsV1Beta1() *AppsV1Beta1 {
+	return &AppsV1Beta1{c}
 }
 
-// AppsV1Alpha1 is a client for interacting with the apps/v1alpha1 API group.
-type AppsV1Alpha1 struct {
+// AppsV1Beta1 is a client for interacting with the apps/v1beta1 API group.
+type AppsV1Beta1 struct {
 	client *Client
 }
 
-func (c *AppsV1Alpha1) CreatePetSet(ctx context.Context, obj *appsv1alpha1.PetSet) (*appsv1alpha1.PetSet, error) {
+func (c *AppsV1Beta1) CreateStatefulSet(ctx context.Context, obj *appsv1beta1.StatefulSet) (*appsv1beta1.StatefulSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("apps", "v1alpha1", md.Namespace, "petsets", "")
-	resp := new(appsv1alpha1.PetSet)
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("apps", "v1beta1", String(md.Namespace), "statefulsets", "")
+	resp := new(appsv1beta1.StatefulSet)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
@@ -955,32 +1255,47 @@ func (c *AppsV1Alpha1) CreatePetSet(ctx context.Context, obj *appsv1alpha1.PetSe
 	return resp, nil
 }
 
-func (c *AppsV1Alpha1) DeletePetSet(ctx context.Context, name string) error {
+func (c *AppsV1Beta1) UpdateStatefulSet(ctx context.Context, obj *appsv1beta1.StatefulSet) (*appsv1beta1.StatefulSet, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("apps", "v1beta1", String(md.Namespace), "statefulsets", String(md.Name))
+	resp := new(appsv1beta1.StatefulSet)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *AppsV1Beta1) DeleteStatefulSet(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", name)
+	url := c.client.urlFor("apps", "v1beta1", ns, "statefulsets", name)
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *AppsV1Alpha1) GetPetSet(ctx context.Context, name string) (*appsv1alpha1.PetSet, error) {
+func (c *AppsV1Beta1) GetStatefulSet(ctx context.Context, name string) (*appsv1beta1.StatefulSet, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", name)
-	resp := new(appsv1alpha1.PetSet)
+	url := c.client.urlFor("apps", "v1beta1", ns, "statefulsets", name)
+	resp := new(appsv1beta1.StatefulSet)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *AppsV1Alpha1) ListPetSets(ctx context.Context) (*appsv1alpha1.PetSetList, error) {
+func (c *AppsV1Beta1) ListStatefulSets(ctx context.Context) (*appsv1beta1.StatefulSetList, error) {
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", "")
-	resp := new(appsv1alpha1.PetSetList)
+	url := c.client.urlFor("apps", "v1beta1", ns, "statefulsets", "")
+	resp := new(appsv1beta1.StatefulSetList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
 	}
@@ -1000,13 +1315,28 @@ type AuthenticationV1Beta1 struct {
 
 func (c *AuthenticationV1Beta1) CreateTokenReview(ctx context.Context, obj *authenticationv1beta1.TokenReview) (*authenticationv1beta1.TokenReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("authentication.k8s.io", "v1beta1", md.Namespace, "tokenreviews", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("authentication.k8s.io", "v1beta1", String(md.Namespace), "tokenreviews", "")
 	resp := new(authenticationv1beta1.TokenReview)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *AuthenticationV1Beta1) UpdateTokenReview(ctx context.Context, obj *authenticationv1beta1.TokenReview) (*authenticationv1beta1.TokenReview, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("authentication.k8s.io", "v1beta1", String(md.Namespace), "tokenreviews", String(md.Name))
+	resp := new(authenticationv1beta1.TokenReview)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1048,13 +1378,28 @@ type AuthorizationV1Beta1 struct {
 
 func (c *AuthorizationV1Beta1) CreateLocalSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.LocalSubjectAccessReview) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "localsubjectaccessreviews", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", String(md.Namespace), "localsubjectaccessreviews", "")
 	resp := new(authorizationv1beta1.LocalSubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *AuthorizationV1Beta1) UpdateLocalSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.LocalSubjectAccessReview) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", String(md.Namespace), "localsubjectaccessreviews", String(md.Name))
+	resp := new(authorizationv1beta1.LocalSubjectAccessReview)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1085,13 +1430,28 @@ func (c *AuthorizationV1Beta1) GetLocalSubjectAccessReview(ctx context.Context, 
 
 func (c *AuthorizationV1Beta1) CreateSelfSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SelfSubjectAccessReview) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "selfsubjectaccessreviews", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", String(md.Namespace), "selfsubjectaccessreviews", "")
 	resp := new(authorizationv1beta1.SelfSubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *AuthorizationV1Beta1) UpdateSelfSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SelfSubjectAccessReview) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", String(md.Namespace), "selfsubjectaccessreviews", String(md.Name))
+	resp := new(authorizationv1beta1.SelfSubjectAccessReview)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1122,13 +1482,28 @@ func (c *AuthorizationV1Beta1) GetSelfSubjectAccessReview(ctx context.Context, n
 
 func (c *AuthorizationV1Beta1) CreateSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SubjectAccessReview) (*authorizationv1beta1.SubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "subjectaccessreviews", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", String(md.Namespace), "subjectaccessreviews", "")
 	resp := new(authorizationv1beta1.SubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *AuthorizationV1Beta1) UpdateSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SubjectAccessReview) (*authorizationv1beta1.SubjectAccessReview, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", String(md.Namespace), "subjectaccessreviews", String(md.Name))
+	resp := new(authorizationv1beta1.SubjectAccessReview)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1170,13 +1545,28 @@ type AutoscalingV1 struct {
 
 func (c *AutoscalingV1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *autoscalingv1.HorizontalPodAutoscaler) (*autoscalingv1.HorizontalPodAutoscaler, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "horizontalpodautoscalers", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("autoscaling", "v1", String(md.Namespace), "horizontalpodautoscalers", "")
 	resp := new(autoscalingv1.HorizontalPodAutoscaler)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *AutoscalingV1) UpdateHorizontalPodAutoscaler(ctx context.Context, obj *autoscalingv1.HorizontalPodAutoscaler) (*autoscalingv1.HorizontalPodAutoscaler, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("autoscaling", "v1", String(md.Namespace), "horizontalpodautoscalers", String(md.Name))
+	resp := new(autoscalingv1.HorizontalPodAutoscaler)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1217,13 +1607,28 @@ func (c *AutoscalingV1) ListHorizontalPodAutoscalers(ctx context.Context) (*auto
 
 func (c *AutoscalingV1) CreateScale(ctx context.Context, obj *autoscalingv1.Scale) (*autoscalingv1.Scale, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "scales", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("autoscaling", "v1", String(md.Namespace), "scales", "")
 	resp := new(autoscalingv1.Scale)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *AutoscalingV1) UpdateScale(ctx context.Context, obj *autoscalingv1.Scale) (*autoscalingv1.Scale, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("autoscaling", "v1", String(md.Namespace), "scales", String(md.Name))
+	resp := new(autoscalingv1.Scale)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1265,13 +1670,28 @@ type BatchV1 struct {
 
 func (c *BatchV1) CreateJob(ctx context.Context, obj *batchv1.Job) (*batchv1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v1", md.Namespace, "jobs", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v1", String(md.Namespace), "jobs", "")
 	resp := new(batchv1.Job)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *BatchV1) UpdateJob(ctx context.Context, obj *batchv1.Job) (*batchv1.Job, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v1", String(md.Namespace), "jobs", String(md.Name))
+	resp := new(batchv1.Job)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1321,15 +1741,92 @@ type BatchV2Alpha1 struct {
 	client *Client
 }
 
-func (c *BatchV2Alpha1) CreateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batchv2alpha1.Job, error) {
+func (c *BatchV2Alpha1) CreateCronJob(ctx context.Context, obj *batchv2alpha1.CronJob) (*batchv2alpha1.CronJob, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobs", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v2alpha1", String(md.Namespace), "cronjobs", "")
+	resp := new(batchv2alpha1.CronJob)
+	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *BatchV2Alpha1) UpdateCronJob(ctx context.Context, obj *batchv2alpha1.CronJob) (*batchv2alpha1.CronJob, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v2alpha1", String(md.Namespace), "cronjobs", String(md.Name))
+	resp := new(batchv2alpha1.CronJob)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *BatchV2Alpha1) DeleteCronJob(ctx context.Context, name string) error {
+	if name == "" {
+		return fmt.Errorf("create: no name for given object")
+	}
+	ns := c.client.namespaceFor(ctx, true)
+	url := c.client.urlFor("batch", "v2alpha1", ns, "cronjobs", name)
+	return c.client.delete(ctx, pbCodec, url)
+}
+
+func (c *BatchV2Alpha1) GetCronJob(ctx context.Context, name string) (*batchv2alpha1.CronJob, error) {
+	if name == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	ns := c.client.namespaceFor(ctx, true)
+	url := c.client.urlFor("batch", "v2alpha1", ns, "cronjobs", name)
+	resp := new(batchv2alpha1.CronJob)
+	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *BatchV2Alpha1) ListCronJobs(ctx context.Context) (*batchv2alpha1.CronJobList, error) {
+	ns := c.client.namespaceFor(ctx, true)
+	url := c.client.urlFor("batch", "v2alpha1", ns, "cronjobs", "")
+	resp := new(batchv2alpha1.CronJobList)
+	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *BatchV2Alpha1) CreateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batchv2alpha1.Job, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v2alpha1", String(md.Namespace), "jobs", "")
 	resp := new(batchv2alpha1.Job)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *BatchV2Alpha1) UpdateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batchv2alpha1.Job, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v2alpha1", String(md.Namespace), "jobs", String(md.Name))
+	resp := new(batchv2alpha1.Job)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1370,13 +1867,28 @@ func (c *BatchV2Alpha1) ListJobs(ctx context.Context) (*batchv2alpha1.JobList, e
 
 func (c *BatchV2Alpha1) CreateJobTemplate(ctx context.Context, obj *batchv2alpha1.JobTemplate) (*batchv2alpha1.JobTemplate, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobtemplates", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v2alpha1", String(md.Namespace), "jobtemplates", "")
 	resp := new(batchv2alpha1.JobTemplate)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *BatchV2Alpha1) UpdateJobTemplate(ctx context.Context, obj *batchv2alpha1.JobTemplate) (*batchv2alpha1.JobTemplate, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("batch", "v2alpha1", String(md.Namespace), "jobtemplates", String(md.Name))
+	resp := new(batchv2alpha1.JobTemplate)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1405,53 +1917,6 @@ func (c *BatchV2Alpha1) GetJobTemplate(ctx context.Context, name string) (*batch
 	return resp, nil
 }
 
-func (c *BatchV2Alpha1) CreateScheduledJob(ctx context.Context, obj *batchv2alpha1.ScheduledJob) (*batchv2alpha1.ScheduledJob, error) {
-	md := obj.GetMetadata()
-	if md.Name == "" {
-		return nil, fmt.Errorf("create: no name for given object")
-	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "scheduledjobs", "")
-	resp := new(batchv2alpha1.ScheduledJob)
-	err := c.client.create(ctx, pbCodec, url, obj, resp)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-func (c *BatchV2Alpha1) DeleteScheduledJob(ctx context.Context, name string) error {
-	if name == "" {
-		return fmt.Errorf("create: no name for given object")
-	}
-	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", name)
-	return c.client.delete(ctx, pbCodec, url)
-}
-
-func (c *BatchV2Alpha1) GetScheduledJob(ctx context.Context, name string) (*batchv2alpha1.ScheduledJob, error) {
-	if name == "" {
-		return nil, fmt.Errorf("create: no name for given object")
-	}
-	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", name)
-	resp := new(batchv2alpha1.ScheduledJob)
-	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-func (c *BatchV2Alpha1) ListScheduledJobs(ctx context.Context) (*batchv2alpha1.ScheduledJobList, error) {
-	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", "")
-	resp := new(batchv2alpha1.ScheduledJobList)
-	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
 
 // CertificatesV1Alpha1 returns a client for interacting with the certificates.k8s.io/v1alpha1 API group.
 func (c *Client) CertificatesV1Alpha1() *CertificatesV1Alpha1 {
@@ -1465,13 +1930,28 @@ type CertificatesV1Alpha1 struct {
 
 func (c *CertificatesV1Alpha1) CreateCertificateSigningRequest(ctx context.Context, obj *certificatesv1alpha1.CertificateSigningRequest) (*certificatesv1alpha1.CertificateSigningRequest, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", md.Namespace, "certificatesigningrequests", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", String(md.Namespace), "certificatesigningrequests", "")
 	resp := new(certificatesv1alpha1.CertificateSigningRequest)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *CertificatesV1Alpha1) UpdateCertificateSigningRequest(ctx context.Context, obj *certificatesv1alpha1.CertificateSigningRequest) (*certificatesv1alpha1.CertificateSigningRequest, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", String(md.Namespace), "certificatesigningrequests", String(md.Name))
+	resp := new(certificatesv1alpha1.CertificateSigningRequest)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1523,13 +2003,28 @@ type ExtensionsV1Beta1 struct {
 
 func (c *ExtensionsV1Beta1) CreateDaemonSet(ctx context.Context, obj *extensionsv1beta1.DaemonSet) (*extensionsv1beta1.DaemonSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "daemonsets", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "daemonsets", "")
 	resp := new(extensionsv1beta1.DaemonSet)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateDaemonSet(ctx context.Context, obj *extensionsv1beta1.DaemonSet) (*extensionsv1beta1.DaemonSet, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "daemonsets", String(md.Name))
+	resp := new(extensionsv1beta1.DaemonSet)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1570,13 +2065,28 @@ func (c *ExtensionsV1Beta1) ListDaemonSets(ctx context.Context) (*extensionsv1be
 
 func (c *ExtensionsV1Beta1) CreateDeployment(ctx context.Context, obj *extensionsv1beta1.Deployment) (*extensionsv1beta1.Deployment, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "deployments", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "deployments", "")
 	resp := new(extensionsv1beta1.Deployment)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateDeployment(ctx context.Context, obj *extensionsv1beta1.Deployment) (*extensionsv1beta1.Deployment, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "deployments", String(md.Name))
+	resp := new(extensionsv1beta1.Deployment)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1617,13 +2127,28 @@ func (c *ExtensionsV1Beta1) ListDeployments(ctx context.Context) (*extensionsv1b
 
 func (c *ExtensionsV1Beta1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *extensionsv1beta1.HorizontalPodAutoscaler) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "horizontalpodautoscalers", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "horizontalpodautoscalers", "")
 	resp := new(extensionsv1beta1.HorizontalPodAutoscaler)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateHorizontalPodAutoscaler(ctx context.Context, obj *extensionsv1beta1.HorizontalPodAutoscaler) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "horizontalpodautoscalers", String(md.Name))
+	resp := new(extensionsv1beta1.HorizontalPodAutoscaler)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1664,13 +2189,28 @@ func (c *ExtensionsV1Beta1) ListHorizontalPodAutoscalers(ctx context.Context) (*
 
 func (c *ExtensionsV1Beta1) CreateIngress(ctx context.Context, obj *extensionsv1beta1.Ingress) (*extensionsv1beta1.Ingress, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "ingresses", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "ingresses", "")
 	resp := new(extensionsv1beta1.Ingress)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateIngress(ctx context.Context, obj *extensionsv1beta1.Ingress) (*extensionsv1beta1.Ingress, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "ingresses", String(md.Name))
+	resp := new(extensionsv1beta1.Ingress)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1711,13 +2251,28 @@ func (c *ExtensionsV1Beta1) ListIngresses(ctx context.Context) (*extensionsv1bet
 
 func (c *ExtensionsV1Beta1) CreateJob(ctx context.Context, obj *extensionsv1beta1.Job) (*extensionsv1beta1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "jobs", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "jobs", "")
 	resp := new(extensionsv1beta1.Job)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateJob(ctx context.Context, obj *extensionsv1beta1.Job) (*extensionsv1beta1.Job, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "jobs", String(md.Name))
+	resp := new(extensionsv1beta1.Job)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1758,13 +2313,28 @@ func (c *ExtensionsV1Beta1) ListJobs(ctx context.Context) (*extensionsv1beta1.Jo
 
 func (c *ExtensionsV1Beta1) CreateNetworkPolicy(ctx context.Context, obj *extensionsv1beta1.NetworkPolicy) (*extensionsv1beta1.NetworkPolicy, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "networkpolicies", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "networkpolicies", "")
 	resp := new(extensionsv1beta1.NetworkPolicy)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateNetworkPolicy(ctx context.Context, obj *extensionsv1beta1.NetworkPolicy) (*extensionsv1beta1.NetworkPolicy, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "networkpolicies", String(md.Name))
+	resp := new(extensionsv1beta1.NetworkPolicy)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1805,13 +2375,28 @@ func (c *ExtensionsV1Beta1) ListNetworkPolicies(ctx context.Context) (*extension
 
 func (c *ExtensionsV1Beta1) CreatePodSecurityPolicy(ctx context.Context, obj *extensionsv1beta1.PodSecurityPolicy) (*extensionsv1beta1.PodSecurityPolicy, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "podsecuritypolicies", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "podsecuritypolicies", "")
 	resp := new(extensionsv1beta1.PodSecurityPolicy)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdatePodSecurityPolicy(ctx context.Context, obj *extensionsv1beta1.PodSecurityPolicy) (*extensionsv1beta1.PodSecurityPolicy, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "podsecuritypolicies", String(md.Name))
+	resp := new(extensionsv1beta1.PodSecurityPolicy)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1852,13 +2437,28 @@ func (c *ExtensionsV1Beta1) ListPodSecurityPolicies(ctx context.Context) (*exten
 
 func (c *ExtensionsV1Beta1) CreateReplicaSet(ctx context.Context, obj *extensionsv1beta1.ReplicaSet) (*extensionsv1beta1.ReplicaSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "replicasets", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "replicasets", "")
 	resp := new(extensionsv1beta1.ReplicaSet)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateReplicaSet(ctx context.Context, obj *extensionsv1beta1.ReplicaSet) (*extensionsv1beta1.ReplicaSet, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "replicasets", String(md.Name))
+	resp := new(extensionsv1beta1.ReplicaSet)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1899,13 +2499,28 @@ func (c *ExtensionsV1Beta1) ListReplicaSets(ctx context.Context) (*extensionsv1b
 
 func (c *ExtensionsV1Beta1) CreateScale(ctx context.Context, obj *extensionsv1beta1.Scale) (*extensionsv1beta1.Scale, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "scales", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "scales", "")
 	resp := new(extensionsv1beta1.Scale)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateScale(ctx context.Context, obj *extensionsv1beta1.Scale) (*extensionsv1beta1.Scale, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "scales", String(md.Name))
+	resp := new(extensionsv1beta1.Scale)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1936,13 +2551,28 @@ func (c *ExtensionsV1Beta1) GetScale(ctx context.Context, name string) (*extensi
 
 func (c *ExtensionsV1Beta1) CreateThirdPartyResource(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResource) (*extensionsv1beta1.ThirdPartyResource, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresources", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "thirdpartyresources", "")
 	resp := new(extensionsv1beta1.ThirdPartyResource)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateThirdPartyResource(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResource) (*extensionsv1beta1.ThirdPartyResource, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "thirdpartyresources", String(md.Name))
+	resp := new(extensionsv1beta1.ThirdPartyResource)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -1983,13 +2613,28 @@ func (c *ExtensionsV1Beta1) ListThirdPartyResources(ctx context.Context) (*exten
 
 func (c *ExtensionsV1Beta1) CreateThirdPartyResourceData(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResourceData) (*extensionsv1beta1.ThirdPartyResourceData, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresourcedatas", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "thirdpartyresourcedatas", "")
 	resp := new(extensionsv1beta1.ThirdPartyResourceData)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ExtensionsV1Beta1) UpdateThirdPartyResourceData(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResourceData) (*extensionsv1beta1.ThirdPartyResourceData, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("extensions", "v1beta1", String(md.Namespace), "thirdpartyresourcedatas", String(md.Name))
+	resp := new(extensionsv1beta1.ThirdPartyResourceData)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -2041,13 +2686,28 @@ type ImagepolicyV1Alpha1 struct {
 
 func (c *ImagepolicyV1Alpha1) CreateImageReview(ctx context.Context, obj *imagepolicyv1alpha1.ImageReview) (*imagepolicyv1alpha1.ImageReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("imagepolicy", "v1alpha1", md.Namespace, "imagereviews", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("imagepolicy", "v1alpha1", String(md.Namespace), "imagereviews", "")
 	resp := new(imagepolicyv1alpha1.ImageReview)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *ImagepolicyV1Alpha1) UpdateImageReview(ctx context.Context, obj *imagepolicyv1alpha1.ImageReview) (*imagepolicyv1alpha1.ImageReview, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("imagepolicy", "v1alpha1", String(md.Namespace), "imagereviews", String(md.Name))
+	resp := new(imagepolicyv1alpha1.ImageReview)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -2077,24 +2737,24 @@ func (c *ImagepolicyV1Alpha1) GetImageReview(ctx context.Context, name string) (
 }
 
 
-// PolicyV1Alpha1 returns a client for interacting with the policy/v1alpha1 API group.
-func (c *Client) PolicyV1Alpha1() *PolicyV1Alpha1 {
-	return &PolicyV1Alpha1{c}
+// PolicyV1Beta1 returns a client for interacting with the policy/v1beta1 API group.
+func (c *Client) PolicyV1Beta1() *PolicyV1Beta1 {
+	return &PolicyV1Beta1{c}
 }
 
-// PolicyV1Alpha1 is a client for interacting with the policy/v1alpha1 API group.
-type PolicyV1Alpha1 struct {
+// PolicyV1Beta1 is a client for interacting with the policy/v1beta1 API group.
+type PolicyV1Beta1 struct {
 	client *Client
 }
 
-func (c *PolicyV1Alpha1) CreateEviction(ctx context.Context, obj *policyv1alpha1.Eviction) (*policyv1alpha1.Eviction, error) {
+func (c *PolicyV1Beta1) CreateEviction(ctx context.Context, obj *policyv1beta1.Eviction) (*policyv1beta1.Eviction, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1alpha1", md.Namespace, "evictions", "")
-	resp := new(policyv1alpha1.Eviction)
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("policy", "v1beta1", String(md.Namespace), "evictions", "")
+	resp := new(policyv1beta1.Eviction)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
@@ -2102,36 +2762,51 @@ func (c *PolicyV1Alpha1) CreateEviction(ctx context.Context, obj *policyv1alpha1
 	return resp, nil
 }
 
-func (c *PolicyV1Alpha1) DeleteEviction(ctx context.Context, name string) error {
+func (c *PolicyV1Beta1) UpdateEviction(ctx context.Context, obj *policyv1beta1.Eviction) (*policyv1beta1.Eviction, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("policy", "v1beta1", String(md.Namespace), "evictions", String(md.Name))
+	resp := new(policyv1beta1.Eviction)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *PolicyV1Beta1) DeleteEviction(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1alpha1", ns, "evictions", name)
+	url := c.client.urlFor("policy", "v1beta1", ns, "evictions", name)
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *PolicyV1Alpha1) GetEviction(ctx context.Context, name string) (*policyv1alpha1.Eviction, error) {
+func (c *PolicyV1Beta1) GetEviction(ctx context.Context, name string) (*policyv1beta1.Eviction, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1alpha1", ns, "evictions", name)
-	resp := new(policyv1alpha1.Eviction)
+	url := c.client.urlFor("policy", "v1beta1", ns, "evictions", name)
+	resp := new(policyv1beta1.Eviction)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *PolicyV1Alpha1) CreatePodDisruptionBudget(ctx context.Context, obj *policyv1alpha1.PodDisruptionBudget) (*policyv1alpha1.PodDisruptionBudget, error) {
+func (c *PolicyV1Beta1) CreatePodDisruptionBudget(ctx context.Context, obj *policyv1beta1.PodDisruptionBudget) (*policyv1beta1.PodDisruptionBudget, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1alpha1", md.Namespace, "poddisruptionbudgets", "")
-	resp := new(policyv1alpha1.PodDisruptionBudget)
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("policy", "v1beta1", String(md.Namespace), "poddisruptionbudgets", "")
+	resp := new(policyv1beta1.PodDisruptionBudget)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
@@ -2139,32 +2814,47 @@ func (c *PolicyV1Alpha1) CreatePodDisruptionBudget(ctx context.Context, obj *pol
 	return resp, nil
 }
 
-func (c *PolicyV1Alpha1) DeletePodDisruptionBudget(ctx context.Context, name string) error {
+func (c *PolicyV1Beta1) UpdatePodDisruptionBudget(ctx context.Context, obj *policyv1beta1.PodDisruptionBudget) (*policyv1beta1.PodDisruptionBudget, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("policy", "v1beta1", String(md.Namespace), "poddisruptionbudgets", String(md.Name))
+	resp := new(policyv1beta1.PodDisruptionBudget)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *PolicyV1Beta1) DeletePodDisruptionBudget(ctx context.Context, name string) error {
 	if name == "" {
 		return fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", name)
+	url := c.client.urlFor("policy", "v1beta1", ns, "poddisruptionbudgets", name)
 	return c.client.delete(ctx, pbCodec, url)
 }
 
-func (c *PolicyV1Alpha1) GetPodDisruptionBudget(ctx context.Context, name string) (*policyv1alpha1.PodDisruptionBudget, error) {
+func (c *PolicyV1Beta1) GetPodDisruptionBudget(ctx context.Context, name string) (*policyv1beta1.PodDisruptionBudget, error) {
 	if name == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", name)
-	resp := new(policyv1alpha1.PodDisruptionBudget)
+	url := c.client.urlFor("policy", "v1beta1", ns, "poddisruptionbudgets", name)
+	resp := new(policyv1beta1.PodDisruptionBudget)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *PolicyV1Alpha1) ListPodDisruptionBudgets(ctx context.Context) (*policyv1alpha1.PodDisruptionBudgetList, error) {
+func (c *PolicyV1Beta1) ListPodDisruptionBudgets(ctx context.Context) (*policyv1beta1.PodDisruptionBudgetList, error) {
 	ns := c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", "")
-	resp := new(policyv1alpha1.PodDisruptionBudgetList)
+	url := c.client.urlFor("policy", "v1beta1", ns, "poddisruptionbudgets", "")
+	resp := new(policyv1beta1.PodDisruptionBudgetList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
 	}
@@ -2184,13 +2874,28 @@ type RBACV1Alpha1 struct {
 
 func (c *RBACV1Alpha1) CreateClusterRole(ctx context.Context, obj *rbacv1alpha1.ClusterRole) (*rbacv1alpha1.ClusterRole, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterroles", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "clusterroles", "")
 	resp := new(rbacv1alpha1.ClusterRole)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *RBACV1Alpha1) UpdateClusterRole(ctx context.Context, obj *rbacv1alpha1.ClusterRole) (*rbacv1alpha1.ClusterRole, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "clusterroles", String(md.Name))
+	resp := new(rbacv1alpha1.ClusterRole)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -2231,13 +2936,28 @@ func (c *RBACV1Alpha1) ListClusterRoles(ctx context.Context) (*rbacv1alpha1.Clus
 
 func (c *RBACV1Alpha1) CreateClusterRoleBinding(ctx context.Context, obj *rbacv1alpha1.ClusterRoleBinding) (*rbacv1alpha1.ClusterRoleBinding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterrolebindings", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "clusterrolebindings", "")
 	resp := new(rbacv1alpha1.ClusterRoleBinding)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *RBACV1Alpha1) UpdateClusterRoleBinding(ctx context.Context, obj *rbacv1alpha1.ClusterRoleBinding) (*rbacv1alpha1.ClusterRoleBinding, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "clusterrolebindings", String(md.Name))
+	resp := new(rbacv1alpha1.ClusterRoleBinding)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -2278,13 +2998,28 @@ func (c *RBACV1Alpha1) ListClusterRoleBindings(ctx context.Context) (*rbacv1alph
 
 func (c *RBACV1Alpha1) CreateRole(ctx context.Context, obj *rbacv1alpha1.Role) (*rbacv1alpha1.Role, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "roles", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "roles", "")
 	resp := new(rbacv1alpha1.Role)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *RBACV1Alpha1) UpdateRole(ctx context.Context, obj *rbacv1alpha1.Role) (*rbacv1alpha1.Role, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "roles", String(md.Name))
+	resp := new(rbacv1alpha1.Role)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -2325,13 +3060,28 @@ func (c *RBACV1Alpha1) ListRoles(ctx context.Context) (*rbacv1alpha1.RoleList, e
 
 func (c *RBACV1Alpha1) CreateRoleBinding(ctx context.Context, obj *rbacv1alpha1.RoleBinding) (*rbacv1alpha1.RoleBinding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "rolebindings", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "rolebindings", "")
 	resp := new(rbacv1alpha1.RoleBinding)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *RBACV1Alpha1) UpdateRoleBinding(ctx context.Context, obj *rbacv1alpha1.RoleBinding) (*rbacv1alpha1.RoleBinding, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, true))
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", String(md.Namespace), "rolebindings", String(md.Name))
+	resp := new(rbacv1alpha1.RoleBinding)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -2383,13 +3133,28 @@ type StorageV1Beta1 struct {
 
 func (c *StorageV1Beta1) CreateStorageClass(ctx context.Context, obj *storagev1beta1.StorageClass) (*storagev1beta1.StorageClass, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if String(md.Name) == "" {
 		return nil, fmt.Errorf("create: no name for given object")
 	}
-	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("storage.k8s.io", "v1beta1", md.Namespace, "storageclasses", "")
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("storage.k8s.io", "v1beta1", String(md.Namespace), "storageclasses", "")
 	resp := new(storagev1beta1.StorageClass)
 	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *StorageV1Beta1) UpdateStorageClass(ctx context.Context, obj *storagev1beta1.StorageClass) (*storagev1beta1.StorageClass, error) {
+	md := obj.GetMetadata()
+	if String(md.Name) == "" {
+		return nil, fmt.Errorf("create: no name for given object")
+	}
+	md.Namespace = StringP(c.client.namespaceFor(ctx, false))
+	url := c.client.urlFor("storage.k8s.io", "v1beta1", String(md.Namespace), "storageclasses", String(md.Name))
+	resp := new(storagev1beta1.StorageClass)
+	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
 		return nil, err
 	}
