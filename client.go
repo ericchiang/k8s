@@ -187,7 +187,7 @@ type APIError struct {
 	Status *unversioned.Status
 }
 
-func (e *APIError) Error() string { return "kubernetes api: " + e.Status.Message }
+func (e *APIError) Error() string { return "kubernetes api: " + String(e.Status.Message) }
 
 func checkStatusCode(c *codec, statusCode, gotStatusCode int, body []byte) error {
 	if statusCode == gotStatusCode {
@@ -304,7 +304,7 @@ func (c *Client) update(ctx context.Context, codec *codec, url string, req, resp
 		return fmt.Errorf("read body: %v", err)
 	}
 
-	if err := checkStatusCode(codec, re.StatusCode, http.StatusCreated, respBody); err != nil {
+	if err := checkStatusCode(codec, re.StatusCode, http.StatusOK, respBody); err != nil {
 		return err
 	}
 	return codec.unmarshal(respBody, resp)

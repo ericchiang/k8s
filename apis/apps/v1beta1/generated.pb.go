@@ -25,12 +25,6 @@ import k8s_io_kubernetes_pkg_api_v1 "github.com/ericchiang/k8s/api/v1"
 import _ "github.com/ericchiang/k8s/runtime"
 import _ "github.com/ericchiang/k8s/util/intstr"
 
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
-
 import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -59,10 +53,12 @@ type StatefulSet struct {
 	// Status is the current status of Pods in this StatefulSet. This data
 	// may be out of date by some window of time.
 	// +optional
-	Status *StatefulSetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *StatefulSetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte             `json:"-"`
 }
 
 func (m *StatefulSet) Reset()                    { *m = StatefulSet{} }
+func (m *StatefulSet) String() string            { return proto.CompactTextString(m) }
 func (*StatefulSet) ProtoMessage()               {}
 func (*StatefulSet) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
@@ -90,11 +86,13 @@ func (m *StatefulSet) GetStatus() *StatefulSetStatus {
 // StatefulSetList is a collection of StatefulSets.
 type StatefulSetList struct {
 	// +optional
-	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	Items    []*StatefulSet                                  `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Metadata         *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	Items            []*StatefulSet                                  `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                                          `json:"-"`
 }
 
 func (m *StatefulSetList) Reset()                    { *m = StatefulSetList{} }
+func (m *StatefulSetList) String() string            { return proto.CompactTextString(m) }
 func (*StatefulSetList) ProtoMessage()               {}
 func (*StatefulSetList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
 
@@ -120,7 +118,7 @@ type StatefulSetSpec struct {
 	// If unspecified, defaults to 1.
 	// TODO: Consider a rename of this field.
 	// +optional
-	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
+	Replicas *int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas,omitempty"`
 	// Selector is a label query over pods that should match the replica count.
 	// If empty, defaulted to labels on the pod template.
 	// More info: http://kubernetes.io/docs/user-guide/labels#label-selectors
@@ -145,16 +143,18 @@ type StatefulSetSpec struct {
 	// the network identity of the set. Pods get DNS/hostnames that follow the
 	// pattern: pod-specific-string.serviceName.default.svc.cluster.local
 	// where "pod-specific-string" is managed by the StatefulSet controller.
-	ServiceName string `protobuf:"bytes,5,opt,name=serviceName" json:"serviceName"`
+	ServiceName      *string `protobuf:"bytes,5,opt,name=serviceName" json:"serviceName,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *StatefulSetSpec) Reset()                    { *m = StatefulSetSpec{} }
+func (m *StatefulSetSpec) String() string            { return proto.CompactTextString(m) }
 func (*StatefulSetSpec) ProtoMessage()               {}
 func (*StatefulSetSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
 
 func (m *StatefulSetSpec) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
@@ -181,8 +181,8 @@ func (m *StatefulSetSpec) GetVolumeClaimTemplates() []*k8s_io_kubernetes_pkg_api
 }
 
 func (m *StatefulSetSpec) GetServiceName() string {
-	if m != nil {
-		return m.ServiceName
+	if m != nil && m.ServiceName != nil {
+		return *m.ServiceName
 	}
 	return ""
 }
@@ -191,25 +191,27 @@ func (m *StatefulSetSpec) GetServiceName() string {
 type StatefulSetStatus struct {
 	// most recent generation observed by this autoscaler.
 	// +optional
-	ObservedGeneration int64 `protobuf:"varint,1,opt,name=observedGeneration" json:"observedGeneration"`
+	ObservedGeneration *int64 `protobuf:"varint,1,opt,name=observedGeneration" json:"observedGeneration,omitempty"`
 	// Replicas is the number of actual replicas.
-	Replicas int32 `protobuf:"varint,2,opt,name=replicas" json:"replicas"`
+	Replicas         *int32 `protobuf:"varint,2,opt,name=replicas" json:"replicas,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *StatefulSetStatus) Reset()                    { *m = StatefulSetStatus{} }
+func (m *StatefulSetStatus) String() string            { return proto.CompactTextString(m) }
 func (*StatefulSetStatus) ProtoMessage()               {}
 func (*StatefulSetStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
 
 func (m *StatefulSetStatus) GetObservedGeneration() int64 {
-	if m != nil {
-		return m.ObservedGeneration
+	if m != nil && m.ObservedGeneration != nil {
+		return *m.ObservedGeneration
 	}
 	return 0
 }
 
 func (m *StatefulSetStatus) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
@@ -219,250 +221,6 @@ func init() {
 	proto.RegisterType((*StatefulSetList)(nil), "github.com/ericchiang.k8s.apis.apps.v1beta1.StatefulSetList")
 	proto.RegisterType((*StatefulSetSpec)(nil), "github.com/ericchiang.k8s.apis.apps.v1beta1.StatefulSetSpec")
 	proto.RegisterType((*StatefulSetStatus)(nil), "github.com/ericchiang.k8s.apis.apps.v1beta1.StatefulSetStatus")
-}
-func (this *StatefulSet) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*StatefulSet)
-	if !ok {
-		that2, ok := that.(StatefulSet)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *StatefulSetList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*StatefulSetList)
-	if !ok {
-		that2, ok := that.(StatefulSetList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *StatefulSetSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*StatefulSetSpec)
-	if !ok {
-		that2, ok := that.(StatefulSetSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	if !this.Selector.Equal(that1.Selector) {
-		return false
-	}
-	if !this.Template.Equal(that1.Template) {
-		return false
-	}
-	if len(this.VolumeClaimTemplates) != len(that1.VolumeClaimTemplates) {
-		return false
-	}
-	for i := range this.VolumeClaimTemplates {
-		if !this.VolumeClaimTemplates[i].Equal(that1.VolumeClaimTemplates[i]) {
-			return false
-		}
-	}
-	if this.ServiceName != that1.ServiceName {
-		return false
-	}
-	return true
-}
-func (this *StatefulSetStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*StatefulSetStatus)
-	if !ok {
-		that2, ok := that.(StatefulSetStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ObservedGeneration != that1.ObservedGeneration {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	return true
-}
-func (this *StatefulSet) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1beta1.StatefulSet{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *StatefulSetList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1beta1.StatefulSetList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *StatefulSetSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1beta1.StatefulSetSpec{")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	if this.Selector != nil {
-		s = append(s, "Selector: "+fmt.Sprintf("%#v", this.Selector)+",\n")
-	}
-	if this.Template != nil {
-		s = append(s, "Template: "+fmt.Sprintf("%#v", this.Template)+",\n")
-	}
-	if this.VolumeClaimTemplates != nil {
-		s = append(s, "VolumeClaimTemplates: "+fmt.Sprintf("%#v", this.VolumeClaimTemplates)+",\n")
-	}
-	s = append(s, "ServiceName: "+fmt.Sprintf("%#v", this.ServiceName)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *StatefulSetStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1beta1.StatefulSetStatus{")
-	s = append(s, "ObservedGeneration: "+fmt.Sprintf("%#v", this.ObservedGeneration)+",\n")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *StatefulSet) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -509,6 +267,9 @@ func (m *StatefulSet) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -549,6 +310,9 @@ func (m *StatefulSetList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -567,9 +331,11 @@ func (m *StatefulSetSpec) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
+	if m.Replicas != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
 	if m.Selector != nil {
 		dAtA[i] = 0x12
 		i++
@@ -602,10 +368,15 @@ func (m *StatefulSetSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ServiceName)))
-	i += copy(dAtA[i:], m.ServiceName)
+	if m.ServiceName != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ServiceName)))
+		i += copy(dAtA[i:], *m.ServiceName)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -624,12 +395,19 @@ func (m *StatefulSetStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ObservedGeneration))
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
+	if m.ObservedGeneration != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ObservedGeneration))
+	}
+	if m.Replicas != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -675,6 +453,9 @@ func (m *StatefulSet) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -691,13 +472,18 @@ func (m *StatefulSetList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *StatefulSetSpec) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Replicas))
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
 	if m.Selector != nil {
 		l = m.Selector.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -712,16 +498,28 @@ func (m *StatefulSetSpec) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.ServiceName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ServiceName != nil {
+		l = len(*m.ServiceName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *StatefulSetStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.ObservedGeneration))
-	n += 1 + sovGenerated(uint64(m.Replicas))
+	if m.ObservedGeneration != nil {
+		n += 1 + sovGenerated(uint64(*m.ObservedGeneration))
+	}
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -737,62 +535,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *StatefulSet) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&StatefulSet{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "StatefulSetSpec", "StatefulSetSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "StatefulSetStatus", "StatefulSetStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *StatefulSetList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&StatefulSetList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "StatefulSet", "StatefulSet", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *StatefulSetSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&StatefulSetSpec{`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`Selector:` + strings.Replace(fmt.Sprintf("%v", this.Selector), "LabelSelector", "github.com/ericchiang.k8s.api_unversioned.LabelSelector", 1) + `,`,
-		`Template:` + strings.Replace(fmt.Sprintf("%v", this.Template), "PodTemplateSpec", "github.com/ericchiang.k8s.api_v1.PodTemplateSpec", 1) + `,`,
-		`VolumeClaimTemplates:` + strings.Replace(fmt.Sprintf("%v", this.VolumeClaimTemplates), "PersistentVolumeClaim", "github.com/ericchiang.k8s.api_v1.PersistentVolumeClaim", 1) + `,`,
-		`ServiceName:` + fmt.Sprintf("%v", this.ServiceName) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *StatefulSetStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&StatefulSetStatus{`,
-		`ObservedGeneration:` + fmt.Sprintf("%v", this.ObservedGeneration) + `,`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *StatefulSet) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -934,6 +676,7 @@ func (m *StatefulSet) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1048,6 +791,7 @@ func (m *StatefulSetList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1090,7 +834,7 @@ func (m *StatefulSetSpec) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1100,11 +844,12 @@ func (m *StatefulSetSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Selector", wireType)
@@ -1229,7 +974,8 @@ func (m *StatefulSetSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ServiceName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ServiceName = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1243,6 +989,7 @@ func (m *StatefulSetSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1285,7 +1032,7 @@ func (m *StatefulSetStatus) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ObservedGeneration", wireType)
 			}
-			m.ObservedGeneration = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1295,16 +1042,17 @@ func (m *StatefulSetStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ObservedGeneration |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ObservedGeneration = &v
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1314,11 +1062,12 @@ func (m *StatefulSetStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -1331,6 +1080,7 @@ func (m *StatefulSetStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1450,38 +1200,36 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 526 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x93, 0xbd, 0x6e, 0x13, 0x41,
-	0x10, 0xc7, 0xbd, 0xfe, 0x00, 0xb3, 0x2e, 0x10, 0x2b, 0x8a, 0x93, 0x8b, 0xc5, 0x72, 0x01, 0x2e,
-	0xc8, 0x9e, 0x6c, 0x1c, 0x11, 0x51, 0x06, 0x24, 0x04, 0x04, 0x88, 0xce, 0x88, 0x82, 0x6e, 0x7d,
-	0x1e, 0xac, 0xc5, 0xf7, 0xb1, 0xda, 0x9d, 0xbb, 0x9a, 0x47, 0xe0, 0x31, 0x10, 0x4f, 0x92, 0x32,
-	0x25, 0x15, 0xc2, 0x47, 0x43, 0x99, 0x86, 0x1e, 0xdd, 0xf9, 0x70, 0x1c, 0x7f, 0x84, 0x28, 0xad,
-	0x77, 0x7e, 0x3f, 0xcf, 0xcc, 0x7f, 0x8e, 0x3e, 0x9e, 0x1d, 0x58, 0xa1, 0x62, 0x77, 0x96, 0x8c,
-	0xc1, 0x44, 0x80, 0x60, 0x5d, 0x3d, 0x9b, 0xba, 0x52, 0x2b, 0xeb, 0x4a, 0xad, 0xad, 0x9b, 0xf6,
-	0xc7, 0x80, 0xb2, 0xef, 0x4e, 0x21, 0x02, 0x23, 0x11, 0x26, 0x42, 0x9b, 0x18, 0x63, 0xf6, 0x60,
-	0x01, 0x8a, 0x73, 0x50, 0xe8, 0xd9, 0x54, 0xe4, 0xa0, 0xc8, 0x41, 0x51, 0x82, 0xed, 0xc1, 0xce,
-	0x7f, 0x70, 0x0d, 0xd8, 0x38, 0x31, 0x3e, 0xac, 0xcb, 0xdb, 0xfb, 0xbb, 0x99, 0x24, 0x4a, 0xc1,
-	0x58, 0x15, 0x47, 0x30, 0xd9, 0xc0, 0x1e, 0xee, 0xc6, 0xd2, 0x8d, 0x09, 0xda, 0x7b, 0xdb, 0xab,
-	0x4d, 0x12, 0xa1, 0x0a, 0x37, 0x7b, 0xea, 0x6f, 0x2f, 0x4f, 0x50, 0x05, 0xae, 0x8a, 0xd0, 0xa2,
-	0x59, 0x47, 0xba, 0x7f, 0x08, 0x6d, 0x8d, 0x50, 0x22, 0x7c, 0x4c, 0x82, 0x11, 0x20, 0x7b, 0x46,
-	0x9b, 0x21, 0xa0, 0x9c, 0x48, 0x94, 0x0e, 0xe9, 0x90, 0x5e, 0x6b, 0xd0, 0x13, 0x3b, 0xd7, 0x28,
-	0xd2, 0xbe, 0x78, 0x3b, 0xfe, 0x04, 0x3e, 0xbe, 0x06, 0x94, 0xde, 0x92, 0x64, 0x47, 0xb4, 0x6e,
-	0x35, 0xf8, 0x4e, 0xb5, 0x30, 0x1c, 0x88, 0x2b, 0x06, 0x21, 0x56, 0x3a, 0x19, 0x69, 0xf0, 0xbd,
-	0xc2, 0xc2, 0x3c, 0x7a, 0xc3, 0xa2, 0xc4, 0xc4, 0x3a, 0xb5, 0xc2, 0xf7, 0xe4, 0x5a, 0xbe, 0xc2,
-	0xe0, 0x95, 0xa6, 0xee, 0x37, 0x42, 0x6f, 0xaf, 0xbc, 0x1e, 0x29, 0x8b, 0xec, 0xd5, 0xc6, 0xec,
-	0xee, 0x25, 0xb3, 0xaf, 0xa4, 0x2c, 0x72, 0x7c, 0x6d, 0x05, 0x2f, 0x69, 0x43, 0x21, 0x84, 0xd6,
-	0xa9, 0x76, 0x6a, 0xbd, 0xd6, 0x60, 0x78, 0x9d, 0x9e, 0xbd, 0x85, 0xa2, 0x3b, 0xaf, 0x5e, 0x68,
-	0x36, 0x5f, 0x0d, 0xeb, 0xd0, 0xa6, 0x01, 0x1d, 0x28, 0x5f, 0xda, 0xa2, 0xd9, 0xc6, 0x61, 0xfd,
-	0xe4, 0xc7, 0xbd, 0x8a, 0xb7, 0xfc, 0x95, 0x1d, 0xd3, 0xa6, 0x85, 0x00, 0x7c, 0x8c, 0x4d, 0x19,
-	0xc4, 0xf0, 0xaa, 0xe3, 0xc8, 0x31, 0x04, 0xa3, 0x92, 0xf5, 0x96, 0x16, 0xf6, 0x82, 0x36, 0x11,
-	0x42, 0x1d, 0x48, 0x84, 0x32, 0x8a, 0xbd, 0xcb, 0x8f, 0xe3, 0x38, 0x9e, 0xbc, 0x2b, 0x81, 0x22,
-	0xcf, 0x25, 0xce, 0xa6, 0xf4, 0x6e, 0x1a, 0x07, 0x49, 0x08, 0x4f, 0x03, 0xa9, 0xc2, 0x7f, 0x45,
-	0xd6, 0xa9, 0x17, 0xdb, 0x7a, 0xf4, 0x1f, 0x6d, 0xde, 0xa9, 0x45, 0x88, 0xf0, 0xfd, 0xb9, 0xc3,
-	0xdb, 0x2a, 0x64, 0xf7, 0x69, 0xcb, 0x82, 0x49, 0x95, 0x0f, 0x6f, 0x64, 0x08, 0x4e, 0xa3, 0x43,
-	0x7a, 0xb7, 0xca, 0x55, 0xad, 0x3e, 0x74, 0x67, 0xf4, 0xce, 0xc6, 0xb5, 0xb0, 0x21, 0x65, 0xf1,
-	0x38, 0xaf, 0x82, 0xc9, 0xf3, 0xc5, 0x87, 0xa3, 0xe2, 0xa8, 0x58, 0x77, 0xad, 0x74, 0x6c, 0x79,
-	0xbf, 0x10, 0x4d, 0x75, 0x5b, 0x34, 0x87, 0xfb, 0xa7, 0x73, 0x5e, 0xf9, 0x3e, 0xe7, 0x95, 0xb3,
-	0x39, 0x27, 0x9f, 0x33, 0x4e, 0xbe, 0x66, 0x9c, 0x9c, 0x64, 0x9c, 0x9c, 0x66, 0x9c, 0xfc, 0xcc,
-	0x38, 0xf9, 0x9d, 0xf1, 0xca, 0x59, 0xc6, 0xc9, 0x97, 0x5f, 0xbc, 0xf2, 0xe1, 0x66, 0x79, 0x1a,
-	0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x3e, 0x51, 0x0a, 0xfc, 0x0a, 0x05, 0x00, 0x00,
+	// 482 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x93, 0xb1, 0x8e, 0xd3, 0x40,
+	0x10, 0x86, 0xe5, 0xe4, 0x02, 0x61, 0x53, 0x20, 0x56, 0x20, 0x59, 0x29, 0xa2, 0x28, 0x0d, 0x29,
+	0xb8, 0xb5, 0x12, 0x0e, 0x71, 0xa2, 0x04, 0x24, 0x04, 0x1c, 0x70, 0xda, 0x20, 0x0a, 0x1a, 0xb4,
+	0xb6, 0x87, 0x68, 0x89, 0xed, 0x5d, 0xed, 0x8c, 0xfd, 0x50, 0x3c, 0x09, 0x25, 0x0d, 0x3d, 0xca,
+	0x3b, 0xd0, 0x23, 0x3b, 0x26, 0x97, 0xc4, 0xc9, 0x71, 0x4a, 0x69, 0xef, 0x7c, 0x9f, 0x67, 0xe6,
+	0x5f, 0xb3, 0xa7, 0x8b, 0x73, 0x14, 0xda, 0x04, 0x8b, 0x3c, 0x04, 0x97, 0x01, 0x01, 0x06, 0x76,
+	0x31, 0x0f, 0x94, 0xd5, 0x18, 0x28, 0x6b, 0x31, 0x28, 0x26, 0x21, 0x90, 0x9a, 0x04, 0x73, 0xc8,
+	0xc0, 0x29, 0x82, 0x58, 0x58, 0x67, 0xc8, 0xf0, 0x87, 0x2b, 0x50, 0x5c, 0x81, 0xc2, 0x2e, 0xe6,
+	0xa2, 0x04, 0x45, 0x09, 0x8a, 0x1a, 0xec, 0x4f, 0x0f, 0x7e, 0x21, 0x70, 0x80, 0x26, 0x77, 0x11,
+	0xec, 0xca, 0xfb, 0x4f, 0x0e, 0x33, 0x79, 0x56, 0x80, 0x43, 0x6d, 0x32, 0x88, 0x1b, 0xd8, 0xa3,
+	0xc3, 0x58, 0xd1, 0x98, 0xa0, 0x7f, 0xba, 0xbf, 0xda, 0xe5, 0x19, 0xe9, 0xb4, 0xd9, 0xd3, 0x64,
+	0x7f, 0x79, 0x4e, 0x3a, 0x09, 0x74, 0x46, 0x48, 0x6e, 0x17, 0x19, 0xfd, 0xf1, 0x58, 0x6f, 0x46,
+	0x8a, 0xe0, 0x6b, 0x9e, 0xcc, 0x80, 0xf8, 0x4b, 0xd6, 0x4d, 0x81, 0x54, 0xac, 0x48, 0xf9, 0xde,
+	0xd0, 0x1b, 0xf7, 0xa6, 0x63, 0x71, 0x70, 0x8d, 0xa2, 0x98, 0x88, 0x0f, 0xe1, 0x37, 0x88, 0xe8,
+	0x1d, 0x90, 0x92, 0x6b, 0x92, 0x5f, 0xb0, 0x13, 0xb4, 0x10, 0xf9, 0xad, 0xca, 0x70, 0x2e, 0x6e,
+	0x18, 0x84, 0xd8, 0xe8, 0x64, 0x66, 0x21, 0x92, 0x95, 0x85, 0x4b, 0x76, 0x0b, 0x49, 0x51, 0x8e,
+	0x7e, 0xbb, 0xf2, 0x3d, 0x3b, 0xca, 0x57, 0x19, 0x64, 0x6d, 0x1a, 0x7d, 0xf7, 0xd8, 0xdd, 0x8d,
+	0xd3, 0x0b, 0x8d, 0xc4, 0xdf, 0x36, 0x66, 0x0f, 0xae, 0x99, 0x7d, 0x23, 0x65, 0x51, 0xe2, 0x3b,
+	0x2b, 0x78, 0xc3, 0x3a, 0x9a, 0x20, 0x45, 0xbf, 0x35, 0x6c, 0x8f, 0x7b, 0xd3, 0xb3, 0x63, 0x7a,
+	0x96, 0x2b, 0xc5, 0xe8, 0x57, 0x6b, 0xab, 0xd9, 0x72, 0x35, 0xbc, 0xcf, 0xba, 0x0e, 0x6c, 0xa2,
+	0x23, 0x85, 0x55, 0xb3, 0x1d, 0xb9, 0x7e, 0xe6, 0x97, 0xac, 0x8b, 0x90, 0x40, 0x44, 0xc6, 0xd5,
+	0x11, 0x9c, 0xdd, 0x74, 0x10, 0x15, 0x42, 0x32, 0xab, 0x59, 0xb9, 0xb6, 0xf0, 0xd7, 0xac, 0x4b,
+	0x90, 0xda, 0x44, 0x11, 0xd4, 0x21, 0x9c, 0x5e, 0x7f, 0x2d, 0x2e, 0x4d, 0xfc, 0xb1, 0x06, 0xaa,
+	0x24, 0xd7, 0x38, 0x9f, 0xb3, 0xfb, 0x85, 0x49, 0xf2, 0x14, 0x5e, 0x24, 0x4a, 0xa7, 0xff, 0x8a,
+	0xd0, 0x3f, 0xa9, 0xf6, 0xf4, 0xf8, 0x3f, 0xda, 0xb2, 0x53, 0x24, 0xc8, 0xe8, 0xd3, 0x95, 0x43,
+	0xee, 0x15, 0xf2, 0x21, 0xeb, 0x21, 0xb8, 0x42, 0x47, 0xf0, 0x5e, 0xa5, 0xe0, 0x77, 0x86, 0xde,
+	0xf8, 0x8e, 0xdc, 0x7c, 0x35, 0xfa, 0xc2, 0xee, 0x35, 0x6e, 0x08, 0x17, 0x8c, 0x9b, 0xb0, 0xac,
+	0x82, 0xf8, 0xd5, 0xea, 0x67, 0xd1, 0x26, 0xab, 0x56, 0xdc, 0x96, 0x7b, 0x4e, 0xb6, 0x82, 0x68,
+	0x6d, 0x07, 0xf1, 0xfc, 0xc1, 0x8f, 0xe5, 0xc0, 0xfb, 0xb9, 0x1c, 0x78, 0xbf, 0x97, 0x03, 0xef,
+	0xf3, 0xed, 0x3a, 0xe2, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0xa2, 0xe1, 0x70, 0xe2, 0xd2, 0x04,
+	0x00, 0x00,
 }

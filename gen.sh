@@ -21,7 +21,7 @@ cd assets
 protobuf=$( find k8s.io/kubernetes/pkg/{api,apis,util,runtime} -name '*.proto' )
 for file in $protobuf; do
     echo $file
-    protoc --gogoslick_out=$PKG $file
+    protoc --gogofast_out=$PKG $file
 done
 
 cd -
