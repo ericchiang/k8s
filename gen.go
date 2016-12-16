@@ -118,7 +118,7 @@ func (c *{{ $.Name }}) Update{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, {{ $r.Namespaced }})
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", "")
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", md.Name)
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {

@@ -50,7 +50,7 @@ func (c *CoreV1) UpdateBinding(ctx context.Context, obj *apiv1.Binding) (*apiv1.
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "bindings", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "bindings", md.Name)
 	resp := new(apiv1.Binding)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -102,7 +102,7 @@ func (c *CoreV1) UpdateComponentStatus(ctx context.Context, obj *apiv1.Component
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "componentstatuses", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "componentstatuses", md.Name)
 	resp := new(apiv1.ComponentStatus)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -164,7 +164,7 @@ func (c *CoreV1) UpdateConfigMap(ctx context.Context, obj *apiv1.ConfigMap) (*ap
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "configmaps", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "configmaps", md.Name)
 	resp := new(apiv1.ConfigMap)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -226,7 +226,7 @@ func (c *CoreV1) UpdateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*ap
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "endpointses", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "endpointses", md.Name)
 	resp := new(apiv1.Endpoints)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -288,7 +288,7 @@ func (c *CoreV1) UpdateEvent(ctx context.Context, obj *apiv1.Event) (*apiv1.Even
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "events", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "events", md.Name)
 	resp := new(apiv1.Event)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -350,7 +350,7 @@ func (c *CoreV1) UpdateLimitRange(ctx context.Context, obj *apiv1.LimitRange) (*
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "limitranges", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "limitranges", md.Name)
 	resp := new(apiv1.LimitRange)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -412,7 +412,7 @@ func (c *CoreV1) UpdateNamespace(ctx context.Context, obj *apiv1.Namespace) (*ap
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "namespaces", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "namespaces", md.Name)
 	resp := new(apiv1.Namespace)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -474,7 +474,7 @@ func (c *CoreV1) UpdateNode(ctx context.Context, obj *apiv1.Node) (*apiv1.Node, 
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "nodes", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "nodes", md.Name)
 	resp := new(apiv1.Node)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -536,7 +536,7 @@ func (c *CoreV1) UpdatePersistentVolume(ctx context.Context, obj *apiv1.Persiste
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumes", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumes", md.Name)
 	resp := new(apiv1.PersistentVolume)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -598,7 +598,7 @@ func (c *CoreV1) UpdatePersistentVolumeClaim(ctx context.Context, obj *apiv1.Per
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumeclaims", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumeclaims", md.Name)
 	resp := new(apiv1.PersistentVolumeClaim)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -660,7 +660,7 @@ func (c *CoreV1) UpdatePod(ctx context.Context, obj *apiv1.Pod) (*apiv1.Pod, err
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "pods", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "pods", md.Name)
 	resp := new(apiv1.Pod)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -722,7 +722,7 @@ func (c *CoreV1) UpdatePodStatusResult(ctx context.Context, obj *apiv1.PodStatus
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "podstatusresults", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "podstatusresults", md.Name)
 	resp := new(apiv1.PodStatusResult)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -774,7 +774,7 @@ func (c *CoreV1) UpdatePodTemplate(ctx context.Context, obj *apiv1.PodTemplate) 
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplates", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "podtemplates", md.Name)
 	resp := new(apiv1.PodTemplate)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -836,7 +836,7 @@ func (c *CoreV1) UpdatePodTemplateSpec(ctx context.Context, obj *apiv1.PodTempla
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplatespecs", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "podtemplatespecs", md.Name)
 	resp := new(apiv1.PodTemplateSpec)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -888,7 +888,7 @@ func (c *CoreV1) UpdateRangeAllocation(ctx context.Context, obj *apiv1.RangeAllo
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "rangeallocations", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "rangeallocations", md.Name)
 	resp := new(apiv1.RangeAllocation)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -940,7 +940,7 @@ func (c *CoreV1) UpdateReplicationController(ctx context.Context, obj *apiv1.Rep
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "replicationcontrollers", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "replicationcontrollers", md.Name)
 	resp := new(apiv1.ReplicationController)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1002,7 +1002,7 @@ func (c *CoreV1) UpdateResourceQuota(ctx context.Context, obj *apiv1.ResourceQuo
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "resourcequotas", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "resourcequotas", md.Name)
 	resp := new(apiv1.ResourceQuota)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1064,7 +1064,7 @@ func (c *CoreV1) UpdateSecret(ctx context.Context, obj *apiv1.Secret) (*apiv1.Se
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "secrets", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "secrets", md.Name)
 	resp := new(apiv1.Secret)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1126,7 +1126,7 @@ func (c *CoreV1) UpdateService(ctx context.Context, obj *apiv1.Service) (*apiv1.
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "services", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "services", md.Name)
 	resp := new(apiv1.Service)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1188,7 +1188,7 @@ func (c *CoreV1) UpdateServiceAccount(ctx context.Context, obj *apiv1.ServiceAcc
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("", "v1", md.Namespace, "serviceaccounts", "")
+	url := c.client.urlFor("", "v1", md.Namespace, "serviceaccounts", md.Name)
 	resp := new(apiv1.ServiceAccount)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1261,7 +1261,7 @@ func (c *AppsV1Beta1) UpdateStatefulSet(ctx context.Context, obj *appsv1beta1.St
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("apps", "v1beta1", md.Namespace, "statefulsets", "")
+	url := c.client.urlFor("apps", "v1beta1", md.Namespace, "statefulsets", md.Name)
 	resp := new(appsv1beta1.StatefulSet)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1334,7 +1334,7 @@ func (c *AuthenticationV1Beta1) UpdateTokenReview(ctx context.Context, obj *auth
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("authentication.k8s.io", "v1beta1", md.Namespace, "tokenreviews", "")
+	url := c.client.urlFor("authentication.k8s.io", "v1beta1", md.Namespace, "tokenreviews", md.Name)
 	resp := new(authenticationv1beta1.TokenReview)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1397,7 +1397,7 @@ func (c *AuthorizationV1Beta1) UpdateLocalSubjectAccessReview(ctx context.Contex
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "localsubjectaccessreviews", "")
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "localsubjectaccessreviews", md.Name)
 	resp := new(authorizationv1beta1.LocalSubjectAccessReview)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1449,7 +1449,7 @@ func (c *AuthorizationV1Beta1) UpdateSelfSubjectAccessReview(ctx context.Context
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "selfsubjectaccessreviews", "")
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "selfsubjectaccessreviews", md.Name)
 	resp := new(authorizationv1beta1.SelfSubjectAccessReview)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1501,7 +1501,7 @@ func (c *AuthorizationV1Beta1) UpdateSubjectAccessReview(ctx context.Context, ob
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "subjectaccessreviews", "")
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "subjectaccessreviews", md.Name)
 	resp := new(authorizationv1beta1.SubjectAccessReview)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1564,7 +1564,7 @@ func (c *AutoscalingV1) UpdateHorizontalPodAutoscaler(ctx context.Context, obj *
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "horizontalpodautoscalers", "")
+	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "horizontalpodautoscalers", md.Name)
 	resp := new(autoscalingv1.HorizontalPodAutoscaler)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1626,7 +1626,7 @@ func (c *AutoscalingV1) UpdateScale(ctx context.Context, obj *autoscalingv1.Scal
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "scales", "")
+	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "scales", md.Name)
 	resp := new(autoscalingv1.Scale)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1689,7 +1689,7 @@ func (c *BatchV1) UpdateJob(ctx context.Context, obj *batchv1.Job) (*batchv1.Job
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v1", md.Namespace, "jobs", "")
+	url := c.client.urlFor("batch", "v1", md.Namespace, "jobs", md.Name)
 	resp := new(batchv1.Job)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1762,7 +1762,7 @@ func (c *BatchV2Alpha1) UpdateCronJob(ctx context.Context, obj *batchv2alpha1.Cr
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "cronjobs", "")
+	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "cronjobs", md.Name)
 	resp := new(batchv2alpha1.CronJob)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1824,7 +1824,7 @@ func (c *BatchV2Alpha1) UpdateJob(ctx context.Context, obj *batchv2alpha1.Job) (
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobs", "")
+	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobs", md.Name)
 	resp := new(batchv2alpha1.Job)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1886,7 +1886,7 @@ func (c *BatchV2Alpha1) UpdateJobTemplate(ctx context.Context, obj *batchv2alpha
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobtemplates", "")
+	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobtemplates", md.Name)
 	resp := new(batchv2alpha1.JobTemplate)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -1949,7 +1949,7 @@ func (c *CertificatesV1Alpha1) UpdateCertificateSigningRequest(ctx context.Conte
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", md.Namespace, "certificatesigningrequests", "")
+	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", md.Namespace, "certificatesigningrequests", md.Name)
 	resp := new(certificatesv1alpha1.CertificateSigningRequest)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2022,7 +2022,7 @@ func (c *ExtensionsV1Beta1) UpdateDaemonSet(ctx context.Context, obj *extensions
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "daemonsets", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "daemonsets", md.Name)
 	resp := new(extensionsv1beta1.DaemonSet)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2084,7 +2084,7 @@ func (c *ExtensionsV1Beta1) UpdateDeployment(ctx context.Context, obj *extension
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "deployments", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "deployments", md.Name)
 	resp := new(extensionsv1beta1.Deployment)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2146,7 +2146,7 @@ func (c *ExtensionsV1Beta1) UpdateHorizontalPodAutoscaler(ctx context.Context, o
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "horizontalpodautoscalers", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "horizontalpodautoscalers", md.Name)
 	resp := new(extensionsv1beta1.HorizontalPodAutoscaler)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2208,7 +2208,7 @@ func (c *ExtensionsV1Beta1) UpdateIngress(ctx context.Context, obj *extensionsv1
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "ingresses", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "ingresses", md.Name)
 	resp := new(extensionsv1beta1.Ingress)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2270,7 +2270,7 @@ func (c *ExtensionsV1Beta1) UpdateJob(ctx context.Context, obj *extensionsv1beta
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "jobs", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "jobs", md.Name)
 	resp := new(extensionsv1beta1.Job)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2332,7 +2332,7 @@ func (c *ExtensionsV1Beta1) UpdateNetworkPolicy(ctx context.Context, obj *extens
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "networkpolicies", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "networkpolicies", md.Name)
 	resp := new(extensionsv1beta1.NetworkPolicy)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2394,7 +2394,7 @@ func (c *ExtensionsV1Beta1) UpdatePodSecurityPolicy(ctx context.Context, obj *ex
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "podsecuritypolicies", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "podsecuritypolicies", md.Name)
 	resp := new(extensionsv1beta1.PodSecurityPolicy)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2456,7 +2456,7 @@ func (c *ExtensionsV1Beta1) UpdateReplicaSet(ctx context.Context, obj *extension
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "replicasets", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "replicasets", md.Name)
 	resp := new(extensionsv1beta1.ReplicaSet)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2518,7 +2518,7 @@ func (c *ExtensionsV1Beta1) UpdateScale(ctx context.Context, obj *extensionsv1be
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "scales", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "scales", md.Name)
 	resp := new(extensionsv1beta1.Scale)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2570,7 +2570,7 @@ func (c *ExtensionsV1Beta1) UpdateThirdPartyResource(ctx context.Context, obj *e
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresources", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresources", md.Name)
 	resp := new(extensionsv1beta1.ThirdPartyResource)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2632,7 +2632,7 @@ func (c *ExtensionsV1Beta1) UpdateThirdPartyResourceData(ctx context.Context, ob
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresourcedatas", "")
+	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresourcedatas", md.Name)
 	resp := new(extensionsv1beta1.ThirdPartyResourceData)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2705,7 +2705,7 @@ func (c *ImagepolicyV1Alpha1) UpdateImageReview(ctx context.Context, obj *imagep
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("imagepolicy", "v1alpha1", md.Namespace, "imagereviews", "")
+	url := c.client.urlFor("imagepolicy", "v1alpha1", md.Namespace, "imagereviews", md.Name)
 	resp := new(imagepolicyv1alpha1.ImageReview)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2768,7 +2768,7 @@ func (c *PolicyV1Beta1) UpdateEviction(ctx context.Context, obj *policyv1beta1.E
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1beta1", md.Namespace, "evictions", "")
+	url := c.client.urlFor("policy", "v1beta1", md.Namespace, "evictions", md.Name)
 	resp := new(policyv1beta1.Eviction)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2820,7 +2820,7 @@ func (c *PolicyV1Beta1) UpdatePodDisruptionBudget(ctx context.Context, obj *poli
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("policy", "v1beta1", md.Namespace, "poddisruptionbudgets", "")
+	url := c.client.urlFor("policy", "v1beta1", md.Namespace, "poddisruptionbudgets", md.Name)
 	resp := new(policyv1beta1.PodDisruptionBudget)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2893,7 +2893,7 @@ func (c *RBACV1Alpha1) UpdateClusterRole(ctx context.Context, obj *rbacv1alpha1.
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterroles", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterroles", md.Name)
 	resp := new(rbacv1alpha1.ClusterRole)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -2955,7 +2955,7 @@ func (c *RBACV1Alpha1) UpdateClusterRoleBinding(ctx context.Context, obj *rbacv1
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterrolebindings", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterrolebindings", md.Name)
 	resp := new(rbacv1alpha1.ClusterRoleBinding)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -3017,7 +3017,7 @@ func (c *RBACV1Alpha1) UpdateRole(ctx context.Context, obj *rbacv1alpha1.Role) (
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "roles", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "roles", md.Name)
 	resp := new(rbacv1alpha1.Role)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -3079,7 +3079,7 @@ func (c *RBACV1Alpha1) UpdateRoleBinding(ctx context.Context, obj *rbacv1alpha1.
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, true)
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "rolebindings", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "rolebindings", md.Name)
 	resp := new(rbacv1alpha1.RoleBinding)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
@@ -3152,7 +3152,7 @@ func (c *StorageV1Beta1) UpdateStorageClass(ctx context.Context, obj *storagev1b
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	md.Namespace = c.client.namespaceFor(ctx, false)
-	url := c.client.urlFor("storage.k8s.io", "v1beta1", md.Namespace, "storageclasses", "")
+	url := c.client.urlFor("storage.k8s.io", "v1beta1", md.Namespace, "storageclasses", md.Name)
 	resp := new(storagev1beta1.StorageClass)
 	err := c.client.update(ctx, pbCodec, url, obj, resp)
 	if err != nil {
