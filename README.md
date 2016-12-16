@@ -31,6 +31,14 @@ func main() {
 }
 ```
 
+## Project status
+
+__DO NOT USE THIS CODE.__
+
+This package is still in development and may change in unexpected ways. It's an experiment to demonstrate generating a client is possible, though it may evolve into a more mature library.
+
+Until this package becomes more mature use Kubernetes' Go client instead: https://github.com/kubernetes/client-go
+
 ## Requirements
 
 * Go 1.7+ (this package uses "context" features added in 1.7)
