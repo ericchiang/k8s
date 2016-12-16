@@ -44,6 +44,7 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 //
 // +protobuf=true
 // +protobuf.options.(gogoproto.goproto_stringer)=false
+// +k8s:openapi-gen=true
 type IntOrString struct {
 	Type   int64  `protobuf:"varint,1,opt,name=type" json:"type"`
 	IntVal int32  `protobuf:"varint,2,opt,name=intVal" json:"intVal"`

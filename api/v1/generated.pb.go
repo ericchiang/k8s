@@ -105,6 +105,7 @@
 		PersistentVolumeSource
 		PersistentVolumeSpec
 		PersistentVolumeStatus
+		PhotonPersistentDiskVolumeSource
 		Pod
 		PodAffinity
 		PodAffinityTerm
@@ -131,6 +132,7 @@
 		RBDVolumeSource
 		RangeAllocation
 		ReplicationController
+		ReplicationControllerCondition
 		ReplicationControllerList
 		ReplicationControllerSpec
 		ReplicationControllerStatus
@@ -204,22 +206,25 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 // ownership management and SELinux relabeling.
 type AWSElasticBlockStoreVolumeSource struct {
 	// Unique ID of the persistent disk resource in AWS (Amazon EBS volume).
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
+	// More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
 	VolumeID string `protobuf:"bytes,1,opt,name=volumeID" json:"volumeID"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
+	// More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
+	// +optional
 	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
 	// The partition in the volume that you want to mount.
 	// If omitted, the default is to mount by volume name.
 	// Examples: For volume /dev/sda1, you specify the partition as "1".
 	// Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty).
+	// +optional
 	Partition int32 `protobuf:"varint,3,opt,name=partition" json:"partition"`
 	// Specify "true" to force and set the ReadOnly property in VolumeMounts to "true".
 	// If omitted, the default is "false".
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
+	// More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
+	// +optional
 	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -260,10 +265,13 @@ func (m *AWSElasticBlockStoreVolumeSource) GetReadOnly() bool {
 // Affinity is a group of affinity scheduling rules.
 type Affinity struct {
 	// Describes node affinity scheduling rules for the pod.
+	// +optional
 	NodeAffinity *NodeAffinity `protobuf:"bytes,1,opt,name=nodeAffinity" json:"nodeAffinity,omitempty"`
 	// Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
+	// +optional
 	PodAffinity *PodAffinity `protobuf:"bytes,2,opt,name=podAffinity" json:"podAffinity,omitempty"`
 	// Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
+	// +optional
 	PodAntiAffinity *PodAntiAffinity `protobuf:"bytes,3,opt,name=podAntiAffinity" json:"podAntiAffinity,omitempty"`
 }
 
@@ -296,7 +304,7 @@ func (m *Affinity) GetPodAntiAffinity() *PodAntiAffinity {
 type AttachedVolume struct {
 	// Name of the attached volume
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
-	// DevicePath represents the device path where the volume should be avilable
+	// DevicePath represents the device path where the volume should be available
 	DevicePath string `protobuf:"bytes,2,opt,name=devicePath" json:"devicePath"`
 }
 
@@ -324,6 +332,7 @@ func (m *AttachedVolume) GetDevicePath() string {
 type AvoidPods struct {
 	// Bounded-sized list of signatures of pods that should avoid this node, sorted
 	// in timestamp order from oldest to newest. Size of the slice is unspecified.
+	// +optional
 	PreferAvoidPods []*PreferAvoidPodsEntry `protobuf:"bytes,1,rep,name=preferAvoidPods" json:"preferAvoidPods,omitempty"`
 }
 
@@ -345,13 +354,16 @@ type AzureDiskVolumeSource struct {
 	// The URI the data disk in the blob storage
 	DiskURI string `protobuf:"bytes,2,opt,name=diskURI" json:"diskURI"`
 	// Host Caching mode: None, Read Only, Read Write.
+	// +optional
 	CachingMode string `protobuf:"bytes,3,opt,name=cachingMode" json:"cachingMode"`
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
+	// +optional
 	FsType string `protobuf:"bytes,4,opt,name=fsType" json:"fsType"`
 	// Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
+	// +optional
 	ReadOnly bool `protobuf:"varint,5,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -402,6 +414,7 @@ type AzureFileVolumeSource struct {
 	ShareName string `protobuf:"bytes,2,opt,name=shareName" json:"shareName"`
 	// Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
+	// +optional
 	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -434,7 +447,8 @@ func (m *AzureFileVolumeSource) GetReadOnly() bool {
 // For example, a pod is bound to a node by a scheduler.
 type Binding struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// The target object that you want to bind to the standard object.
 	Target *ObjectReference `protobuf:"bytes,2,opt,name=target" json:"target,omitempty"`
@@ -461,8 +475,10 @@ func (m *Binding) GetTarget() *ObjectReference {
 // Adds and removes POSIX capabilities from running containers.
 type Capabilities struct {
 	// Added capabilities
+	// +optional
 	Add []string `protobuf:"bytes,1,rep,name=add" json:"add,omitempty"`
 	// Removed capabilities
+	// +optional
 	Drop []string `protobuf:"bytes,2,rep,name=drop" json:"drop,omitempty"`
 }
 
@@ -488,22 +504,27 @@ func (m *Capabilities) GetDrop() []string {
 // Cephfs volumes do not support ownership management or SELinux relabeling.
 type CephFSVolumeSource struct {
 	// Required: Monitors is a collection of Ceph monitors
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it
 	Monitors []string `protobuf:"bytes,1,rep,name=monitors" json:"monitors,omitempty"`
 	// Optional: Used as the mounted root, rather than the full Ceph tree, default is /
+	// +optional
 	Path string `protobuf:"bytes,2,opt,name=path" json:"path"`
 	// Optional: User is the rados user name, default is admin
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it
+	// +optional
 	User string `protobuf:"bytes,3,opt,name=user" json:"user"`
 	// Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it
+	// +optional
 	SecretFile string `protobuf:"bytes,4,opt,name=secretFile" json:"secretFile"`
 	// Optional: SecretRef is reference to the authentication secret for User, default is empty.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it
+	// +optional
 	SecretRef *LocalObjectReference `protobuf:"bytes,5,opt,name=secretRef" json:"secretRef,omitempty"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it
+	// +optional
 	ReadOnly bool `protobuf:"varint,6,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -559,16 +580,18 @@ func (m *CephFSVolumeSource) GetReadOnly() bool {
 // Cinder volumes support ownership management and SELinux relabeling.
 type CinderVolumeSource struct {
 	// volume id used to identify the volume in cinder
-	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md
 	VolumeID string `protobuf:"bytes,1,opt,name=volumeID" json:"volumeID"`
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md
+	// +optional
 	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
-	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md
+	// +optional
 	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -607,9 +630,11 @@ type ComponentCondition struct {
 	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
 	// Message about the condition for a component.
 	// For example, information about a health check.
+	// +optional
 	Message string `protobuf:"bytes,3,opt,name=message" json:"message"`
 	// Condition error code for a component.
 	// For example, a health check error code.
+	// +optional
 	Error string `protobuf:"bytes,4,opt,name=error" json:"error"`
 }
 
@@ -648,9 +673,11 @@ func (m *ComponentCondition) GetError() string {
 // ComponentStatus (and ComponentStatusList) holds the cluster validation info.
 type ComponentStatus struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of component conditions observed
+	// +optional
 	Conditions []*ComponentCondition `protobuf:"bytes,2,rep,name=conditions" json:"conditions,omitempty"`
 }
 
@@ -675,7 +702,8 @@ func (m *ComponentStatus) GetConditions() []*ComponentCondition {
 // Status of all the conditions for the component as a list of ComponentStatus objects.
 type ComponentStatusList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of ComponentStatus objects.
 	Items []*ComponentStatus `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -702,10 +730,12 @@ func (m *ComponentStatusList) GetItems() []*ComponentStatus {
 // ConfigMap holds configuration data for pods to consume.
 type ConfigMap struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Data contains the configuration data.
 	// Each key must be a valid DNS_SUBDOMAIN with an optional leading dot.
+	// +optional
 	Data map[string]string `protobuf:"bytes,2,rep,name=data" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
@@ -755,7 +785,8 @@ func (m *ConfigMapKeySelector) GetKey() string {
 
 // ConfigMapList is a resource containing a list of ConfigMap objects.
 type ConfigMapList struct {
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of ConfigMaps.
 	Items []*ConfigMap `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -794,12 +825,14 @@ type ConfigMapVolumeSource struct {
 	// present. If a key is specified which is not present in the ConfigMap,
 	// the volume setup will error. Paths must be relative and may not contain
 	// the '..' path or start with '..'.
+	// +optional
 	Items []*KeyToPath `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 	// Optional: mode bits to use on created files by default. Must be a
 	// value between 0 and 0777. Defaults to 0644.
 	// Directories within the path are not affected by this setting.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
+	// +optional
 	DefaultMode int32 `protobuf:"varint,3,opt,name=defaultMode" json:"defaultMode"`
 }
 
@@ -835,7 +868,8 @@ type Container struct {
 	// Cannot be updated.
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// Docker image name.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/images.md
+	// More info: http://kubernetes.io/docs/user-guide/images
+	// +optional
 	Image string `protobuf:"bytes,2,opt,name=image" json:"image"`
 	// Entrypoint array. Not executed within a shell.
 	// The docker image's ENTRYPOINT is used if this is not provided.
@@ -844,7 +878,8 @@ type Container struct {
 	// can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded,
 	// regardless of whether the variable exists or not.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/containers.md#containers-and-commands
+	// More info: http://kubernetes.io/docs/user-guide/containers#containers-and-commands
+	// +optional
 	Command []string `protobuf:"bytes,3,rep,name=command" json:"command,omitempty"`
 	// Arguments to the entrypoint.
 	// The docker image's CMD is used if this is not provided.
@@ -853,12 +888,14 @@ type Container struct {
 	// can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded,
 	// regardless of whether the variable exists or not.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/containers.md#containers-and-commands
+	// More info: http://kubernetes.io/docs/user-guide/containers#containers-and-commands
+	// +optional
 	Args []string `protobuf:"bytes,4,rep,name=args" json:"args,omitempty"`
 	// Container's working directory.
 	// If not specified, the container runtime's default will be used, which
 	// might be configured in the container image.
 	// Cannot be updated.
+	// +optional
 	WorkingDir string `protobuf:"bytes,5,opt,name=workingDir" json:"workingDir"`
 	// List of ports to expose from the container. Exposing a port here gives
 	// the system additional information about the network connections a
@@ -867,48 +904,59 @@ type Container struct {
 	// listening on the default "0.0.0.0" address inside a container will be
 	// accessible from the network.
 	// Cannot be updated.
+	// +optional
 	Ports []*ContainerPort `protobuf:"bytes,6,rep,name=ports" json:"ports,omitempty"`
 	// List of environment variables to set in the container.
 	// Cannot be updated.
+	// +optional
 	Env []*EnvVar `protobuf:"bytes,7,rep,name=env" json:"env,omitempty"`
 	// Compute Resources required by this container.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#resources
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#resources
+	// +optional
 	Resources *ResourceRequirements `protobuf:"bytes,8,opt,name=resources" json:"resources,omitempty"`
 	// Pod volumes to mount into the container's filesystem.
 	// Cannot be updated.
+	// +optional
 	VolumeMounts []*VolumeMount `protobuf:"bytes,9,rep,name=volumeMounts" json:"volumeMounts,omitempty"`
 	// Periodic probe of container liveness.
 	// Container will be restarted if the probe fails.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-probes
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#container-probes
+	// +optional
 	LivenessProbe *Probe `protobuf:"bytes,10,opt,name=livenessProbe" json:"livenessProbe,omitempty"`
 	// Periodic probe of container service readiness.
 	// Container will be removed from service endpoints if the probe fails.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-probes
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#container-probes
+	// +optional
 	ReadinessProbe *Probe `protobuf:"bytes,11,opt,name=readinessProbe" json:"readinessProbe,omitempty"`
 	// Actions that the management system should take in response to container lifecycle events.
 	// Cannot be updated.
+	// +optional
 	Lifecycle *Lifecycle `protobuf:"bytes,12,opt,name=lifecycle" json:"lifecycle,omitempty"`
 	// Optional: Path at which the file to which the container's termination message
 	// will be written is mounted into the container's filesystem.
 	// Message written is intended to be brief final status, such as an assertion failure message.
 	// Defaults to /dev/termination-log.
 	// Cannot be updated.
+	// +optional
 	TerminationMessagePath string `protobuf:"bytes,13,opt,name=terminationMessagePath" json:"terminationMessagePath"`
 	// Image pull policy.
 	// One of Always, Never, IfNotPresent.
 	// Defaults to Always if :latest tag is specified, or IfNotPresent otherwise.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/images.md#updating-images
+	// More info: http://kubernetes.io/docs/user-guide/images#updating-images
+	// +optional
 	ImagePullPolicy string `protobuf:"bytes,14,opt,name=imagePullPolicy" json:"imagePullPolicy"`
 	// Security options the pod should run with.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/security_context.md
+	// More info: http://releases.k8s.io/HEAD/docs/design/security_context.md
+	// +optional
 	SecurityContext *SecurityContext `protobuf:"bytes,15,opt,name=securityContext" json:"securityContext,omitempty"`
 	// Whether this container should allocate a buffer for stdin in the container runtime. If this
 	// is not set, reads from stdin in the container will always result in EOF.
 	// Default is false.
+	// +optional
 	Stdin bool `protobuf:"varint,16,opt,name=stdin" json:"stdin"`
 	// Whether the container runtime should close the stdin channel after it has been opened by
 	// a single attach. When stdin is true the stdin stream will remain open across multiple attach
@@ -917,9 +965,11 @@ type Container struct {
 	// at which time stdin is closed and remains closed until the container is restarted. If this
 	// flag is false, a container processes that reads from stdin will never receive an EOF.
 	// Default is false
+	// +optional
 	StdinOnce bool `protobuf:"varint,17,opt,name=stdinOnce" json:"stdinOnce"`
 	// Whether this container should allocate a TTY for itself, also requires 'stdin' to be true.
 	// Default is false.
+	// +optional
 	Tty bool `protobuf:"varint,18,opt,name=tty" json:"tty"`
 }
 
@@ -1059,6 +1109,7 @@ type ContainerImage struct {
 	// e.g. ["gcr.io/google_containers/hyperkube:v1.0.7", "dockerhub.io/google_containers/hyperkube:v1.0.7"]
 	Names []string `protobuf:"bytes,1,rep,name=names" json:"names,omitempty"`
 	// The size of the image in bytes.
+	// +optional
 	SizeBytes int64 `protobuf:"varint,2,opt,name=sizeBytes" json:"sizeBytes"`
 }
 
@@ -1085,19 +1136,23 @@ type ContainerPort struct {
 	// If specified, this must be an IANA_SVC_NAME and unique within the pod. Each
 	// named port in a pod must have a unique name. Name for the port that can be
 	// referred to by services.
+	// +optional
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// Number of port to expose on the host.
 	// If specified, this must be a valid port number, 0 < x < 65536.
 	// If HostNetwork is specified, this must match ContainerPort.
 	// Most containers do not need this.
+	// +optional
 	HostPort int32 `protobuf:"varint,2,opt,name=hostPort" json:"hostPort"`
 	// Number of port to expose on the pod's IP address.
 	// This must be a valid port number, 0 < x < 65536.
 	ContainerPort int32 `protobuf:"varint,3,opt,name=containerPort" json:"containerPort"`
 	// Protocol for port. Must be UDP or TCP.
 	// Defaults to "TCP".
+	// +optional
 	Protocol string `protobuf:"bytes,4,opt,name=protocol" json:"protocol"`
 	// What host IP to bind the external port to.
+	// +optional
 	HostIP string `protobuf:"bytes,5,opt,name=hostIP" json:"hostIP"`
 }
 
@@ -1145,10 +1200,13 @@ func (m *ContainerPort) GetHostIP() string {
 // If none of them is specified, the default one is ContainerStateWaiting.
 type ContainerState struct {
 	// Details about a waiting container
+	// +optional
 	Waiting *ContainerStateWaiting `protobuf:"bytes,1,opt,name=waiting" json:"waiting,omitempty"`
 	// Details about a running container
+	// +optional
 	Running *ContainerStateRunning `protobuf:"bytes,2,opt,name=running" json:"running,omitempty"`
 	// Details about a terminated container
+	// +optional
 	Terminated *ContainerStateTerminated `protobuf:"bytes,3,opt,name=terminated" json:"terminated,omitempty"`
 }
 
@@ -1180,6 +1238,7 @@ func (m *ContainerState) GetTerminated() *ContainerStateTerminated {
 // ContainerStateRunning is a running state of a container.
 type ContainerStateRunning struct {
 	// Time at which the container was last (re-)started
+	// +optional
 	StartedAt *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,1,opt,name=startedAt" json:"startedAt,omitempty"`
 }
 
@@ -1199,16 +1258,22 @@ type ContainerStateTerminated struct {
 	// Exit status from the last termination of the container
 	ExitCode int32 `protobuf:"varint,1,opt,name=exitCode" json:"exitCode"`
 	// Signal from the last termination of the container
+	// +optional
 	Signal int32 `protobuf:"varint,2,opt,name=signal" json:"signal"`
 	// (brief) reason from the last termination of the container
+	// +optional
 	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
 	// Message regarding the last termination of the container
+	// +optional
 	Message string `protobuf:"bytes,4,opt,name=message" json:"message"`
 	// Time at which previous execution of the container started
+	// +optional
 	StartedAt *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,5,opt,name=startedAt" json:"startedAt,omitempty"`
 	// Time at which the container last terminated
+	// +optional
 	FinishedAt *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,6,opt,name=finishedAt" json:"finishedAt,omitempty"`
 	// Container's ID in the format 'docker://<container_id>'
+	// +optional
 	ContainerID string `protobuf:"bytes,7,opt,name=containerID" json:"containerID"`
 }
 
@@ -1270,8 +1335,10 @@ func (m *ContainerStateTerminated) GetContainerID() string {
 // ContainerStateWaiting is a waiting state of a container.
 type ContainerStateWaiting struct {
 	// (brief) reason the container is not yet running.
+	// +optional
 	Reason string `protobuf:"bytes,1,opt,name=reason" json:"reason"`
 	// Message regarding why the container is not yet running.
+	// +optional
 	Message string `protobuf:"bytes,2,opt,name=message" json:"message"`
 }
 
@@ -1299,8 +1366,10 @@ type ContainerStatus struct {
 	// Cannot be updated.
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// Details about the container's current condition.
+	// +optional
 	State *ContainerState `protobuf:"bytes,2,opt,name=state" json:"state,omitempty"`
 	// Details about the container's last termination condition.
+	// +optional
 	LastState *ContainerState `protobuf:"bytes,3,opt,name=lastState" json:"lastState,omitempty"`
 	// Specifies whether the container has passed its readiness probe.
 	Ready bool `protobuf:"varint,4,opt,name=ready" json:"ready"`
@@ -1310,13 +1379,14 @@ type ContainerStatus struct {
 	// garbage collection. This value will get capped at 5 by GC.
 	RestartCount int32 `protobuf:"varint,5,opt,name=restartCount" json:"restartCount"`
 	// The image the container is running.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/images.md
+	// More info: http://kubernetes.io/docs/user-guide/images
 	// TODO(dchen1107): Which image the container is running with?
 	Image string `protobuf:"bytes,6,opt,name=image" json:"image"`
 	// ImageID of the container's image.
 	ImageID string `protobuf:"bytes,7,opt,name=imageID" json:"imageID"`
 	// Container's ID in the format 'docker://<container_id>'.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/container-environment.md#container-information
+	// More info: http://kubernetes.io/docs/user-guide/container-environment#container-information
+	// +optional
 	ContainerID string `protobuf:"bytes,8,opt,name=containerID" json:"containerID"`
 }
 
@@ -1403,12 +1473,15 @@ type DeleteOptions struct {
 	// The value zero indicates delete immediately. If this value is nil, the default grace period for the
 	// specified type will be used.
 	// Defaults to a per object value if not specified. zero means delete immediately.
+	// +optional
 	GracePeriodSeconds int64 `protobuf:"varint,1,opt,name=gracePeriodSeconds" json:"gracePeriodSeconds"`
 	// Must be fulfilled before a deletion is carried out. If not possible, a 409 Conflict status will be
 	// returned.
+	// +optional
 	Preconditions *Preconditions `protobuf:"bytes,2,opt,name=preconditions" json:"preconditions,omitempty"`
 	// Should the dependent objects be orphaned. If true/false, the "orphan"
 	// finalizer will be added to/removed from the object's finalizers list.
+	// +optional
 	OrphanDependents bool `protobuf:"varint,3,opt,name=orphanDependents" json:"orphanDependents"`
 }
 
@@ -1442,14 +1515,17 @@ type DownwardAPIVolumeFile struct {
 	// Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the '..' path. Must be utf-8 encoded. The first item of the relative path must not start with '..'
 	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
 	// Required: Selects a field of the pod: only annotations, labels, name and namespace are supported.
+	// +optional
 	FieldRef *ObjectFieldSelector `protobuf:"bytes,2,opt,name=fieldRef" json:"fieldRef,omitempty"`
 	// Selects a resource of the container: only resources limits and requests
 	// (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
+	// +optional
 	ResourceFieldRef *ResourceFieldSelector `protobuf:"bytes,3,opt,name=resourceFieldRef" json:"resourceFieldRef,omitempty"`
 	// Optional: mode bits to use on this file, must be a value between 0
 	// and 0777. If not specified, the volume defaultMode will be used.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
+	// +optional
 	Mode int32 `protobuf:"varint,4,opt,name=mode" json:"mode"`
 }
 
@@ -1489,12 +1565,14 @@ func (m *DownwardAPIVolumeFile) GetMode() int32 {
 // Downward API volumes support ownership management and SELinux relabeling.
 type DownwardAPIVolumeSource struct {
 	// Items is a list of downward API volume file
+	// +optional
 	Items []*DownwardAPIVolumeFile `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
 	// Optional: mode bits to use on created files by default. Must be a
 	// value between 0 and 0777. Defaults to 0644.
 	// Directories within the path are not affected by this setting.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
+	// +optional
 	DefaultMode int32 `protobuf:"varint,2,opt,name=defaultMode" json:"defaultMode"`
 }
 
@@ -1524,7 +1602,8 @@ type EmptyDirVolumeSource struct {
 	// What type of storage medium should back this directory.
 	// The default is "" which means to use the node's default medium.
 	// Must be an empty string (default) or Memory.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#emptydir
+	// More info: http://kubernetes.io/docs/user-guide/volumes#emptydir
+	// +optional
 	Medium string `protobuf:"bytes,1,opt,name=medium" json:"medium"`
 }
 
@@ -1549,10 +1628,13 @@ type EndpointAddress struct {
 	// TODO: This should allow hostname or IP, See #4447.
 	Ip string `protobuf:"bytes,1,opt,name=ip" json:"ip"`
 	// The Hostname of this endpoint
+	// +optional
 	Hostname string `protobuf:"bytes,3,opt,name=hostname" json:"hostname"`
 	// Optional: Node hosting this endpoint. This can be used to determine endpoints local to a node.
+	// +optional
 	NodeName string `protobuf:"bytes,4,opt,name=nodeName" json:"nodeName"`
 	// Reference to object providing the endpoint.
+	// +optional
 	TargetRef *ObjectReference `protobuf:"bytes,2,opt,name=targetRef" json:"targetRef,omitempty"`
 }
 
@@ -1593,12 +1675,14 @@ type EndpointPort struct {
 	// The name of this port (corresponds to ServicePort.Name).
 	// Must be a DNS_LABEL.
 	// Optional only if one port is defined.
+	// +optional
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// The port number of the endpoint.
 	Port int32 `protobuf:"varint,2,opt,name=port" json:"port"`
 	// The IP protocol for this port.
 	// Must be UDP or TCP.
 	// Default is TCP.
+	// +optional
 	Protocol string `protobuf:"bytes,3,opt,name=protocol" json:"protocol"`
 }
 
@@ -1640,12 +1724,15 @@ func (m *EndpointPort) GetProtocol() string {
 type EndpointSubset struct {
 	// IP addresses which offer the related ports that are marked as ready. These endpoints
 	// should be considered safe for load balancers and clients to utilize.
+	// +optional
 	Addresses []*EndpointAddress `protobuf:"bytes,1,rep,name=addresses" json:"addresses,omitempty"`
 	// IP addresses which offer the related ports but are not currently marked as ready
 	// because they have not yet finished starting, have recently failed a readiness check,
 	// or have recently failed a liveness check.
+	// +optional
 	NotReadyAddresses []*EndpointAddress `protobuf:"bytes,2,rep,name=notReadyAddresses" json:"notReadyAddresses,omitempty"`
 	// Port numbers available on the related IP addresses.
+	// +optional
 	Ports []*EndpointPort `protobuf:"bytes,3,rep,name=ports" json:"ports,omitempty"`
 }
 
@@ -1688,7 +1775,8 @@ func (m *EndpointSubset) GetPorts() []*EndpointPort {
 //  ]
 type Endpoints struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// The set of all endpoints is the union of all subsets. Addresses are placed into
 	// subsets according to the IPs they share. A single address with multiple ports,
@@ -1721,7 +1809,8 @@ func (m *Endpoints) GetSubsets() []*EndpointSubset {
 // EndpointsList is a list of endpoints.
 type EndpointsList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of endpoints.
 	Items []*Endpoints `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -1757,8 +1846,10 @@ type EnvVar struct {
 	// references will never be expanded, regardless of whether the variable
 	// exists or not.
 	// Defaults to "".
+	// +optional
 	Value string `protobuf:"bytes,2,opt,name=value" json:"value"`
 	// Source for the environment variable's value. Cannot be used if value is not empty.
+	// +optional
 	ValueFrom *EnvVarSource `protobuf:"bytes,3,opt,name=valueFrom" json:"valueFrom,omitempty"`
 }
 
@@ -1791,13 +1882,17 @@ func (m *EnvVar) GetValueFrom() *EnvVarSource {
 type EnvVarSource struct {
 	// Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations,
 	// spec.nodeName, spec.serviceAccountName, status.podIP.
+	// +optional
 	FieldRef *ObjectFieldSelector `protobuf:"bytes,1,opt,name=fieldRef" json:"fieldRef,omitempty"`
 	// Selects a resource of the container: only resources limits and requests
 	// (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
+	// +optional
 	ResourceFieldRef *ResourceFieldSelector `protobuf:"bytes,2,opt,name=resourceFieldRef" json:"resourceFieldRef,omitempty"`
 	// Selects a key of a ConfigMap.
+	// +optional
 	ConfigMapKeyRef *ConfigMapKeySelector `protobuf:"bytes,3,opt,name=configMapKeyRef" json:"configMapKeyRef,omitempty"`
 	// Selects a key of a secret in the pod's namespace
+	// +optional
 	SecretKeyRef *SecretKeySelector `protobuf:"bytes,4,opt,name=secretKeyRef" json:"secretKeyRef,omitempty"`
 }
 
@@ -1837,26 +1932,33 @@ func (m *EnvVarSource) GetSecretKeyRef() *SecretKeySelector {
 // TODO: Decide whether to store these separately or with the object they apply to.
 type Event struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// The object that this event is about.
 	InvolvedObject *ObjectReference `protobuf:"bytes,2,opt,name=involvedObject" json:"involvedObject,omitempty"`
 	// This should be a short, machine understandable string that gives the reason
 	// for the transition into the object's current status.
 	// TODO: provide exact specification for format.
+	// +optional
 	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
 	// A human-readable description of the status of this operation.
 	// TODO: decide on maximum length.
+	// +optional
 	Message string `protobuf:"bytes,4,opt,name=message" json:"message"`
 	// The component reporting this event. Should be a short machine understandable string.
+	// +optional
 	Source *EventSource `protobuf:"bytes,5,opt,name=source" json:"source,omitempty"`
 	// The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)
+	// +optional
 	FirstTimestamp *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,6,opt,name=firstTimestamp" json:"firstTimestamp,omitempty"`
 	// The time at which the most recent occurrence of this event was recorded.
+	// +optional
 	LastTimestamp *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,7,opt,name=lastTimestamp" json:"lastTimestamp,omitempty"`
 	// The number of times this event has occurred.
+	// +optional
 	Count int32 `protobuf:"varint,8,opt,name=count" json:"count"`
 	// Type of this event (Normal, Warning), new types could be added in the future
+	// +optional
 	Type string `protobuf:"bytes,9,opt,name=type" json:"type"`
 }
 
@@ -1930,7 +2032,8 @@ func (m *Event) GetType() string {
 // EventList is a list of events.
 type EventList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of events
 	Items []*Event `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -1957,8 +2060,10 @@ func (m *EventList) GetItems() []*Event {
 // EventSource contains information for an event.
 type EventSource struct {
 	// Component from which the event is generated.
+	// +optional
 	Component string `protobuf:"bytes,1,opt,name=component" json:"component"`
-	// Host name on which the event is generated.
+	// Node name on which the event is generated.
+	// +optional
 	Host string `protobuf:"bytes,2,opt,name=host" json:"host"`
 }
 
@@ -1987,6 +2092,7 @@ type ExecAction struct {
 	// not run inside a shell, so traditional shell instructions ('|', etc) won't work. To use
 	// a shell, you need to explicitly call out to that shell.
 	// Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
+	// +optional
 	Command []string `protobuf:"bytes,1,rep,name=command" json:"command,omitempty"`
 }
 
@@ -2039,9 +2145,11 @@ type FCVolumeSource struct {
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
+	// +optional
 	FsType string `protobuf:"bytes,3,opt,name=fsType" json:"fsType"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
+	// +optional
 	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -2085,17 +2193,21 @@ type FlexVolumeSource struct {
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". The default filesystem depends on FlexVolume script.
+	// +optional
 	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
 	// Optional: SecretRef is reference to the secret object containing
 	// sensitive information to pass to the plugin scripts. This may be
 	// empty if no secret object is specified. If the secret object
 	// contains more than one secret, all secrets are passed to the plugin
 	// scripts.
+	// +optional
 	SecretRef *LocalObjectReference `protobuf:"bytes,3,opt,name=secretRef" json:"secretRef,omitempty"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
+	// +optional
 	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
 	// Optional: Extra command options if any.
+	// +optional
 	Options map[string]string `protobuf:"bytes,5,rep,name=options" json:"options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
@@ -2139,10 +2251,16 @@ func (m *FlexVolumeSource) GetOptions() map[string]string {
 }
 
 // Represents a Flocker volume mounted by the Flocker agent.
+// One and only one of datasetName and datasetUUID should be set.
 // Flocker volumes do not support ownership management or SELinux relabeling.
 type FlockerVolumeSource struct {
-	// Required: the volume name. This is going to be store on metadata -> name on the payload for Flocker
+	// Name of the dataset stored as metadata -> name on the dataset for Flocker
+	// should be considered as deprecated
+	// +optional
 	DatasetName string `protobuf:"bytes,1,opt,name=datasetName" json:"datasetName"`
+	// UUID of the dataset. This is unique identifier of a Flocker dataset
+	// +optional
+	DatasetUUID string `protobuf:"bytes,2,opt,name=datasetUUID" json:"datasetUUID"`
 }
 
 func (m *FlockerVolumeSource) Reset()                    { *m = FlockerVolumeSource{} }
@@ -2156,6 +2274,13 @@ func (m *FlockerVolumeSource) GetDatasetName() string {
 	return ""
 }
 
+func (m *FlockerVolumeSource) GetDatasetUUID() string {
+	if m != nil {
+		return m.DatasetUUID
+	}
+	return ""
+}
+
 // Represents a Persistent Disk resource in Google Compute Engine.
 //
 // A GCE PD must exist before mounting to a container. The disk must
@@ -2164,23 +2289,26 @@ func (m *FlockerVolumeSource) GetDatasetName() string {
 // PDs support ownership management and SELinux relabeling.
 type GCEPersistentDiskVolumeSource struct {
 	// Unique name of the PD resource in GCE. Used to identify the disk in GCE.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
+	// More info: http://kubernetes.io/docs/user-guide/volumes#gcepersistentdisk
 	PdName string `protobuf:"bytes,1,opt,name=pdName" json:"pdName"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
+	// More info: http://kubernetes.io/docs/user-guide/volumes#gcepersistentdisk
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
+	// +optional
 	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
 	// The partition in the volume that you want to mount.
 	// If omitted, the default is to mount by volume name.
 	// Examples: For volume /dev/sda1, you specify the partition as "1".
 	// Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty).
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
+	// More info: http://kubernetes.io/docs/user-guide/volumes#gcepersistentdisk
+	// +optional
 	Partition int32 `protobuf:"varint,3,opt,name=partition" json:"partition"`
 	// ReadOnly here will force the ReadOnly setting in VolumeMounts.
 	// Defaults to false.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
+	// More info: http://kubernetes.io/docs/user-guide/volumes#gcepersistentdisk
+	// +optional
 	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -2225,11 +2353,13 @@ type GitRepoVolumeSource struct {
 	// Repository URL
 	Repository string `protobuf:"bytes,1,opt,name=repository" json:"repository"`
 	// Commit hash for the specified revision.
+	// +optional
 	Revision string `protobuf:"bytes,2,opt,name=revision" json:"revision"`
 	// Target directory name.
 	// Must not contain or start with '..'.  If '.' is supplied, the volume directory will be the
 	// git repository.  Otherwise, if specified, the volume will contain the git repository in
 	// the subdirectory with the given name.
+	// +optional
 	Directory string `protobuf:"bytes,3,opt,name=directory" json:"directory"`
 }
 
@@ -2262,14 +2392,15 @@ func (m *GitRepoVolumeSource) GetDirectory() string {
 // Glusterfs volumes do not support ownership management or SELinux relabeling.
 type GlusterfsVolumeSource struct {
 	// EndpointsName is the endpoint name that details Glusterfs topology.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md#create-a-pod
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md#create-a-pod
 	Endpoints string `protobuf:"bytes,1,opt,name=endpoints" json:"endpoints"`
 	// Path is the Glusterfs volume path.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md#create-a-pod
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md#create-a-pod
 	Path string `protobuf:"bytes,2,opt,name=path" json:"path"`
 	// ReadOnly here will force the Glusterfs volume to be mounted with read-only permissions.
 	// Defaults to false.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md#create-a-pod
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md#create-a-pod
+	// +optional
 	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -2301,6 +2432,7 @@ func (m *GlusterfsVolumeSource) GetReadOnly() bool {
 // HTTPGetAction describes an action based on HTTP Get requests.
 type HTTPGetAction struct {
 	// Path to access on the HTTP server.
+	// +optional
 	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
 	// Name or number of the port to access on the container.
 	// Number must be in the range 1 to 65535.
@@ -2308,11 +2440,14 @@ type HTTPGetAction struct {
 	Port *k8s_io_kubernetes_pkg_util_intstr.IntOrString `protobuf:"bytes,2,opt,name=port" json:"port,omitempty"`
 	// Host name to connect to, defaults to the pod IP. You probably want to set
 	// "Host" in httpHeaders instead.
+	// +optional
 	Host string `protobuf:"bytes,3,opt,name=host" json:"host"`
 	// Scheme to use for connecting to the host.
 	// Defaults to HTTP.
+	// +optional
 	Scheme string `protobuf:"bytes,4,opt,name=scheme" json:"scheme"`
 	// Custom headers to set in the request. HTTP allows repeated headers.
+	// +optional
 	HttpHeaders []*HTTPHeader `protobuf:"bytes,5,rep,name=httpHeaders" json:"httpHeaders,omitempty"`
 }
 
@@ -2386,12 +2521,15 @@ func (m *HTTPHeader) GetValue() string {
 type Handler struct {
 	// One and only one of the following should be specified.
 	// Exec specifies the action to take.
+	// +optional
 	Exec *ExecAction `protobuf:"bytes,1,opt,name=exec" json:"exec,omitempty"`
 	// HTTPGet specifies the http request to perform.
+	// +optional
 	HttpGet *HTTPGetAction `protobuf:"bytes,2,opt,name=httpGet" json:"httpGet,omitempty"`
 	// TCPSocket specifies an action involving a TCP port.
 	// TCP hooks not yet supported
 	// TODO: implement a realistic TCP lifecycle hook
+	// +optional
 	TcpSocket *TCPSocketAction `protobuf:"bytes,3,opt,name=tcpSocket" json:"tcpSocket,omitempty"`
 }
 
@@ -2424,7 +2562,7 @@ func (m *Handler) GetTcpSocket() *TCPSocketAction {
 // Host path volumes do not support ownership management or SELinux relabeling.
 type HostPathVolumeSource struct {
 	// Path of the directory on the host.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#hostpath
+	// More info: http://kubernetes.io/docs/user-guide/volumes#hostpath
 	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
 }
 
@@ -2451,15 +2589,18 @@ type ISCSIVolumeSource struct {
 	// iSCSI target lun number.
 	Lun int32 `protobuf:"varint,3,opt,name=lun" json:"lun"`
 	// Optional: Defaults to 'default' (tcp). iSCSI interface name that uses an iSCSI transport.
+	// +optional
 	IscsiInterface string `protobuf:"bytes,4,opt,name=iscsiInterface" json:"iscsiInterface"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#iscsi
+	// More info: http://kubernetes.io/docs/user-guide/volumes#iscsi
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
+	// +optional
 	FsType string `protobuf:"bytes,5,opt,name=fsType" json:"fsType"`
 	// ReadOnly here will force the ReadOnly setting in VolumeMounts.
 	// Defaults to false.
+	// +optional
 	ReadOnly bool `protobuf:"varint,6,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -2522,6 +2663,7 @@ type KeyToPath struct {
 	// and 0777. If not specified, the volume defaultMode will be used.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
+	// +optional
 	Mode int32 `protobuf:"varint,3,opt,name=mode" json:"mode"`
 }
 
@@ -2557,14 +2699,16 @@ type Lifecycle struct {
 	// PostStart is called immediately after a container is created. If the handler fails,
 	// the container is terminated and restarted according to its restart policy.
 	// Other management of the container blocks until the hook completes.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/container-environment.md#hook-details
+	// More info: http://kubernetes.io/docs/user-guide/container-environment#hook-details
+	// +optional
 	PostStart *Handler `protobuf:"bytes,1,opt,name=postStart" json:"postStart,omitempty"`
 	// PreStop is called immediately before a container is terminated.
 	// The container is terminated after the handler completes.
 	// The reason for termination is passed to the handler.
 	// Regardless of the outcome of the handler, the container is eventually terminated.
 	// Other management of the container blocks until the hook completes.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/container-environment.md#hook-details
+	// More info: http://kubernetes.io/docs/user-guide/container-environment#hook-details
+	// +optional
 	PreStop *Handler `protobuf:"bytes,2,opt,name=preStop" json:"preStop,omitempty"`
 }
 
@@ -2589,10 +2733,12 @@ func (m *Lifecycle) GetPreStop() *Handler {
 // LimitRange sets resource usage limits for each kind of resource in a Namespace.
 type LimitRange struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the limits enforced.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *LimitRangeSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 }
 
@@ -2617,16 +2763,22 @@ func (m *LimitRange) GetSpec() *LimitRangeSpec {
 // LimitRangeItem defines a min/max usage limit for any resource that matches on kind.
 type LimitRangeItem struct {
 	// Type of resource that this limit applies to.
+	// +optional
 	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
 	// Max usage constraints on this kind by resource name.
+	// +optional
 	Max map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=max" json:"max,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Min usage constraints on this kind by resource name.
+	// +optional
 	Min map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,3,rep,name=min" json:"min,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Default resource requirement limit value by resource name if resource limit is omitted.
+	// +optional
 	Default map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,4,rep,name=default" json:"default,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// DefaultRequest is the default resource requirement request value by resource name if resource request is omitted.
+	// +optional
 	DefaultRequest map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,5,rep,name=defaultRequest" json:"defaultRequest,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// MaxLimitRequestRatio if specified, the named resource must have a request and limit that are both non-zero where limit divided by request is less than or equal to the enumerated value; this represents the max burst for the named resource.
+	// +optional
 	MaxLimitRequestRatio map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,6,rep,name=maxLimitRequestRatio" json:"maxLimitRequestRatio,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
@@ -2679,10 +2831,11 @@ func (m *LimitRangeItem) GetMaxLimitRequestRatio() map[string]*k8s_io_kubernetes
 // LimitRangeList is a list of LimitRange items.
 type LimitRangeList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of LimitRange objects.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/admission_control_limit_range.md
+	// More info: http://releases.k8s.io/HEAD/docs/design/admission_control_limit_range.md
 	Items []*LimitRange `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
@@ -2724,7 +2877,8 @@ func (m *LimitRangeSpec) GetLimits() []*LimitRangeItem {
 // List holds a list of objects, which may not be known by the server.
 type List struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of objects
 	Items []*k8s_io_kubernetes_pkg_runtime.RawExtension `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -2752,17 +2906,22 @@ func (m *List) GetItems() []*k8s_io_kubernetes_pkg_runtime.RawExtension {
 type ListOptions struct {
 	// A selector to restrict the list of returned objects by their labels.
 	// Defaults to everything.
+	// +optional
 	LabelSelector string `protobuf:"bytes,1,opt,name=labelSelector" json:"labelSelector"`
 	// A selector to restrict the list of returned objects by their fields.
 	// Defaults to everything.
+	// +optional
 	FieldSelector string `protobuf:"bytes,2,opt,name=fieldSelector" json:"fieldSelector"`
 	// Watch for changes to the described resources and return them as a stream of
 	// add, update, and remove notifications. Specify resourceVersion.
+	// +optional
 	Watch bool `protobuf:"varint,3,opt,name=watch" json:"watch"`
 	// When specified with a watch call, shows changes that occur after that particular version of a resource.
 	// Defaults to changes from the beginning of history.
+	// +optional
 	ResourceVersion string `protobuf:"bytes,4,opt,name=resourceVersion" json:"resourceVersion"`
 	// Timeout for the list/watch call.
+	// +optional
 	TimeoutSeconds int64 `protobuf:"varint,5,opt,name=timeoutSeconds" json:"timeoutSeconds"`
 }
 
@@ -2810,9 +2969,11 @@ func (m *ListOptions) GetTimeoutSeconds() int64 {
 type LoadBalancerIngress struct {
 	// IP is set for load-balancer ingress points that are IP based
 	// (typically GCE or OpenStack load-balancers)
+	// +optional
 	Ip string `protobuf:"bytes,1,opt,name=ip" json:"ip"`
 	// Hostname is set for load-balancer ingress points that are DNS based
 	// (typically AWS load-balancers)
+	// +optional
 	Hostname string `protobuf:"bytes,2,opt,name=hostname" json:"hostname"`
 }
 
@@ -2838,6 +2999,7 @@ func (m *LoadBalancerIngress) GetHostname() string {
 type LoadBalancerStatus struct {
 	// Ingress is a list containing ingress points for the load-balancer.
 	// Traffic intended for the service should be sent to these ingress points.
+	// +optional
 	Ingress []*LoadBalancerIngress `protobuf:"bytes,1,rep,name=ingress" json:"ingress,omitempty"`
 }
 
@@ -2856,8 +3018,9 @@ func (m *LoadBalancerStatus) GetIngress() []*LoadBalancerIngress {
 // referenced object inside the same namespace.
 type LocalObjectReference struct {
 	// Name of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#names
 	// TODO: Add other useful fields. apiVersion, kind, uid?
+	// +optional
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 }
 
@@ -2876,15 +3039,16 @@ func (m *LocalObjectReference) GetName() string {
 // NFS volumes do not support ownership management or SELinux relabeling.
 type NFSVolumeSource struct {
 	// Server is the hostname or IP address of the NFS server.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
+	// More info: http://kubernetes.io/docs/user-guide/volumes#nfs
 	Server string `protobuf:"bytes,1,opt,name=server" json:"server"`
 	// Path that is exported by the NFS server.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
+	// More info: http://kubernetes.io/docs/user-guide/volumes#nfs
 	Path string `protobuf:"bytes,2,opt,name=path" json:"path"`
 	// ReadOnly here will force
 	// the NFS export to be mounted with read-only permissions.
 	// Defaults to false.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
+	// More info: http://kubernetes.io/docs/user-guide/volumes#nfs
+	// +optional
 	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -2917,13 +3081,16 @@ func (m *NFSVolumeSource) GetReadOnly() bool {
 // Use of multiple namespaces is optional.
 type Namespace struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the behavior of the Namespace.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *NamespaceSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status describes the current status of a Namespace.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *NamespaceStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
@@ -2955,10 +3122,11 @@ func (m *Namespace) GetStatus() *NamespaceStatus {
 // NamespaceList is a list of Namespaces.
 type NamespaceList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of Namespace objects in the list.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/namespaces.md
+	// More info: http://kubernetes.io/docs/user-guide/namespaces
 	Items []*Namespace `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
@@ -2983,7 +3151,8 @@ func (m *NamespaceList) GetItems() []*Namespace {
 // NamespaceSpec describes the attributes on a Namespace.
 type NamespaceSpec struct {
 	// Finalizers is an opaque list of values that must be empty to permanently remove object from storage.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/namespaces.md#finalizers
+	// More info: http://releases.k8s.io/HEAD/docs/design/namespaces.md#finalizers
+	// +optional
 	Finalizers []string `protobuf:"bytes,1,rep,name=finalizers" json:"finalizers,omitempty"`
 }
 
@@ -3001,7 +3170,8 @@ func (m *NamespaceSpec) GetFinalizers() []string {
 // NamespaceStatus is information about the current status of a Namespace.
 type NamespaceStatus struct {
 	// Phase is the current lifecycle phase of the namespace.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/namespaces.md#phases
+	// More info: http://releases.k8s.io/HEAD/docs/design/namespaces.md#phases
+	// +optional
 	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
 }
 
@@ -3016,19 +3186,22 @@ func (m *NamespaceStatus) GetPhase() string {
 	return ""
 }
 
-// Node is a worker node in Kubernetes, formerly known as minion.
+// Node is a worker node in Kubernetes.
 // Each node will have a unique identifier in the cache (i.e. in etcd).
 type Node struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the behavior of a node.
-	// http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *NodeSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Most recently observed status of the node.
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *NodeStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
@@ -3090,6 +3263,7 @@ type NodeAffinity struct {
 	// If the affinity requirements specified by this field cease to be met
 	// at some point during pod execution (e.g. due to an update), the system
 	// may or may not try to eventually evict the pod from its node.
+	// +optional
 	RequiredDuringSchedulingIgnoredDuringExecution *NodeSelector `protobuf:"bytes,1,opt,name=requiredDuringSchedulingIgnoredDuringExecution" json:"requiredDuringSchedulingIgnoredDuringExecution,omitempty"`
 	// The scheduler will prefer to schedule pods to nodes that satisfy
 	// the affinity expressions specified by this field, but it may choose
@@ -3100,6 +3274,7 @@ type NodeAffinity struct {
 	// compute a sum by iterating through the elements of this field and adding
 	// "weight" to the sum if the node matches the corresponding matchExpressions; the
 	// node(s) with the highest sum are the most preferred.
+	// +optional
 	PreferredDuringSchedulingIgnoredDuringExecution []*PreferredSchedulingTerm `protobuf:"bytes,2,rep,name=preferredDuringSchedulingIgnoredDuringExecution" json:"preferredDuringSchedulingIgnoredDuringExecution,omitempty"`
 }
 
@@ -3128,12 +3303,16 @@ type NodeCondition struct {
 	// Status of the condition, one of True, False, Unknown.
 	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
 	// Last time we got an update on a given condition.
+	// +optional
 	LastHeartbeatTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=lastHeartbeatTime" json:"lastHeartbeatTime,omitempty"`
 	// Last time the condition transit from one status to another.
+	// +optional
 	LastTransitionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,4,opt,name=lastTransitionTime" json:"lastTransitionTime,omitempty"`
 	// (brief) reason for the condition's last transition.
+	// +optional
 	Reason string `protobuf:"bytes,5,opt,name=reason" json:"reason"`
 	// Human readable message indicating details about last transition.
+	// +optional
 	Message string `protobuf:"bytes,6,opt,name=message" json:"message"`
 }
 
@@ -3186,6 +3365,7 @@ func (m *NodeCondition) GetMessage() string {
 // NodeDaemonEndpoints lists ports opened by daemons running on the Node.
 type NodeDaemonEndpoints struct {
 	// Endpoint on which Kubelet is listening.
+	// +optional
 	KubeletEndpoint *DaemonEndpoint `protobuf:"bytes,1,opt,name=kubeletEndpoint" json:"kubeletEndpoint,omitempty"`
 }
 
@@ -3203,7 +3383,8 @@ func (m *NodeDaemonEndpoints) GetKubeletEndpoint() *DaemonEndpoint {
 // NodeList is the whole list of all Nodes which have been registered with master.
 type NodeList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of nodes
 	Items []*Node `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -3230,6 +3411,7 @@ func (m *NodeList) GetItems() []*Node {
 // NodeProxyOptions is the query options to a Node's proxy call.
 type NodeProxyOptions struct {
 	// Path is the URL path to use for the current proxy request to node.
+	// +optional
 	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
 }
 
@@ -3276,6 +3458,7 @@ type NodeSelectorRequirement struct {
 	// the values array must be empty. If the operator is Gt or Lt, the values
 	// array must have a single element, which will be interpreted as an integer.
 	// This array is replaced during a strategic merge patch.
+	// +optional
 	Values []string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty"`
 }
 
@@ -3326,14 +3509,18 @@ func (m *NodeSelectorTerm) GetMatchExpressions() []*NodeSelectorRequirement {
 // NodeSpec describes the attributes that a node is created with.
 type NodeSpec struct {
 	// PodCIDR represents the pod IP range assigned to the node.
+	// +optional
 	PodCIDR string `protobuf:"bytes,1,opt,name=podCIDR" json:"podCIDR"`
 	// External ID of the node assigned by some machine database (e.g. a cloud provider).
 	// Deprecated.
+	// +optional
 	ExternalID string `protobuf:"bytes,2,opt,name=externalID" json:"externalID"`
 	// ID of the node assigned by the cloud provider in the format: <ProviderName>://<ProviderSpecificNodeID>
+	// +optional
 	ProviderID string `protobuf:"bytes,3,opt,name=providerID" json:"providerID"`
 	// Unschedulable controls node schedulability of new pods. By default, node is schedulable.
-	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#manual-node-administration"`
+	// More info: http://releases.k8s.io/HEAD/docs/admin/node.md#manual-node-administration"
+	// +optional
 	Unschedulable bool `protobuf:"varint,4,opt,name=unschedulable" json:"unschedulable"`
 }
 
@@ -3372,32 +3559,42 @@ func (m *NodeSpec) GetUnschedulable() bool {
 // NodeStatus is information about the current status of a node.
 type NodeStatus struct {
 	// Capacity represents the total resources of a node.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#capacity for more details.
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#capacity for more details.
+	// +optional
 	Capacity map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,1,rep,name=capacity" json:"capacity,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Allocatable represents the resources of a node that are available for scheduling.
 	// Defaults to Capacity.
+	// +optional
 	Allocatable map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=allocatable" json:"allocatable,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// NodePhase is the recently observed lifecycle phase of the node.
-	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#node-phase
+	// More info: http://releases.k8s.io/HEAD/docs/admin/node.md#node-phase
 	// The field is never populated, and now is deprecated.
+	// +optional
 	Phase string `protobuf:"bytes,3,opt,name=phase" json:"phase"`
 	// Conditions is an array of current observed node conditions.
-	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#node-condition
+	// More info: http://releases.k8s.io/HEAD/docs/admin/node.md#node-condition
+	// +optional
 	Conditions []*NodeCondition `protobuf:"bytes,4,rep,name=conditions" json:"conditions,omitempty"`
 	// List of addresses reachable to the node.
 	// Queried from cloud provider, if available.
-	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#node-addresses
+	// More info: http://releases.k8s.io/HEAD/docs/admin/node.md#node-addresses
+	// +optional
 	Addresses []*NodeAddress `protobuf:"bytes,5,rep,name=addresses" json:"addresses,omitempty"`
 	// Endpoints of daemons running on the Node.
+	// +optional
 	DaemonEndpoints *NodeDaemonEndpoints `protobuf:"bytes,6,opt,name=daemonEndpoints" json:"daemonEndpoints,omitempty"`
 	// Set of ids/uuids to uniquely identify the node.
-	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#node-info
+	// More info: http://releases.k8s.io/HEAD/docs/admin/node.md#node-info
+	// +optional
 	NodeInfo *NodeSystemInfo `protobuf:"bytes,7,opt,name=nodeInfo" json:"nodeInfo,omitempty"`
 	// List of container images on this node
+	// +optional
 	Images []*ContainerImage `protobuf:"bytes,8,rep,name=images" json:"images,omitempty"`
 	// List of attachable volumes in use (mounted) by the node.
+	// +optional
 	VolumesInUse []string `protobuf:"bytes,9,rep,name=volumesInUse" json:"volumesInUse,omitempty"`
 	// List of volumes that are attached to the node.
+	// +optional
 	VolumesAttached []*AttachedVolume `protobuf:"bytes,10,rep,name=volumesAttached" json:"volumesAttached,omitempty"`
 }
 
@@ -3477,9 +3674,13 @@ func (m *NodeStatus) GetVolumesAttached() []*AttachedVolume {
 
 // NodeSystemInfo is a set of ids/uuids to uniquely identify the node.
 type NodeSystemInfo struct {
-	// Machine ID reported by the node.
+	// MachineID reported by the node. For unique machine identification
+	// in the cluster this field is prefered. Learn more from man(5)
+	// machine-id: http://man7.org/linux/man-pages/man5/machine-id.5.html
 	MachineID string `protobuf:"bytes,1,opt,name=machineID" json:"machineID"`
-	// System UUID reported by the node.
+	// SystemUUID reported by the node. For unique machine identification
+	// MachineID is prefered. This field is specific to Red Hat hosts
+	// https://access.redhat.com/documentation/en-US/Red_Hat_Subscription_Management/1/html/RHSM/getting-system-uuid.html
 	SystemUUID string `protobuf:"bytes,2,opt,name=systemUUID" json:"systemUUID"`
 	// Boot ID reported by the node.
 	BootID string `protobuf:"bytes,3,opt,name=bootID" json:"bootID"`
@@ -3576,6 +3777,7 @@ func (m *NodeSystemInfo) GetArchitecture() string {
 // ObjectFieldSelector selects an APIVersioned field of an object.
 type ObjectFieldSelector struct {
 	// Version of the schema the FieldPath is written in terms of, defaults to "v1".
+	// +optional
 	ApiVersion string `protobuf:"bytes,1,opt,name=apiVersion" json:"apiVersion"`
 	// Path of the field to select in the specified API version.
 	FieldPath string `protobuf:"bytes,2,opt,name=fieldPath" json:"fieldPath"`
@@ -3607,7 +3809,8 @@ type ObjectMeta struct {
 	// automatically. Name is primarily intended for creation idempotence and configuration
 	// definition.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#names
+	// +optional
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// GenerateName is an optional prefix, used by the server, to generate a unique
 	// name ONLY IF the Name field has not been provided.
@@ -3623,7 +3826,8 @@ type ObjectMeta struct {
 	// should retry (optionally after the time indicated in the Retry-After header).
 	//
 	// Applied only if Name is not specified.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#idempotency
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#idempotency
+	// +optional
 	GenerateName string `protobuf:"bytes,2,opt,name=generateName" json:"generateName"`
 	// Namespace defines the space within each name must be unique. An empty namespace is
 	// equivalent to the "default" namespace, but "default" is the canonical representation.
@@ -3632,11 +3836,13 @@ type ObjectMeta struct {
 	//
 	// Must be a DNS_LABEL.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/namespaces.md
+	// More info: http://kubernetes.io/docs/user-guide/namespaces
+	// +optional
 	Namespace string `protobuf:"bytes,3,opt,name=namespace" json:"namespace"`
 	// SelfLink is a URL representing this object.
 	// Populated by the system.
 	// Read-only.
+	// +optional
 	SelfLink string `protobuf:"bytes,4,opt,name=selfLink" json:"selfLink"`
 	// UID is the unique in time and space value for this object. It is typically generated by
 	// the server on successful creation of a resource and is not allowed to change on PUT
@@ -3644,7 +3850,8 @@ type ObjectMeta struct {
 	//
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#uids
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+	// +optional
 	Uid string `protobuf:"bytes,5,opt,name=uid" json:"uid"`
 	// An opaque value that represents the internal version of this object that can
 	// be used by clients to determine when objects have changed. May be used for optimistic
@@ -3655,10 +3862,12 @@ type ObjectMeta struct {
 	// Populated by the system.
 	// Read-only.
 	// Value must be treated as opaque by clients and .
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#concurrency-control-and-consistency
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#concurrency-control-and-consistency
+	// +optional
 	ResourceVersion string `protobuf:"bytes,6,opt,name=resourceVersion" json:"resourceVersion"`
 	// A sequence number representing a specific generation of the desired state.
 	// Populated by the system. Read-only.
+	// +optional
 	Generation int64 `protobuf:"varint,7,opt,name=generation" json:"generation"`
 	// CreationTimestamp is a timestamp representing the server time when this object was
 	// created. It is not guaranteed to be set in happens-before order across separate operations.
@@ -3667,51 +3876,62 @@ type ObjectMeta struct {
 	// Populated by the system.
 	// Read-only.
 	// Null for lists.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	CreationTimestamp *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,8,opt,name=creationTimestamp" json:"creationTimestamp,omitempty"`
 	// DeletionTimestamp is RFC 3339 date and time at which this resource will be deleted. This
 	// field is set by the server when a graceful deletion is requested by the user, and is not
-	// directly settable by a client. The resource will be deleted (no longer visible from
-	// resource lists, and not reachable by name) after the time in this field. Once set, this
-	// value may not be unset or be set further into the future, although it may be shortened
+	// directly settable by a client. The resource is expected to be deleted (no longer visible
+	// from resource lists, and not reachable by name) after the time in this field. Once set,
+	// this value may not be unset or be set further into the future, although it may be shortened
 	// or the resource may be deleted prior to this time. For example, a user may request that
 	// a pod is deleted in 30 seconds. The Kubelet will react by sending a graceful termination
-	// signal to the containers in the pod. Once the resource is deleted in the API, the Kubelet
-	// will send a hard termination signal to the container.
+	// signal to the containers in the pod. After that 30 seconds, the Kubelet will send a hard
+	// termination signal (SIGKILL) to the container and after cleanup, remove the pod from the
+	// API. In the presence of network partitions, this object may still exist after this
+	// timestamp, until an administrator or automated process can determine the resource is
+	// fully terminated.
 	// If not set, graceful deletion of the object has not been requested.
 	//
 	// Populated by the system when a graceful deletion is requested.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	DeletionTimestamp *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,9,opt,name=deletionTimestamp" json:"deletionTimestamp,omitempty"`
 	// Number of seconds allowed for this object to gracefully terminate before
 	// it will be removed from the system. Only set when deletionTimestamp is also set.
 	// May only be shortened.
 	// Read-only.
+	// +optional
 	DeletionGracePeriodSeconds int64 `protobuf:"varint,10,opt,name=deletionGracePeriodSeconds" json:"deletionGracePeriodSeconds"`
 	// Map of string keys and values that can be used to organize and categorize
 	// (scope and select) objects. May match selectors of replication controllers
 	// and services.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/labels.md
+	// More info: http://kubernetes.io/docs/user-guide/labels
+	// +optional
 	Labels map[string]string `protobuf:"bytes,11,rep,name=labels" json:"labels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Annotations is an unstructured key value map stored with a resource that may be
 	// set by external tools to store and retrieve arbitrary metadata. They are not
 	// queryable and should be preserved when modifying objects.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/annotations.md
+	// More info: http://kubernetes.io/docs/user-guide/annotations
+	// +optional
 	Annotations map[string]string `protobuf:"bytes,12,rep,name=annotations" json:"annotations,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// List of objects depended by this object. If ALL objects in the list have
 	// been deleted, this object will be garbage collected. If this object is managed by a controller,
 	// then an entry in this list will point to this controller, with the controller field set to true.
 	// There cannot be more than one managing controller.
+	// +optional
 	OwnerReferences []*OwnerReference `protobuf:"bytes,13,rep,name=ownerReferences" json:"ownerReferences,omitempty"`
 	// Must be empty before the object is deleted from the registry. Each entry
 	// is an identifier for the responsible component that will remove the entry
 	// from the list. If the deletionTimestamp of the object is non-nil, entries
 	// in this list can only be removed.
+	// +optional
 	Finalizers []string `protobuf:"bytes,14,rep,name=finalizers" json:"finalizers,omitempty"`
 	// The name of the cluster which the object belongs to.
 	// This is used to distinguish resources with same name and namespace in different clusters.
 	// This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
+	// +optional
 	ClusterName string `protobuf:"bytes,15,opt,name=clusterName" json:"clusterName"`
 }
 
@@ -3827,21 +4047,27 @@ func (m *ObjectMeta) GetClusterName() string {
 // ObjectReference contains enough information to let you inspect or modify the referred object.
 type ObjectReference struct {
 	// Kind of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Kind string `protobuf:"bytes,1,opt,name=kind" json:"kind"`
 	// Namespace of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/namespaces.md
+	// More info: http://kubernetes.io/docs/user-guide/namespaces
+	// +optional
 	Namespace string `protobuf:"bytes,2,opt,name=namespace" json:"namespace"`
 	// Name of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#names
+	// +optional
 	Name string `protobuf:"bytes,3,opt,name=name" json:"name"`
 	// UID of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#uids
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+	// +optional
 	Uid string `protobuf:"bytes,4,opt,name=uid" json:"uid"`
 	// API version of the referent.
+	// +optional
 	ApiVersion string `protobuf:"bytes,5,opt,name=apiVersion" json:"apiVersion"`
 	// Specific resourceVersion to which this reference is made, if any.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#concurrency-control-and-consistency
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#concurrency-control-and-consistency
+	// +optional
 	ResourceVersion string `protobuf:"bytes,6,opt,name=resourceVersion" json:"resourceVersion"`
 	// If referring to a piece of an object instead of an entire object, this string
 	// should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].
@@ -3851,6 +4077,7 @@ type ObjectReference struct {
 	// index 2 in this pod). This syntax is chosen only to have some well-defined way of
 	// referencing a part of an object.
 	// TODO: this design is not final and this field is subject to change in the future.
+	// +optional
 	FieldPath string `protobuf:"bytes,7,opt,name=fieldPath" json:"fieldPath"`
 }
 
@@ -3914,15 +4141,16 @@ type OwnerReference struct {
 	// API version of the referent.
 	ApiVersion string `protobuf:"bytes,5,opt,name=apiVersion" json:"apiVersion"`
 	// Kind of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
 	Kind string `protobuf:"bytes,1,opt,name=kind" json:"kind"`
 	// Name of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#names
 	Name string `protobuf:"bytes,3,opt,name=name" json:"name"`
 	// UID of the referent.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#uids
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#uids
 	Uid string `protobuf:"bytes,4,opt,name=uid" json:"uid"`
 	// If true, this reference points to the managing controller.
+	// +optional
 	Controller bool `protobuf:"varint,6,opt,name=controller" json:"controller"`
 }
 
@@ -3967,19 +4195,22 @@ func (m *OwnerReference) GetController() bool {
 
 // PersistentVolume (PV) is a storage resource provisioned by an administrator.
 // It is analogous to a node.
-// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md
+// More info: http://kubernetes.io/docs/user-guide/persistent-volumes
 type PersistentVolume struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines a specification of a persistent volume owned by the cluster.
 	// Provisioned by an administrator.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistent-volumes
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistent-volumes
+	// +optional
 	Spec *PersistentVolumeSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status represents the current information/status for the persistent volume.
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistent-volumes
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistent-volumes
+	// +optional
 	Status *PersistentVolumeStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
@@ -4011,14 +4242,17 @@ func (m *PersistentVolume) GetStatus() *PersistentVolumeStatus {
 // PersistentVolumeClaim is a user's request for and claim to a persistent volume
 type PersistentVolumeClaim struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the desired characteristics of a volume requested by a pod author.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistentvolumeclaims
+	// +optional
 	Spec *PersistentVolumeClaimSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status represents the current information/status of a persistent volume claim.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistentvolumeclaims
+	// +optional
 	Status *PersistentVolumeClaimStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
@@ -4050,10 +4284,11 @@ func (m *PersistentVolumeClaim) GetStatus() *PersistentVolumeClaimStatus {
 // PersistentVolumeClaimList is a list of PersistentVolumeClaim items.
 type PersistentVolumeClaimList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// A list of persistent volume claims.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistentvolumeclaims
 	Items []*PersistentVolumeClaim `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
@@ -4081,14 +4316,18 @@ func (m *PersistentVolumeClaimList) GetItems() []*PersistentVolumeClaim {
 // and allows a Source for provider-specific attributes
 type PersistentVolumeClaimSpec struct {
 	// AccessModes contains the desired access modes the volume should have.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#access-modes-1
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#access-modes-1
+	// +optional
 	AccessModes []string `protobuf:"bytes,1,rep,name=accessModes" json:"accessModes,omitempty"`
 	// A label query over volumes to consider for binding.
+	// +optional
 	Selector *k8s_io_kubernetes_pkg_api_unversioned.LabelSelector `protobuf:"bytes,4,opt,name=selector" json:"selector,omitempty"`
 	// Resources represents the minimum resources the volume should have.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#resources
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#resources
+	// +optional
 	Resources *ResourceRequirements `protobuf:"bytes,2,opt,name=resources" json:"resources,omitempty"`
 	// VolumeName is the binding reference to the PersistentVolume backing this claim.
+	// +optional
 	VolumeName string `protobuf:"bytes,3,opt,name=volumeName" json:"volumeName"`
 }
 
@@ -4129,11 +4368,14 @@ func (m *PersistentVolumeClaimSpec) GetVolumeName() string {
 // PersistentVolumeClaimStatus is the current status of a persistent volume claim.
 type PersistentVolumeClaimStatus struct {
 	// Phase represents the current phase of PersistentVolumeClaim.
+	// +optional
 	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
 	// AccessModes contains the actual access modes the volume backing the PVC has.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#access-modes-1
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#access-modes-1
+	// +optional
 	AccessModes []string `protobuf:"bytes,2,rep,name=accessModes" json:"accessModes,omitempty"`
 	// Represents the actual resources of the underlying volume.
+	// +optional
 	Capacity map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,3,rep,name=capacity" json:"capacity,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
@@ -4170,10 +4412,11 @@ func (m *PersistentVolumeClaimStatus) GetCapacity() map[string]*k8s_io_kubernete
 // type of volume that is owned by someone else (the system).
 type PersistentVolumeClaimVolumeSource struct {
 	// ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistentvolumeclaims
 	ClaimName string `protobuf:"bytes,1,opt,name=claimName" json:"claimName"`
 	// Will force the ReadOnly setting in VolumeMounts.
 	// Default false.
+	// +optional
 	ReadOnly bool `protobuf:"varint,2,opt,name=readOnly" json:"readOnly"`
 }
 
@@ -4200,10 +4443,11 @@ func (m *PersistentVolumeClaimVolumeSource) GetReadOnly() bool {
 // PersistentVolumeList is a list of PersistentVolume items.
 type PersistentVolumeList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of persistent volumes.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes
 	Items []*PersistentVolume `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
@@ -4230,52 +4474,70 @@ func (m *PersistentVolumeList) GetItems() []*PersistentVolume {
 type PersistentVolumeSource struct {
 	// GCEPersistentDisk represents a GCE Disk resource that is attached to a
 	// kubelet's host machine and then exposed to the pod. Provisioned by an admin.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
+	// More info: http://kubernetes.io/docs/user-guide/volumes#gcepersistentdisk
+	// +optional
 	GcePersistentDisk *GCEPersistentDiskVolumeSource `protobuf:"bytes,1,opt,name=gcePersistentDisk" json:"gcePersistentDisk,omitempty"`
 	// AWSElasticBlockStore represents an AWS Disk resource that is attached to a
 	// kubelet's host machine and then exposed to the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
+	// More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
+	// +optional
 	AwsElasticBlockStore *AWSElasticBlockStoreVolumeSource `protobuf:"bytes,2,opt,name=awsElasticBlockStore" json:"awsElasticBlockStore,omitempty"`
 	// HostPath represents a directory on the host.
 	// Provisioned by a developer or tester.
 	// This is useful for single-node development and testing only!
 	// On-host storage is not supported in any way and WILL NOT WORK in a multi-node cluster.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#hostpath
+	// More info: http://kubernetes.io/docs/user-guide/volumes#hostpath
+	// +optional
 	HostPath *HostPathVolumeSource `protobuf:"bytes,3,opt,name=hostPath" json:"hostPath,omitempty"`
 	// Glusterfs represents a Glusterfs volume that is attached to a host and
 	// exposed to the pod. Provisioned by an admin.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md
+	// +optional
 	Glusterfs *GlusterfsVolumeSource `protobuf:"bytes,4,opt,name=glusterfs" json:"glusterfs,omitempty"`
 	// NFS represents an NFS mount on the host. Provisioned by an admin.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
+	// More info: http://kubernetes.io/docs/user-guide/volumes#nfs
+	// +optional
 	Nfs *NFSVolumeSource `protobuf:"bytes,5,opt,name=nfs" json:"nfs,omitempty"`
 	// RBD represents a Rados Block Device mount on the host that shares a pod's lifetime.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md
+	// +optional
 	Rbd *RBDVolumeSource `protobuf:"bytes,6,opt,name=rbd" json:"rbd,omitempty"`
 	// ISCSI represents an ISCSI Disk resource that is attached to a
 	// kubelet's host machine and then exposed to the pod. Provisioned by an admin.
+	// +optional
 	Iscsi *ISCSIVolumeSource `protobuf:"bytes,7,opt,name=iscsi" json:"iscsi,omitempty"`
 	// Cinder represents a cinder volume attached and mounted on kubelets host machine
-	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md
+	// +optional
 	Cinder *CinderVolumeSource `protobuf:"bytes,8,opt,name=cinder" json:"cinder,omitempty"`
 	// CephFS represents a Ceph FS mount on the host that shares a pod's lifetime
+	// +optional
 	Cephfs *CephFSVolumeSource `protobuf:"bytes,9,opt,name=cephfs" json:"cephfs,omitempty"`
 	// FC represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
+	// +optional
 	Fc *FCVolumeSource `protobuf:"bytes,10,opt,name=fc" json:"fc,omitempty"`
 	// Flocker represents a Flocker volume attached to a kubelet's host machine and exposed to the pod for its usage. This depends on the Flocker control service being running
+	// +optional
 	Flocker *FlockerVolumeSource `protobuf:"bytes,11,opt,name=flocker" json:"flocker,omitempty"`
 	// FlexVolume represents a generic volume resource that is
 	// provisioned/attached using an exec based plugin. This is an
 	// alpha feature and may change in future.
+	// +optional
 	FlexVolume *FlexVolumeSource `protobuf:"bytes,12,opt,name=flexVolume" json:"flexVolume,omitempty"`
 	// AzureFile represents an Azure File Service mount on the host and bind mount to the pod.
+	// +optional
 	AzureFile *AzureFileVolumeSource `protobuf:"bytes,13,opt,name=azureFile" json:"azureFile,omitempty"`
 	// VsphereVolume represents a vSphere volume attached and mounted on kubelets host machine
+	// +optional
 	VsphereVolume *VsphereVirtualDiskVolumeSource `protobuf:"bytes,14,opt,name=vsphereVolume" json:"vsphereVolume,omitempty"`
 	// Quobyte represents a Quobyte mount on the host that shares a pod's lifetime
+	// +optional
 	Quobyte *QuobyteVolumeSource `protobuf:"bytes,15,opt,name=quobyte" json:"quobyte,omitempty"`
 	// AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
+	// +optional
 	AzureDisk *AzureDiskVolumeSource `protobuf:"bytes,16,opt,name=azureDisk" json:"azureDisk,omitempty"`
+	// PhotonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine
+	PhotonPersistentDisk *PhotonPersistentDiskVolumeSource `protobuf:"bytes,17,opt,name=photonPersistentDisk" json:"photonPersistentDisk,omitempty"`
 }
 
 func (m *PersistentVolumeSource) Reset()                    { *m = PersistentVolumeSource{} }
@@ -4394,25 +4656,36 @@ func (m *PersistentVolumeSource) GetAzureDisk() *AzureDiskVolumeSource {
 	return nil
 }
 
+func (m *PersistentVolumeSource) GetPhotonPersistentDisk() *PhotonPersistentDiskVolumeSource {
+	if m != nil {
+		return m.PhotonPersistentDisk
+	}
+	return nil
+}
+
 // PersistentVolumeSpec is the specification of a persistent volume.
 type PersistentVolumeSpec struct {
 	// A description of the persistent volume's resources and capacity.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#capacity
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#capacity
+	// +optional
 	Capacity map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,1,rep,name=capacity" json:"capacity,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// The actual volume backing the persistent volume.
 	PersistentVolumeSource *PersistentVolumeSource `protobuf:"bytes,2,opt,name=persistentVolumeSource" json:"persistentVolumeSource,omitempty"`
 	// AccessModes contains all ways the volume can be mounted.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#access-modes
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#access-modes
+	// +optional
 	AccessModes []string `protobuf:"bytes,3,rep,name=accessModes" json:"accessModes,omitempty"`
 	// ClaimRef is part of a bi-directional binding between PersistentVolume and PersistentVolumeClaim.
 	// Expected to be non-nil when bound.
 	// claim.VolumeName is the authoritative bind between PV and PVC.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#binding
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#binding
+	// +optional
 	ClaimRef *ObjectReference `protobuf:"bytes,4,opt,name=claimRef" json:"claimRef,omitempty"`
 	// What happens to a persistent volume when released from its claim.
 	// Valid options are Retain (default) and Recycle.
 	// Recycling must be supported by the volume plugin underlying this persistent volume.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#recycling-policy
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#recycling-policy
+	// +optional
 	PersistentVolumeReclaimPolicy string `protobuf:"bytes,5,opt,name=persistentVolumeReclaimPolicy" json:"persistentVolumeReclaimPolicy"`
 }
 
@@ -4458,12 +4731,15 @@ func (m *PersistentVolumeSpec) GetPersistentVolumeReclaimPolicy() string {
 // PersistentVolumeStatus is the current status of a persistent volume.
 type PersistentVolumeStatus struct {
 	// Phase indicates if a volume is available, bound to a claim, or released by a claim.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#phase
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#phase
+	// +optional
 	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
 	// A human-readable message indicating details about why the volume is in this state.
+	// +optional
 	Message string `protobuf:"bytes,2,opt,name=message" json:"message"`
 	// Reason is a brief CamelCase string that describes any failure and is meant
 	// for machine parsing and tidy display in the CLI.
+	// +optional
 	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
 }
 
@@ -4492,26 +4768,59 @@ func (m *PersistentVolumeStatus) GetReason() string {
 	return ""
 }
 
+// Represents a Photon Controller persistent disk resource.
+type PhotonPersistentDiskVolumeSource struct {
+	// ID that identifies Photon Controller persistent disk
+	PdID string `protobuf:"bytes,1,opt,name=pdID" json:"pdID"`
+	// Filesystem type to mount.
+	// Must be a filesystem type supported by the host operating system.
+	// Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
+	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
+}
+
+func (m *PhotonPersistentDiskVolumeSource) Reset()      { *m = PhotonPersistentDiskVolumeSource{} }
+func (*PhotonPersistentDiskVolumeSource) ProtoMessage() {}
+func (*PhotonPersistentDiskVolumeSource) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{96}
+}
+
+func (m *PhotonPersistentDiskVolumeSource) GetPdID() string {
+	if m != nil {
+		return m.PdID
+	}
+	return ""
+}
+
+func (m *PhotonPersistentDiskVolumeSource) GetFsType() string {
+	if m != nil {
+		return m.FsType
+	}
+	return ""
+}
+
 // Pod is a collection of containers that can run on a host. This resource is created
 // by clients and scheduled onto hosts.
 type Pod struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Specification of the desired behavior of the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *PodSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Most recently observed status of the pod.
 	// This data may not be up to date.
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *PodStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
 func (m *Pod) Reset()                    { *m = Pod{} }
 func (*Pod) ProtoMessage()               {}
-func (*Pod) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{96} }
+func (*Pod) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{97} }
 
 func (m *Pod) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -4544,6 +4853,7 @@ type PodAffinity struct {
 	// system will try to eventually evict the pod from its node.
 	// When there are multiple elements, the lists of nodes corresponding to each
 	// podAffinityTerm are intersected, i.e. all terms must be satisfied.
+	// +optional
 	// RequiredDuringSchedulingRequiredDuringExecution []PodAffinityTerm  `json:"requiredDuringSchedulingRequiredDuringExecution,omitempty"`
 	// If the affinity requirements specified by this field are not met at
 	// scheduling time, the pod will not be scheduled onto the node.
@@ -4552,6 +4862,7 @@ type PodAffinity struct {
 	// system may or may not try to eventually evict the pod from its node.
 	// When there are multiple elements, the lists of nodes corresponding to each
 	// podAffinityTerm are intersected, i.e. all terms must be satisfied.
+	// +optional
 	RequiredDuringSchedulingIgnoredDuringExecution []*PodAffinityTerm `protobuf:"bytes,1,rep,name=requiredDuringSchedulingIgnoredDuringExecution" json:"requiredDuringSchedulingIgnoredDuringExecution,omitempty"`
 	// The scheduler will prefer to schedule pods to nodes that satisfy
 	// the affinity expressions specified by this field, but it may choose
@@ -4562,12 +4873,13 @@ type PodAffinity struct {
 	// compute a sum by iterating through the elements of this field and adding
 	// "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the
 	// node(s) with the highest sum are the most preferred.
+	// +optional
 	PreferredDuringSchedulingIgnoredDuringExecution []*WeightedPodAffinityTerm `protobuf:"bytes,2,rep,name=preferredDuringSchedulingIgnoredDuringExecution" json:"preferredDuringSchedulingIgnoredDuringExecution,omitempty"`
 }
 
 func (m *PodAffinity) Reset()                    { *m = PodAffinity{} }
 func (*PodAffinity) ProtoMessage()               {}
-func (*PodAffinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{97} }
+func (*PodAffinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{98} }
 
 func (m *PodAffinity) GetRequiredDuringSchedulingIgnoredDuringExecution() []*PodAffinityTerm {
 	if m != nil {
@@ -4591,6 +4903,7 @@ func (m *PodAffinity) GetPreferredDuringSchedulingIgnoredDuringExecution() []*We
 // a pod of the set of pods is running
 type PodAffinityTerm struct {
 	// A label query over a set of resources, in this case pods.
+	// +optional
 	LabelSelector *k8s_io_kubernetes_pkg_api_unversioned.LabelSelector `protobuf:"bytes,1,opt,name=labelSelector" json:"labelSelector,omitempty"`
 	// namespaces specifies which namespaces the labelSelector applies to (matches against);
 	// nil list means "this pod's namespace," empty list means "all namespaces"
@@ -4604,12 +4917,13 @@ type PodAffinityTerm struct {
 	// For PreferredDuringScheduling pod anti-affinity, empty topologyKey is interpreted as "all topologies"
 	// ("all topologies" here means all the topologyKeys indicated by scheduler command-line argument --failure-domains);
 	// for affinity and for RequiredDuringScheduling pod anti-affinity, empty topologyKey is not allowed.
+	// +optional
 	TopologyKey string `protobuf:"bytes,3,opt,name=topologyKey" json:"topologyKey"`
 }
 
 func (m *PodAffinityTerm) Reset()                    { *m = PodAffinityTerm{} }
 func (*PodAffinityTerm) ProtoMessage()               {}
-func (*PodAffinityTerm) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{98} }
+func (*PodAffinityTerm) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{99} }
 
 func (m *PodAffinityTerm) GetLabelSelector() *k8s_io_kubernetes_pkg_api_unversioned.LabelSelector {
 	if m != nil {
@@ -4642,6 +4956,7 @@ type PodAntiAffinity struct {
 	// system will try to eventually evict the pod from its node.
 	// When there are multiple elements, the lists of nodes corresponding to each
 	// podAffinityTerm are intersected, i.e. all terms must be satisfied.
+	// +optional
 	// RequiredDuringSchedulingRequiredDuringExecution []PodAffinityTerm  `json:"requiredDuringSchedulingRequiredDuringExecution,omitempty"`
 	// If the anti-affinity requirements specified by this field are not met at
 	// scheduling time, the pod will not be scheduled onto the node.
@@ -4650,6 +4965,7 @@ type PodAntiAffinity struct {
 	// system may or may not try to eventually evict the pod from its node.
 	// When there are multiple elements, the lists of nodes corresponding to each
 	// podAffinityTerm are intersected, i.e. all terms must be satisfied.
+	// +optional
 	RequiredDuringSchedulingIgnoredDuringExecution []*PodAffinityTerm `protobuf:"bytes,1,rep,name=requiredDuringSchedulingIgnoredDuringExecution" json:"requiredDuringSchedulingIgnoredDuringExecution,omitempty"`
 	// The scheduler will prefer to schedule pods to nodes that satisfy
 	// the anti-affinity expressions specified by this field, but it may choose
@@ -4660,12 +4976,13 @@ type PodAntiAffinity struct {
 	// compute a sum by iterating through the elements of this field and adding
 	// "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the
 	// node(s) with the highest sum are the most preferred.
+	// +optional
 	PreferredDuringSchedulingIgnoredDuringExecution []*WeightedPodAffinityTerm `protobuf:"bytes,2,rep,name=preferredDuringSchedulingIgnoredDuringExecution" json:"preferredDuringSchedulingIgnoredDuringExecution,omitempty"`
 }
 
 func (m *PodAntiAffinity) Reset()                    { *m = PodAntiAffinity{} }
 func (*PodAntiAffinity) ProtoMessage()               {}
-func (*PodAntiAffinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{99} }
+func (*PodAntiAffinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{100} }
 
 func (m *PodAntiAffinity) GetRequiredDuringSchedulingIgnoredDuringExecution() []*PodAffinityTerm {
 	if m != nil {
@@ -4688,26 +5005,31 @@ func (m *PodAntiAffinity) GetPreferredDuringSchedulingIgnoredDuringExecution() [
 type PodAttachOptions struct {
 	// Stdin if true, redirects the standard input stream of the pod for this call.
 	// Defaults to false.
+	// +optional
 	Stdin bool `protobuf:"varint,1,opt,name=stdin" json:"stdin"`
 	// Stdout if true indicates that stdout is to be redirected for the attach call.
 	// Defaults to true.
+	// +optional
 	Stdout bool `protobuf:"varint,2,opt,name=stdout" json:"stdout"`
 	// Stderr if true indicates that stderr is to be redirected for the attach call.
 	// Defaults to true.
+	// +optional
 	Stderr bool `protobuf:"varint,3,opt,name=stderr" json:"stderr"`
 	// TTY if true indicates that a tty will be allocated for the attach call.
 	// This is passed through the container runtime so the tty
 	// is allocated on the worker node by the container runtime.
 	// Defaults to false.
+	// +optional
 	Tty bool `protobuf:"varint,4,opt,name=tty" json:"tty"`
 	// The container in which to execute the command.
 	// Defaults to only container if there is only one container in the pod.
+	// +optional
 	Container string `protobuf:"bytes,5,opt,name=container" json:"container"`
 }
 
 func (m *PodAttachOptions) Reset()                    { *m = PodAttachOptions{} }
 func (*PodAttachOptions) ProtoMessage()               {}
-func (*PodAttachOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{100} }
+func (*PodAttachOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{101} }
 
 func (m *PodAttachOptions) GetStdin() bool {
 	if m != nil {
@@ -4748,25 +5070,29 @@ func (m *PodAttachOptions) GetContainer() string {
 type PodCondition struct {
 	// Type is the type of the condition.
 	// Currently only Ready.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-conditions
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#pod-conditions
 	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
 	// Status is the status of the condition.
 	// Can be True, False, Unknown.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-conditions
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#pod-conditions
 	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
 	// Last time we probed the condition.
+	// +optional
 	LastProbeTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=lastProbeTime" json:"lastProbeTime,omitempty"`
 	// Last time the condition transitioned from one status to another.
+	// +optional
 	LastTransitionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,4,opt,name=lastTransitionTime" json:"lastTransitionTime,omitempty"`
 	// Unique, one-word, CamelCase reason for the condition's last transition.
+	// +optional
 	Reason string `protobuf:"bytes,5,opt,name=reason" json:"reason"`
 	// Human-readable message indicating details about last transition.
+	// +optional
 	Message string `protobuf:"bytes,6,opt,name=message" json:"message"`
 }
 
 func (m *PodCondition) Reset()                    { *m = PodCondition{} }
 func (*PodCondition) ProtoMessage()               {}
-func (*PodCondition) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{101} }
+func (*PodCondition) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{102} }
 
 func (m *PodCondition) GetType() string {
 	if m != nil {
@@ -4817,18 +5143,23 @@ func (m *PodCondition) GetMessage() string {
 type PodExecOptions struct {
 	// Redirect the standard input stream of the pod for this call.
 	// Defaults to false.
+	// +optional
 	Stdin bool `protobuf:"varint,1,opt,name=stdin" json:"stdin"`
 	// Redirect the standard output stream of the pod for this call.
 	// Defaults to true.
+	// +optional
 	Stdout bool `protobuf:"varint,2,opt,name=stdout" json:"stdout"`
 	// Redirect the standard error stream of the pod for this call.
 	// Defaults to true.
+	// +optional
 	Stderr bool `protobuf:"varint,3,opt,name=stderr" json:"stderr"`
 	// TTY if true indicates that a tty will be allocated for the exec call.
 	// Defaults to false.
+	// +optional
 	Tty bool `protobuf:"varint,4,opt,name=tty" json:"tty"`
 	// Container in which to execute the command.
 	// Defaults to only container if there is only one container in the pod.
+	// +optional
 	Container string `protobuf:"bytes,5,opt,name=container" json:"container"`
 	// Command is the remote command to execute. argv array. Not executed within a shell.
 	Command []string `protobuf:"bytes,6,rep,name=command" json:"command,omitempty"`
@@ -4836,7 +5167,7 @@ type PodExecOptions struct {
 
 func (m *PodExecOptions) Reset()                    { *m = PodExecOptions{} }
 func (*PodExecOptions) ProtoMessage()               {}
-func (*PodExecOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{102} }
+func (*PodExecOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{103} }
 
 func (m *PodExecOptions) GetStdin() bool {
 	if m != nil {
@@ -4883,16 +5214,17 @@ func (m *PodExecOptions) GetCommand() []string {
 // PodList is a list of Pods.
 type PodList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of pods.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pods.md
+	// More info: http://kubernetes.io/docs/user-guide/pods
 	Items []*Pod `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
 func (m *PodList) Reset()                    { *m = PodList{} }
 func (*PodList) ProtoMessage()               {}
-func (*PodList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{103} }
+func (*PodList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{104} }
 
 func (m *PodList) GetMetadata() *k8s_io_kubernetes_pkg_api_unversioned.ListMeta {
 	if m != nil {
@@ -4911,36 +5243,44 @@ func (m *PodList) GetItems() []*Pod {
 // PodLogOptions is the query options for a Pod's logs REST call.
 type PodLogOptions struct {
 	// The container for which to stream logs. Defaults to only container if there is one container in the pod.
+	// +optional
 	Container string `protobuf:"bytes,1,opt,name=container" json:"container"`
 	// Follow the log stream of the pod. Defaults to false.
+	// +optional
 	Follow bool `protobuf:"varint,2,opt,name=follow" json:"follow"`
 	// Return previous terminated container logs. Defaults to false.
+	// +optional
 	Previous bool `protobuf:"varint,3,opt,name=previous" json:"previous"`
 	// A relative time in seconds before the current time from which to show logs. If this value
 	// precedes the time a pod was started, only logs since the pod start will be returned.
 	// If this value is in the future, no logs will be returned.
 	// Only one of sinceSeconds or sinceTime may be specified.
+	// +optional
 	SinceSeconds int64 `protobuf:"varint,4,opt,name=sinceSeconds" json:"sinceSeconds"`
 	// An RFC3339 timestamp from which to show logs. If this value
 	// precedes the time a pod was started, only logs since the pod start will be returned.
 	// If this value is in the future, no logs will be returned.
 	// Only one of sinceSeconds or sinceTime may be specified.
+	// +optional
 	SinceTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,5,opt,name=sinceTime" json:"sinceTime,omitempty"`
 	// If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every line
 	// of log output. Defaults to false.
+	// +optional
 	Timestamps bool `protobuf:"varint,6,opt,name=timestamps" json:"timestamps"`
 	// If set, the number of lines from the end of the logs to show. If not specified,
 	// logs are shown from the creation of the container or sinceSeconds or sinceTime
+	// +optional
 	TailLines int64 `protobuf:"varint,7,opt,name=tailLines" json:"tailLines"`
 	// If set, the number of bytes to read from the server before terminating the
 	// log output. This may not display a complete final line of logging, and may return
 	// slightly more or slightly less than the specified limit.
+	// +optional
 	LimitBytes int64 `protobuf:"varint,8,opt,name=limitBytes" json:"limitBytes"`
 }
 
 func (m *PodLogOptions) Reset()                    { *m = PodLogOptions{} }
 func (*PodLogOptions) ProtoMessage()               {}
-func (*PodLogOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{104} }
+func (*PodLogOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{105} }
 
 func (m *PodLogOptions) GetContainer() string {
 	if m != nil {
@@ -5001,12 +5341,13 @@ func (m *PodLogOptions) GetLimitBytes() int64 {
 // PodProxyOptions is the query options to a Pod's proxy call.
 type PodProxyOptions struct {
 	// Path is the URL path to use for the current proxy request to pod.
+	// +optional
 	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
 }
 
 func (m *PodProxyOptions) Reset()                    { *m = PodProxyOptions{} }
 func (*PodProxyOptions) ProtoMessage()               {}
-func (*PodProxyOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{105} }
+func (*PodProxyOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{106} }
 
 func (m *PodProxyOptions) GetPath() string {
 	if m != nil {
@@ -5024,12 +5365,14 @@ type PodSecurityContext struct {
 	// container.  May also be set in SecurityContext.  If set in
 	// both SecurityContext and PodSecurityContext, the value specified in SecurityContext
 	// takes precedence for that container.
+	// +optional
 	SeLinuxOptions *SELinuxOptions `protobuf:"bytes,1,opt,name=seLinuxOptions" json:"seLinuxOptions,omitempty"`
 	// The UID to run the entrypoint of the container process.
 	// Defaults to user specified in image metadata if unspecified.
 	// May also be set in SecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence
 	// for that container.
+	// +optional
 	RunAsUser int64 `protobuf:"varint,2,opt,name=runAsUser" json:"runAsUser"`
 	// Indicates that the container must run as a non-root user.
 	// If true, the Kubelet will validate the image at runtime to ensure that it
@@ -5037,10 +5380,12 @@ type PodSecurityContext struct {
 	// If unset or false, no such validation will be performed.
 	// May also be set in SecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence.
+	// +optional
 	RunAsNonRoot bool `protobuf:"varint,3,opt,name=runAsNonRoot" json:"runAsNonRoot"`
 	// A list of groups applied to the first process run in each container, in addition
 	// to the container's primary GID.  If unspecified, no groups will be added to
 	// any container.
+	// +optional
 	SupplementalGroups []int64 `protobuf:"varint,4,rep,name=supplementalGroups" json:"supplementalGroups,omitempty"`
 	// A special supplemental group that applies to all containers in a pod.
 	// Some volume types allow the Kubelet to change the ownership of that volume
@@ -5051,12 +5396,13 @@ type PodSecurityContext struct {
 	// 3. The permission bits are OR'd with rw-rw----
 	//
 	// If unset, the Kubelet will not modify the ownership and permissions of any volume.
+	// +optional
 	FsGroup int64 `protobuf:"varint,5,opt,name=fsGroup" json:"fsGroup"`
 }
 
 func (m *PodSecurityContext) Reset()                    { *m = PodSecurityContext{} }
 func (*PodSecurityContext) ProtoMessage()               {}
-func (*PodSecurityContext) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{106} }
+func (*PodSecurityContext) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{107} }
 
 func (m *PodSecurityContext) GetSeLinuxOptions() *SELinuxOptions {
 	if m != nil {
@@ -5097,12 +5443,13 @@ func (m *PodSecurityContext) GetFsGroup() int64 {
 // Exactly one field should be set.
 type PodSignature struct {
 	// Reference to controller whose pods should avoid this node.
+	// +optional
 	PodController *OwnerReference `protobuf:"bytes,1,opt,name=podController" json:"podController,omitempty"`
 }
 
 func (m *PodSignature) Reset()                    { *m = PodSignature{} }
 func (*PodSignature) ProtoMessage()               {}
-func (*PodSignature) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{107} }
+func (*PodSignature) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{108} }
 
 func (m *PodSignature) GetPodController() *OwnerReference {
 	if m != nil {
@@ -5114,18 +5461,20 @@ func (m *PodSignature) GetPodController() *OwnerReference {
 // PodSpec is a description of a pod.
 type PodSpec struct {
 	// List of volumes that can be mounted by containers belonging to the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md
+	// More info: http://kubernetes.io/docs/user-guide/volumes
+	// +optional
 	Volumes []*Volume `protobuf:"bytes,1,rep,name=volumes" json:"volumes,omitempty"`
 	// List of containers belonging to the pod.
 	// Containers cannot currently be added or removed.
 	// There must be at least one container in a Pod.
 	// Cannot be updated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/containers.md
+	// More info: http://kubernetes.io/docs/user-guide/containers
 	Containers []*Container `protobuf:"bytes,2,rep,name=containers" json:"containers,omitempty"`
 	// Restart policy for all containers within the pod.
 	// One of Always, OnFailure, Never.
 	// Default to Always.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#restartpolicy
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#restartpolicy
+	// +optional
 	RestartPolicy string `protobuf:"bytes,3,opt,name=restartPolicy" json:"restartPolicy"`
 	// Optional duration in seconds the pod needs to terminate gracefully. May be decreased in delete request.
 	// Value must be non-negative integer. The value zero indicates delete immediately.
@@ -5134,62 +5483,76 @@ type PodSpec struct {
 	// a termination signal and the time when the processes are forcibly halted with a kill signal.
 	// Set this value longer than the expected cleanup time for your process.
 	// Defaults to 30 seconds.
+	// +optional
 	TerminationGracePeriodSeconds int64 `protobuf:"varint,4,opt,name=terminationGracePeriodSeconds" json:"terminationGracePeriodSeconds"`
 	// Optional duration in seconds the pod may be active on the node relative to
 	// StartTime before the system will actively try to mark it failed and kill associated containers.
 	// Value must be a positive integer.
+	// +optional
 	ActiveDeadlineSeconds int64 `protobuf:"varint,5,opt,name=activeDeadlineSeconds" json:"activeDeadlineSeconds"`
 	// Set DNS policy for containers within the pod.
 	// One of 'ClusterFirst' or 'Default'.
 	// Defaults to "ClusterFirst".
+	// +optional
 	DnsPolicy string `protobuf:"bytes,6,opt,name=dnsPolicy" json:"dnsPolicy"`
 	// NodeSelector is a selector which must be true for the pod to fit on a node.
 	// Selector which must match a node's labels for the pod to be scheduled on that node.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/node-selection/README.md
+	// More info: http://kubernetes.io/docs/user-guide/node-selection/README
+	// +optional
 	NodeSelector map[string]string `protobuf:"bytes,7,rep,name=nodeSelector" json:"nodeSelector,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// ServiceAccountName is the name of the ServiceAccount to use to run this pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/service_accounts.md
+	// More info: http://releases.k8s.io/HEAD/docs/design/service_accounts.md
+	// +optional
 	ServiceAccountName string `protobuf:"bytes,8,opt,name=serviceAccountName" json:"serviceAccountName"`
 	// DeprecatedServiceAccount is a depreciated alias for ServiceAccountName.
 	// Deprecated: Use serviceAccountName instead.
 	// +k8s:conversion-gen=false
+	// +optional
 	ServiceAccount string `protobuf:"bytes,9,opt,name=serviceAccount" json:"serviceAccount"`
 	// NodeName is a request to schedule this pod onto a specific node. If it is non-empty,
 	// the scheduler simply schedules this pod onto that node, assuming that it fits resource
 	// requirements.
+	// +optional
 	NodeName string `protobuf:"bytes,10,opt,name=nodeName" json:"nodeName"`
 	// Host networking requested for this pod. Use the host's network namespace.
 	// If this option is set, the ports that will be used must be specified.
 	// Default to false.
 	// +k8s:conversion-gen=false
+	// +optional
 	HostNetwork bool `protobuf:"varint,11,opt,name=hostNetwork" json:"hostNetwork"`
 	// Use the host's pid namespace.
 	// Optional: Default to false.
 	// +k8s:conversion-gen=false
+	// +optional
 	HostPID bool `protobuf:"varint,12,opt,name=hostPID" json:"hostPID"`
 	// Use the host's ipc namespace.
 	// Optional: Default to false.
 	// +k8s:conversion-gen=false
+	// +optional
 	HostIPC bool `protobuf:"varint,13,opt,name=hostIPC" json:"hostIPC"`
 	// SecurityContext holds pod-level security attributes and common container settings.
 	// Optional: Defaults to empty.  See type description for default values of each field.
+	// +optional
 	SecurityContext *PodSecurityContext `protobuf:"bytes,14,opt,name=securityContext" json:"securityContext,omitempty"`
 	// ImagePullSecrets is an optional list of references to secrets in the same namespace to use for pulling any of the images used by this PodSpec.
 	// If specified, these secrets will be passed to individual puller implementations for them to use. For example,
 	// in the case of docker, only DockerConfig type secrets are honored.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/images.md#specifying-imagepullsecrets-on-a-pod
+	// More info: http://kubernetes.io/docs/user-guide/images#specifying-imagepullsecrets-on-a-pod
+	// +optional
 	ImagePullSecrets []*LocalObjectReference `protobuf:"bytes,15,rep,name=imagePullSecrets" json:"imagePullSecrets,omitempty"`
 	// Specifies the hostname of the Pod
 	// If not specified, the pod's hostname will be set to a system-defined value.
+	// +optional
 	Hostname string `protobuf:"bytes,16,opt,name=hostname" json:"hostname"`
 	// If specified, the fully qualified Pod hostname will be "<hostname>.<subdomain>.<pod namespace>.svc.<cluster domain>".
 	// If not specified, the pod will not have a domainname at all.
+	// +optional
 	Subdomain string `protobuf:"bytes,17,opt,name=subdomain" json:"subdomain"`
 }
 
 func (m *PodSpec) Reset()                    { *m = PodSpec{} }
 func (*PodSpec) ProtoMessage()               {}
-func (*PodSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{108} }
+func (*PodSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{109} }
 
 func (m *PodSpec) GetVolumes() []*Volume {
 	if m != nil {
@@ -5314,33 +5677,41 @@ func (m *PodSpec) GetSubdomain() string {
 // state of a system.
 type PodStatus struct {
 	// Current condition of the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-phase
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#pod-phase
+	// +optional
 	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
 	// Current service state of pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-conditions
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#pod-conditions
+	// +optional
 	Conditions []*PodCondition `protobuf:"bytes,2,rep,name=conditions" json:"conditions,omitempty"`
 	// A human readable message indicating details about why the pod is in this condition.
+	// +optional
 	Message string `protobuf:"bytes,3,opt,name=message" json:"message"`
 	// A brief CamelCase message indicating details about why the pod is in this state.
 	// e.g. 'OutOfDisk'
+	// +optional
 	Reason string `protobuf:"bytes,4,opt,name=reason" json:"reason"`
 	// IP address of the host to which the pod is assigned. Empty if not yet scheduled.
+	// +optional
 	HostIP string `protobuf:"bytes,5,opt,name=hostIP" json:"hostIP"`
 	// IP address allocated to the pod. Routable at least within the cluster.
 	// Empty if not yet allocated.
+	// +optional
 	PodIP string `protobuf:"bytes,6,opt,name=podIP" json:"podIP"`
 	// RFC 3339 date and time at which the object was acknowledged by the Kubelet.
 	// This is before the Kubelet pulled the container image(s) for the pod.
+	// +optional
 	StartTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,7,opt,name=startTime" json:"startTime,omitempty"`
 	// The list has one entry per container in the manifest. Each entry is currently the output
 	// of `docker inspect`.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-statuses
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#container-statuses
+	// +optional
 	ContainerStatuses []*ContainerStatus `protobuf:"bytes,8,rep,name=containerStatuses" json:"containerStatuses,omitempty"`
 }
 
 func (m *PodStatus) Reset()                    { *m = PodStatus{} }
 func (*PodStatus) ProtoMessage()               {}
-func (*PodStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{109} }
+func (*PodStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{110} }
 
 func (m *PodStatus) GetPhase() string {
 	if m != nil {
@@ -5401,19 +5772,21 @@ func (m *PodStatus) GetContainerStatuses() []*ContainerStatus {
 // PodStatusResult is a wrapper for PodStatus returned by kubelet that can be encode/decoded
 type PodStatusResult struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Most recently observed status of the pod.
 	// This data may not be up to date.
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *PodStatus `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
 }
 
 func (m *PodStatusResult) Reset()                    { *m = PodStatusResult{} }
 func (*PodStatusResult) ProtoMessage()               {}
-func (*PodStatusResult) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{110} }
+func (*PodStatusResult) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{111} }
 
 func (m *PodStatusResult) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -5432,16 +5805,18 @@ func (m *PodStatusResult) GetStatus() *PodStatus {
 // PodTemplate describes a template for creating copies of a predefined pod.
 type PodTemplate struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Template defines the pods that will be created from this pod template.
-	// http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Template *PodTemplateSpec `protobuf:"bytes,2,opt,name=template" json:"template,omitempty"`
 }
 
 func (m *PodTemplate) Reset()                    { *m = PodTemplate{} }
 func (*PodTemplate) ProtoMessage()               {}
-func (*PodTemplate) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{111} }
+func (*PodTemplate) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{112} }
 
 func (m *PodTemplate) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -5460,7 +5835,8 @@ func (m *PodTemplate) GetTemplate() *PodTemplateSpec {
 // PodTemplateList is a list of PodTemplates.
 type PodTemplateList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of pod templates
 	Items []*PodTemplate `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -5468,7 +5844,7 @@ type PodTemplateList struct {
 
 func (m *PodTemplateList) Reset()                    { *m = PodTemplateList{} }
 func (*PodTemplateList) ProtoMessage()               {}
-func (*PodTemplateList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{112} }
+func (*PodTemplateList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{113} }
 
 func (m *PodTemplateList) GetMetadata() *k8s_io_kubernetes_pkg_api_unversioned.ListMeta {
 	if m != nil {
@@ -5487,16 +5863,18 @@ func (m *PodTemplateList) GetItems() []*PodTemplate {
 // PodTemplateSpec describes the data a pod should have when created from a template
 type PodTemplateSpec struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Specification of the desired behavior of the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *PodSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 }
 
 func (m *PodTemplateSpec) Reset()                    { *m = PodTemplateSpec{} }
 func (*PodTemplateSpec) ProtoMessage()               {}
-func (*PodTemplateSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{113} }
+func (*PodTemplateSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{114} }
 
 func (m *PodTemplateSpec) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -5515,12 +5893,13 @@ func (m *PodTemplateSpec) GetSpec() *PodSpec {
 // Preconditions must be fulfilled before an operation (update, delete, etc.) is carried out.
 type Preconditions struct {
 	// Specifies the target UID.
+	// +optional
 	Uid string `protobuf:"bytes,1,opt,name=uid" json:"uid"`
 }
 
 func (m *Preconditions) Reset()                    { *m = Preconditions{} }
 func (*Preconditions) ProtoMessage()               {}
-func (*Preconditions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{114} }
+func (*Preconditions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{115} }
 
 func (m *Preconditions) GetUid() string {
 	if m != nil {
@@ -5534,16 +5913,19 @@ type PreferAvoidPodsEntry struct {
 	// The class of pods.
 	PodSignature *PodSignature `protobuf:"bytes,1,opt,name=podSignature" json:"podSignature,omitempty"`
 	// Time at which this entry was added to the list.
+	// +optional
 	EvictionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,2,opt,name=evictionTime" json:"evictionTime,omitempty"`
 	// (brief) reason why this entry was added to the list.
+	// +optional
 	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
 	// Human readable message indicating why this entry was added to the list.
+	// +optional
 	Message string `protobuf:"bytes,4,opt,name=message" json:"message"`
 }
 
 func (m *PreferAvoidPodsEntry) Reset()                    { *m = PreferAvoidPodsEntry{} }
 func (*PreferAvoidPodsEntry) ProtoMessage()               {}
-func (*PreferAvoidPodsEntry) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{115} }
+func (*PreferAvoidPodsEntry) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{116} }
 
 func (m *PreferAvoidPodsEntry) GetPodSignature() *PodSignature {
 	if m != nil {
@@ -5585,7 +5967,7 @@ type PreferredSchedulingTerm struct {
 func (m *PreferredSchedulingTerm) Reset()      { *m = PreferredSchedulingTerm{} }
 func (*PreferredSchedulingTerm) ProtoMessage() {}
 func (*PreferredSchedulingTerm) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{116}
+	return fileDescriptorGenerated, []int{117}
 }
 
 func (m *PreferredSchedulingTerm) GetWeight() int32 {
@@ -5608,26 +5990,31 @@ type Probe struct {
 	// The action taken to determine the health of a container
 	Handler *Handler `protobuf:"bytes,1,opt,name=handler" json:"handler,omitempty"`
 	// Number of seconds after the container has started before liveness probes are initiated.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-probes
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#container-probes
+	// +optional
 	InitialDelaySeconds int32 `protobuf:"varint,2,opt,name=initialDelaySeconds" json:"initialDelaySeconds"`
 	// Number of seconds after which the probe times out.
 	// Defaults to 1 second. Minimum value is 1.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-probes
+	// More info: http://kubernetes.io/docs/user-guide/pod-states#container-probes
+	// +optional
 	TimeoutSeconds int32 `protobuf:"varint,3,opt,name=timeoutSeconds" json:"timeoutSeconds"`
 	// How often (in seconds) to perform the probe.
 	// Default to 10 seconds. Minimum value is 1.
+	// +optional
 	PeriodSeconds int32 `protobuf:"varint,4,opt,name=periodSeconds" json:"periodSeconds"`
 	// Minimum consecutive successes for the probe to be considered successful after having failed.
 	// Defaults to 1. Must be 1 for liveness. Minimum value is 1.
+	// +optional
 	SuccessThreshold int32 `protobuf:"varint,5,opt,name=successThreshold" json:"successThreshold"`
 	// Minimum consecutive failures for the probe to be considered failed after having succeeded.
 	// Defaults to 3. Minimum value is 1.
+	// +optional
 	FailureThreshold int32 `protobuf:"varint,6,opt,name=failureThreshold" json:"failureThreshold"`
 }
 
 func (m *Probe) Reset()                    { *m = Probe{} }
 func (*Probe) ProtoMessage()               {}
-func (*Probe) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{117} }
+func (*Probe) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{118} }
 
 func (m *Probe) GetHandler() *Handler {
 	if m != nil {
@@ -5682,18 +6069,21 @@ type QuobyteVolumeSource struct {
 	Volume string `protobuf:"bytes,2,opt,name=volume" json:"volume"`
 	// ReadOnly here will force the Quobyte volume to be mounted with read-only permissions.
 	// Defaults to false.
+	// +optional
 	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
 	// User to map volume access to
 	// Defaults to serivceaccount user
+	// +optional
 	User string `protobuf:"bytes,4,opt,name=user" json:"user"`
 	// Group to map volume access to
 	// Default is no group
+	// +optional
 	Group string `protobuf:"bytes,5,opt,name=group" json:"group"`
 }
 
 func (m *QuobyteVolumeSource) Reset()                    { *m = QuobyteVolumeSource{} }
 func (*QuobyteVolumeSource) ProtoMessage()               {}
-func (*QuobyteVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{118} }
+func (*QuobyteVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{119} }
 
 func (m *QuobyteVolumeSource) GetRegistry() string {
 	if m != nil {
@@ -5734,43 +6124,49 @@ func (m *QuobyteVolumeSource) GetGroup() string {
 // RBD volumes support ownership management and SELinux relabeling.
 type RBDVolumeSource struct {
 	// A collection of Ceph monitors.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
 	Monitors []string `protobuf:"bytes,1,rep,name=monitors" json:"monitors,omitempty"`
 	// The rados image name.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
 	Image string `protobuf:"bytes,2,opt,name=image" json:"image"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#rbd
+	// More info: http://kubernetes.io/docs/user-guide/volumes#rbd
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
+	// +optional
 	FsType string `protobuf:"bytes,3,opt,name=fsType" json:"fsType"`
 	// The rados pool name.
 	// Default is rbd.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it.
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it.
+	// +optional
 	Pool string `protobuf:"bytes,4,opt,name=pool" json:"pool"`
 	// The rados user name.
 	// Default is admin.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+	// +optional
 	User string `protobuf:"bytes,5,opt,name=user" json:"user"`
 	// Keyring is the path to key ring for RBDUser.
 	// Default is /etc/ceph/keyring.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+	// +optional
 	Keyring string `protobuf:"bytes,6,opt,name=keyring" json:"keyring"`
 	// SecretRef is name of the authentication secret for RBDUser. If provided
 	// overrides keyring.
 	// Default is nil.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+	// +optional
 	SecretRef *LocalObjectReference `protobuf:"bytes,7,opt,name=secretRef" json:"secretRef,omitempty"`
 	// ReadOnly here will force the ReadOnly setting in VolumeMounts.
 	// Defaults to false.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+	// +optional
 	ReadOnly bool `protobuf:"varint,8,opt,name=readOnly" json:"readOnly"`
 }
 
 func (m *RBDVolumeSource) Reset()                    { *m = RBDVolumeSource{} }
 func (*RBDVolumeSource) ProtoMessage()               {}
-func (*RBDVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{119} }
+func (*RBDVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{120} }
 
 func (m *RBDVolumeSource) GetMonitors() []string {
 	if m != nil {
@@ -5831,7 +6227,8 @@ func (m *RBDVolumeSource) GetReadOnly() bool {
 // RangeAllocation is not a public type.
 type RangeAllocation struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Range is string that identifies the range represented by 'data'.
 	Range string `protobuf:"bytes,2,opt,name=range" json:"range"`
@@ -5841,7 +6238,7 @@ type RangeAllocation struct {
 
 func (m *RangeAllocation) Reset()                    { *m = RangeAllocation{} }
 func (*RangeAllocation) ProtoMessage()               {}
-func (*RangeAllocation) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{120} }
+func (*RangeAllocation) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{121} }
 
 func (m *RangeAllocation) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -5868,22 +6265,25 @@ func (m *RangeAllocation) GetData() []byte {
 type ReplicationController struct {
 	// If the Labels of a ReplicationController are empty, they are defaulted to
 	// be the same as the Pod(s) that the replication controller manages.
-	// Standard object's metadata. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// Standard object's metadata. More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the specification of the desired behavior of the replication controller.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *ReplicationControllerSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is the most recently observed status of the replication controller.
 	// This data may be out of date by some window of time.
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *ReplicationControllerStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
 func (m *ReplicationController) Reset()                    { *m = ReplicationController{} }
 func (*ReplicationController) ProtoMessage()               {}
-func (*ReplicationController) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{121} }
+func (*ReplicationController) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{122} }
 
 func (m *ReplicationController) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -5906,20 +6306,79 @@ func (m *ReplicationController) GetStatus() *ReplicationControllerStatus {
 	return nil
 }
 
+// ReplicationControllerCondition describes the state of a replication controller at a certain point.
+type ReplicationControllerCondition struct {
+	// Type of replication controller condition.
+	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
+	// Status of the condition, one of True, False, Unknown.
+	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
+	// The last time the condition transitioned from one status to another.
+	// +optional
+	LastTransitionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=lastTransitionTime" json:"lastTransitionTime,omitempty"`
+	// The reason for the condition's last transition.
+	// +optional
+	Reason string `protobuf:"bytes,4,opt,name=reason" json:"reason"`
+	// A human readable message indicating details about the transition.
+	// +optional
+	Message string `protobuf:"bytes,5,opt,name=message" json:"message"`
+}
+
+func (m *ReplicationControllerCondition) Reset()      { *m = ReplicationControllerCondition{} }
+func (*ReplicationControllerCondition) ProtoMessage() {}
+func (*ReplicationControllerCondition) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{123}
+}
+
+func (m *ReplicationControllerCondition) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *ReplicationControllerCondition) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
+
+func (m *ReplicationControllerCondition) GetLastTransitionTime() *k8s_io_kubernetes_pkg_api_unversioned.Time {
+	if m != nil {
+		return m.LastTransitionTime
+	}
+	return nil
+}
+
+func (m *ReplicationControllerCondition) GetReason() string {
+	if m != nil {
+		return m.Reason
+	}
+	return ""
+}
+
+func (m *ReplicationControllerCondition) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
 // ReplicationControllerList is a collection of replication controllers.
 type ReplicationControllerList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of replication controllers.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md
+	// More info: http://kubernetes.io/docs/user-guide/replication-controller
 	Items []*ReplicationController `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
 func (m *ReplicationControllerList) Reset()      { *m = ReplicationControllerList{} }
 func (*ReplicationControllerList) ProtoMessage() {}
 func (*ReplicationControllerList) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{122}
+	return fileDescriptorGenerated, []int{124}
 }
 
 func (m *ReplicationControllerList) GetMetadata() *k8s_io_kubernetes_pkg_api_unversioned.ListMeta {
@@ -5941,29 +6400,44 @@ type ReplicationControllerSpec struct {
 	// Replicas is the number of desired replicas.
 	// This is a pointer to distinguish between explicit zero and unspecified.
 	// Defaults to 1.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md#what-is-a-replication-controller
+	// More info: http://kubernetes.io/docs/user-guide/replication-controller#what-is-a-replication-controller
+	// +optional
 	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
+	// Minimum number of seconds for which a newly created pod should be ready
+	// without any of its container crashing, for it to be considered available.
+	// Defaults to 0 (pod will be considered available as soon as it is ready)
+	// +optional
+	MinReadySeconds int32 `protobuf:"varint,4,opt,name=minReadySeconds" json:"minReadySeconds"`
 	// Selector is a label query over pods that should match the Replicas count.
 	// If Selector is empty, it is defaulted to the labels present on the Pod template.
 	// Label keys and values that must match in order to be controlled by this replication
 	// controller, if empty defaulted to labels on Pod template.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/labels.md#label-selectors
+	// More info: http://kubernetes.io/docs/user-guide/labels#label-selectors
+	// +optional
 	Selector map[string]string `protobuf:"bytes,2,rep,name=selector" json:"selector,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Template is the object that describes the pod that will be created if
 	// insufficient replicas are detected. This takes precedence over a TemplateRef.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md#pod-template
+	// More info: http://kubernetes.io/docs/user-guide/replication-controller#pod-template
+	// +optional
 	Template *PodTemplateSpec `protobuf:"bytes,3,opt,name=template" json:"template,omitempty"`
 }
 
 func (m *ReplicationControllerSpec) Reset()      { *m = ReplicationControllerSpec{} }
 func (*ReplicationControllerSpec) ProtoMessage() {}
 func (*ReplicationControllerSpec) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{123}
+	return fileDescriptorGenerated, []int{125}
 }
 
 func (m *ReplicationControllerSpec) GetReplicas() int32 {
 	if m != nil {
 		return m.Replicas
+	}
+	return 0
+}
+
+func (m *ReplicationControllerSpec) GetMinReadySeconds() int32 {
+	if m != nil {
+		return m.MinReadySeconds
 	}
 	return 0
 }
@@ -5986,20 +6460,29 @@ func (m *ReplicationControllerSpec) GetTemplate() *PodTemplateSpec {
 // controller.
 type ReplicationControllerStatus struct {
 	// Replicas is the most recently oberved number of replicas.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md#what-is-a-replication-controller
+	// More info: http://kubernetes.io/docs/user-guide/replication-controller#what-is-a-replication-controller
 	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
 	// The number of pods that have labels matching the labels of the pod template of the replication controller.
+	// +optional
 	FullyLabeledReplicas int32 `protobuf:"varint,2,opt,name=fullyLabeledReplicas" json:"fullyLabeledReplicas"`
 	// The number of ready replicas for this replication controller.
+	// +optional
 	ReadyReplicas int32 `protobuf:"varint,4,opt,name=readyReplicas" json:"readyReplicas"`
+	// The number of available replicas (ready for at least minReadySeconds) for this replication controller.
+	// +optional
+	AvailableReplicas int32 `protobuf:"varint,5,opt,name=availableReplicas" json:"availableReplicas"`
 	// ObservedGeneration reflects the generation of the most recently observed replication controller.
+	// +optional
 	ObservedGeneration int64 `protobuf:"varint,3,opt,name=observedGeneration" json:"observedGeneration"`
+	// Represents the latest available observations of a replication controller's current state.
+	// +optional
+	Conditions []*ReplicationControllerCondition `protobuf:"bytes,6,rep,name=conditions" json:"conditions,omitempty"`
 }
 
 func (m *ReplicationControllerStatus) Reset()      { *m = ReplicationControllerStatus{} }
 func (*ReplicationControllerStatus) ProtoMessage() {}
 func (*ReplicationControllerStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{124}
+	return fileDescriptorGenerated, []int{126}
 }
 
 func (m *ReplicationControllerStatus) GetReplicas() int32 {
@@ -6023,6 +6506,13 @@ func (m *ReplicationControllerStatus) GetReadyReplicas() int32 {
 	return 0
 }
 
+func (m *ReplicationControllerStatus) GetAvailableReplicas() int32 {
+	if m != nil {
+		return m.AvailableReplicas
+	}
+	return 0
+}
+
 func (m *ReplicationControllerStatus) GetObservedGeneration() int64 {
 	if m != nil {
 		return m.ObservedGeneration
@@ -6030,19 +6520,28 @@ func (m *ReplicationControllerStatus) GetObservedGeneration() int64 {
 	return 0
 }
 
+func (m *ReplicationControllerStatus) GetConditions() []*ReplicationControllerCondition {
+	if m != nil {
+		return m.Conditions
+	}
+	return nil
+}
+
 // ResourceFieldSelector represents container resources (cpu, memory) and their output format
 type ResourceFieldSelector struct {
 	// Container name: required for volumes, optional for env vars
+	// +optional
 	ContainerName string `protobuf:"bytes,1,opt,name=containerName" json:"containerName"`
 	// Required: resource to select
 	Resource string `protobuf:"bytes,2,opt,name=resource" json:"resource"`
 	// Specifies the output format of the exposed resources, defaults to "1"
+	// +optional
 	Divisor *k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,3,opt,name=divisor" json:"divisor,omitempty"`
 }
 
 func (m *ResourceFieldSelector) Reset()                    { *m = ResourceFieldSelector{} }
 func (*ResourceFieldSelector) ProtoMessage()               {}
-func (*ResourceFieldSelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{125} }
+func (*ResourceFieldSelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{127} }
 
 func (m *ResourceFieldSelector) GetContainerName() string {
 	if m != nil {
@@ -6068,19 +6567,22 @@ func (m *ResourceFieldSelector) GetDivisor() *k8s_io_kubernetes_pkg_api_resource
 // ResourceQuota sets aggregate quota restrictions enforced per namespace
 type ResourceQuota struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the desired quota.
-	// http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *ResourceQuotaSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status defines the actual enforced quota and its current usage.
-	// http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *ResourceQuotaStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
 func (m *ResourceQuota) Reset()                    { *m = ResourceQuota{} }
 func (*ResourceQuota) ProtoMessage()               {}
-func (*ResourceQuota) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{126} }
+func (*ResourceQuota) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{128} }
 
 func (m *ResourceQuota) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -6106,16 +6608,17 @@ func (m *ResourceQuota) GetStatus() *ResourceQuotaStatus {
 // ResourceQuotaList is a list of ResourceQuota items.
 type ResourceQuotaList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of ResourceQuota objects.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
+	// More info: http://releases.k8s.io/HEAD/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
 	Items []*ResourceQuota `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
 func (m *ResourceQuotaList) Reset()                    { *m = ResourceQuotaList{} }
 func (*ResourceQuotaList) ProtoMessage()               {}
-func (*ResourceQuotaList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{127} }
+func (*ResourceQuotaList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{129} }
 
 func (m *ResourceQuotaList) GetMetadata() *k8s_io_kubernetes_pkg_api_unversioned.ListMeta {
 	if m != nil {
@@ -6134,16 +6637,18 @@ func (m *ResourceQuotaList) GetItems() []*ResourceQuota {
 // ResourceQuotaSpec defines the desired hard limits to enforce for Quota.
 type ResourceQuotaSpec struct {
 	// Hard is the set of desired hard limits for each named resource.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
+	// More info: http://releases.k8s.io/HEAD/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
+	// +optional
 	Hard map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,1,rep,name=hard" json:"hard,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// A collection of filters that must match each object tracked by a quota.
 	// If not specified, the quota matches all objects.
+	// +optional
 	Scopes []string `protobuf:"bytes,2,rep,name=scopes" json:"scopes,omitempty"`
 }
 
 func (m *ResourceQuotaSpec) Reset()                    { *m = ResourceQuotaSpec{} }
 func (*ResourceQuotaSpec) ProtoMessage()               {}
-func (*ResourceQuotaSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{128} }
+func (*ResourceQuotaSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{130} }
 
 func (m *ResourceQuotaSpec) GetHard() map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity {
 	if m != nil {
@@ -6162,15 +6667,17 @@ func (m *ResourceQuotaSpec) GetScopes() []string {
 // ResourceQuotaStatus defines the enforced hard limits and observed use.
 type ResourceQuotaStatus struct {
 	// Hard is the set of enforced hard limits for each named resource.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
+	// More info: http://releases.k8s.io/HEAD/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
+	// +optional
 	Hard map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,1,rep,name=hard" json:"hard,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Used is the current observed total usage of the resource in the namespace.
+	// +optional
 	Used map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=used" json:"used,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
 func (m *ResourceQuotaStatus) Reset()                    { *m = ResourceQuotaStatus{} }
 func (*ResourceQuotaStatus) ProtoMessage()               {}
-func (*ResourceQuotaStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{129} }
+func (*ResourceQuotaStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{131} }
 
 func (m *ResourceQuotaStatus) GetHard() map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity {
 	if m != nil {
@@ -6190,17 +6697,19 @@ func (m *ResourceQuotaStatus) GetUsed() map[string]*k8s_io_kubernetes_pkg_api_re
 type ResourceRequirements struct {
 	// Limits describes the maximum amount of compute resources allowed.
 	// More info: http://kubernetes.io/docs/user-guide/compute-resources/
+	// +optional
 	Limits map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,1,rep,name=limits" json:"limits,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Requests describes the minimum amount of compute resources required.
 	// If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
 	// otherwise to an implementation-defined value.
 	// More info: http://kubernetes.io/docs/user-guide/compute-resources/
+	// +optional
 	Requests map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=requests" json:"requests,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
 func (m *ResourceRequirements) Reset()                    { *m = ResourceRequirements{} }
 func (*ResourceRequirements) ProtoMessage()               {}
-func (*ResourceRequirements) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{130} }
+func (*ResourceRequirements) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{132} }
 
 func (m *ResourceRequirements) GetLimits() map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity {
 	if m != nil {
@@ -6219,18 +6728,22 @@ func (m *ResourceRequirements) GetRequests() map[string]*k8s_io_kubernetes_pkg_a
 // SELinuxOptions are the labels to be applied to the container
 type SELinuxOptions struct {
 	// User is a SELinux user label that applies to the container.
+	// +optional
 	User string `protobuf:"bytes,1,opt,name=user" json:"user"`
 	// Role is a SELinux role label that applies to the container.
+	// +optional
 	Role string `protobuf:"bytes,2,opt,name=role" json:"role"`
 	// Type is a SELinux type label that applies to the container.
+	// +optional
 	Type string `protobuf:"bytes,3,opt,name=type" json:"type"`
 	// Level is SELinux level label that applies to the container.
+	// +optional
 	Level string `protobuf:"bytes,4,opt,name=level" json:"level"`
 }
 
 func (m *SELinuxOptions) Reset()                    { *m = SELinuxOptions{} }
 func (*SELinuxOptions) ProtoMessage()               {}
-func (*SELinuxOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{131} }
+func (*SELinuxOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{133} }
 
 func (m *SELinuxOptions) GetUser() string {
 	if m != nil {
@@ -6264,27 +6777,31 @@ func (m *SELinuxOptions) GetLevel() string {
 // the Data field must be less than MaxSecretSize bytes.
 type Secret struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Data contains the secret data. Each key must be a valid DNS_SUBDOMAIN
 	// or leading dot followed by valid DNS_SUBDOMAIN.
 	// The serialized form of the secret data is a base64 encoded string,
 	// representing the arbitrary (possibly non-string) data value here.
 	// Described in https://tools.ietf.org/html/rfc4648#section-4
+	// +optional
 	Data map[string][]byte `protobuf:"bytes,2,rep,name=data" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// stringData allows specifying non-binary secret data in string form.
 	// It is provided as a write-only convenience method.
 	// All keys and values are merged into the data field on write, overwriting any existing values.
 	// It is never output when reading from the API.
 	// +k8s:conversion-gen=false
+	// +optional
 	StringData map[string]string `protobuf:"bytes,4,rep,name=stringData" json:"stringData,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Used to facilitate programmatic handling of secret data.
+	// +optional
 	Type string `protobuf:"bytes,3,opt,name=type" json:"type"`
 }
 
 func (m *Secret) Reset()                    { *m = Secret{} }
 func (*Secret) ProtoMessage()               {}
-func (*Secret) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{132} }
+func (*Secret) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{134} }
 
 func (m *Secret) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -6324,7 +6841,7 @@ type SecretKeySelector struct {
 
 func (m *SecretKeySelector) Reset()                    { *m = SecretKeySelector{} }
 func (*SecretKeySelector) ProtoMessage()               {}
-func (*SecretKeySelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{133} }
+func (*SecretKeySelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{135} }
 
 func (m *SecretKeySelector) GetLocalObjectReference() *LocalObjectReference {
 	if m != nil {
@@ -6343,16 +6860,17 @@ func (m *SecretKeySelector) GetKey() string {
 // SecretList is a list of Secret.
 type SecretList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of secret objects.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/secrets.md
+	// More info: http://kubernetes.io/docs/user-guide/secrets
 	Items []*Secret `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
 func (m *SecretList) Reset()                    { *m = SecretList{} }
 func (*SecretList) ProtoMessage()               {}
-func (*SecretList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{134} }
+func (*SecretList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{136} }
 
 func (m *SecretList) GetMetadata() *k8s_io_kubernetes_pkg_api_unversioned.ListMeta {
 	if m != nil {
@@ -6375,7 +6893,8 @@ func (m *SecretList) GetItems() []*Secret {
 // Secret volumes support ownership management and SELinux relabeling.
 type SecretVolumeSource struct {
 	// Name of the secret in the pod's namespace to use.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#secrets
+	// More info: http://kubernetes.io/docs/user-guide/volumes#secrets
+	// +optional
 	SecretName string `protobuf:"bytes,1,opt,name=secretName" json:"secretName"`
 	// If unspecified, each key-value pair in the Data field of the referenced
 	// Secret will be projected into the volume as a file whose name is the
@@ -6384,18 +6903,20 @@ type SecretVolumeSource struct {
 	// present. If a key is specified which is not present in the Secret,
 	// the volume setup will error. Paths must be relative and may not contain
 	// the '..' path or start with '..'.
+	// +optional
 	Items []*KeyToPath `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 	// Optional: mode bits to use on created files by default. Must be a
 	// value between 0 and 0777. Defaults to 0644.
 	// Directories within the path are not affected by this setting.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
+	// +optional
 	DefaultMode int32 `protobuf:"varint,3,opt,name=defaultMode" json:"defaultMode"`
 }
 
 func (m *SecretVolumeSource) Reset()                    { *m = SecretVolumeSource{} }
 func (*SecretVolumeSource) ProtoMessage()               {}
-func (*SecretVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{135} }
+func (*SecretVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{137} }
 
 func (m *SecretVolumeSource) GetSecretName() string {
 	if m != nil {
@@ -6424,20 +6945,24 @@ func (m *SecretVolumeSource) GetDefaultMode() int32 {
 type SecurityContext struct {
 	// The capabilities to add/drop when running containers.
 	// Defaults to the default set of capabilities granted by the container runtime.
+	// +optional
 	Capabilities *Capabilities `protobuf:"bytes,1,opt,name=capabilities" json:"capabilities,omitempty"`
 	// Run container in privileged mode.
 	// Processes in privileged containers are essentially equivalent to root on the host.
 	// Defaults to false.
+	// +optional
 	Privileged bool `protobuf:"varint,2,opt,name=privileged" json:"privileged"`
 	// The SELinux context to be applied to the container.
 	// If unspecified, the container runtime will allocate a random SELinux context for each
 	// container.  May also be set in PodSecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence.
+	// +optional
 	SeLinuxOptions *SELinuxOptions `protobuf:"bytes,3,opt,name=seLinuxOptions" json:"seLinuxOptions,omitempty"`
 	// The UID to run the entrypoint of the container process.
 	// Defaults to user specified in image metadata if unspecified.
 	// May also be set in PodSecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence.
+	// +optional
 	RunAsUser int64 `protobuf:"varint,4,opt,name=runAsUser" json:"runAsUser"`
 	// Indicates that the container must run as a non-root user.
 	// If true, the Kubelet will validate the image at runtime to ensure that it
@@ -6445,15 +6970,17 @@ type SecurityContext struct {
 	// If unset or false, no such validation will be performed.
 	// May also be set in PodSecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence.
+	// +optional
 	RunAsNonRoot bool `protobuf:"varint,5,opt,name=runAsNonRoot" json:"runAsNonRoot"`
 	// Whether this container has a read-only root filesystem.
 	// Default is false.
+	// +optional
 	ReadOnlyRootFilesystem bool `protobuf:"varint,6,opt,name=readOnlyRootFilesystem" json:"readOnlyRootFilesystem"`
 }
 
 func (m *SecurityContext) Reset()                    { *m = SecurityContext{} }
 func (*SecurityContext) ProtoMessage()               {}
-func (*SecurityContext) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{136} }
+func (*SecurityContext) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{138} }
 
 func (m *SecurityContext) GetCapabilities() *Capabilities {
 	if m != nil {
@@ -6500,12 +7027,13 @@ func (m *SecurityContext) GetReadOnlyRootFilesystem() bool {
 // SerializedReference is a reference to serialized object.
 type SerializedReference struct {
 	// The reference to an object in the system.
+	// +optional
 	Reference *ObjectReference `protobuf:"bytes,1,opt,name=reference" json:"reference,omitempty"`
 }
 
 func (m *SerializedReference) Reset()                    { *m = SerializedReference{} }
 func (*SerializedReference) ProtoMessage()               {}
-func (*SerializedReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{137} }
+func (*SerializedReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{139} }
 
 func (m *SerializedReference) GetReference() *ObjectReference {
 	if m != nil {
@@ -6519,21 +7047,24 @@ func (m *SerializedReference) GetReference() *ObjectReference {
 // will answer requests sent through the proxy.
 type Service struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the behavior of a service.
-	// http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *ServiceSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Most recently observed status of the service.
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *ServiceStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
 func (m *Service) Reset()                    { *m = Service{} }
 func (*Service) ProtoMessage()               {}
-func (*Service) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{138} }
+func (*Service) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{140} }
 
 func (m *Service) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -6562,21 +7093,24 @@ func (m *Service) GetStatus() *ServiceStatus {
 // * a set of secrets
 type ServiceAccount struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Secrets is the list of secrets allowed to be used by pods running using this ServiceAccount.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/secrets.md
+	// More info: http://kubernetes.io/docs/user-guide/secrets
+	// +optional
 	Secrets []*ObjectReference `protobuf:"bytes,2,rep,name=secrets" json:"secrets,omitempty"`
 	// ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images
 	// in pods that reference this ServiceAccount. ImagePullSecrets are distinct from Secrets because Secrets
 	// can be mounted in the pod, but ImagePullSecrets are only accessed by the kubelet.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/secrets.md#manually-specifying-an-imagepullsecret
+	// More info: http://kubernetes.io/docs/user-guide/secrets#manually-specifying-an-imagepullsecret
+	// +optional
 	ImagePullSecrets []*LocalObjectReference `protobuf:"bytes,3,rep,name=imagePullSecrets" json:"imagePullSecrets,omitempty"`
 }
 
 func (m *ServiceAccount) Reset()                    { *m = ServiceAccount{} }
 func (*ServiceAccount) ProtoMessage()               {}
-func (*ServiceAccount) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{139} }
+func (*ServiceAccount) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{141} }
 
 func (m *ServiceAccount) GetMetadata() *ObjectMeta {
 	if m != nil {
@@ -6602,16 +7136,17 @@ func (m *ServiceAccount) GetImagePullSecrets() []*LocalObjectReference {
 // ServiceAccountList is a list of ServiceAccount objects
 type ServiceAccountList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of ServiceAccounts.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/service_accounts.md#service-accounts
+	// More info: http://releases.k8s.io/HEAD/docs/design/service_accounts.md#service-accounts
 	Items []*ServiceAccount `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 }
 
 func (m *ServiceAccountList) Reset()                    { *m = ServiceAccountList{} }
 func (*ServiceAccountList) ProtoMessage()               {}
-func (*ServiceAccountList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{140} }
+func (*ServiceAccountList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{142} }
 
 func (m *ServiceAccountList) GetMetadata() *k8s_io_kubernetes_pkg_api_unversioned.ListMeta {
 	if m != nil {
@@ -6630,7 +7165,8 @@ func (m *ServiceAccountList) GetItems() []*ServiceAccount {
 // ServiceList holds a list of services.
 type ServiceList struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of services
 	Items []*Service `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -6638,7 +7174,7 @@ type ServiceList struct {
 
 func (m *ServiceList) Reset()                    { *m = ServiceList{} }
 func (*ServiceList) ProtoMessage()               {}
-func (*ServiceList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{141} }
+func (*ServiceList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{143} }
 
 func (m *ServiceList) GetMetadata() *k8s_io_kubernetes_pkg_api_unversioned.ListMeta {
 	if m != nil {
@@ -6660,9 +7196,11 @@ type ServicePort struct {
 	// All ports within a ServiceSpec must have unique names. This maps to
 	// the 'Name' field in EndpointPort objects.
 	// Optional if only one ServicePort is defined on this service.
+	// +optional
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// The IP protocol for this port. Supports "TCP" and "UDP".
 	// Default is TCP.
+	// +optional
 	Protocol string `protobuf:"bytes,2,opt,name=protocol" json:"protocol"`
 	// The port that will be exposed by this service.
 	Port int32 `protobuf:"varint,3,opt,name=port" json:"port"`
@@ -6673,19 +7211,21 @@ type ServicePort struct {
 	// of the 'port' field is used (an identity map).
 	// This field is ignored for services with clusterIP=None, and should be
 	// omitted or set equal to the 'port' field.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#defining-a-service
+	// More info: http://kubernetes.io/docs/user-guide/services#defining-a-service
+	// +optional
 	TargetPort *k8s_io_kubernetes_pkg_util_intstr.IntOrString `protobuf:"bytes,4,opt,name=targetPort" json:"targetPort,omitempty"`
 	// The port on each node on which this service is exposed when type=NodePort or LoadBalancer.
 	// Usually assigned by the system. If specified, it will be allocated to the service
 	// if unused or else creation of the service will fail.
 	// Default is to auto-allocate a port if the ServiceType of this Service requires one.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#type--nodeport
+	// More info: http://kubernetes.io/docs/user-guide/services#type--nodeport
+	// +optional
 	NodePort int32 `protobuf:"varint,5,opt,name=nodePort" json:"nodePort"`
 }
 
 func (m *ServicePort) Reset()                    { *m = ServicePort{} }
 func (*ServicePort) ProtoMessage()               {}
-func (*ServicePort) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{142} }
+func (*ServicePort) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{144} }
 
 func (m *ServicePort) GetName() string {
 	if m != nil {
@@ -6729,12 +7269,13 @@ type ServiceProxyOptions struct {
 	// For example, the whole request URL is
 	// http://localhost/api/v1/namespaces/kube-system/services/elasticsearch-logging/_search?q=user:kimchy.
 	// Path is _search?q=user:kimchy.
+	// +optional
 	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
 }
 
 func (m *ServiceProxyOptions) Reset()                    { *m = ServiceProxyOptions{} }
 func (*ServiceProxyOptions) ProtoMessage()               {}
-func (*ServiceProxyOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{143} }
+func (*ServiceProxyOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{145} }
 
 func (m *ServiceProxyOptions) GetPath() string {
 	if m != nil {
@@ -6746,14 +7287,15 @@ func (m *ServiceProxyOptions) GetPath() string {
 // ServiceSpec describes the attributes that a user creates on a service.
 type ServiceSpec struct {
 	// The list of ports that are exposed by this service.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#virtual-ips-and-service-proxies
+	// More info: http://kubernetes.io/docs/user-guide/services#virtual-ips-and-service-proxies
 	Ports []*ServicePort `protobuf:"bytes,1,rep,name=ports" json:"ports,omitempty"`
 	// Route service traffic to pods with label keys and values matching this
 	// selector. If empty or not present, the service is assumed to have an
 	// external process managing its endpoints, which Kubernetes will not
 	// modify. Only applies to types ClusterIP, NodePort, and LoadBalancer.
 	// Ignored if type is ExternalName.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#overview
+	// More info: http://kubernetes.io/docs/user-guide/services#overview
+	// +optional
 	Selector map[string]string `protobuf:"bytes,2,rep,name=selector" json:"selector,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// clusterIP is the IP address of the service and is usually assigned
 	// randomly by the master. If an address is specified manually and is not in
@@ -6763,7 +7305,8 @@ type ServiceSpec struct {
 	// can be specified for headless services when proxying is not required.
 	// Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if
 	// type is ExternalName.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#virtual-ips-and-service-proxies
+	// More info: http://kubernetes.io/docs/user-guide/services#virtual-ips-and-service-proxies
+	// +optional
 	ClusterIP string `protobuf:"bytes,3,opt,name=clusterIP" json:"clusterIP"`
 	// type determines how the Service is exposed. Defaults to ClusterIP. Valid
 	// options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
@@ -6778,7 +7321,8 @@ type ServiceSpec struct {
 	// "LoadBalancer" builds on NodePort and creates an
 	// external load-balancer (if supported in the current cloud) which routes
 	// to the clusterIP.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#overview
+	// More info: http://kubernetes.io/docs/user-guide/services#overview
+	// +optional
 	Type string `protobuf:"bytes,4,opt,name=type" json:"type"`
 	// externalIPs is a list of IP addresses for which nodes in the cluster
 	// will also accept traffic for this service.  These IPs are not managed by
@@ -6787,6 +7331,7 @@ type ServiceSpec struct {
 	// that are not part of the Kubernetes system.  A previous form of this
 	// functionality exists as the deprecatedPublicIPs field.  When using this
 	// field, callers should also clear the deprecatedPublicIPs field.
+	// +optional
 	ExternalIPs []string `protobuf:"bytes,5,rep,name=externalIPs" json:"externalIPs,omitempty"`
 	// deprecatedPublicIPs is deprecated and replaced by the externalIPs field
 	// with almost the exact same semantics.  This field is retained in the v1
@@ -6794,33 +7339,38 @@ type ServiceSpec struct {
 	// any new API revisions.  If both deprecatedPublicIPs *and* externalIPs are
 	// set, deprecatedPublicIPs is used.
 	// +k8s:conversion-gen=false
+	// +optional
 	DeprecatedPublicIPs []string `protobuf:"bytes,6,rep,name=deprecatedPublicIPs" json:"deprecatedPublicIPs,omitempty"`
 	// Supports "ClientIP" and "None". Used to maintain session affinity.
 	// Enable client IP based session affinity.
 	// Must be ClientIP or None.
 	// Defaults to None.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#virtual-ips-and-service-proxies
+	// More info: http://kubernetes.io/docs/user-guide/services#virtual-ips-and-service-proxies
+	// +optional
 	SessionAffinity string `protobuf:"bytes,7,opt,name=sessionAffinity" json:"sessionAffinity"`
 	// Only applies to Service Type: LoadBalancer
 	// LoadBalancer will get created with the IP specified in this field.
 	// This feature depends on whether the underlying cloud-provider supports specifying
 	// the loadBalancerIP when a load balancer is created.
 	// This field will be ignored if the cloud-provider does not support the feature.
+	// +optional
 	LoadBalancerIP string `protobuf:"bytes,8,opt,name=loadBalancerIP" json:"loadBalancerIP"`
 	// If specified and supported by the platform, this will restrict traffic through the cloud-provider
 	// load-balancer will be restricted to the specified client IPs. This field will be ignored if the
 	// cloud-provider does not support the feature."
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services-firewalls.md
+	// More info: http://kubernetes.io/docs/user-guide/services-firewalls
+	// +optional
 	LoadBalancerSourceRanges []string `protobuf:"bytes,9,rep,name=loadBalancerSourceRanges" json:"loadBalancerSourceRanges,omitempty"`
 	// externalName is the external reference that kubedns or equivalent will
 	// return as a CNAME record for this service. No proxying will be involved.
 	// Must be a valid DNS name and requires Type to be ExternalName.
+	// +optional
 	ExternalName string `protobuf:"bytes,10,opt,name=externalName" json:"externalName"`
 }
 
 func (m *ServiceSpec) Reset()                    { *m = ServiceSpec{} }
 func (*ServiceSpec) ProtoMessage()               {}
-func (*ServiceSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{144} }
+func (*ServiceSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{146} }
 
 func (m *ServiceSpec) GetPorts() []*ServicePort {
 	if m != nil {
@@ -6896,12 +7446,13 @@ func (m *ServiceSpec) GetExternalName() string {
 type ServiceStatus struct {
 	// LoadBalancer contains the current status of the load-balancer,
 	// if one is present.
+	// +optional
 	LoadBalancer *LoadBalancerStatus `protobuf:"bytes,1,opt,name=loadBalancer" json:"loadBalancer,omitempty"`
 }
 
 func (m *ServiceStatus) Reset()                    { *m = ServiceStatus{} }
 func (*ServiceStatus) ProtoMessage()               {}
-func (*ServiceStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{145} }
+func (*ServiceStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{147} }
 
 func (m *ServiceStatus) GetLoadBalancer() *LoadBalancerStatus {
 	if m != nil {
@@ -6920,7 +7471,7 @@ type TCPSocketAction struct {
 
 func (m *TCPSocketAction) Reset()                    { *m = TCPSocketAction{} }
 func (*TCPSocketAction) ProtoMessage()               {}
-func (*TCPSocketAction) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{146} }
+func (*TCPSocketAction) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{148} }
 
 func (m *TCPSocketAction) GetPort() *k8s_io_kubernetes_pkg_util_intstr.IntOrString {
 	if m != nil {
@@ -6935,6 +7486,7 @@ type Taint struct {
 	// Required. The taint key to be applied to a node.
 	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
 	// Required. The taint value corresponding to the taint key.
+	// +optional
 	Value string `protobuf:"bytes,2,opt,name=value" json:"value"`
 	// Required. The effect of the taint on pods
 	// that do not tolerate the taint.
@@ -6944,7 +7496,7 @@ type Taint struct {
 
 func (m *Taint) Reset()                    { *m = Taint{} }
 func (*Taint) ProtoMessage()               {}
-func (*Taint) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{147} }
+func (*Taint) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{149} }
 
 func (m *Taint) GetKey() string {
 	if m != nil {
@@ -6971,23 +7523,27 @@ func (m *Taint) GetEffect() string {
 // the triple <key,value,effect> using the matching operator <operator>.
 type Toleration struct {
 	// Required. Key is the taint key that the toleration applies to.
+	// +optional
 	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
 	// operator represents a key's relationship to the value.
 	// Valid operators are Exists and Equal. Defaults to Equal.
 	// Exists is equivalent to wildcard for value, so that a pod can
 	// tolerate all taints of a particular category.
+	// +optional
 	Operator string `protobuf:"bytes,2,opt,name=operator" json:"operator"`
 	// Value is the taint value the toleration matches to.
 	// If the operator is Exists, the value should be empty, otherwise just a regular string.
+	// +optional
 	Value string `protobuf:"bytes,3,opt,name=value" json:"value"`
 	// Effect indicates the taint effect to match. Empty means match all taint effects.
 	// When specified, allowed values are NoSchedule and PreferNoSchedule.
+	// +optional
 	Effect string `protobuf:"bytes,4,opt,name=effect" json:"effect"`
 }
 
 func (m *Toleration) Reset()                    { *m = Toleration{} }
 func (*Toleration) ProtoMessage()               {}
-func (*Toleration) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{148} }
+func (*Toleration) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{150} }
 
 func (m *Toleration) GetKey() string {
 	if m != nil {
@@ -7021,7 +7577,7 @@ func (m *Toleration) GetEffect() string {
 type Volume struct {
 	// Volume's name.
 	// Must be a DNS_LABEL and unique within the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
+	// More info: http://kubernetes.io/docs/user-guide/identifiers#names
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// VolumeSource represents the location and type of the mounted volume.
 	// If not specified, the Volume is implied to be an EmptyDir.
@@ -7031,7 +7587,7 @@ type Volume struct {
 
 func (m *Volume) Reset()                    { *m = Volume{} }
 func (*Volume) ProtoMessage()               {}
-func (*Volume) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{149} }
+func (*Volume) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{151} }
 
 func (m *Volume) GetName() string {
 	if m != nil {
@@ -7053,18 +7609,20 @@ type VolumeMount struct {
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// Mounted read-only if true, read-write otherwise (false or unspecified).
 	// Defaults to false.
+	// +optional
 	ReadOnly bool `protobuf:"varint,2,opt,name=readOnly" json:"readOnly"`
 	// Path within the container at which the volume should be mounted.  Must
 	// not contain ':'.
 	MountPath string `protobuf:"bytes,3,opt,name=mountPath" json:"mountPath"`
 	// Path within the volume from which the container's volume should be mounted.
 	// Defaults to "" (volume's root).
+	// +optional
 	SubPath string `protobuf:"bytes,4,opt,name=subPath" json:"subPath"`
 }
 
 func (m *VolumeMount) Reset()                    { *m = VolumeMount{} }
 func (*VolumeMount) ProtoMessage()               {}
-func (*VolumeMount) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{150} }
+func (*VolumeMount) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{152} }
 
 func (m *VolumeMount) GetName() string {
 	if m != nil {
@@ -7101,74 +7659,98 @@ type VolumeSource struct {
 	// machine that is directly exposed to the container. This is generally
 	// used for system agents or other privileged things that are allowed
 	// to see the host machine. Most containers will NOT need this.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#hostpath
+	// More info: http://kubernetes.io/docs/user-guide/volumes#hostpath
 	// ---
 	// TODO(jonesdl) We need to restrict who can use host directory mounts and who can/can not
 	// mount host directories as read/write.
+	// +optional
 	HostPath *HostPathVolumeSource `protobuf:"bytes,1,opt,name=hostPath" json:"hostPath,omitempty"`
 	// EmptyDir represents a temporary directory that shares a pod's lifetime.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#emptydir
+	// More info: http://kubernetes.io/docs/user-guide/volumes#emptydir
+	// +optional
 	EmptyDir *EmptyDirVolumeSource `protobuf:"bytes,2,opt,name=emptyDir" json:"emptyDir,omitempty"`
 	// GCEPersistentDisk represents a GCE Disk resource that is attached to a
 	// kubelet's host machine and then exposed to the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
+	// More info: http://kubernetes.io/docs/user-guide/volumes#gcepersistentdisk
+	// +optional
 	GcePersistentDisk *GCEPersistentDiskVolumeSource `protobuf:"bytes,3,opt,name=gcePersistentDisk" json:"gcePersistentDisk,omitempty"`
 	// AWSElasticBlockStore represents an AWS Disk resource that is attached to a
 	// kubelet's host machine and then exposed to the pod.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
+	// More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
+	// +optional
 	AwsElasticBlockStore *AWSElasticBlockStoreVolumeSource `protobuf:"bytes,4,opt,name=awsElasticBlockStore" json:"awsElasticBlockStore,omitempty"`
 	// GitRepo represents a git repository at a particular revision.
+	// +optional
 	GitRepo *GitRepoVolumeSource `protobuf:"bytes,5,opt,name=gitRepo" json:"gitRepo,omitempty"`
 	// Secret represents a secret that should populate this volume.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#secrets
+	// More info: http://kubernetes.io/docs/user-guide/volumes#secrets
+	// +optional
 	Secret *SecretVolumeSource `protobuf:"bytes,6,opt,name=secret" json:"secret,omitempty"`
 	// NFS represents an NFS mount on the host that shares a pod's lifetime
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
+	// More info: http://kubernetes.io/docs/user-guide/volumes#nfs
+	// +optional
 	Nfs *NFSVolumeSource `protobuf:"bytes,7,opt,name=nfs" json:"nfs,omitempty"`
 	// ISCSI represents an ISCSI Disk resource that is attached to a
 	// kubelet's host machine and then exposed to the pod.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/iscsi/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/iscsi/README.md
+	// +optional
 	Iscsi *ISCSIVolumeSource `protobuf:"bytes,8,opt,name=iscsi" json:"iscsi,omitempty"`
 	// Glusterfs represents a Glusterfs mount on the host that shares a pod's lifetime.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md
+	// +optional
 	Glusterfs *GlusterfsVolumeSource `protobuf:"bytes,9,opt,name=glusterfs" json:"glusterfs,omitempty"`
 	// PersistentVolumeClaimVolumeSource represents a reference to a
 	// PersistentVolumeClaim in the same namespace.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
+	// More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistentvolumeclaims
+	// +optional
 	PersistentVolumeClaim *PersistentVolumeClaimVolumeSource `protobuf:"bytes,10,opt,name=persistentVolumeClaim" json:"persistentVolumeClaim,omitempty"`
 	// RBD represents a Rados Block Device mount on the host that shares a pod's lifetime.
-	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md
+	// +optional
 	Rbd *RBDVolumeSource `protobuf:"bytes,11,opt,name=rbd" json:"rbd,omitempty"`
 	// FlexVolume represents a generic volume resource that is
 	// provisioned/attached using an exec based plugin. This is an
 	// alpha feature and may change in future.
+	// +optional
 	FlexVolume *FlexVolumeSource `protobuf:"bytes,12,opt,name=flexVolume" json:"flexVolume,omitempty"`
 	// Cinder represents a cinder volume attached and mounted on kubelets host machine
-	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
+	// More info: http://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md
+	// +optional
 	Cinder *CinderVolumeSource `protobuf:"bytes,13,opt,name=cinder" json:"cinder,omitempty"`
 	// CephFS represents a Ceph FS mount on the host that shares a pod's lifetime
+	// +optional
 	Cephfs *CephFSVolumeSource `protobuf:"bytes,14,opt,name=cephfs" json:"cephfs,omitempty"`
 	// Flocker represents a Flocker volume attached to a kubelet's host machine. This depends on the Flocker control service being running
+	// +optional
 	Flocker *FlockerVolumeSource `protobuf:"bytes,15,opt,name=flocker" json:"flocker,omitempty"`
 	// DownwardAPI represents downward API about the pod that should populate this volume
+	// +optional
 	DownwardAPI *DownwardAPIVolumeSource `protobuf:"bytes,16,opt,name=downwardAPI" json:"downwardAPI,omitempty"`
 	// FC represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
+	// +optional
 	Fc *FCVolumeSource `protobuf:"bytes,17,opt,name=fc" json:"fc,omitempty"`
 	// AzureFile represents an Azure File Service mount on the host and bind mount to the pod.
+	// +optional
 	AzureFile *AzureFileVolumeSource `protobuf:"bytes,18,opt,name=azureFile" json:"azureFile,omitempty"`
 	// ConfigMap represents a configMap that should populate this volume
+	// +optional
 	ConfigMap *ConfigMapVolumeSource `protobuf:"bytes,19,opt,name=configMap" json:"configMap,omitempty"`
 	// VsphereVolume represents a vSphere volume attached and mounted on kubelets host machine
+	// +optional
 	VsphereVolume *VsphereVirtualDiskVolumeSource `protobuf:"bytes,20,opt,name=vsphereVolume" json:"vsphereVolume,omitempty"`
 	// Quobyte represents a Quobyte mount on the host that shares a pod's lifetime
+	// +optional
 	Quobyte *QuobyteVolumeSource `protobuf:"bytes,21,opt,name=quobyte" json:"quobyte,omitempty"`
 	// AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
+	// +optional
 	AzureDisk *AzureDiskVolumeSource `protobuf:"bytes,22,opt,name=azureDisk" json:"azureDisk,omitempty"`
+	// PhotonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine
+	PhotonPersistentDisk *PhotonPersistentDiskVolumeSource `protobuf:"bytes,23,opt,name=photonPersistentDisk" json:"photonPersistentDisk,omitempty"`
 }
 
 func (m *VolumeSource) Reset()                    { *m = VolumeSource{} }
 func (*VolumeSource) ProtoMessage()               {}
-func (*VolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{151} }
+func (*VolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{153} }
 
 func (m *VolumeSource) GetHostPath() *HostPathVolumeSource {
 	if m != nil {
@@ -7324,6 +7906,13 @@ func (m *VolumeSource) GetAzureDisk() *AzureDiskVolumeSource {
 	return nil
 }
 
+func (m *VolumeSource) GetPhotonPersistentDisk() *PhotonPersistentDiskVolumeSource {
+	if m != nil {
+		return m.PhotonPersistentDisk
+	}
+	return nil
+}
+
 // Represents a vSphere volume resource.
 type VsphereVirtualDiskVolumeSource struct {
 	// Path that identifies vSphere volume vmdk
@@ -7331,13 +7920,14 @@ type VsphereVirtualDiskVolumeSource struct {
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
+	// +optional
 	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
 }
 
 func (m *VsphereVirtualDiskVolumeSource) Reset()      { *m = VsphereVirtualDiskVolumeSource{} }
 func (*VsphereVirtualDiskVolumeSource) ProtoMessage() {}
 func (*VsphereVirtualDiskVolumeSource) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{152}
+	return fileDescriptorGenerated, []int{154}
 }
 
 func (m *VsphereVirtualDiskVolumeSource) GetVolumePath() string {
@@ -7366,7 +7956,7 @@ type WeightedPodAffinityTerm struct {
 func (m *WeightedPodAffinityTerm) Reset()      { *m = WeightedPodAffinityTerm{} }
 func (*WeightedPodAffinityTerm) ProtoMessage() {}
 func (*WeightedPodAffinityTerm) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{153}
+	return fileDescriptorGenerated, []int{155}
 }
 
 func (m *WeightedPodAffinityTerm) GetWeight() int32 {
@@ -7480,6 +8070,7 @@ func init() {
 	proto.RegisterType((*PersistentVolumeSource)(nil), "github.com/ericchiang.k8s.api.v1.PersistentVolumeSource")
 	proto.RegisterType((*PersistentVolumeSpec)(nil), "github.com/ericchiang.k8s.api.v1.PersistentVolumeSpec")
 	proto.RegisterType((*PersistentVolumeStatus)(nil), "github.com/ericchiang.k8s.api.v1.PersistentVolumeStatus")
+	proto.RegisterType((*PhotonPersistentDiskVolumeSource)(nil), "github.com/ericchiang.k8s.api.v1.PhotonPersistentDiskVolumeSource")
 	proto.RegisterType((*Pod)(nil), "github.com/ericchiang.k8s.api.v1.Pod")
 	proto.RegisterType((*PodAffinity)(nil), "github.com/ericchiang.k8s.api.v1.PodAffinity")
 	proto.RegisterType((*PodAffinityTerm)(nil), "github.com/ericchiang.k8s.api.v1.PodAffinityTerm")
@@ -7506,6 +8097,7 @@ func init() {
 	proto.RegisterType((*RBDVolumeSource)(nil), "github.com/ericchiang.k8s.api.v1.RBDVolumeSource")
 	proto.RegisterType((*RangeAllocation)(nil), "github.com/ericchiang.k8s.api.v1.RangeAllocation")
 	proto.RegisterType((*ReplicationController)(nil), "github.com/ericchiang.k8s.api.v1.ReplicationController")
+	proto.RegisterType((*ReplicationControllerCondition)(nil), "github.com/ericchiang.k8s.api.v1.ReplicationControllerCondition")
 	proto.RegisterType((*ReplicationControllerList)(nil), "github.com/ericchiang.k8s.api.v1.ReplicationControllerList")
 	proto.RegisterType((*ReplicationControllerSpec)(nil), "github.com/ericchiang.k8s.api.v1.ReplicationControllerSpec")
 	proto.RegisterType((*ReplicationControllerStatus)(nil), "github.com/ericchiang.k8s.api.v1.ReplicationControllerStatus")
@@ -9331,6 +9923,9 @@ func (this *FlockerVolumeSource) Equal(that interface{}) bool {
 		return false
 	}
 	if this.DatasetName != that1.DatasetName {
+		return false
+	}
+	if this.DatasetUUID != that1.DatasetUUID {
 		return false
 	}
 	return true
@@ -11343,6 +11938,9 @@ func (this *PersistentVolumeSource) Equal(that interface{}) bool {
 	if !this.AzureDisk.Equal(that1.AzureDisk) {
 		return false
 	}
+	if !this.PhotonPersistentDisk.Equal(that1.PhotonPersistentDisk) {
+		return false
+	}
 	return true
 }
 func (this *PersistentVolumeSpec) Equal(that interface{}) bool {
@@ -11429,6 +12027,39 @@ func (this *PersistentVolumeStatus) Equal(that interface{}) bool {
 		return false
 	}
 	if this.Reason != that1.Reason {
+		return false
+	}
+	return true
+}
+func (this *PhotonPersistentDiskVolumeSource) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*PhotonPersistentDiskVolumeSource)
+	if !ok {
+		that2, ok := that.(PhotonPersistentDiskVolumeSource)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.PdID != that1.PdID {
+		return false
+	}
+	if this.FsType != that1.FsType {
 		return false
 	}
 	return true
@@ -12542,6 +13173,48 @@ func (this *ReplicationController) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *ReplicationControllerCondition) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*ReplicationControllerCondition)
+	if !ok {
+		that2, ok := that.(ReplicationControllerCondition)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if this.Status != that1.Status {
+		return false
+	}
+	if !this.LastTransitionTime.Equal(that1.LastTransitionTime) {
+		return false
+	}
+	if this.Reason != that1.Reason {
+		return false
+	}
+	if this.Message != that1.Message {
+		return false
+	}
+	return true
+}
 func (this *ReplicationControllerList) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
@@ -12608,6 +13281,9 @@ func (this *ReplicationControllerSpec) Equal(that interface{}) bool {
 	if this.Replicas != that1.Replicas {
 		return false
 	}
+	if this.MinReadySeconds != that1.MinReadySeconds {
+		return false
+	}
 	if len(this.Selector) != len(that1.Selector) {
 		return false
 	}
@@ -12655,8 +13331,19 @@ func (this *ReplicationControllerStatus) Equal(that interface{}) bool {
 	if this.ReadyReplicas != that1.ReadyReplicas {
 		return false
 	}
+	if this.AvailableReplicas != that1.AvailableReplicas {
+		return false
+	}
 	if this.ObservedGeneration != that1.ObservedGeneration {
 		return false
+	}
+	if len(this.Conditions) != len(that1.Conditions) {
+		return false
+	}
+	for i := range this.Conditions {
+		if !this.Conditions[i].Equal(that1.Conditions[i]) {
+			return false
+		}
 	}
 	return true
 }
@@ -13784,6 +14471,9 @@ func (this *VolumeSource) Equal(that interface{}) bool {
 	if !this.AzureDisk.Equal(that1.AzureDisk) {
 		return false
 	}
+	if !this.PhotonPersistentDisk.Equal(that1.PhotonPersistentDisk) {
+		return false
+	}
 	return true
 }
 func (this *VsphereVirtualDiskVolumeSource) Equal(that interface{}) bool {
@@ -14559,9 +15249,10 @@ func (this *FlockerVolumeSource) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 5)
+	s := make([]string, 0, 6)
 	s = append(s, "&v1.FlockerVolumeSource{")
 	s = append(s, "DatasetName: "+fmt.Sprintf("%#v", this.DatasetName)+",\n")
+	s = append(s, "DatasetUUID: "+fmt.Sprintf("%#v", this.DatasetUUID)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -15397,7 +16088,7 @@ func (this *PersistentVolumeSource) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 20)
+	s := make([]string, 0, 21)
 	s = append(s, "&v1.PersistentVolumeSource{")
 	if this.GcePersistentDisk != nil {
 		s = append(s, "GcePersistentDisk: "+fmt.Sprintf("%#v", this.GcePersistentDisk)+",\n")
@@ -15447,6 +16138,9 @@ func (this *PersistentVolumeSource) GoString() string {
 	if this.AzureDisk != nil {
 		s = append(s, "AzureDisk: "+fmt.Sprintf("%#v", this.AzureDisk)+",\n")
 	}
+	if this.PhotonPersistentDisk != nil {
+		s = append(s, "PhotonPersistentDisk: "+fmt.Sprintf("%#v", this.PhotonPersistentDisk)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -15491,6 +16185,17 @@ func (this *PersistentVolumeStatus) GoString() string {
 	s = append(s, "Phase: "+fmt.Sprintf("%#v", this.Phase)+",\n")
 	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
 	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *PhotonPersistentDiskVolumeSource) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&v1.PhotonPersistentDiskVolumeSource{")
+	s = append(s, "PdID: "+fmt.Sprintf("%#v", this.PdID)+",\n")
+	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -15935,6 +16640,22 @@ func (this *ReplicationController) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *ReplicationControllerCondition) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&v1.ReplicationControllerCondition{")
+	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
+	s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
+	if this.LastTransitionTime != nil {
+		s = append(s, "LastTransitionTime: "+fmt.Sprintf("%#v", this.LastTransitionTime)+",\n")
+	}
+	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
+	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *ReplicationControllerList) GoString() string {
 	if this == nil {
 		return "nil"
@@ -15954,9 +16675,10 @@ func (this *ReplicationControllerSpec) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 7)
+	s := make([]string, 0, 8)
 	s = append(s, "&v1.ReplicationControllerSpec{")
 	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
+	s = append(s, "MinReadySeconds: "+fmt.Sprintf("%#v", this.MinReadySeconds)+",\n")
 	keysForSelector := make([]string, 0, len(this.Selector))
 	for k, _ := range this.Selector {
 		keysForSelector = append(keysForSelector, k)
@@ -15980,12 +16702,16 @@ func (this *ReplicationControllerStatus) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 8)
+	s := make([]string, 0, 10)
 	s = append(s, "&v1.ReplicationControllerStatus{")
 	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
 	s = append(s, "FullyLabeledReplicas: "+fmt.Sprintf("%#v", this.FullyLabeledReplicas)+",\n")
 	s = append(s, "ReadyReplicas: "+fmt.Sprintf("%#v", this.ReadyReplicas)+",\n")
+	s = append(s, "AvailableReplicas: "+fmt.Sprintf("%#v", this.AvailableReplicas)+",\n")
 	s = append(s, "ObservedGeneration: "+fmt.Sprintf("%#v", this.ObservedGeneration)+",\n")
+	if this.Conditions != nil {
+		s = append(s, "Conditions: "+fmt.Sprintf("%#v", this.Conditions)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -16466,7 +17192,7 @@ func (this *VolumeSource) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 26)
+	s := make([]string, 0, 27)
 	s = append(s, "&v1.VolumeSource{")
 	if this.HostPath != nil {
 		s = append(s, "HostPath: "+fmt.Sprintf("%#v", this.HostPath)+",\n")
@@ -16533,6 +17259,9 @@ func (this *VolumeSource) GoString() string {
 	}
 	if this.AzureDisk != nil {
 		s = append(s, "AzureDisk: "+fmt.Sprintf("%#v", this.AzureDisk)+",\n")
+	}
+	if this.PhotonPersistentDisk != nil {
+		s = append(s, "PhotonPersistentDisk: "+fmt.Sprintf("%#v", this.PhotonPersistentDisk)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -18541,6 +19270,10 @@ func (m *FlockerVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	i++
 	i = encodeVarintGenerated(dAtA, i, uint64(len(m.DatasetName)))
 	i += copy(dAtA[i:], m.DatasetName)
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.DatasetUUID)))
+	i += copy(dAtA[i:], m.DatasetUUID)
 	return i, nil
 }
 
@@ -20879,6 +21612,18 @@ func (m *PersistentVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n103
 	}
+	if m.PhotonPersistentDisk != nil {
+		dAtA[i] = 0x8a
+		i++
+		dAtA[i] = 0x1
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.PhotonPersistentDisk.Size()))
+		n104, err := m.PhotonPersistentDisk.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n104
+	}
 	return i, nil
 }
 
@@ -20917,11 +21662,11 @@ func (m *PersistentVolumeSpec) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n104, err := v.MarshalTo(dAtA[i:])
+				n105, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n104
+				i += n105
 			}
 		}
 	}
@@ -20929,11 +21674,11 @@ func (m *PersistentVolumeSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.PersistentVolumeSource.Size()))
-		n105, err := m.PersistentVolumeSource.MarshalTo(dAtA[i:])
+		n106, err := m.PersistentVolumeSource.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n105
+		i += n106
 	}
 	if len(m.AccessModes) > 0 {
 		for _, s := range m.AccessModes {
@@ -20954,11 +21699,11 @@ func (m *PersistentVolumeSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.ClaimRef.Size()))
-		n106, err := m.ClaimRef.MarshalTo(dAtA[i:])
+		n107, err := m.ClaimRef.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n106
+		i += n107
 	}
 	dAtA[i] = 0x2a
 	i++
@@ -20997,6 +21742,32 @@ func (m *PersistentVolumeStatus) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *PhotonPersistentDiskVolumeSource) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PhotonPersistentDiskVolumeSource) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0xa
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.PdID)))
+	i += copy(dAtA[i:], m.PdID)
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
+	i += copy(dAtA[i:], m.FsType)
+	return i, nil
+}
+
 func (m *Pod) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -21016,31 +21787,31 @@ func (m *Pod) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n107, err := m.Metadata.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n107
-	}
-	if m.Spec != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
-		n108, err := m.Spec.MarshalTo(dAtA[i:])
+		n108, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n108
 	}
-	if m.Status != nil {
-		dAtA[i] = 0x1a
+	if m.Spec != nil {
+		dAtA[i] = 0x12
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n109, err := m.Status.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
+		n109, err := m.Spec.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n109
+	}
+	if m.Status != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
+		n110, err := m.Status.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n110
 	}
 	return i, nil
 }
@@ -21106,11 +21877,11 @@ func (m *PodAffinityTerm) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.LabelSelector.Size()))
-		n110, err := m.LabelSelector.MarshalTo(dAtA[i:])
+		n111, err := m.LabelSelector.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n110
+		i += n111
 	}
 	if len(m.Namespaces) > 0 {
 		for _, s := range m.Namespaces {
@@ -21257,21 +22028,21 @@ func (m *PodCondition) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.LastProbeTime.Size()))
-		n111, err := m.LastProbeTime.MarshalTo(dAtA[i:])
+		n112, err := m.LastProbeTime.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n111
+		i += n112
 	}
 	if m.LastTransitionTime != nil {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.LastTransitionTime.Size()))
-		n112, err := m.LastTransitionTime.MarshalTo(dAtA[i:])
+		n113, err := m.LastTransitionTime.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n112
+		i += n113
 	}
 	dAtA[i] = 0x2a
 	i++
@@ -21372,11 +22143,11 @@ func (m *PodList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n113, err := m.Metadata.MarshalTo(dAtA[i:])
+		n114, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n113
+		i += n114
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -21435,11 +22206,11 @@ func (m *PodLogOptions) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x2a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.SinceTime.Size()))
-		n114, err := m.SinceTime.MarshalTo(dAtA[i:])
+		n115, err := m.SinceTime.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n114
+		i += n115
 	}
 	dAtA[i] = 0x30
 	i++
@@ -21499,11 +22270,11 @@ func (m *PodSecurityContext) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.SeLinuxOptions.Size()))
-		n115, err := m.SeLinuxOptions.MarshalTo(dAtA[i:])
+		n116, err := m.SeLinuxOptions.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n115
+		i += n116
 	}
 	dAtA[i] = 0x10
 	i++
@@ -21548,11 +22319,11 @@ func (m *PodSignature) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.PodController.Size()))
-		n116, err := m.PodController.MarshalTo(dAtA[i:])
+		n117, err := m.PodController.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n116
+		i += n117
 	}
 	return i, nil
 }
@@ -21667,11 +22438,11 @@ func (m *PodSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x72
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.SecurityContext.Size()))
-		n117, err := m.SecurityContext.MarshalTo(dAtA[i:])
+		n118, err := m.SecurityContext.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n117
+		i += n118
 	}
 	if len(m.ImagePullSecrets) > 0 {
 		for _, msg := range m.ImagePullSecrets {
@@ -21751,11 +22522,11 @@ func (m *PodStatus) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x3a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.StartTime.Size()))
-		n118, err := m.StartTime.MarshalTo(dAtA[i:])
+		n119, err := m.StartTime.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n118
+		i += n119
 	}
 	if len(m.ContainerStatuses) > 0 {
 		for _, msg := range m.ContainerStatuses {
@@ -21791,21 +22562,21 @@ func (m *PodStatusResult) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n119, err := m.Metadata.MarshalTo(dAtA[i:])
+		n120, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n119
+		i += n120
 	}
 	if m.Status != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n120, err := m.Status.MarshalTo(dAtA[i:])
+		n121, err := m.Status.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n120
+		i += n121
 	}
 	return i, nil
 }
@@ -21829,21 +22600,21 @@ func (m *PodTemplate) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n121, err := m.Metadata.MarshalTo(dAtA[i:])
+		n122, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n121
+		i += n122
 	}
 	if m.Template != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Template.Size()))
-		n122, err := m.Template.MarshalTo(dAtA[i:])
+		n123, err := m.Template.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n122
+		i += n123
 	}
 	return i, nil
 }
@@ -21867,11 +22638,11 @@ func (m *PodTemplateList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n123, err := m.Metadata.MarshalTo(dAtA[i:])
+		n124, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n123
+		i += n124
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -21907,21 +22678,21 @@ func (m *PodTemplateSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n124, err := m.Metadata.MarshalTo(dAtA[i:])
+		n125, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n124
+		i += n125
 	}
 	if m.Spec != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
-		n125, err := m.Spec.MarshalTo(dAtA[i:])
+		n126, err := m.Spec.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n125
+		i += n126
 	}
 	return i, nil
 }
@@ -21967,21 +22738,21 @@ func (m *PreferAvoidPodsEntry) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.PodSignature.Size()))
-		n126, err := m.PodSignature.MarshalTo(dAtA[i:])
+		n127, err := m.PodSignature.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n126
+		i += n127
 	}
 	if m.EvictionTime != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.EvictionTime.Size()))
-		n127, err := m.EvictionTime.MarshalTo(dAtA[i:])
+		n128, err := m.EvictionTime.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n127
+		i += n128
 	}
 	dAtA[i] = 0x1a
 	i++
@@ -22016,11 +22787,11 @@ func (m *PreferredSchedulingTerm) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Preference.Size()))
-		n128, err := m.Preference.MarshalTo(dAtA[i:])
+		n129, err := m.Preference.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n128
+		i += n129
 	}
 	return i, nil
 }
@@ -22044,11 +22815,11 @@ func (m *Probe) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Handler.Size()))
-		n129, err := m.Handler.MarshalTo(dAtA[i:])
+		n130, err := m.Handler.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n129
+		i += n130
 	}
 	dAtA[i] = 0x10
 	i++
@@ -22164,11 +22935,11 @@ func (m *RBDVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x3a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.SecretRef.Size()))
-		n130, err := m.SecretRef.MarshalTo(dAtA[i:])
+		n131, err := m.SecretRef.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n130
+		i += n131
 	}
 	dAtA[i] = 0x40
 	i++
@@ -22200,11 +22971,11 @@ func (m *RangeAllocation) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n131, err := m.Metadata.MarshalTo(dAtA[i:])
+		n132, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n131
+		i += n132
 	}
 	dAtA[i] = 0x12
 	i++
@@ -22238,32 +23009,76 @@ func (m *ReplicationController) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n132, err := m.Metadata.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n132
-	}
-	if m.Spec != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
-		n133, err := m.Spec.MarshalTo(dAtA[i:])
+		n133, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n133
 	}
-	if m.Status != nil {
-		dAtA[i] = 0x1a
+	if m.Spec != nil {
+		dAtA[i] = 0x12
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n134, err := m.Status.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
+		n134, err := m.Spec.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n134
 	}
+	if m.Status != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
+		n135, err := m.Status.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n135
+	}
+	return i, nil
+}
+
+func (m *ReplicationControllerCondition) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ReplicationControllerCondition) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0xa
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
+	i += copy(dAtA[i:], m.Type)
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Status)))
+	i += copy(dAtA[i:], m.Status)
+	if m.LastTransitionTime != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.LastTransitionTime.Size()))
+		n136, err := m.LastTransitionTime.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n136
+	}
+	dAtA[i] = 0x22
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
+	i += copy(dAtA[i:], m.Reason)
+	dAtA[i] = 0x2a
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
+	i += copy(dAtA[i:], m.Message)
 	return i, nil
 }
 
@@ -22286,11 +23101,11 @@ func (m *ReplicationControllerList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n135, err := m.Metadata.MarshalTo(dAtA[i:])
+		n137, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n135
+		i += n137
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -22346,12 +23161,15 @@ func (m *ReplicationControllerSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Template.Size()))
-		n136, err := m.Template.MarshalTo(dAtA[i:])
+		n138, err := m.Template.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n136
+		i += n138
 	}
+	dAtA[i] = 0x20
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(m.MinReadySeconds))
 	return i, nil
 }
 
@@ -22382,6 +23200,21 @@ func (m *ReplicationControllerStatus) MarshalTo(dAtA []byte) (int, error) {
 	dAtA[i] = 0x20
 	i++
 	i = encodeVarintGenerated(dAtA, i, uint64(m.ReadyReplicas))
+	dAtA[i] = 0x28
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(m.AvailableReplicas))
+	if len(m.Conditions) > 0 {
+		for _, msg := range m.Conditions {
+			dAtA[i] = 0x32
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
 	return i, nil
 }
 
@@ -22412,11 +23245,11 @@ func (m *ResourceFieldSelector) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Divisor.Size()))
-		n137, err := m.Divisor.MarshalTo(dAtA[i:])
+		n139, err := m.Divisor.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n137
+		i += n139
 	}
 	return i, nil
 }
@@ -22440,31 +23273,31 @@ func (m *ResourceQuota) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n138, err := m.Metadata.MarshalTo(dAtA[i:])
+		n140, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n138
+		i += n140
 	}
 	if m.Spec != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
-		n139, err := m.Spec.MarshalTo(dAtA[i:])
+		n141, err := m.Spec.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n139
+		i += n141
 	}
 	if m.Status != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n140, err := m.Status.MarshalTo(dAtA[i:])
+		n142, err := m.Status.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n140
+		i += n142
 	}
 	return i, nil
 }
@@ -22488,11 +23321,11 @@ func (m *ResourceQuotaList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n141, err := m.Metadata.MarshalTo(dAtA[i:])
+		n143, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n141
+		i += n143
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -22544,11 +23377,11 @@ func (m *ResourceQuotaSpec) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n142, err := v.MarshalTo(dAtA[i:])
+				n144, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n142
+				i += n144
 			}
 		}
 	}
@@ -22605,11 +23438,11 @@ func (m *ResourceQuotaStatus) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n143, err := v.MarshalTo(dAtA[i:])
+				n145, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n143
+				i += n145
 			}
 		}
 	}
@@ -22633,11 +23466,11 @@ func (m *ResourceQuotaStatus) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n144, err := v.MarshalTo(dAtA[i:])
+				n146, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n144
+				i += n146
 			}
 		}
 	}
@@ -22679,11 +23512,11 @@ func (m *ResourceRequirements) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n145, err := v.MarshalTo(dAtA[i:])
+				n147, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n145
+				i += n147
 			}
 		}
 	}
@@ -22707,11 +23540,11 @@ func (m *ResourceRequirements) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n146, err := v.MarshalTo(dAtA[i:])
+				n148, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n146
+				i += n148
 			}
 		}
 	}
@@ -22771,11 +23604,11 @@ func (m *Secret) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n147, err := m.Metadata.MarshalTo(dAtA[i:])
+		n149, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n147
+		i += n149
 	}
 	if len(m.Data) > 0 {
 		for k, _ := range m.Data {
@@ -22843,11 +23676,11 @@ func (m *SecretKeySelector) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.LocalObjectReference.Size()))
-		n148, err := m.LocalObjectReference.MarshalTo(dAtA[i:])
+		n150, err := m.LocalObjectReference.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n148
+		i += n150
 	}
 	dAtA[i] = 0x12
 	i++
@@ -22875,11 +23708,11 @@ func (m *SecretList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n149, err := m.Metadata.MarshalTo(dAtA[i:])
+		n151, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n149
+		i += n151
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -22952,11 +23785,11 @@ func (m *SecurityContext) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Capabilities.Size()))
-		n150, err := m.Capabilities.MarshalTo(dAtA[i:])
+		n152, err := m.Capabilities.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n150
+		i += n152
 	}
 	dAtA[i] = 0x10
 	i++
@@ -22970,11 +23803,11 @@ func (m *SecurityContext) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.SeLinuxOptions.Size()))
-		n151, err := m.SeLinuxOptions.MarshalTo(dAtA[i:])
+		n153, err := m.SeLinuxOptions.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n151
+		i += n153
 	}
 	dAtA[i] = 0x20
 	i++
@@ -23017,11 +23850,11 @@ func (m *SerializedReference) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Reference.Size()))
-		n152, err := m.Reference.MarshalTo(dAtA[i:])
+		n154, err := m.Reference.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n152
+		i += n154
 	}
 	return i, nil
 }
@@ -23045,31 +23878,31 @@ func (m *Service) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n153, err := m.Metadata.MarshalTo(dAtA[i:])
+		n155, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n153
+		i += n155
 	}
 	if m.Spec != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
-		n154, err := m.Spec.MarshalTo(dAtA[i:])
+		n156, err := m.Spec.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n154
+		i += n156
 	}
 	if m.Status != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n155, err := m.Status.MarshalTo(dAtA[i:])
+		n157, err := m.Status.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n155
+		i += n157
 	}
 	return i, nil
 }
@@ -23093,11 +23926,11 @@ func (m *ServiceAccount) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n156, err := m.Metadata.MarshalTo(dAtA[i:])
+		n158, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n156
+		i += n158
 	}
 	if len(m.Secrets) > 0 {
 		for _, msg := range m.Secrets {
@@ -23145,11 +23978,11 @@ func (m *ServiceAccountList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n157, err := m.Metadata.MarshalTo(dAtA[i:])
+		n159, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n157
+		i += n159
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -23185,11 +24018,11 @@ func (m *ServiceList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n158, err := m.Metadata.MarshalTo(dAtA[i:])
+		n160, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n158
+		i += n160
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -23236,11 +24069,11 @@ func (m *ServicePort) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.TargetPort.Size()))
-		n159, err := m.TargetPort.MarshalTo(dAtA[i:])
+		n161, err := m.TargetPort.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n159
+		i += n161
 	}
 	dAtA[i] = 0x28
 	i++
@@ -23401,11 +24234,11 @@ func (m *ServiceStatus) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.LoadBalancer.Size()))
-		n160, err := m.LoadBalancer.MarshalTo(dAtA[i:])
+		n162, err := m.LoadBalancer.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n160
+		i += n162
 	}
 	return i, nil
 }
@@ -23429,11 +24262,11 @@ func (m *TCPSocketAction) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Port.Size()))
-		n161, err := m.Port.MarshalTo(dAtA[i:])
+		n163, err := m.Port.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n161
+		i += n163
 	}
 	return i, nil
 }
@@ -23525,11 +24358,11 @@ func (m *Volume) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.VolumeSource.Size()))
-		n162, err := m.VolumeSource.MarshalTo(dAtA[i:])
+		n164, err := m.VolumeSource.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n162
+		i += n164
 	}
 	return i, nil
 }
@@ -23591,151 +24424,151 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.HostPath.Size()))
-		n163, err := m.HostPath.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n163
-	}
-	if m.EmptyDir != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.EmptyDir.Size()))
-		n164, err := m.EmptyDir.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n164
-	}
-	if m.GcePersistentDisk != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.GcePersistentDisk.Size()))
-		n165, err := m.GcePersistentDisk.MarshalTo(dAtA[i:])
+		n165, err := m.HostPath.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n165
 	}
-	if m.AwsElasticBlockStore != nil {
-		dAtA[i] = 0x22
+	if m.EmptyDir != nil {
+		dAtA[i] = 0x12
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.AwsElasticBlockStore.Size()))
-		n166, err := m.AwsElasticBlockStore.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.EmptyDir.Size()))
+		n166, err := m.EmptyDir.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n166
 	}
-	if m.GitRepo != nil {
-		dAtA[i] = 0x2a
+	if m.GcePersistentDisk != nil {
+		dAtA[i] = 0x1a
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.GitRepo.Size()))
-		n167, err := m.GitRepo.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.GcePersistentDisk.Size()))
+		n167, err := m.GcePersistentDisk.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n167
 	}
-	if m.Secret != nil {
-		dAtA[i] = 0x32
+	if m.AwsElasticBlockStore != nil {
+		dAtA[i] = 0x22
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Secret.Size()))
-		n168, err := m.Secret.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.AwsElasticBlockStore.Size()))
+		n168, err := m.AwsElasticBlockStore.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n168
 	}
-	if m.Nfs != nil {
-		dAtA[i] = 0x3a
+	if m.GitRepo != nil {
+		dAtA[i] = 0x2a
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Nfs.Size()))
-		n169, err := m.Nfs.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.GitRepo.Size()))
+		n169, err := m.GitRepo.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n169
 	}
-	if m.Iscsi != nil {
-		dAtA[i] = 0x42
+	if m.Secret != nil {
+		dAtA[i] = 0x32
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Iscsi.Size()))
-		n170, err := m.Iscsi.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Secret.Size()))
+		n170, err := m.Secret.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n170
 	}
-	if m.Glusterfs != nil {
-		dAtA[i] = 0x4a
+	if m.Nfs != nil {
+		dAtA[i] = 0x3a
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Glusterfs.Size()))
-		n171, err := m.Glusterfs.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Nfs.Size()))
+		n171, err := m.Nfs.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n171
 	}
-	if m.PersistentVolumeClaim != nil {
-		dAtA[i] = 0x52
+	if m.Iscsi != nil {
+		dAtA[i] = 0x42
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.PersistentVolumeClaim.Size()))
-		n172, err := m.PersistentVolumeClaim.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Iscsi.Size()))
+		n172, err := m.Iscsi.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n172
 	}
-	if m.Rbd != nil {
-		dAtA[i] = 0x5a
+	if m.Glusterfs != nil {
+		dAtA[i] = 0x4a
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Rbd.Size()))
-		n173, err := m.Rbd.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Glusterfs.Size()))
+		n173, err := m.Glusterfs.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n173
 	}
-	if m.FlexVolume != nil {
-		dAtA[i] = 0x62
+	if m.PersistentVolumeClaim != nil {
+		dAtA[i] = 0x52
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.FlexVolume.Size()))
-		n174, err := m.FlexVolume.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.PersistentVolumeClaim.Size()))
+		n174, err := m.PersistentVolumeClaim.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n174
 	}
-	if m.Cinder != nil {
-		dAtA[i] = 0x6a
+	if m.Rbd != nil {
+		dAtA[i] = 0x5a
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Cinder.Size()))
-		n175, err := m.Cinder.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Rbd.Size()))
+		n175, err := m.Rbd.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n175
 	}
-	if m.Cephfs != nil {
-		dAtA[i] = 0x72
+	if m.FlexVolume != nil {
+		dAtA[i] = 0x62
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Cephfs.Size()))
-		n176, err := m.Cephfs.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.FlexVolume.Size()))
+		n176, err := m.FlexVolume.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n176
 	}
-	if m.Flocker != nil {
-		dAtA[i] = 0x7a
+	if m.Cinder != nil {
+		dAtA[i] = 0x6a
 		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.Flocker.Size()))
-		n177, err := m.Flocker.MarshalTo(dAtA[i:])
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Cinder.Size()))
+		n177, err := m.Cinder.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n177
+	}
+	if m.Cephfs != nil {
+		dAtA[i] = 0x72
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Cephfs.Size()))
+		n178, err := m.Cephfs.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n178
+	}
+	if m.Flocker != nil {
+		dAtA[i] = 0x7a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Flocker.Size()))
+		n179, err := m.Flocker.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n179
 	}
 	if m.DownwardAPI != nil {
 		dAtA[i] = 0x82
@@ -23743,11 +24576,11 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.DownwardAPI.Size()))
-		n178, err := m.DownwardAPI.MarshalTo(dAtA[i:])
+		n180, err := m.DownwardAPI.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n178
+		i += n180
 	}
 	if m.Fc != nil {
 		dAtA[i] = 0x8a
@@ -23755,11 +24588,11 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Fc.Size()))
-		n179, err := m.Fc.MarshalTo(dAtA[i:])
+		n181, err := m.Fc.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n179
+		i += n181
 	}
 	if m.AzureFile != nil {
 		dAtA[i] = 0x92
@@ -23767,11 +24600,11 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.AzureFile.Size()))
-		n180, err := m.AzureFile.MarshalTo(dAtA[i:])
+		n182, err := m.AzureFile.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n180
+		i += n182
 	}
 	if m.ConfigMap != nil {
 		dAtA[i] = 0x9a
@@ -23779,11 +24612,11 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.ConfigMap.Size()))
-		n181, err := m.ConfigMap.MarshalTo(dAtA[i:])
+		n183, err := m.ConfigMap.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n181
+		i += n183
 	}
 	if m.VsphereVolume != nil {
 		dAtA[i] = 0xa2
@@ -23791,11 +24624,11 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.VsphereVolume.Size()))
-		n182, err := m.VsphereVolume.MarshalTo(dAtA[i:])
+		n184, err := m.VsphereVolume.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n182
+		i += n184
 	}
 	if m.Quobyte != nil {
 		dAtA[i] = 0xaa
@@ -23803,11 +24636,11 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Quobyte.Size()))
-		n183, err := m.Quobyte.MarshalTo(dAtA[i:])
+		n185, err := m.Quobyte.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n183
+		i += n185
 	}
 	if m.AzureDisk != nil {
 		dAtA[i] = 0xb2
@@ -23815,11 +24648,23 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.AzureDisk.Size()))
-		n184, err := m.AzureDisk.MarshalTo(dAtA[i:])
+		n186, err := m.AzureDisk.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n184
+		i += n186
+	}
+	if m.PhotonPersistentDisk != nil {
+		dAtA[i] = 0xba
+		i++
+		dAtA[i] = 0x1
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.PhotonPersistentDisk.Size()))
+		n187, err := m.PhotonPersistentDisk.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n187
 	}
 	return i, nil
 }
@@ -23872,11 +24717,11 @@ func (m *WeightedPodAffinityTerm) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.PodAffinityTerm.Size()))
-		n185, err := m.PodAffinityTerm.MarshalTo(dAtA[i:])
+		n188, err := m.PodAffinityTerm.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n185
+		i += n188
 	}
 	return i, nil
 }
@@ -24639,6 +25484,8 @@ func (m *FlockerVolumeSource) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.DatasetName)
+	n += 1 + l + sovGenerated(uint64(l))
+	l = len(m.DatasetUUID)
 	n += 1 + l + sovGenerated(uint64(l))
 	return n
 }
@@ -25564,6 +26411,10 @@ func (m *PersistentVolumeSource) Size() (n int) {
 		l = m.AzureDisk.Size()
 		n += 2 + l + sovGenerated(uint64(l))
 	}
+	if m.PhotonPersistentDisk != nil {
+		l = m.PhotonPersistentDisk.Size()
+		n += 2 + l + sovGenerated(uint64(l))
+	}
 	return n
 }
 
@@ -25610,6 +26461,16 @@ func (m *PersistentVolumeStatus) Size() (n int) {
 	l = len(m.Message)
 	n += 1 + l + sovGenerated(uint64(l))
 	l = len(m.Reason)
+	n += 1 + l + sovGenerated(uint64(l))
+	return n
+}
+
+func (m *PhotonPersistentDiskVolumeSource) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.PdID)
+	n += 1 + l + sovGenerated(uint64(l))
+	l = len(m.FsType)
 	n += 1 + l + sovGenerated(uint64(l))
 	return n
 }
@@ -26081,6 +26942,24 @@ func (m *ReplicationController) Size() (n int) {
 	return n
 }
 
+func (m *ReplicationControllerCondition) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Type)
+	n += 1 + l + sovGenerated(uint64(l))
+	l = len(m.Status)
+	n += 1 + l + sovGenerated(uint64(l))
+	if m.LastTransitionTime != nil {
+		l = m.LastTransitionTime.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	l = len(m.Reason)
+	n += 1 + l + sovGenerated(uint64(l))
+	l = len(m.Message)
+	n += 1 + l + sovGenerated(uint64(l))
+	return n
+}
+
 func (m *ReplicationControllerList) Size() (n int) {
 	var l int
 	_ = l
@@ -26113,6 +26992,7 @@ func (m *ReplicationControllerSpec) Size() (n int) {
 		l = m.Template.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	n += 1 + sovGenerated(uint64(m.MinReadySeconds))
 	return n
 }
 
@@ -26123,6 +27003,13 @@ func (m *ReplicationControllerStatus) Size() (n int) {
 	n += 1 + sovGenerated(uint64(m.FullyLabeledReplicas))
 	n += 1 + sovGenerated(uint64(m.ObservedGeneration))
 	n += 1 + sovGenerated(uint64(m.ReadyReplicas))
+	n += 1 + sovGenerated(uint64(m.AvailableReplicas))
+	if len(m.Conditions) > 0 {
+		for _, e := range m.Conditions {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
 	return n
 }
 
@@ -26684,6 +27571,10 @@ func (m *VolumeSource) Size() (n int) {
 	}
 	if m.AzureDisk != nil {
 		l = m.AzureDisk.Size()
+		n += 2 + l + sovGenerated(uint64(l))
+	}
+	if m.PhotonPersistentDisk != nil {
+		l = m.PhotonPersistentDisk.Size()
 		n += 2 + l + sovGenerated(uint64(l))
 	}
 	return n
@@ -27296,6 +28187,7 @@ func (this *FlockerVolumeSource) String() string {
 	}
 	s := strings.Join([]string{`&FlockerVolumeSource{`,
 		`DatasetName:` + fmt.Sprintf("%v", this.DatasetName) + `,`,
+		`DatasetUUID:` + fmt.Sprintf("%v", this.DatasetUUID) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -28011,6 +28903,7 @@ func (this *PersistentVolumeSource) String() string {
 		`VsphereVolume:` + strings.Replace(fmt.Sprintf("%v", this.VsphereVolume), "VsphereVirtualDiskVolumeSource", "VsphereVirtualDiskVolumeSource", 1) + `,`,
 		`Quobyte:` + strings.Replace(fmt.Sprintf("%v", this.Quobyte), "QuobyteVolumeSource", "QuobyteVolumeSource", 1) + `,`,
 		`AzureDisk:` + strings.Replace(fmt.Sprintf("%v", this.AzureDisk), "AzureDiskVolumeSource", "AzureDiskVolumeSource", 1) + `,`,
+		`PhotonPersistentDisk:` + strings.Replace(fmt.Sprintf("%v", this.PhotonPersistentDisk), "PhotonPersistentDiskVolumeSource", "PhotonPersistentDiskVolumeSource", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -28047,6 +28940,17 @@ func (this *PersistentVolumeStatus) String() string {
 		`Phase:` + fmt.Sprintf("%v", this.Phase) + `,`,
 		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
 		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *PhotonPersistentDiskVolumeSource) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&PhotonPersistentDiskVolumeSource{`,
+		`PdID:` + fmt.Sprintf("%v", this.PdID) + `,`,
+		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -28404,6 +29308,20 @@ func (this *ReplicationController) String() string {
 	}, "")
 	return s
 }
+func (this *ReplicationControllerCondition) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ReplicationControllerCondition{`,
+		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
+		`Status:` + fmt.Sprintf("%v", this.Status) + `,`,
+		`LastTransitionTime:` + strings.Replace(fmt.Sprintf("%v", this.LastTransitionTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
+		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
+		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *ReplicationControllerList) String() string {
 	if this == nil {
 		return "nil"
@@ -28433,6 +29351,7 @@ func (this *ReplicationControllerSpec) String() string {
 		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
 		`Selector:` + mapStringForSelector + `,`,
 		`Template:` + strings.Replace(fmt.Sprintf("%v", this.Template), "PodTemplateSpec", "PodTemplateSpec", 1) + `,`,
+		`MinReadySeconds:` + fmt.Sprintf("%v", this.MinReadySeconds) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -28446,6 +29365,8 @@ func (this *ReplicationControllerStatus) String() string {
 		`FullyLabeledReplicas:` + fmt.Sprintf("%v", this.FullyLabeledReplicas) + `,`,
 		`ObservedGeneration:` + fmt.Sprintf("%v", this.ObservedGeneration) + `,`,
 		`ReadyReplicas:` + fmt.Sprintf("%v", this.ReadyReplicas) + `,`,
+		`AvailableReplicas:` + fmt.Sprintf("%v", this.AvailableReplicas) + `,`,
+		`Conditions:` + strings.Replace(fmt.Sprintf("%v", this.Conditions), "ReplicationControllerCondition", "ReplicationControllerCondition", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -28868,6 +29789,7 @@ func (this *VolumeSource) String() string {
 		`VsphereVolume:` + strings.Replace(fmt.Sprintf("%v", this.VsphereVolume), "VsphereVirtualDiskVolumeSource", "VsphereVirtualDiskVolumeSource", 1) + `,`,
 		`Quobyte:` + strings.Replace(fmt.Sprintf("%v", this.Quobyte), "QuobyteVolumeSource", "QuobyteVolumeSource", 1) + `,`,
 		`AzureDisk:` + strings.Replace(fmt.Sprintf("%v", this.AzureDisk), "AzureDiskVolumeSource", "AzureDiskVolumeSource", 1) + `,`,
+		`PhotonPersistentDisk:` + strings.Replace(fmt.Sprintf("%v", this.PhotonPersistentDisk), "PhotonPersistentDiskVolumeSource", "PhotonPersistentDiskVolumeSource", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -35638,6 +36560,35 @@ func (m *FlockerVolumeSource) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.DatasetName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DatasetUUID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DatasetUUID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -44155,6 +45106,39 @@ func (m *PersistentVolumeSource) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 17:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PhotonPersistentDisk", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PhotonPersistentDisk == nil {
+				m.PhotonPersistentDisk = &PhotonPersistentDiskVolumeSource{}
+			}
+			if err := m.PhotonPersistentDisk.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -44586,6 +45570,114 @@ func (m *PersistentVolumeStatus) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Reason = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PhotonPersistentDiskVolumeSource) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PhotonPersistentDiskVolumeSource: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PhotonPersistentDiskVolumeSource: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PdID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PdID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FsType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FsType = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -49000,6 +50092,205 @@ func (m *ReplicationController) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *ReplicationControllerCondition) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ReplicationControllerCondition: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ReplicationControllerCondition: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Status = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LastTransitionTime", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.LastTransitionTime == nil {
+				m.LastTransitionTime = &k8s_io_kubernetes_pkg_api_unversioned.Time{}
+			}
+			if err := m.LastTransitionTime.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Reason = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Message = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *ReplicationControllerList) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -49311,6 +50602,25 @@ func (m *ReplicationControllerSpec) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinReadySeconds", wireType)
+			}
+			m.MinReadySeconds = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MinReadySeconds |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -49437,6 +50747,56 @@ func (m *ReplicationControllerStatus) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AvailableReplicas", wireType)
+			}
+			m.AvailableReplicas = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AvailableReplicas |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Conditions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Conditions = append(m.Conditions, &ReplicationControllerCondition{})
+			if err := m.Conditions[len(m.Conditions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -54492,6 +55852,39 @@ func (m *VolumeSource) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 23:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PhotonPersistentDisk", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PhotonPersistentDisk == nil {
+				m.PhotonPersistentDisk = &PhotonPersistentDiskVolumeSource{}
+			}
+			if err := m.PhotonPersistentDisk.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -54833,475 +56226,483 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 7515 bytes of a gzipped FileDescriptorProto
+	// 7637 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xec, 0x7d, 0x5b, 0x8c, 0x24, 0x57,
 	0x79, 0xb0, 0xab, 0xbb, 0x67, 0x7a, 0xfa, 0x9b, 0xeb, 0x9e, 0xbd, 0xb8, 0x19, 0xcc, 0xfc, 0x4b,
-	0xb1, 0x98, 0x65, 0xbd, 0xee, 0xbd, 0x60, 0xf0, 0x05, 0x63, 0x7b, 0x76, 0x66, 0x76, 0x77, 0x3c,
-	0xbb, 0xb3, 0xed, 0x9a, 0xd9, 0x5d, 0x81, 0xad, 0x1f, 0xd5, 0x54, 0x9d, 0xe9, 0x29, 0xa6, 0xba,
-	0xaa, 0x5d, 0x55, 0x3d, 0x3b, 0xe3, 0xff, 0x85, 0x5f, 0x44, 0x81, 0x07, 0x50, 0xb8, 0x04, 0x92,
-	0x28, 0x4a, 0x10, 0x89, 0x92, 0x60, 0x29, 0x11, 0x8a, 0x20, 0x4a, 0x5e, 0x40, 0x4a, 0xa4, 0x08,
-	0x44, 0x5e, 0x90, 0xa2, 0x48, 0x44, 0x28, 0x24, 0x76, 0x44, 0x2e, 0x2f, 0x11, 0x3c, 0xe4, 0x89,
-	0xdc, 0x74, 0x6e, 0x55, 0xe7, 0x54, 0x55, 0x77, 0x57, 0xf7, 0xf6, 0xda, 0x3c, 0xe4, 0xad, 0xfb,
-	0x3b, 0xf5, 0x7d, 0x75, 0xae, 0xdf, 0xf9, 0xee, 0x05, 0xe7, 0xf7, 0x9f, 0x0a, 0x1b, 0x8e, 0x7f,
-	0x61, 0xbf, 0xbb, 0x83, 0x03, 0x0f, 0x47, 0x38, 0xbc, 0xd0, 0xd9, 0x6f, 0x5d, 0x30, 0x3b, 0xce,
-	0x85, 0x83, 0x4b, 0x17, 0x5a, 0xd8, 0xc3, 0x81, 0x19, 0x61, 0xbb, 0xd1, 0x09, 0xfc, 0xc8, 0x47,
-	0x8f, 0xb0, 0xa7, 0x1b, 0xc9, 0xd3, 0x8d, 0xce, 0x7e, 0xab, 0x61, 0x76, 0x9c, 0xc6, 0xc1, 0xa5,
-	0xc5, 0xcb, 0xbd, 0x69, 0x05, 0x38, 0xf4, 0xbb, 0x81, 0x85, 0xd3, 0x14, 0x17, 0x3f, 0xd8, 0x1b,
-	0xa7, 0xeb, 0x1d, 0xe0, 0x20, 0x74, 0x7c, 0x0f, 0xdb, 0x19, 0xb4, 0xc7, 0xf3, 0xd1, 0x82, 0xae,
-	0x17, 0x39, 0xed, 0xec, 0x5b, 0x2e, 0xe5, 0x3f, 0xde, 0x8d, 0x1c, 0xf7, 0x82, 0xe3, 0x45, 0x61,
-	0x14, 0xa4, 0x51, 0xf4, 0xaf, 0x6b, 0x70, 0x7a, 0xf9, 0xee, 0xd6, 0x9a, 0x6b, 0x86, 0x91, 0x63,
-	0x5d, 0x71, 0x7d, 0x6b, 0x7f, 0x2b, 0xf2, 0x03, 0x7c, 0xc7, 0x77, 0xbb, 0x6d, 0xbc, 0x45, 0x47,
-	0x83, 0x4e, 0xc3, 0xd4, 0x01, 0xfd, 0xbf, 0xbe, 0x5a, 0xd7, 0x4e, 0x6b, 0x67, 0x6b, 0x57, 0x2a,
-	0xdf, 0xfb, 0xf1, 0xff, 0x79, 0xc8, 0x88, 0xa1, 0xe8, 0x11, 0x98, 0xdc, 0x0d, 0xb7, 0x8f, 0x3a,
-	0xb8, 0x5e, 0x92, 0xda, 0x39, 0x0c, 0xe9, 0x50, 0xeb, 0x98, 0x41, 0xe4, 0x44, 0x8e, 0xef, 0xd5,
-	0xcb, 0xa7, 0xb5, 0xb3, 0x13, 0xfc, 0x81, 0x04, 0x4c, 0xde, 0x11, 0x60, 0xd3, 0xbe, 0xe5, 0xb9,
-	0x47, 0xf5, 0xca, 0x69, 0xed, 0xec, 0x94, 0x78, 0x87, 0x80, 0xea, 0x9f, 0x2c, 0xc1, 0xd4, 0xf2,
-	0xee, 0xae, 0xe3, 0x39, 0xd1, 0x11, 0xda, 0x84, 0x19, 0xcf, 0xb7, 0xb1, 0xf8, 0x4f, 0xbb, 0x35,
-	0x7d, 0xf9, 0x5c, 0xa3, 0xdf, 0xca, 0x35, 0x36, 0x25, 0x0c, 0x43, 0xc1, 0x47, 0x1b, 0x30, 0xdd,
-	0xf1, 0xed, 0x98, 0x5c, 0x89, 0x92, 0x7b, 0x7f, 0x7f, 0x72, 0xcd, 0x04, 0xc1, 0x90, 0xb1, 0xd1,
-	0x5d, 0x98, 0x27, 0x7f, 0xbd, 0xc8, 0x89, 0x09, 0x96, 0x29, 0xc1, 0xc7, 0x07, 0x13, 0x94, 0x90,
-	0x8c, 0x34, 0x15, 0xbd, 0x09, 0x73, 0xcb, 0x51, 0x64, 0x5a, 0x7b, 0xd8, 0x66, 0x0b, 0x84, 0xea,
-	0x50, 0xf1, 0xcc, 0x36, 0x56, 0x96, 0x85, 0x42, 0xd0, 0x19, 0x00, 0x1b, 0x1f, 0x38, 0x16, 0x6e,
-	0x9a, 0xd1, 0x9e, 0xb2, 0x2c, 0x12, 0x5c, 0x77, 0xa0, 0xb6, 0x7c, 0xe0, 0x3b, 0x76, 0xd3, 0xb7,
-	0x43, 0xf4, 0x0a, 0xcc, 0x77, 0x02, 0xbc, 0x8b, 0x83, 0x18, 0x54, 0xd7, 0x4e, 0x97, 0xcf, 0x4e,
-	0x5f, 0xbe, 0x3c, 0xa0, 0xdf, 0x2a, 0xd2, 0x9a, 0x17, 0x05, 0xa4, 0xf3, 0x2a, 0x54, 0xff, 0x73,
-	0x0d, 0x4e, 0x2e, 0xbf, 0xd6, 0x0d, 0xf0, 0xaa, 0x13, 0xee, 0xa7, 0xf7, 0x97, 0xed, 0x84, 0xfb,
-	0x9b, 0xe9, 0x81, 0xc4, 0x50, 0xb4, 0x04, 0x55, 0xf2, 0xfb, 0xb6, 0xb1, 0xae, 0x8c, 0x44, 0x00,
-	0xd1, 0xa3, 0x30, 0x6d, 0x99, 0xd6, 0x9e, 0xe3, 0xb5, 0x6e, 0xfa, 0x36, 0xa6, 0xb3, 0x2d, 0x9e,
-	0x91, 0x1b, 0xa4, 0x7d, 0x5a, 0xc9, 0xd9, 0xa7, 0xf2, 0x1e, 0x9c, 0xc8, 0xdd, 0x83, 0x9f, 0x12,
-	0x63, 0xb8, 0xea, 0xb8, 0xea, 0x19, 0x39, 0x03, 0x10, 0x62, 0x2b, 0xc0, 0x51, 0x66, 0x14, 0x12,
-	0x9c, 0x9c, 0x84, 0x70, 0xcf, 0x0c, 0x30, 0x7d, 0x48, 0x1e, 0x49, 0x02, 0x56, 0x7a, 0x51, 0xce,
-	0xed, 0xc5, 0x57, 0x34, 0xa8, 0x5e, 0x71, 0x3c, 0xdb, 0xf1, 0x5a, 0x68, 0x15, 0xa6, 0xda, 0x38,
-	0x32, 0x6d, 0x33, 0x32, 0xf9, 0x21, 0x38, 0xdb, 0x7f, 0xb1, 0x6e, 0xed, 0x7c, 0x02, 0x5b, 0xd1,
-	0x4d, 0x1c, 0x99, 0x46, 0x8c, 0x89, 0xd6, 0x60, 0x32, 0x32, 0x83, 0x16, 0x8e, 0xf8, 0xce, 0x7f,
-	0xbc, 0x08, 0x0d, 0x83, 0xac, 0x2f, 0xf6, 0x2c, 0x6c, 0x70, 0x64, 0xfd, 0x09, 0x98, 0x59, 0x31,
-	0x3b, 0xe6, 0x8e, 0xe3, 0x3a, 0x91, 0x83, 0x43, 0xb4, 0x00, 0x65, 0xd3, 0xb6, 0xe9, 0x26, 0xaa,
-	0x19, 0xe4, 0x27, 0x42, 0x50, 0xb1, 0x03, 0xbf, 0x53, 0x2f, 0x51, 0x10, 0xfd, 0xad, 0xff, 0x97,
-	0x06, 0x68, 0x05, 0x77, 0xf6, 0xae, 0x6e, 0x29, 0x33, 0xba, 0x08, 0x53, 0x6d, 0xdf, 0x73, 0x22,
-	0x3f, 0x08, 0x39, 0x85, 0xf8, 0x3f, 0xd9, 0xf6, 0x9d, 0xf4, 0xb6, 0xa6, 0x10, 0xd2, 0xd2, 0x0d,
-	0x71, 0xa0, 0x6c, 0x01, 0x0a, 0x49, 0x56, 0x88, 0xac, 0x9d, 0xb2, 0xfe, 0x12, 0x1c, 0x35, 0xa1,
-	0xc6, 0xfe, 0x19, 0x78, 0x97, 0x6e, 0x82, 0x81, 0xbb, 0xff, 0x86, 0x6f, 0x99, 0x6e, 0x7a, 0x46,
-	0x12, 0x22, 0xca, 0x7a, 0x4e, 0xe6, 0xae, 0xe7, 0x01, 0xa0, 0x15, 0xc7, 0xb3, 0x71, 0x30, 0x56,
-	0xae, 0x3b, 0x78, 0x1f, 0x7d, 0x86, 0x4c, 0xbc, 0xdf, 0xee, 0xf8, 0x1e, 0xf6, 0xa2, 0x15, 0xdf,
-	0xb3, 0x19, 0x2b, 0xae, 0x43, 0x25, 0x22, 0x44, 0x15, 0x9e, 0x42, 0x20, 0xe4, 0x85, 0x61, 0x64,
-	0x46, 0xdd, 0x50, 0x7d, 0x21, 0x83, 0x91, 0x43, 0xda, 0xc6, 0x61, 0x68, 0xb6, 0xd4, 0x03, 0x28,
-	0x80, 0x68, 0x11, 0x26, 0x70, 0x10, 0xf8, 0x81, 0x32, 0xf7, 0x0c, 0xa4, 0xbf, 0xae, 0xc1, 0x7c,
-	0xdc, 0x95, 0x2d, 0x46, 0x6f, 0x3c, 0x5b, 0xbb, 0x09, 0x60, 0x89, 0xa1, 0x85, 0x74, 0xdf, 0x4d,
-	0x5f, 0xbe, 0xd8, 0x9f, 0x4e, 0x76, 0x4e, 0x0c, 0x89, 0x86, 0xfe, 0x07, 0x1a, 0x1c, 0x4f, 0xf5,
-	0xf5, 0x86, 0x13, 0x46, 0x68, 0x23, 0xd3, 0xdf, 0x0b, 0x7d, 0xde, 0x23, 0xdd, 0xfb, 0x0d, 0x82,
-	0x9e, 0xea, 0xf6, 0x0a, 0x4c, 0x38, 0x11, 0x6e, 0x8b, 0x1e, 0x3f, 0x5e, 0xb0, 0xc7, 0xac, 0x3b,
-	0x06, 0xc3, 0xd5, 0xff, 0x4e, 0x83, 0xda, 0x8a, 0xef, 0xed, 0x3a, 0xad, 0x9b, 0x66, 0x67, 0x6c,
-	0xac, 0xa2, 0x42, 0x29, 0xb0, 0x7e, 0x5d, 0x1a, 0xd4, 0x2f, 0xfe, 0xf2, 0xc6, 0xaa, 0x19, 0x99,
-	0xec, 0x62, 0xa0, 0xe8, 0x8b, 0x2b, 0x50, 0x8b, 0x41, 0xe8, 0x14, 0x94, 0xf7, 0xf1, 0x91, 0xb2,
-	0xe1, 0x08, 0x80, 0xec, 0x98, 0x03, 0xd3, 0xed, 0xaa, 0xfb, 0x9b, 0x81, 0x9e, 0x29, 0x3d, 0xa5,
-	0x11, 0x46, 0x78, 0x22, 0x7e, 0xc5, 0x06, 0x3e, 0xda, 0xc2, 0x2e, 0xb6, 0x22, 0x3f, 0x40, 0xbb,
-	0x70, 0xc2, 0xcd, 0x39, 0x96, 0x7c, 0xd8, 0xa3, 0x1c, 0xe8, 0x5c, 0x7a, 0xa2, 0xe3, 0xa5, 0x54,
-	0xc7, 0xf5, 0xdf, 0xd4, 0x60, 0x36, 0xee, 0xd8, 0xf8, 0x37, 0xc7, 0x47, 0xd4, 0xcd, 0xf1, 0xbe,
-	0x82, 0x8b, 0x20, 0xb6, 0xc5, 0x3f, 0x69, 0x70, 0x32, 0x06, 0x2a, 0x3c, 0xe7, 0xad, 0x9a, 0xb7,
-	0xe1, 0x06, 0xb0, 0x81, 0x8f, 0xb6, 0x7d, 0x22, 0xae, 0xf0, 0x01, 0x90, 0xeb, 0xde, 0xc6, 0xbb,
-	0x66, 0xd7, 0x8d, 0xe2, 0xeb, 0x5e, 0x88, 0x94, 0x72, 0x83, 0xfe, 0x8d, 0x2a, 0xdd, 0xff, 0x91,
-	0xe9, 0x78, 0x38, 0xe8, 0x23, 0x2b, 0x2d, 0xc2, 0x84, 0xd3, 0x26, 0x7c, 0x4b, 0xd9, 0x67, 0x14,
-	0x84, 0xea, 0x50, 0xb5, 0xfc, 0x76, 0xdb, 0xf4, 0xec, 0x7a, 0x99, 0xde, 0x42, 0xe2, 0x2f, 0xb9,
-	0xcb, 0xcc, 0xa0, 0x15, 0xd6, 0x2b, 0xec, 0x2e, 0x23, 0xbf, 0xc9, 0x25, 0x73, 0xcf, 0x0f, 0xf6,
-	0x1d, 0xaf, 0xb5, 0xea, 0x04, 0xf4, 0xfe, 0x88, 0x2f, 0x99, 0x04, 0x8e, 0x96, 0x61, 0xa2, 0xe3,
-	0x07, 0x51, 0x58, 0x9f, 0xa4, 0xc3, 0x7f, 0x6c, 0xe0, 0xfa, 0xb1, 0x11, 0x34, 0xfd, 0x20, 0x32,
-	0x18, 0x26, 0xfa, 0x10, 0x94, 0xb1, 0x77, 0x50, 0xaf, 0x52, 0x02, 0x67, 0xfa, 0x13, 0x58, 0xf3,
-	0x0e, 0xee, 0x98, 0x81, 0x41, 0x10, 0xc8, 0xfd, 0x26, 0xb4, 0x94, 0xb0, 0x3e, 0x55, 0x64, 0x59,
-	0x0d, 0xfe, 0xb8, 0x81, 0x5f, 0xed, 0x3a, 0x01, 0x6e, 0x63, 0x2f, 0x0a, 0x8d, 0x84, 0x08, 0xba,
-	0x09, 0x33, 0xec, 0x46, 0xba, 0xe9, 0x77, 0xbd, 0x28, 0xac, 0xd7, 0x68, 0x97, 0x06, 0xc8, 0xce,
-	0x77, 0x12, 0x0c, 0x43, 0x41, 0x47, 0xeb, 0x30, 0xeb, 0x3a, 0x07, 0xd8, 0xc3, 0x61, 0xd8, 0x0c,
-	0xfc, 0x1d, 0x5c, 0x07, 0xda, 0xc9, 0xf7, 0x0c, 0x12, 0x41, 0xfd, 0x1d, 0x6c, 0xa8, 0x98, 0x68,
-	0x03, 0xe6, 0xc8, 0x5d, 0xe7, 0x24, 0xb4, 0xa6, 0x8b, 0xd3, 0x4a, 0xa1, 0xa2, 0x35, 0xa8, 0xb9,
-	0xce, 0x2e, 0xb6, 0x8e, 0x2c, 0x17, 0xd7, 0x67, 0x28, 0x9d, 0x01, 0xdb, 0xf6, 0x86, 0x78, 0xdc,
-	0x48, 0x30, 0xd1, 0xb3, 0x70, 0x2a, 0xc2, 0x41, 0xdb, 0xf1, 0x4c, 0x72, 0x99, 0xdc, 0x64, 0x57,
-	0x23, 0x15, 0xd1, 0x67, 0xa5, 0xcd, 0xd2, 0xe3, 0x19, 0xd4, 0x80, 0x79, 0xba, 0x2b, 0x9b, 0x5d,
-	0xd7, 0x6d, 0xfa, 0xae, 0x63, 0x1d, 0xd5, 0xe7, 0x24, 0xb4, 0x74, 0x23, 0xd1, 0x44, 0x42, 0x6c,
-	0x75, 0x03, 0x27, 0x3a, 0x22, 0xbb, 0x08, 0x1f, 0x46, 0xf5, 0xf9, 0x22, 0x02, 0xde, 0x96, 0x8a,
-	0x64, 0xa4, 0xa9, 0x90, 0x13, 0x13, 0x46, 0xb6, 0xe3, 0xd5, 0x17, 0x24, 0xc9, 0x82, 0x81, 0xa8,
-	0x90, 0x4b, 0x7e, 0xdc, 0x22, 0x9c, 0xe3, 0x98, 0xd4, 0x9e, 0x80, 0x09, 0xe3, 0x8c, 0xa2, 0xa3,
-	0x3a, 0x92, 0x5a, 0x09, 0x40, 0x7f, 0x11, 0xe6, 0xe2, 0xed, 0xbe, 0x4e, 0xcf, 0xdf, 0x09, 0x98,
-	0x20, 0x67, 0x54, 0xc8, 0x80, 0xec, 0x0f, 0x7d, 0x87, 0xf3, 0x1a, 0xbe, 0x72, 0x14, 0x61, 0x26,
-	0x8c, 0x94, 0xe3, 0x77, 0x08, 0xb0, 0xfe, 0xa7, 0x8c, 0x09, 0x27, 0x67, 0xa7, 0x0f, 0x07, 0x38,
-	0x0d, 0x53, 0x7b, 0x7e, 0x18, 0x91, 0xa7, 0x28, 0x39, 0xc1, 0x4e, 0x62, 0x28, 0x3a, 0x07, 0xb3,
-	0x96, 0x4c, 0x4c, 0xe1, 0x3a, 0x6a, 0x13, 0xa1, 0x46, 0xd5, 0x6b, 0xcb, 0x77, 0x15, 0x61, 0x27,
-	0x86, 0x12, 0x49, 0x8a, 0x50, 0x5e, 0x6f, 0x2a, 0x3c, 0x82, 0xc3, 0xf4, 0x5f, 0x2e, 0x49, 0xd3,
-	0x40, 0xae, 0x74, 0x8c, 0x6e, 0x42, 0xf5, 0x9e, 0xe9, 0x44, 0x8e, 0xd7, 0xe2, 0xcc, 0xf8, 0x03,
-	0x05, 0x99, 0x06, 0x45, 0xbf, 0xcb, 0x50, 0x0d, 0x41, 0x83, 0x90, 0x0b, 0xba, 0x9e, 0x47, 0xc8,
-	0x95, 0x86, 0x27, 0x67, 0x30, 0x54, 0x43, 0xd0, 0x40, 0x77, 0x00, 0xc4, 0x8e, 0xc5, 0x36, 0x57,
-	0x76, 0x3f, 0x34, 0x0c, 0xc5, 0xed, 0x18, 0xdb, 0x90, 0x28, 0xe9, 0x3b, 0xf4, 0xa2, 0xca, 0xbe,
-	0x19, 0xad, 0x93, 0x3d, 0x66, 0x06, 0x11, 0xb6, 0x97, 0x23, 0x3e, 0x21, 0x8f, 0x15, 0xbc, 0x4f,
-	0xb7, 0x9d, 0x36, 0x91, 0xcf, 0x05, 0xb6, 0xfe, 0xc3, 0x12, 0xd4, 0x7b, 0x75, 0x86, 0xac, 0x24,
-	0x3e, 0x74, 0xa2, 0x15, 0x72, 0xcd, 0x68, 0xf2, 0xbe, 0x10, 0x50, 0x2a, 0x13, 0x3b, 0x2d, 0xcf,
+	0xb1, 0x98, 0x65, 0xbd, 0xee, 0xbd, 0xb0, 0xe0, 0x0b, 0xc6, 0xf6, 0xec, 0xcc, 0xec, 0xee, 0x78,
+	0x76, 0x67, 0xdb, 0x35, 0x7b, 0x11, 0xb6, 0xf5, 0xa3, 0x9a, 0xaa, 0x33, 0x3d, 0xc5, 0x54, 0x57,
+	0xb5, 0xab, 0xaa, 0x67, 0x77, 0x9c, 0x17, 0x22, 0xa2, 0xc0, 0x03, 0x28, 0x5c, 0x02, 0x49, 0x14,
+	0x11, 0x44, 0xa2, 0x24, 0x20, 0x05, 0xa1, 0x88, 0x44, 0xc9, 0x0b, 0x48, 0x89, 0x14, 0x81, 0xc8,
+	0x0b, 0x52, 0x14, 0x89, 0x28, 0x0a, 0x89, 0x9d, 0x90, 0xcb, 0x43, 0x22, 0x50, 0x94, 0x27, 0x72,
+	0xd3, 0xb9, 0x55, 0x9d, 0x53, 0x55, 0xdd, 0x5d, 0xdd, 0xdb, 0x63, 0xf3, 0x90, 0xb7, 0xee, 0xef,
+	0xd4, 0xf7, 0xd5, 0xb9, 0x7e, 0xe7, 0xbb, 0x17, 0x9c, 0xdd, 0x7b, 0x32, 0x6c, 0x38, 0xfe, 0xb9,
+	0xbd, 0xee, 0x36, 0x0e, 0x3c, 0x1c, 0xe1, 0xf0, 0x5c, 0x67, 0xaf, 0x75, 0xce, 0xec, 0x38, 0xe7,
+	0xf6, 0x2f, 0x9c, 0x6b, 0x61, 0x0f, 0x07, 0x66, 0x84, 0xed, 0x46, 0x27, 0xf0, 0x23, 0x1f, 0x3d,
+	0xc2, 0x9e, 0x6e, 0x24, 0x4f, 0x37, 0x3a, 0x7b, 0xad, 0x86, 0xd9, 0x71, 0x1a, 0xfb, 0x17, 0x16,
+	0x2f, 0xf6, 0xa6, 0x15, 0xe0, 0xd0, 0xef, 0x06, 0x16, 0x4e, 0x53, 0x5c, 0x7c, 0x7f, 0x6f, 0x9c,
+	0xae, 0xb7, 0x8f, 0x83, 0xd0, 0xf1, 0x3d, 0x6c, 0x67, 0xd0, 0x1e, 0xcf, 0x47, 0x0b, 0xba, 0x5e,
+	0xe4, 0xb4, 0xb3, 0x6f, 0xb9, 0x90, 0xff, 0x78, 0x37, 0x72, 0xdc, 0x73, 0x8e, 0x17, 0x85, 0x51,
+	0x90, 0x46, 0xd1, 0xbf, 0xaa, 0xc1, 0xc9, 0xe5, 0xbb, 0x5b, 0x6b, 0xae, 0x19, 0x46, 0x8e, 0x75,
+	0xd9, 0xf5, 0xad, 0xbd, 0xad, 0xc8, 0x0f, 0xf0, 0x1d, 0xdf, 0xed, 0xb6, 0xf1, 0x16, 0x1d, 0x0d,
+	0x3a, 0x09, 0x53, 0xfb, 0xf4, 0xff, 0xfa, 0x6a, 0x5d, 0x3b, 0xa9, 0x9d, 0xae, 0x5d, 0xae, 0x7c,
+	0xf7, 0x87, 0xff, 0xef, 0x21, 0x23, 0x86, 0xa2, 0x47, 0x60, 0x72, 0x27, 0xbc, 0x75, 0xd0, 0xc1,
+	0xf5, 0x92, 0xd4, 0xce, 0x61, 0x48, 0x87, 0x5a, 0xc7, 0x0c, 0x22, 0x27, 0x72, 0x7c, 0xaf, 0x5e,
+	0x3e, 0xa9, 0x9d, 0x9e, 0xe0, 0x0f, 0x24, 0x60, 0xf2, 0x8e, 0x00, 0x9b, 0xf6, 0x4d, 0xcf, 0x3d,
+	0xa8, 0x57, 0x4e, 0x6a, 0xa7, 0xa7, 0xc4, 0x3b, 0x04, 0x54, 0xff, 0x58, 0x09, 0xa6, 0x96, 0x77,
+	0x76, 0x1c, 0xcf, 0x89, 0x0e, 0xd0, 0x26, 0xcc, 0x78, 0xbe, 0x8d, 0xc5, 0x7f, 0xda, 0xad, 0xe9,
+	0x8b, 0x67, 0x1a, 0xfd, 0x56, 0xae, 0xb1, 0x29, 0x61, 0x18, 0x0a, 0x3e, 0xda, 0x80, 0xe9, 0x8e,
+	0x6f, 0xc7, 0xe4, 0x4a, 0x94, 0xdc, 0x7b, 0xfb, 0x93, 0x6b, 0x26, 0x08, 0x86, 0x8c, 0x8d, 0xee,
+	0xc2, 0x3c, 0xf9, 0xeb, 0x45, 0x4e, 0x4c, 0xb0, 0x4c, 0x09, 0x3e, 0x3e, 0x98, 0xa0, 0x84, 0x64,
+	0xa4, 0xa9, 0xe8, 0x4d, 0x98, 0x5b, 0x8e, 0x22, 0xd3, 0xda, 0xc5, 0x36, 0x5b, 0x20, 0x54, 0x87,
+	0x8a, 0x67, 0xb6, 0xb1, 0xb2, 0x2c, 0x14, 0x82, 0x4e, 0x01, 0xd8, 0x78, 0xdf, 0xb1, 0x70, 0xd3,
+	0x8c, 0x76, 0x95, 0x65, 0x91, 0xe0, 0xba, 0x03, 0xb5, 0xe5, 0x7d, 0xdf, 0xb1, 0x9b, 0xbe, 0x1d,
+	0xa2, 0x57, 0x60, 0xbe, 0x13, 0xe0, 0x1d, 0x1c, 0xc4, 0xa0, 0xba, 0x76, 0xb2, 0x7c, 0x7a, 0xfa,
+	0xe2, 0xc5, 0x01, 0xfd, 0x56, 0x91, 0xd6, 0xbc, 0x28, 0x20, 0x9d, 0x57, 0xa1, 0xfa, 0x9f, 0x68,
+	0x70, 0x7c, 0xf9, 0xb5, 0x6e, 0x80, 0x57, 0x9d, 0x70, 0x2f, 0xbd, 0xbf, 0x6c, 0x27, 0xdc, 0xdb,
+	0x4c, 0x0f, 0x24, 0x86, 0xa2, 0x25, 0xa8, 0x92, 0xdf, 0xb7, 0x8d, 0x75, 0x65, 0x24, 0x02, 0x88,
+	0x1e, 0x85, 0x69, 0xcb, 0xb4, 0x76, 0x1d, 0xaf, 0x75, 0xc3, 0xb7, 0x31, 0x9d, 0x6d, 0xf1, 0x8c,
+	0xdc, 0x20, 0xed, 0xd3, 0x4a, 0xce, 0x3e, 0x95, 0xf7, 0xe0, 0x44, 0xee, 0x1e, 0xfc, 0xb8, 0x18,
+	0xc3, 0x15, 0xc7, 0x55, 0xcf, 0xc8, 0x29, 0x80, 0x10, 0x5b, 0x01, 0x8e, 0x32, 0xa3, 0x90, 0xe0,
+	0xe4, 0x24, 0x84, 0xbb, 0x66, 0x80, 0xe9, 0x43, 0xf2, 0x48, 0x12, 0xb0, 0xd2, 0x8b, 0x72, 0x6e,
+	0x2f, 0xbe, 0xa8, 0x41, 0xf5, 0xb2, 0xe3, 0xd9, 0x8e, 0xd7, 0x42, 0xab, 0x30, 0xd5, 0xc6, 0x91,
+	0x69, 0x9b, 0x91, 0xc9, 0x0f, 0xc1, 0xe9, 0xfe, 0x8b, 0x75, 0x73, 0xfb, 0xa3, 0xd8, 0x8a, 0x6e,
+	0xe0, 0xc8, 0x34, 0x62, 0x4c, 0xb4, 0x06, 0x93, 0x91, 0x19, 0xb4, 0x70, 0xc4, 0x77, 0xfe, 0xe3,
+	0x45, 0x68, 0x18, 0x64, 0x7d, 0xb1, 0x67, 0x61, 0x83, 0x23, 0xeb, 0x97, 0x60, 0x66, 0xc5, 0xec,
+	0x98, 0xdb, 0x8e, 0xeb, 0x44, 0x0e, 0x0e, 0xd1, 0x02, 0x94, 0x4d, 0xdb, 0xa6, 0x9b, 0xa8, 0x66,
+	0x90, 0x9f, 0x08, 0x41, 0xc5, 0x0e, 0xfc, 0x4e, 0xbd, 0x44, 0x41, 0xf4, 0xb7, 0xfe, 0xdf, 0x1a,
+	0xa0, 0x15, 0xdc, 0xd9, 0xbd, 0xb2, 0xa5, 0xcc, 0xe8, 0x22, 0x4c, 0xb5, 0x7d, 0xcf, 0x89, 0xfc,
+	0x20, 0xe4, 0x14, 0xe2, 0xff, 0x64, 0xdb, 0x77, 0xd2, 0xdb, 0x9a, 0x42, 0x48, 0x4b, 0x37, 0xc4,
+	0x81, 0xb2, 0x05, 0x28, 0x24, 0x59, 0x21, 0xb2, 0x76, 0xca, 0xfa, 0x4b, 0x70, 0xd4, 0x84, 0x1a,
+	0xfb, 0x67, 0xe0, 0x1d, 0xba, 0x09, 0x06, 0xee, 0xfe, 0xeb, 0xbe, 0x65, 0xba, 0xe9, 0x19, 0x49,
+	0x88, 0x28, 0xeb, 0x39, 0x99, 0xbb, 0x9e, 0xfb, 0x80, 0x56, 0x1c, 0xcf, 0xc6, 0xc1, 0x58, 0xb9,
+	0xee, 0xe0, 0x7d, 0xf4, 0x49, 0x32, 0xf1, 0x7e, 0xbb, 0xe3, 0x7b, 0xd8, 0x8b, 0x56, 0x7c, 0xcf,
+	0x66, 0xac, 0xb8, 0x0e, 0x95, 0x88, 0x10, 0x55, 0x78, 0x0a, 0x81, 0x90, 0x17, 0x86, 0x91, 0x19,
+	0x75, 0x43, 0xf5, 0x85, 0x0c, 0x46, 0x0e, 0x69, 0x1b, 0x87, 0xa1, 0xd9, 0x52, 0x0f, 0xa0, 0x00,
+	0xa2, 0x45, 0x98, 0xc0, 0x41, 0xe0, 0x07, 0xca, 0xdc, 0x33, 0x90, 0xfe, 0x35, 0x0d, 0xe6, 0xe3,
+	0xae, 0x6c, 0x31, 0x7a, 0xe3, 0xd9, 0xda, 0x4d, 0x00, 0x4b, 0x0c, 0x2d, 0xa4, 0xfb, 0x6e, 0xfa,
+	0xe2, 0xf9, 0xfe, 0x74, 0xb2, 0x73, 0x62, 0x48, 0x34, 0xf4, 0xdf, 0xd5, 0xe0, 0x68, 0xaa, 0xaf,
+	0xd7, 0x9d, 0x30, 0x42, 0x1b, 0x99, 0xfe, 0x9e, 0xeb, 0xf3, 0x1e, 0xe9, 0xde, 0x6f, 0x10, 0xf4,
+	0x54, 0xb7, 0x57, 0x60, 0xc2, 0x89, 0x70, 0x5b, 0xf4, 0xf8, 0xf1, 0x82, 0x3d, 0x66, 0xdd, 0x31,
+	0x18, 0xae, 0xfe, 0x37, 0x1a, 0xd4, 0x56, 0x7c, 0x6f, 0xc7, 0x69, 0xdd, 0x30, 0x3b, 0x63, 0x63,
+	0x15, 0x15, 0x4a, 0x81, 0xf5, 0xeb, 0xc2, 0xa0, 0x7e, 0xf1, 0x97, 0x37, 0x56, 0xcd, 0xc8, 0x64,
+	0x17, 0x03, 0x45, 0x5f, 0x5c, 0x81, 0x5a, 0x0c, 0x42, 0x27, 0xa0, 0xbc, 0x87, 0x0f, 0x94, 0x0d,
+	0x47, 0x00, 0x64, 0xc7, 0xec, 0x9b, 0x6e, 0x57, 0xdd, 0xdf, 0x0c, 0xf4, 0x74, 0xe9, 0x49, 0x8d,
+	0x30, 0xc2, 0x63, 0xf1, 0x2b, 0x36, 0xf0, 0xc1, 0x16, 0x76, 0xb1, 0x15, 0xf9, 0x01, 0xda, 0x81,
+	0x63, 0x6e, 0xce, 0xb1, 0xe4, 0xc3, 0x1e, 0xe5, 0x40, 0xe7, 0xd2, 0x13, 0x1d, 0x2f, 0xa5, 0x3a,
+	0xae, 0xff, 0xba, 0x06, 0xb3, 0x71, 0xc7, 0xc6, 0xbf, 0x39, 0x3e, 0xa4, 0x6e, 0x8e, 0xf7, 0x14,
+	0x5c, 0x04, 0xb1, 0x2d, 0xfe, 0x51, 0x83, 0xe3, 0x31, 0x50, 0xe1, 0x39, 0x6f, 0xd6, 0xbc, 0x0d,
+	0x37, 0x80, 0x0d, 0x7c, 0x70, 0xcb, 0x27, 0xe2, 0x0a, 0x1f, 0x00, 0xb9, 0xee, 0x6d, 0xbc, 0x63,
+	0x76, 0xdd, 0x28, 0xbe, 0xee, 0x85, 0x48, 0x29, 0x37, 0xe8, 0xdf, 0xa8, 0xd2, 0xfd, 0x1f, 0x99,
+	0x8e, 0x87, 0x83, 0x3e, 0xb2, 0xd2, 0x22, 0x4c, 0x38, 0x6d, 0xc2, 0xb7, 0x94, 0x7d, 0x46, 0x41,
+	0xa8, 0x0e, 0x55, 0xcb, 0x6f, 0xb7, 0x4d, 0xcf, 0xae, 0x97, 0xe9, 0x2d, 0x24, 0xfe, 0x92, 0xbb,
+	0xcc, 0x0c, 0x5a, 0x61, 0xbd, 0xc2, 0xee, 0x32, 0xf2, 0x9b, 0x5c, 0x32, 0xf7, 0xfc, 0x60, 0xcf,
+	0xf1, 0x5a, 0xab, 0x4e, 0x40, 0xef, 0x8f, 0xf8, 0x92, 0x49, 0xe0, 0x68, 0x19, 0x26, 0x3a, 0x7e,
+	0x10, 0x85, 0xf5, 0x49, 0x3a, 0xfc, 0xc7, 0x06, 0xae, 0x1f, 0x1b, 0x41, 0xd3, 0x0f, 0x22, 0x83,
+	0x61, 0xa2, 0x0f, 0x40, 0x19, 0x7b, 0xfb, 0xf5, 0x2a, 0x25, 0x70, 0xaa, 0x3f, 0x81, 0x35, 0x6f,
+	0xff, 0x8e, 0x19, 0x18, 0x04, 0x81, 0xdc, 0x6f, 0x42, 0x4b, 0x09, 0xeb, 0x53, 0x45, 0x96, 0xd5,
+	0xe0, 0x8f, 0x1b, 0xf8, 0xd5, 0xae, 0x13, 0xe0, 0x36, 0xf6, 0xa2, 0xd0, 0x48, 0x88, 0xa0, 0x1b,
+	0x30, 0xc3, 0x6e, 0xa4, 0x1b, 0x7e, 0xd7, 0x8b, 0xc2, 0x7a, 0x8d, 0x76, 0x69, 0x80, 0xec, 0x7c,
+	0x27, 0xc1, 0x30, 0x14, 0x74, 0xb4, 0x0e, 0xb3, 0xae, 0xb3, 0x8f, 0x3d, 0x1c, 0x86, 0xcd, 0xc0,
+	0xdf, 0xc6, 0x75, 0xa0, 0x9d, 0x7c, 0xd7, 0x20, 0x11, 0xd4, 0xdf, 0xc6, 0x86, 0x8a, 0x89, 0x36,
+	0x60, 0x8e, 0xdc, 0x75, 0x4e, 0x42, 0x6b, 0xba, 0x38, 0xad, 0x14, 0x2a, 0x5a, 0x83, 0x9a, 0xeb,
+	0xec, 0x60, 0xeb, 0xc0, 0x72, 0x71, 0x7d, 0x86, 0xd2, 0x19, 0xb0, 0x6d, 0xaf, 0x8b, 0xc7, 0x8d,
+	0x04, 0x13, 0x3d, 0x03, 0x27, 0x22, 0x1c, 0xb4, 0x1d, 0xcf, 0x24, 0x97, 0xc9, 0x0d, 0x76, 0x35,
+	0x52, 0x11, 0x7d, 0x56, 0xda, 0x2c, 0x3d, 0x9e, 0x41, 0x0d, 0x98, 0xa7, 0xbb, 0xb2, 0xd9, 0x75,
+	0xdd, 0xa6, 0xef, 0x3a, 0xd6, 0x41, 0x7d, 0x4e, 0x42, 0x4b, 0x37, 0x12, 0x4d, 0x24, 0xc4, 0x56,
+	0x37, 0x70, 0xa2, 0x03, 0xb2, 0x8b, 0xf0, 0xfd, 0xa8, 0x3e, 0x5f, 0x44, 0xc0, 0xdb, 0x52, 0x91,
+	0x8c, 0x34, 0x15, 0x72, 0x62, 0xc2, 0xc8, 0x76, 0xbc, 0xfa, 0x82, 0x24, 0x59, 0x30, 0x10, 0x15,
+	0x72, 0xc9, 0x8f, 0x9b, 0x84, 0x73, 0x1c, 0x91, 0xda, 0x13, 0x30, 0x61, 0x9c, 0x51, 0x74, 0x50,
+	0x47, 0x52, 0x2b, 0x01, 0xe8, 0x2f, 0xc0, 0x5c, 0xbc, 0xdd, 0xd7, 0xe9, 0xf9, 0x3b, 0x06, 0x13,
+	0xe4, 0x8c, 0x0a, 0x19, 0x90, 0xfd, 0xa1, 0xef, 0x70, 0x5e, 0xc3, 0x97, 0x0f, 0x22, 0xcc, 0x84,
+	0x91, 0x72, 0xfc, 0x0e, 0x01, 0xd6, 0xff, 0x88, 0x31, 0xe1, 0xe4, 0xec, 0xf4, 0xe1, 0x00, 0x27,
+	0x61, 0x6a, 0xd7, 0x0f, 0x23, 0xf2, 0x14, 0x25, 0x27, 0xd8, 0x49, 0x0c, 0x45, 0x67, 0x60, 0xd6,
+	0x92, 0x89, 0x29, 0x5c, 0x47, 0x6d, 0x22, 0xd4, 0xa8, 0x7a, 0x6d, 0xf9, 0xae, 0x22, 0xec, 0xc4,
+	0x50, 0x22, 0x49, 0x11, 0xca, 0xeb, 0x4d, 0x85, 0x47, 0x70, 0x98, 0xfe, 0x8b, 0x25, 0x69, 0x1a,
+	0xc8, 0x95, 0x8e, 0xd1, 0x0d, 0xa8, 0xde, 0x33, 0x9d, 0xc8, 0xf1, 0x5a, 0x9c, 0x19, 0xbf, 0xaf,
+	0x20, 0xd3, 0xa0, 0xe8, 0x77, 0x19, 0xaa, 0x21, 0x68, 0x10, 0x72, 0x41, 0xd7, 0xf3, 0x08, 0xb9,
+	0xd2, 0xf0, 0xe4, 0x0c, 0x86, 0x6a, 0x08, 0x1a, 0xe8, 0x0e, 0x80, 0xd8, 0xb1, 0xd8, 0xe6, 0xca,
+	0xee, 0x07, 0x86, 0xa1, 0x78, 0x2b, 0xc6, 0x36, 0x24, 0x4a, 0xfa, 0x36, 0xbd, 0xa8, 0xb2, 0x6f,
+	0x46, 0xeb, 0x64, 0x8f, 0x99, 0x41, 0x84, 0xed, 0xe5, 0x88, 0x4f, 0xc8, 0x63, 0x05, 0xef, 0xd3,
+	0x5b, 0x4e, 0x9b, 0xc8, 0xe7, 0x02, 0x5b, 0xff, 0x41, 0x09, 0xea, 0xbd, 0x3a, 0x43, 0x56, 0x12,
+	0xdf, 0x77, 0xa2, 0x15, 0x72, 0xcd, 0x68, 0xf2, 0xbe, 0x10, 0x50, 0x2a, 0x13, 0x3b, 0x2d, 0xcf,
 	0x74, 0x95, 0x7d, 0xc3, 0x61, 0xa4, 0x35, 0xc0, 0x66, 0xc8, 0xed, 0x1e, 0xf1, 0x3a, 0x33, 0x98,
-	0x2c, 0x31, 0x57, 0xf2, 0x24, 0x66, 0x65, 0x94, 0x13, 0xf7, 0x33, 0x4a, 0xb4, 0x01, 0xb0, 0xeb,
-	0x78, 0x4e, 0xb8, 0x47, 0x69, 0x4d, 0x0e, 0x4f, 0x4b, 0x42, 0xa7, 0xea, 0x76, 0x7c, 0x4a, 0x57,
+	0x2c, 0x31, 0x57, 0xf2, 0x24, 0x66, 0x65, 0x94, 0x13, 0x0f, 0x32, 0x4a, 0xb4, 0x01, 0xb0, 0xe3,
+	0x78, 0x4e, 0xb8, 0x4b, 0x69, 0x4d, 0x0e, 0x4f, 0x4b, 0x42, 0xa7, 0xea, 0x76, 0x7c, 0x4a, 0x57,
 	0xeb, 0x55, 0x45, 0xdd, 0x4e, 0x1a, 0xf4, 0xdb, 0xe9, 0xe5, 0xe3, 0xfb, 0x50, 0x9a, 0x16, 0xad,
-	0xff, 0xb4, 0x94, 0x72, 0xa6, 0x45, 0xff, 0x49, 0x89, 0x28, 0x0b, 0x12, 0xdd, 0x6e, 0xd8, 0xe7,
-	0x68, 0x5f, 0x21, 0xac, 0xca, 0x8c, 0x30, 0xdf, 0xe8, 0xe7, 0x87, 0xda, 0xe8, 0x0c, 0x15, 0xbd,
-	0x08, 0x35, 0xd7, 0x0c, 0xa9, 0x74, 0x8d, 0xf9, 0xf6, 0x1e, 0x8e, 0x4e, 0x82, 0x4e, 0x58, 0x27,
-	0xb9, 0x5a, 0x54, 0x33, 0x17, 0x03, 0xa1, 0xb3, 0x30, 0x13, 0x60, 0xba, 0x68, 0x2b, 0xe4, 0x36,
+	0xff, 0xb4, 0x94, 0x72, 0xa6, 0x45, 0xff, 0x51, 0x89, 0x28, 0x0b, 0x12, 0xdd, 0x6e, 0xd8, 0xe7,
+	0x68, 0x5f, 0x26, 0xac, 0xca, 0x8c, 0x30, 0xdf, 0xe8, 0x67, 0x87, 0xda, 0xe8, 0x0c, 0x15, 0xbd,
+	0x00, 0x35, 0xd7, 0x0c, 0xa9, 0x74, 0x8d, 0xf9, 0xf6, 0x1e, 0x8e, 0x4e, 0x82, 0x4e, 0x58, 0x27,
+	0xb9, 0x5a, 0x54, 0x33, 0x17, 0x03, 0xa1, 0xd3, 0x30, 0x13, 0x60, 0xba, 0x68, 0x2b, 0xe4, 0x36,
 	0xa4, 0x6b, 0x2e, 0xb6, 0x94, 0xd2, 0x92, 0x88, 0x2c, 0x93, 0x59, 0x91, 0x65, 0x09, 0xaa, 0xf4,
-	0x47, 0x6a, 0x69, 0x04, 0x30, 0xbd, 0x7c, 0x53, 0xbd, 0x96, 0xef, 0x1c, 0xcc, 0xad, 0x9a, 0xb8,
+	0x47, 0x6a, 0x69, 0x04, 0x30, 0xbd, 0x7c, 0x53, 0xbd, 0x96, 0xef, 0x0c, 0xcc, 0xad, 0x9a, 0xb8,
 	0xed, 0x7b, 0x6b, 0x9e, 0xdd, 0xf1, 0x1d, 0x8f, 0x32, 0x50, 0xca, 0xfb, 0xe4, 0xa3, 0x40, 0x21,
-	0xfa, 0xf7, 0x35, 0x98, 0x5d, 0xc5, 0x2e, 0x8e, 0xf0, 0xad, 0x0e, 0x55, 0x93, 0xd0, 0x13, 0x80,
-	0x5a, 0x81, 0x69, 0xe1, 0x26, 0x0e, 0x1c, 0xdf, 0xde, 0xc2, 0x44, 0x83, 0x0a, 0x29, 0xa6, 0xe0,
-	0xd5, 0x39, 0xed, 0xe8, 0x25, 0x98, 0xed, 0x04, 0x58, 0xd1, 0xd8, 0xb4, 0xc1, 0x22, 0x52, 0x53,
-	0x46, 0x31, 0x54, 0x0a, 0xe8, 0x22, 0x2c, 0xf8, 0x41, 0x67, 0xcf, 0xf4, 0x56, 0x71, 0x07, 0x7b,
-	0x36, 0x91, 0x5f, 0x14, 0x85, 0x38, 0xd3, 0xaa, 0xff, 0x5c, 0x83, 0x93, 0xab, 0xfe, 0x3d, 0xef,
-	0x9e, 0x19, 0xd8, 0xcb, 0xcd, 0x75, 0x26, 0xac, 0x50, 0xf3, 0x80, 0x30, 0x3c, 0x68, 0x19, 0xc3,
-	0xc3, 0x4d, 0x98, 0xda, 0x75, 0xb0, 0x6b, 0x1b, 0x78, 0x97, 0xf7, 0xf9, 0x52, 0x11, 0xed, 0xea,
-	0x2a, 0xc1, 0x11, 0x7a, 0x8b, 0x11, 0x93, 0x40, 0x1f, 0x87, 0x05, 0x21, 0x62, 0x5d, 0x15, 0x64,
-	0xcb, 0x45, 0x38, 0xb5, 0x21, 0x63, 0xc5, 0x84, 0x33, 0xc4, 0xc8, 0x48, 0xda, 0x84, 0xab, 0x55,
-	0xe4, 0xa5, 0x24, 0x10, 0xfd, 0xb3, 0x1a, 0x3c, 0x9c, 0x19, 0x3d, 0x57, 0x10, 0xd6, 0x85, 0xe0,
-	0xce, 0x0c, 0x83, 0x03, 0xfa, 0x92, 0x3b, 0x87, 0x3d, 0x84, 0xf8, 0x52, 0x2f, 0x21, 0xfe, 0x09,
-	0x38, 0xb1, 0xd6, 0xee, 0x44, 0x47, 0xab, 0x8e, 0x6a, 0x1f, 0x79, 0x04, 0x26, 0xdb, 0xd8, 0x76,
-	0xba, 0x6d, 0x95, 0x87, 0x30, 0x98, 0xfe, 0x67, 0x1a, 0xcc, 0x8b, 0x6d, 0xbb, 0x6c, 0xdb, 0x01,
-	0x0e, 0x43, 0x74, 0x02, 0x4a, 0x4e, 0x47, 0x79, 0xba, 0xe4, 0x74, 0xd0, 0x06, 0xd4, 0x98, 0xf9,
-	0x2a, 0x59, 0xb9, 0x21, 0xcd, 0x5f, 0x09, 0xbe, 0x90, 0x23, 0x28, 0x2b, 0x92, 0x39, 0x7e, 0x0c,
-	0x25, 0x4f, 0x78, 0xbe, 0xcd, 0x2c, 0x80, 0x8a, 0x6c, 0x20, 0xa0, 0xba, 0x0d, 0x33, 0xa2, 0xe7,
-	0x03, 0xa4, 0x16, 0xb2, 0x1b, 0xd3, 0x12, 0x0b, 0x85, 0x28, 0x12, 0x48, 0x39, 0x4f, 0x02, 0xd1,
-	0xff, 0x43, 0x83, 0x39, 0xf1, 0x9a, 0xad, 0xee, 0x4e, 0x88, 0xc9, 0x1d, 0x51, 0x33, 0xd9, 0x54,
-	0x61, 0xb1, 0xc0, 0x8f, 0x0f, 0xd2, 0x2c, 0x94, 0x19, 0x36, 0x12, 0x7c, 0xf4, 0x32, 0x1c, 0xf3,
-	0xfc, 0xc8, 0x20, 0x6c, 0x6d, 0x39, 0x26, 0x5a, 0x1a, 0x85, 0x68, 0x96, 0x0e, 0x7a, 0x41, 0x28,
-	0x50, 0x65, 0x4a, 0xf0, 0x5c, 0x31, 0x82, 0x92, 0xfe, 0xa4, 0xff, 0x86, 0x06, 0x35, 0x01, 0x1f,
-	0x97, 0xa9, 0xe9, 0x2a, 0x54, 0x43, 0x3a, 0x93, 0x62, 0xa0, 0xe7, 0x8b, 0xf5, 0x8b, 0x4d, 0xbf,
-	0x21, 0x90, 0xa9, 0xf5, 0x20, 0xee, 0xdb, 0xdb, 0x6d, 0x3d, 0x88, 0x3b, 0x22, 0xac, 0x07, 0x9f,
-	0xd1, 0x60, 0x92, 0x69, 0x94, 0xfd, 0x35, 0xea, 0x5e, 0x96, 0x1b, 0x74, 0x1d, 0x6a, 0xf4, 0xc7,
-	0xd5, 0xc0, 0x6f, 0x73, 0x9e, 0x76, 0xae, 0x88, 0x02, 0xcb, 0xce, 0xbd, 0x91, 0x20, 0xeb, 0x3f,
-	0x2b, 0x91, 0xa3, 0x92, 0xb4, 0x29, 0x4c, 0x58, 0x7b, 0x30, 0x4c, 0xb8, 0x34, 0x4e, 0x26, 0xfc,
-	0x0a, 0xcc, 0x5b, 0x92, 0xfd, 0x2a, 0x61, 0xf2, 0x97, 0x0b, 0x9a, 0x74, 0x24, 0xa3, 0x97, 0x91,
-	0x26, 0x85, 0xb6, 0x60, 0x86, 0x99, 0xa1, 0x39, 0xe9, 0xca, 0xc0, 0x9d, 0xc3, 0x54, 0x3f, 0x86,
-	0x11, 0xd3, 0x55, 0x88, 0xe8, 0x9f, 0xaa, 0xc0, 0xc4, 0xda, 0x01, 0xf6, 0xa2, 0x31, 0x1d, 0x9a,
-	0xdb, 0x30, 0xe7, 0x78, 0x07, 0xbe, 0x7b, 0x80, 0x6d, 0xd6, 0x3e, 0x1a, 0x0f, 0x4e, 0x11, 0xb9,
-	0x4f, 0xc1, 0x7b, 0x19, 0x26, 0xd9, 0x4a, 0x71, 0xa9, 0x7b, 0x80, 0x35, 0x83, 0xce, 0x07, 0xdf,
-	0x9e, 0x1c, 0x11, 0x6d, 0xc1, 0xdc, 0xae, 0x13, 0x84, 0x11, 0x11, 0x9e, 0xc3, 0xc8, 0x6c, 0x77,
-	0x46, 0x11, 0xba, 0x53, 0x24, 0x88, 0x74, 0x44, 0x04, 0xc9, 0x84, 0x66, 0x75, 0x78, 0x9a, 0x2a,
-	0x05, 0x72, 0x52, 0x2d, 0x2a, 0x6b, 0x4e, 0x49, 0x97, 0x08, 0x03, 0xc5, 0x9e, 0x80, 0x5a, 0xda,
-	0x13, 0xa0, 0x7f, 0x89, 0xb0, 0x4f, 0x32, 0xea, 0xf1, 0xb3, 0xa7, 0xa7, 0x55, 0xf6, 0xf4, 0x9e,
-	0x02, 0x53, 0x2f, 0x58, 0xd3, 0x06, 0x4c, 0x4b, 0x4b, 0x81, 0x74, 0xa8, 0x59, 0xc2, 0x30, 0xae,
-	0xf0, 0xa8, 0x04, 0x4c, 0x86, 0x48, 0xae, 0x66, 0xd5, 0x93, 0x44, 0x20, 0xfa, 0xa3, 0x00, 0x6b,
-	0x87, 0xd8, 0x5a, 0xb6, 0xb8, 0x53, 0x24, 0x36, 0x03, 0x6a, 0x8a, 0x19, 0x50, 0x5f, 0x87, 0xd9,
-	0xb5, 0x43, 0x72, 0xa9, 0x08, 0xc1, 0xf7, 0x11, 0x98, 0xc4, 0x14, 0x40, 0xdf, 0x29, 0xa4, 0x4c,
-	0x0e, 0xa3, 0x5e, 0x90, 0x43, 0x93, 0x6f, 0xf3, 0x58, 0xfc, 0xa7, 0x20, 0xc2, 0x5a, 0xe7, 0xae,
-	0xae, 0x28, 0x52, 0xce, 0x12, 0x00, 0x93, 0x2e, 0xee, 0xde, 0xdd, 0x14, 0x36, 0x10, 0x09, 0x82,
-	0x4e, 0x41, 0xd9, 0xed, 0x7a, 0x8a, 0x04, 0x40, 0x00, 0x92, 0x6f, 0xa8, 0x3c, 0xc0, 0x37, 0x94,
-	0xef, 0x6d, 0x7f, 0xa3, 0x04, 0x0b, 0x57, 0x5d, 0x7c, 0x98, 0x16, 0xb9, 0xec, 0xc0, 0x39, 0xc0,
-	0x81, 0x2a, 0x72, 0x31, 0xd8, 0x00, 0x77, 0x94, 0xe2, 0x58, 0x2b, 0x8f, 0xdb, 0xb1, 0x96, 0x3b,
-	0x08, 0x74, 0x1b, 0xaa, 0x3e, 0x5b, 0x94, 0xfa, 0x04, 0xdd, 0x4c, 0x1f, 0xee, 0xff, 0xc6, 0xf4,
-	0x80, 0x1b, 0x7c, 0x49, 0x99, 0xe3, 0x42, 0xd0, 0x5a, 0xbc, 0x0a, 0x33, 0x72, 0xc3, 0xc8, 0xee,
-	0x8b, 0x8f, 0xc0, 0xf1, 0xab, 0xae, 0x6f, 0xed, 0xa7, 0x1c, 0x7f, 0x44, 0x30, 0x36, 0x23, 0x33,
-	0xcc, 0xf1, 0x25, 0xcb, 0x0d, 0xfa, 0xd7, 0x34, 0x78, 0xd7, 0xb5, 0x95, 0xb5, 0x26, 0x39, 0x4c,
-	0x61, 0x84, 0xbd, 0x28, 0xe3, 0x58, 0x7f, 0x04, 0x26, 0x3b, 0x76, 0x86, 0x08, 0x87, 0xbd, 0x25,
-	0x41, 0x1b, 0xff, 0x5f, 0x83, 0xe3, 0xd7, 0x9c, 0xc8, 0xc0, 0x1d, 0x3f, 0xed, 0x2e, 0x0f, 0x70,
-	0xc7, 0x0f, 0x9d, 0xc8, 0x0f, 0xd4, 0x99, 0x93, 0xe0, 0x8c, 0xfe, 0x81, 0x43, 0x78, 0x85, 0xd2,
-	0xc7, 0x18, 0x4a, 0x7a, 0x69, 0x3b, 0x01, 0xbd, 0xa7, 0x8e, 0x94, 0x9d, 0x9e, 0x80, 0xf5, 0x7b,
-	0x70, 0xf2, 0x9a, 0xdb, 0x0d, 0x23, 0x1c, 0xec, 0x86, 0x4a, 0x27, 0x74, 0xa8, 0x61, 0x21, 0xdd,
-	0xa8, 0xfc, 0x21, 0x06, 0xf7, 0xf1, 0x34, 0x0f, 0xf6, 0xaf, 0xfe, 0x4c, 0x83, 0xd9, 0xeb, 0xdb,
-	0xdb, 0xcd, 0x6b, 0x38, 0x8a, 0xb9, 0x48, 0x2f, 0xf5, 0xf1, 0x8a, 0x24, 0xca, 0x4f, 0x5f, 0x6e,
-	0xf4, 0xd8, 0xa7, 0xdd, 0xc8, 0x71, 0x1b, 0x2c, 0x94, 0xa7, 0xb1, 0xee, 0x45, 0xb7, 0x82, 0xad,
-	0x28, 0x70, 0xbc, 0x16, 0x17, 0xfa, 0x05, 0x2f, 0x2b, 0xa7, 0x79, 0x19, 0x35, 0x52, 0x59, 0x7b,
-	0x38, 0xa5, 0x72, 0x70, 0x18, 0x7a, 0x11, 0xa6, 0xf7, 0xa2, 0xa8, 0x73, 0x1d, 0x9b, 0x36, 0x0e,
-	0xc4, 0x51, 0x19, 0x70, 0x97, 0x93, 0x71, 0x31, 0x04, 0x43, 0x46, 0xd6, 0xaf, 0x00, 0x24, 0x4d,
-	0xa3, 0x09, 0x88, 0xfa, 0x8f, 0x34, 0xa8, 0x5e, 0x37, 0x3d, 0xdb, 0xc5, 0x01, 0x7a, 0x16, 0x2a,
-	0xf8, 0x10, 0x5b, 0xc5, 0x04, 0x8c, 0x84, 0x5f, 0x1b, 0x14, 0x0b, 0xad, 0x41, 0x95, 0x74, 0xee,
-	0x5a, 0x1c, 0xd8, 0xf0, 0xd8, 0xe0, 0x51, 0xc5, 0xab, 0x65, 0x08, 0x5c, 0xaa, 0x22, 0x5a, 0x9d,
-	0x2d, 0x72, 0x54, 0xa3, 0x62, 0xa1, 0x3c, 0xdb, 0x2b, 0x4d, 0xf6, 0x38, 0x27, 0x95, 0xe0, 0xeb,
-	0x17, 0xe1, 0xc4, 0x75, 0x3f, 0x8c, 0x9a, 0x66, 0xb4, 0xa7, 0xec, 0xc6, 0x9e, 0x7b, 0x83, 0xcc,
-	0xc7, 0xb1, 0xf5, 0xad, 0x95, 0x2d, 0x55, 0x15, 0x3f, 0x0b, 0x33, 0xec, 0x1e, 0x20, 0x6a, 0x8d,
-	0xe9, 0x2a, 0x78, 0x4a, 0x0b, 0xe1, 0x4f, 0xce, 0xab, 0xea, 0x09, 0x22, 0x00, 0x71, 0x77, 0x94,
-	0xd3, 0x77, 0xc7, 0x79, 0x98, 0x73, 0x42, 0x2b, 0x74, 0xd6, 0x3d, 0x72, 0x66, 0x4c, 0x4b, 0xdd,
-	0x35, 0xa9, 0x36, 0x89, 0x8d, 0x4c, 0x0c, 0xb8, 0x69, 0xf2, 0xa3, 0x1f, 0xee, 0x42, 0x2d, 0x76,
-	0xf0, 0xf5, 0x64, 0xa5, 0x7d, 0x03, 0x3e, 0xda, 0x69, 0x27, 0x20, 0xb3, 0x63, 0x7c, 0x41, 0x83,
-	0x5a, 0xec, 0x83, 0x41, 0x2b, 0x50, 0xeb, 0xf8, 0xd4, 0x06, 0x17, 0x08, 0x8b, 0xf1, 0x7b, 0x07,
-	0x6c, 0x06, 0xb6, 0x05, 0x8d, 0x04, 0x0f, 0x3d, 0x0f, 0xd5, 0x4e, 0x80, 0xb7, 0x22, 0x1a, 0xc1,
-	0x32, 0x04, 0x09, 0x81, 0xa5, 0xff, 0xaa, 0x06, 0x70, 0xc3, 0x69, 0x3b, 0x91, 0x61, 0x7a, 0x2d,
-	0x3c, 0x26, 0x11, 0xfa, 0x05, 0xa8, 0x84, 0x1d, 0x6c, 0x15, 0x33, 0x70, 0x26, 0x6f, 0xdf, 0xea,
-	0x60, 0xcb, 0xa0, 0x98, 0xfa, 0x37, 0xa7, 0x60, 0x2e, 0x69, 0x58, 0x8f, 0x70, 0xbb, 0x4f, 0x14,
-	0xc8, 0x35, 0x28, 0xb7, 0xcd, 0x43, 0x2e, 0x9e, 0x7d, 0xb0, 0xe8, 0xdb, 0x08, 0xd1, 0xc6, 0x4d,
-	0xf3, 0x90, 0xdd, 0xa5, 0x84, 0x02, 0x25, 0xe4, 0x78, 0x5c, 0x87, 0x1f, 0x92, 0x90, 0xe3, 0x09,
-	0x42, 0x8e, 0x87, 0xb6, 0xa0, 0xca, 0x2d, 0x46, 0xd4, 0x19, 0x3b, 0x7d, 0xf9, 0xe9, 0xa1, 0x88,
-	0xad, 0x32, 0x5c, 0x7e, 0xcb, 0x73, 0x4a, 0x68, 0x0f, 0xe6, 0xf8, 0x4f, 0x03, 0xbf, 0xda, 0xc5,
-	0x61, 0xc4, 0x19, 0xe3, 0x0b, 0xa3, 0xd0, 0xe6, 0x24, 0xd8, 0x2b, 0x52, 0x74, 0xd1, 0x6b, 0x70,
-	0xa2, 0x6d, 0x1e, 0x32, 0x44, 0x06, 0x32, 0xcc, 0xc8, 0xf1, 0xb9, 0x77, 0xf8, 0xea, 0xb0, 0x33,
-	0x9c, 0x21, 0xc4, 0xde, 0x9a, 0xfb, 0x8e, 0xc5, 0x4f, 0xc0, 0x94, 0x58, 0x94, 0x9e, 0x87, 0xef,
-	0x8a, 0xcc, 0xab, 0xfb, 0x6f, 0x30, 0xa1, 0xe1, 0x36, 0x5e, 0xea, 0x9a, 0x5e, 0xe4, 0x44, 0x47,
-	0x92, 0xbc, 0x43, 0xdf, 0xc5, 0xd7, 0xed, 0x81, 0xbf, 0xcb, 0x83, 0x19, 0x79, 0x59, 0x1f, 0xf8,
-	0xfb, 0xba, 0x70, 0x3c, 0x67, 0xa9, 0x1f, 0xf8, 0x6b, 0xff, 0x1f, 0xbc, 0xa3, 0xe7, 0x8a, 0x3f,
-	0xe8, 0x97, 0xeb, 0xbf, 0xa5, 0xc9, 0x5c, 0x63, 0xfc, 0x9a, 0xe0, 0x73, 0xaa, 0x26, 0x78, 0xb6,
-	0xe8, 0x41, 0x10, 0xea, 0xe0, 0x1d, 0xb9, 0x7b, 0x84, 0xdb, 0xa1, 0x55, 0x98, 0x74, 0x09, 0x44,
-	0x98, 0x37, 0xcf, 0x0f, 0x73, 0xb6, 0x0c, 0x8e, 0xab, 0x7f, 0x45, 0x83, 0xca, 0xf8, 0x47, 0xbb,
-	0xac, 0x8e, 0xb6, 0x97, 0xa4, 0xc2, 0x83, 0xbf, 0x1b, 0x86, 0x79, 0x6f, 0xed, 0x30, 0xc2, 0x1e,
-	0x21, 0x28, 0x06, 0xfc, 0xf7, 0x1a, 0x4c, 0x13, 0xca, 0x42, 0x13, 0x3d, 0x07, 0xb3, 0xae, 0xb9,
-	0x83, 0x5d, 0x61, 0xca, 0x51, 0xb6, 0x82, 0xda, 0x44, 0x9e, 0xdd, 0x95, 0xad, 0x55, 0xca, 0x55,
-	0xab, 0x36, 0x11, 0xe1, 0xed, 0x9e, 0x19, 0x59, 0x7b, 0x8a, 0xdc, 0xcb, 0x40, 0xa8, 0x01, 0xf3,
-	0x62, 0xd3, 0xdc, 0x61, 0xc3, 0x55, 0xa4, 0x87, 0x74, 0x23, 0x11, 0x36, 0xc8, 0x78, 0xfc, 0x6e,
-	0x24, 0x5c, 0x44, 0x13, 0x92, 0x8b, 0x28, 0xd5, 0xa6, 0xdf, 0x84, 0xe3, 0x37, 0x7c, 0xd3, 0xbe,
-	0x62, 0xba, 0xa6, 0x67, 0xe1, 0x60, 0xdd, 0x6b, 0xf5, 0xb1, 0xec, 0xcb, 0xc6, 0xf8, 0x52, 0x9e,
-	0x31, 0x5e, 0x37, 0x01, 0xc9, 0xe4, 0xb8, 0x2f, 0x71, 0x03, 0xaa, 0x0e, 0x23, 0xcc, 0xb7, 0xc9,
-	0xa5, 0x41, 0x8a, 0x6a, 0xa6, 0x47, 0x86, 0xa0, 0x40, 0xc4, 0xbd, 0x3c, 0x45, 0xb6, 0xb7, 0x68,
-	0xac, 0xef, 0xc3, 0xfc, 0x66, 0x2a, 0x16, 0x96, 0xc8, 0xef, 0x38, 0xc8, 0x28, 0xde, 0x0c, 0x76,
-	0x5f, 0x3a, 0xca, 0xdf, 0x6a, 0x50, 0x23, 0xda, 0x60, 0xd8, 0x21, 0xb2, 0xdc, 0x78, 0xe4, 0x91,
-	0xe7, 0x15, 0x79, 0x64, 0x80, 0xc8, 0x1d, 0xbf, 0x3c, 0x11, 0x47, 0xd0, 0x5a, 0x1c, 0x67, 0x5a,
-	0x48, 0xd8, 0x4e, 0x48, 0xb0, 0xe8, 0x47, 0x8e, 0x4c, 0xed, 0xe8, 0x71, 0xdb, 0xdb, 0x6d, 0x47,
-	0x8f, 0x3b, 0x22, 0x0e, 0xeb, 0x05, 0xa9, 0x73, 0x94, 0x39, 0x2d, 0x51, 0x17, 0xbd, 0xe9, 0x3a,
-	0xaf, 0xe1, 0x38, 0xe4, 0x59, 0x82, 0xe8, 0x8f, 0xc3, 0x7c, 0x6a, 0xa4, 0xe4, 0x20, 0x76, 0xf6,
-	0xcc, 0x50, 0xdd, 0x45, 0x0c, 0xa4, 0x7f, 0x5f, 0x83, 0xca, 0xa6, 0x6f, 0x8f, 0x6b, 0x51, 0x9f,
-	0x51, 0x16, 0xf5, 0xd1, 0xc1, 0x99, 0x16, 0xd2, 0x7a, 0xbe, 0x90, 0x5a, 0xcf, 0xb3, 0x05, 0xb0,
-	0xd5, 0xa5, 0xbc, 0x06, 0xd3, 0x34, 0x7b, 0x83, 0x7b, 0xf2, 0x7a, 0x0b, 0xa7, 0x4b, 0x50, 0xe5,
-	0x3e, 0x28, 0x35, 0x76, 0x80, 0x03, 0xf5, 0xbf, 0x2c, 0xc1, 0x8c, 0x9c, 0x07, 0x82, 0xbe, 0xa8,
-	0x41, 0x23, 0x60, 0xa1, 0x6d, 0xf6, 0x6a, 0x97, 0x68, 0xd3, 0x5b, 0xd6, 0x1e, 0xb6, 0xbb, 0xae,
-	0xe3, 0xb5, 0xd6, 0x5b, 0x9e, 0x1f, 0x83, 0x89, 0x72, 0xd9, 0xa5, 0xd6, 0x90, 0xc2, 0xc9, 0x26,
-	0xb1, 0x09, 0x7d, 0xc8, 0x37, 0xa0, 0xaf, 0x6a, 0x70, 0x81, 0xe5, 0x4f, 0x14, 0xef, 0x55, 0x21,
-	0x79, 0xbc, 0x29, 0x88, 0x26, 0xe4, 0xb6, 0x71, 0xd0, 0x36, 0x86, 0x7d, 0x9b, 0xfe, 0xed, 0x12,
-	0xcc, 0x92, 0x21, 0xde, 0x7f, 0xd8, 0xf8, 0x47, 0xe1, 0x98, 0x6b, 0x86, 0xd1, 0x75, 0x6c, 0x06,
-	0xd1, 0x0e, 0x36, 0xa9, 0x69, 0x9a, 0xef, 0x93, 0xa1, 0xec, 0xda, 0x59, 0x2a, 0xe8, 0x65, 0x40,
-	0xd4, 0xd8, 0x1d, 0x98, 0x5e, 0x48, 0x3b, 0x49, 0x69, 0x57, 0x86, 0xa7, 0x9d, 0x43, 0x46, 0xf2,
-	0x30, 0x4c, 0xf4, 0xf7, 0x30, 0x4c, 0xe6, 0xc5, 0xb0, 0xb4, 0xe1, 0x38, 0x99, 0x3e, 0x35, 0xbe,
-	0x22, 0x44, 0x77, 0x60, 0x9e, 0xf4, 0xc7, 0xc5, 0x91, 0x80, 0xf1, 0xdd, 0x36, 0x40, 0x52, 0x51,
-	0xe9, 0x18, 0x69, 0x22, 0x44, 0x17, 0x9e, 0x22, 0xef, 0x1b, 0x3f, 0x17, 0x7c, 0x4a, 0xe5, 0x82,
-	0xfa, 0xe0, 0x53, 0x21, 0x18, 0xe0, 0x79, 0x58, 0x20, 0x7f, 0x9b, 0x81, 0x7f, 0x78, 0x24, 0x24,
-	0x96, 0xde, 0x46, 0x10, 0x97, 0x9d, 0xdb, 0x58, 0x06, 0x79, 0x05, 0x8e, 0x79, 0xd2, 0x7f, 0xb2,
-	0x8b, 0xc5, 0x75, 0xdd, 0x28, 0x7e, 0x32, 0xe9, 0xe6, 0xcf, 0x12, 0xd2, 0xf7, 0xe1, 0x61, 0xe5,
-	0x00, 0x27, 0xb1, 0xaf, 0x3d, 0xa5, 0xea, 0xd3, 0x30, 0xe5, 0x77, 0x70, 0x60, 0xa6, 0x65, 0xa7,
-	0x18, 0x8a, 0x4e, 0xc1, 0x24, 0x15, 0x9e, 0x43, 0x1e, 0x49, 0xcc, 0xff, 0xe9, 0x5d, 0x36, 0x11,
-	0x72, 0x0f, 0x90, 0x09, 0x0b, 0x6d, 0x22, 0x4f, 0xad, 0x1d, 0x76, 0x08, 0xdf, 0xa2, 0x36, 0x6c,
-	0xad, 0xc8, 0x09, 0xef, 0xd1, 0x6d, 0x23, 0x43, 0x4e, 0xff, 0x1d, 0xbe, 0x27, 0xf8, 0xe5, 0x53,
-	0xed, 0xf8, 0xf6, 0xca, 0xfa, 0xaa, 0xa1, 0x8c, 0x4c, 0x00, 0xd1, 0x19, 0x00, 0x7c, 0x18, 0xe1,
-	0xc0, 0x33, 0xdd, 0xf5, 0x55, 0x35, 0x9d, 0x2c, 0x81, 0x93, 0xa7, 0x3a, 0x81, 0x7f, 0xe0, 0xd8,
-	0x34, 0xb0, 0x48, 0xb6, 0x43, 0x4a, 0x70, 0x22, 0x6a, 0x76, 0xbd, 0x90, 0x71, 0x18, 0x73, 0x87,
-	0x27, 0xe3, 0x08, 0xd1, 0x44, 0x6d, 0xd2, 0xbf, 0x5d, 0x05, 0x48, 0xee, 0x03, 0x64, 0xc0, 0x94,
-	0x65, 0x76, 0x4c, 0x8b, 0xe5, 0xfc, 0x95, 0x07, 0x87, 0x19, 0x26, 0xb8, 0x8d, 0x15, 0x8e, 0xc8,
-	0xd4, 0xe1, 0x98, 0x0e, 0x7a, 0x19, 0xa6, 0x4d, 0xd7, 0xf5, 0x2d, 0x33, 0xa2, 0x9d, 0x29, 0x15,
-	0xb1, 0x20, 0x48, 0x64, 0x97, 0x13, 0x5c, 0x46, 0x59, 0xa6, 0x96, 0xdc, 0xd0, 0xe5, 0xcc, 0x0d,
-	0x8d, 0x36, 0x94, 0xd4, 0x94, 0x4a, 0x91, 0x58, 0x70, 0x85, 0xe5, 0xca, 0x59, 0x29, 0xe8, 0x9a,
-	0x1c, 0xbc, 0x31, 0x51, 0x24, 0x06, 0x5b, 0xba, 0x50, 0xd5, 0xc0, 0x8d, 0x79, 0x5b, 0xe5, 0x4a,
-	0xdc, 0x73, 0x79, 0x69, 0x30, 0xb9, 0x14, 0x3b, 0x33, 0xd2, 0x94, 0xd0, 0x75, 0x16, 0xfd, 0xb2,
-	0xee, 0xed, 0xfa, 0xdc, 0x77, 0x79, 0xbe, 0xc0, 0x44, 0x1f, 0x85, 0x11, 0x6e, 0x13, 0x1c, 0x23,
-	0xc6, 0x26, 0xaa, 0x1c, 0x8d, 0x67, 0x0b, 0xeb, 0x53, 0x45, 0x54, 0x39, 0x35, 0xaa, 0xd8, 0xe0,
-	0xb8, 0x48, 0x17, 0xc1, 0xeb, 0xe1, 0xba, 0x77, 0x3b, 0xc4, 0x34, 0x78, 0xbd, 0x66, 0x28, 0x30,
-	0xc2, 0x93, 0xf9, 0x7f, 0x91, 0x7c, 0x59, 0x87, 0x22, 0xaf, 0x54, 0x53, 0x35, 0x8d, 0x34, 0x91,
-	0x45, 0x1f, 0x66, 0x95, 0x2d, 0xf9, 0xc0, 0x8d, 0x05, 0x01, 0x2c, 0xa4, 0x37, 0xeb, 0x03, 0xb7,
-	0x11, 0x7c, 0xa7, 0x0c, 0x73, 0xea, 0x1a, 0x22, 0x1d, 0x6a, 0x6d, 0x9a, 0x93, 0x99, 0xce, 0x6c,
-	0x4b, 0xc0, 0x34, 0x59, 0x8f, 0x62, 0xdc, 0xbe, 0x9d, 0x66, 0x37, 0x09, 0x9c, 0x5c, 0xc1, 0x3b,
-	0xbe, 0x1f, 0xa5, 0x58, 0x0d, 0x87, 0x11, 0x36, 0xb3, 0x4f, 0xfa, 0xea, 0xe6, 0xe9, 0xa1, 0x6a,
-	0x13, 0x61, 0x7f, 0x7e, 0x48, 0xb7, 0x86, 0x72, 0x9b, 0x0b, 0x20, 0x7a, 0x0e, 0x1e, 0x8e, 0x23,
-	0x23, 0x0d, 0xa6, 0x81, 0x0b, 0xaa, 0xf2, 0xf5, 0xde, 0xeb, 0x21, 0xa2, 0xe5, 0xf2, 0x2b, 0x59,
-	0xa0, 0xc9, 0x91, 0x99, 0xa9, 0x36, 0x74, 0x11, 0x16, 0x08, 0x84, 0xde, 0x8c, 0xe2, 0x79, 0x39,
-	0x4a, 0x33, 0xd3, 0x4a, 0xb4, 0x6e, 0x76, 0xcd, 0x10, 0xd9, 0x8d, 0x4e, 0x90, 0xe2, 0xb4, 0x4f,
-	0x37, 0xa2, 0xb3, 0x30, 0x63, 0x06, 0xd6, 0x9e, 0x13, 0x61, 0x2b, 0xea, 0x06, 0x2c, 0xc9, 0x22,
-	0x76, 0x1e, 0xc8, 0x2d, 0xfa, 0xc7, 0xe1, 0x78, 0x4e, 0x90, 0x0c, 0x59, 0x20, 0xb3, 0xe3, 0x88,
-	0xce, 0x29, 0x0e, 0xbc, 0x04, 0x4e, 0x96, 0x9a, 0x5a, 0x0e, 0x32, 0x39, 0xc8, 0x09, 0x58, 0xff,
-	0x71, 0x15, 0x20, 0xd1, 0x38, 0xfa, 0xb8, 0x8c, 0xce, 0xc2, 0x8c, 0x48, 0x5f, 0xcf, 0xe4, 0xcf,
-	0x2a, 0x2d, 0xe4, 0xb5, 0x9e, 0xd0, 0x94, 0x54, 0xaf, 0x60, 0x0c, 0x26, 0xd7, 0x75, 0x88, 0xdd,
-	0xdd, 0x1b, 0x8e, 0xb7, 0xaf, 0xc6, 0xe1, 0x09, 0x28, 0x39, 0x1a, 0x5d, 0xc7, 0x56, 0xf6, 0x03,
-	0x01, 0xe4, 0x59, 0x38, 0x26, 0xfb, 0x59, 0x38, 0xce, 0x00, 0xf0, 0xde, 0x89, 0x75, 0x17, 0xd6,
-	0x0d, 0x09, 0x4e, 0xc4, 0x60, 0x2b, 0xc0, 0xa6, 0x10, 0x2f, 0x59, 0x78, 0xc7, 0xd4, 0x08, 0x62,
-	0x70, 0x86, 0x0a, 0x21, 0x6d, 0x93, 0xed, 0xa5, 0x90, 0xae, 0x8d, 0x40, 0x3a, 0x43, 0x05, 0xad,
-	0xc2, 0xa2, 0x00, 0x5e, 0xcb, 0x06, 0xfb, 0x82, 0x34, 0xd6, 0x3e, 0xcf, 0xa1, 0x1b, 0x30, 0x49,
-	0x8d, 0x51, 0x61, 0x7d, 0x9a, 0x32, 0xd6, 0x27, 0x8a, 0xea, 0xa7, 0x8d, 0x1b, 0x14, 0x8d, 0xdd,
-	0xbb, 0x9c, 0x06, 0xbd, 0xcf, 0x3d, 0xcf, 0x8f, 0x4c, 0x76, 0xaf, 0xce, 0x14, 0xb9, 0xcf, 0x25,
-	0x92, 0xcb, 0x09, 0xae, 0xb8, 0xcf, 0x13, 0x08, 0xb9, 0x0c, 0xfc, 0x7b, 0xe4, 0x7c, 0x0b, 0x43,
-	0x4e, 0x58, 0x9f, 0x2d, 0x72, 0x19, 0xdc, 0x52, 0x90, 0x8c, 0x34, 0x91, 0x94, 0xf2, 0x3f, 0x97,
-	0x56, 0xfe, 0x69, 0xcc, 0x36, 0x73, 0x62, 0xd3, 0xbd, 0x3f, 0xaf, 0xc4, 0x6c, 0x27, 0x0d, 0x8b,
-	0x6b, 0x30, 0x2d, 0xcd, 0xc9, 0xa8, 0xa1, 0x09, 0x8b, 0x2f, 0xc2, 0x42, 0x7a, 0x1e, 0x46, 0x0e,
-	0x73, 0xf8, 0xb9, 0x06, 0xf3, 0x39, 0xd6, 0xaf, 0x7d, 0x87, 0xc6, 0xd2, 0x48, 0xa7, 0x9c, 0x40,
-	0xd4, 0xb3, 0x5b, 0xca, 0x3f, 0xbb, 0x82, 0x47, 0x94, 0x33, 0x3c, 0x82, 0x9f, 0xd9, 0x4a, 0xfa,
-	0xcc, 0xaa, 0xec, 0x6a, 0xa2, 0x07, 0xbb, 0x1a, 0xf6, 0x64, 0x2b, 0xec, 0xad, 0x9a, 0xcf, 0xde,
-	0xbe, 0xae, 0xc1, 0x9c, 0xba, 0xf8, 0x7d, 0x06, 0xff, 0xa0, 0x06, 0x76, 0x86, 0x4a, 0x9a, 0x51,
-	0xe0, 0xbb, 0x2e, 0x0e, 0x14, 0x3f, 0xac, 0x04, 0xd7, 0xff, 0x4d, 0x83, 0x85, 0x24, 0x9a, 0x84,
-	0x57, 0x98, 0x18, 0x57, 0x68, 0xac, 0x6c, 0x3d, 0x1a, 0x54, 0x4f, 0x22, 0xd5, 0x07, 0xc9, 0x92,
-	0x74, 0x23, 0x65, 0x49, 0x7a, 0x62, 0x48, 0x4a, 0xaa, 0x55, 0xe9, 0x3f, 0x35, 0x38, 0x99, 0x7e,
-	0x64, 0xc5, 0x35, 0x9d, 0xf6, 0x98, 0x46, 0xbd, 0xa1, 0x8c, 0xfa, 0xc9, 0xe1, 0xfa, 0x4a, 0x3b,
-	0x22, 0x0d, 0xfd, 0xa5, 0xd4, 0xd0, 0x9f, 0x1e, 0x85, 0x9c, 0x3a, 0xfe, 0x6f, 0x6a, 0xf0, 0x8e,
-	0xdc, 0xe7, 0xc6, 0x6f, 0x26, 0x58, 0x57, 0xcd, 0x04, 0x1f, 0x18, 0xa1, 0xf3, 0xc2, 0x6e, 0xf0,
-	0xe9, 0x52, 0x8f, 0x5e, 0x53, 0x45, 0xf6, 0x34, 0x4c, 0x9b, 0x96, 0x85, 0xc3, 0xf0, 0xa6, 0x6f,
-	0xc7, 0x59, 0x83, 0x32, 0x48, 0x4d, 0x81, 0x2d, 0x8d, 0x23, 0x05, 0xf6, 0x0c, 0x00, 0x13, 0xee,
-	0x37, 0xd3, 0x87, 0x57, 0x82, 0xa3, 0x26, 0x95, 0x38, 0x98, 0x73, 0xa5, 0x32, 0x70, 0xf7, 0x2a,
-	0xf3, 0x29, 0x7b, 0x6a, 0x8c, 0x98, 0x8a, 0xfe, 0xc7, 0x25, 0x78, 0x67, 0x9f, 0x75, 0xee, 0x67,
-	0x1e, 0x4e, 0xcf, 0x53, 0x29, 0x3b, 0x4f, 0x96, 0xa4, 0x6b, 0x33, 0x1f, 0xfd, 0xb5, 0x91, 0xb7,
-	0x5c, 0x2f, 0xe5, 0xfb, 0x2d, 0x57, 0x82, 0x74, 0x07, 0xde, 0x9d, 0xdb, 0xcf, 0x74, 0x64, 0x98,
-	0x45, 0x80, 0x99, 0xd8, 0xb9, 0x04, 0xac, 0xf8, 0x56, 0x4a, 0xb9, 0xbe, 0x95, 0xd7, 0x35, 0x38,
-	0x91, 0x7e, 0xd7, 0xf8, 0x4f, 0xd6, 0xaa, 0x7a, 0xb2, 0x1a, 0xc3, 0xad, 0x91, 0x38, 0x54, 0xaf,
-	0x03, 0x9c, 0xca, 0x70, 0x4b, 0x36, 0x19, 0x0e, 0x1c, 0x6b, 0x51, 0x89, 0x4d, 0x0a, 0x33, 0xe4,
-	0xdd, 0x1e, 0x10, 0x4f, 0xd9, 0x37, 0x3a, 0xd1, 0xc8, 0x52, 0x45, 0x01, 0x9c, 0x30, 0xef, 0x85,
-	0x99, 0x6a, 0x54, 0x7c, 0xcd, 0x9f, 0x1b, 0xa0, 0x6f, 0x0f, 0xa8, 0x63, 0x65, 0xe4, 0xd2, 0x46,
-	0x9b, 0x3c, 0xf5, 0x97, 0xdc, 0xe1, 0x85, 0xe2, 0x52, 0xf3, 0xa2, 0xb7, 0x8c, 0x98, 0x06, 0x7a,
-	0x09, 0x6a, 0x2d, 0x11, 0x6e, 0xc8, 0xcf, 0xf9, 0x00, 0x6e, 0x97, 0x1b, 0x9d, 0x68, 0x24, 0x54,
-	0xd0, 0xf3, 0x50, 0xf6, 0x76, 0x43, 0x1e, 0x8b, 0x3e, 0xc8, 0x19, 0xa6, 0xba, 0x0e, 0x0d, 0x82,
-	0x49, 0x08, 0x04, 0x3b, 0x36, 0xb7, 0xe3, 0x0c, 0x20, 0x60, 0x5c, 0x59, 0x55, 0x09, 0x04, 0x3b,
-	0x36, 0x5a, 0x83, 0x09, 0x1a, 0xf6, 0xc5, 0x8d, 0x36, 0x03, 0x72, 0x08, 0x32, 0xc1, 0x6a, 0x06,
-	0xc3, 0x46, 0xd7, 0x61, 0xd2, 0xa2, 0x95, 0x6e, 0xb8, 0x66, 0x33, 0xa8, 0x10, 0x4b, 0xa6, 0x2a,
-	0x8e, 0xc1, 0xf1, 0x29, 0x25, 0xdc, 0xd9, 0xdb, 0x0d, 0xb9, 0x22, 0x33, 0x88, 0x52, 0xa6, 0xbe,
-	0x90, 0xc1, 0xf1, 0xd1, 0xb3, 0x50, 0xda, 0xb5, 0x78, 0x95, 0x81, 0x01, 0x42, 0xbc, 0x1a, 0x9b,
-	0x6d, 0x94, 0x76, 0x2d, 0xb4, 0x01, 0xd5, 0x5d, 0x16, 0xc3, 0xcb, 0x8b, 0x0b, 0x5c, 0x1a, 0x14,
-	0x62, 0x9c, 0x09, 0xf8, 0x35, 0x04, 0x05, 0xb4, 0x09, 0xb0, 0x1b, 0x87, 0x20, 0xf3, 0x22, 0x03,
-	0x8d, 0xe1, 0x42, 0x96, 0x0d, 0x89, 0x02, 0xd9, 0x8a, 0xa6, 0xa8, 0x56, 0x45, 0xeb, 0x0b, 0x0c,
-	0xdc, 0x8a, 0xb9, 0xc5, 0xad, 0x8c, 0x84, 0x0a, 0xda, 0x81, 0xd9, 0x83, 0xb0, 0xb3, 0x87, 0xc5,
-	0xd1, 0xa2, 0xf5, 0x07, 0xa6, 0x2f, 0x3f, 0x3b, 0xa0, 0xdc, 0x03, 0x47, 0x71, 0x82, 0xa8, 0x6b,
-	0xba, 0x19, 0x4e, 0xa0, 0x92, 0x24, 0x73, 0xfa, 0x6a, 0xd7, 0xdf, 0x39, 0x8a, 0x30, 0xaf, 0x56,
-	0x30, 0x60, 0x4e, 0x5f, 0x62, 0x0f, 0xab, 0x73, 0xca, 0x29, 0xc4, 0x73, 0x40, 0xb9, 0xd6, 0x42,
-	0xe1, 0x39, 0xc8, 0xf4, 0x31, 0xa1, 0xa2, 0x7f, 0xb6, 0x92, 0xe5, 0xeb, 0x54, 0xf6, 0x78, 0x25,
-	0x63, 0x9d, 0x7e, 0x61, 0x78, 0x49, 0xb7, 0xa7, 0x9d, 0xda, 0x85, 0x53, 0x9d, 0x5c, 0x0e, 0xcd,
-	0xd9, 0xe3, 0xb0, 0xb2, 0x30, 0x1b, 0x57, 0x0f, 0x9a, 0x69, 0xf9, 0xa0, 0x9c, 0x95, 0x0f, 0xd6,
-	0x61, 0x8a, 0xde, 0x86, 0x49, 0x6a, 0xd1, 0x90, 0x39, 0x3b, 0x31, 0x3a, 0x7a, 0x11, 0xde, 0x95,
-	0xee, 0x86, 0x81, 0x69, 0x2b, 0xaf, 0x72, 0x21, 0x2b, 0x36, 0xfd, 0x1f, 0x7d, 0xeb, 0x25, 0x8a,
-	0x20, 0xe7, 0xe6, 0x1c, 0x2c, 0x7f, 0x0d, 0x48, 0x72, 0xef, 0x9f, 0xc0, 0xa4, 0x7f, 0x57, 0x83,
-	0x72, 0xd3, 0xb7, 0xc7, 0xa4, 0xa7, 0x3c, 0xad, 0xe8, 0x29, 0xef, 0x1d, 0x58, 0xa5, 0x50, 0xd2,
-	0x4a, 0x9e, 0x4f, 0x69, 0x25, 0xef, 0x1b, 0x8c, 0xac, 0xea, 0x20, 0xdf, 0x2d, 0xc1, 0xb4, 0x54,
-	0x49, 0x11, 0x7d, 0x79, 0x14, 0x7f, 0x7c, 0xb9, 0x58, 0x71, 0x45, 0xfe, 0x0e, 0xea, 0xf4, 0xfb,
-	0x85, 0x71, 0xc9, 0xdf, 0xc5, 0x4e, 0x6b, 0x2f, 0xc2, 0x76, 0xba, 0x83, 0x43, 0xbb, 0xe4, 0xff,
-	0x44, 0x83, 0xf9, 0x14, 0x11, 0xf4, 0xb1, 0xbc, 0x08, 0xb0, 0x51, 0x15, 0x8f, 0x54, 0xc4, 0xd8,
-	0x12, 0x40, 0x6c, 0x92, 0x11, 0x0a, 0x84, 0x04, 0x41, 0x8f, 0xc2, 0x74, 0xe4, 0x77, 0x7c, 0xd7,
-	0x6f, 0x1d, 0x6d, 0x60, 0x35, 0x3b, 0x43, 0x6e, 0xd0, 0xff, 0xaa, 0xc4, 0xfa, 0x2d, 0x55, 0xba,
-	0xfc, 0xdf, 0x5d, 0x30, 0xf2, 0x2e, 0xf8, 0x7d, 0x0d, 0x16, 0x08, 0x11, 0xea, 0x65, 0x12, 0x6e,
-	0xf5, 0xb8, 0x5c, 0x8f, 0x96, 0x2d, 0xd7, 0x43, 0xa3, 0x33, 0x6c, 0xbf, 0xab, 0x66, 0xa4, 0x71,
-	0x18, 0x6f, 0xc5, 0x41, 0xa0, 0xc4, 0x8f, 0x71, 0x98, 0x28, 0xe3, 0x53, 0x49, 0x95, 0xf1, 0x61,
-	0x99, 0x77, 0xdc, 0x13, 0xa2, 0xf0, 0xee, 0x04, 0xac, 0x7f, 0xab, 0x04, 0x33, 0x4d, 0xdf, 0xbe,
-	0xff, 0x00, 0x12, 0x9e, 0x14, 0x49, 0xcb, 0x34, 0x8d, 0x1a, 0x3c, 0xa2, 0x52, 0xf8, 0x45, 0x0e,
-	0x1c, 0xf9, 0x8e, 0x06, 0x73, 0x4d, 0xdf, 0x26, 0x0b, 0xfe, 0x0b, 0xbc, 0xba, 0x72, 0xbe, 0xe4,
-	0xa4, 0x9a, 0x2f, 0xf9, 0x2b, 0x1a, 0x54, 0x9b, 0xbe, 0x3d, 0x7e, 0x45, 0xf8, 0x49, 0x55, 0x11,
-	0x7e, 0xf7, 0x40, 0x4e, 0x20, 0x74, 0xdf, 0x1f, 0x96, 0x60, 0x96, 0xf4, 0xc8, 0x6f, 0x89, 0x19,
-	0x55, 0x46, 0xa8, 0xe5, 0x8f, 0xf0, 0x11, 0x98, 0xdc, 0xf5, 0x5d, 0xd7, 0xbf, 0xa7, 0xce, 0x2c,
-	0x83, 0xb1, 0x02, 0x0c, 0xf8, 0xc0, 0xf1, 0xbb, 0x6a, 0xb1, 0x91, 0x18, 0x8a, 0xce, 0xc2, 0x4c,
-	0xe8, 0x78, 0x16, 0x16, 0xce, 0x92, 0x8a, 0xe4, 0x2c, 0x51, 0x5a, 0x68, 0x19, 0x20, 0xf2, 0x9f,
-	0x6e, 0xc2, 0x91, 0xca, 0x00, 0x09, 0x6c, 0x74, 0x06, 0x20, 0x12, 0xce, 0x9b, 0x50, 0x35, 0x04,
-	0x27, 0x70, 0x32, 0xfc, 0xc8, 0x74, 0xdc, 0x1b, 0x8e, 0x87, 0x43, 0xc5, 0x61, 0x95, 0x80, 0x09,
-	0x25, 0x1a, 0x0e, 0xcd, 0x4a, 0x70, 0x4d, 0xc9, 0x5e, 0xad, 0x04, 0xae, 0x3f, 0x46, 0x59, 0x7b,
-	0xc1, 0x10, 0x9f, 0xcf, 0x94, 0x00, 0x35, 0xa9, 0x57, 0x48, 0xa9, 0x35, 0xb6, 0x0d, 0x73, 0x21,
-	0xbe, 0xe1, 0x78, 0xdd, 0x43, 0x4e, 0xa2, 0x58, 0x48, 0xd4, 0xd6, 0x9a, 0x8c, 0x63, 0xa4, 0x68,
-	0x90, 0x31, 0x06, 0x5d, 0x6f, 0x39, 0xbc, 0x1d, 0xe2, 0x40, 0xad, 0x20, 0x16, 0x83, 0x69, 0x39,
-	0x1e, 0xf2, 0x67, 0xd3, 0xf7, 0x0c, 0xdf, 0x8f, 0x94, 0x85, 0x54, 0x5a, 0x50, 0x03, 0x50, 0xd8,
-	0xed, 0x74, 0x5c, 0x6a, 0x1b, 0x34, 0xdd, 0x6b, 0x81, 0xdf, 0xed, 0xb0, 0x90, 0x8e, 0xb2, 0x91,
-	0xd3, 0x42, 0x4e, 0xf9, 0x6e, 0x48, 0x7f, 0x2b, 0xe1, 0xce, 0x02, 0xa8, 0xef, 0x50, 0xde, 0xb8,
-	0xe5, 0xb4, 0x3c, 0x33, 0xea, 0x06, 0x18, 0x19, 0x30, 0xdb, 0xa1, 0xbc, 0x52, 0xd8, 0xf0, 0x0b,
-	0x4d, 0x41, 0xca, 0xe9, 0xa4, 0x92, 0xd0, 0x7f, 0x69, 0x8a, 0x1e, 0x44, 0xaa, 0xb9, 0x3c, 0x07,
-	0x55, 0x1e, 0x9e, 0xc0, 0xef, 0xd1, 0x33, 0x45, 0xea, 0xf7, 0x19, 0x02, 0x09, 0x5d, 0x63, 0x0e,
-	0x06, 0x7a, 0x32, 0x8a, 0x97, 0xa5, 0xe4, 0xae, 0x72, 0x09, 0x15, 0x9d, 0x83, 0x59, 0x5e, 0xe7,
-	0x88, 0x4b, 0xfe, 0xb2, 0xd8, 0xa0, 0x36, 0x11, 0xad, 0x41, 0xaa, 0x93, 0x97, 0xe3, 0x7f, 0x94,
-	0x8f, 0x54, 0xff, 0x47, 0xd1, 0x33, 0x70, 0xd2, 0xb4, 0x22, 0xe7, 0x00, 0xaf, 0x62, 0xd3, 0x76,
-	0x1d, 0x0f, 0xe7, 0x45, 0xa3, 0xe7, 0x3f, 0x42, 0x93, 0x50, 0xbd, 0x90, 0xf7, 0x77, 0x52, 0x49,
-	0x42, 0x15, 0x60, 0xf4, 0x32, 0x2b, 0x58, 0x1e, 0xcb, 0x61, 0xac, 0x70, 0xe3, 0x93, 0x85, 0x44,
-	0x6d, 0x25, 0xa6, 0x8b, 0x69, 0x85, 0x0a, 0x31, 0xf4, 0x04, 0xa0, 0x10, 0x07, 0x07, 0x8e, 0x85,
-	0x97, 0x2d, 0x9a, 0xb9, 0x4f, 0xed, 0x96, 0x72, 0xc4, 0x40, 0x4e, 0x3b, 0x3a, 0x4f, 0xce, 0x95,
-	0x0c, 0x55, 0x42, 0x06, 0x52, 0x6d, 0x4a, 0xdd, 0x1a, 0xc8, 0xab, 0x5b, 0x43, 0xe4, 0xbd, 0x3d,
-	0x3f, 0x8c, 0x36, 0x71, 0x74, 0xcf, 0x0f, 0xf6, 0xa9, 0x39, 0x44, 0x1c, 0x16, 0xb9, 0x81, 0xec,
-	0x7d, 0x6a, 0x2c, 0x5b, 0x5f, 0xa5, 0x26, 0x0e, 0xf1, 0x8c, 0x00, 0x8a, 0xf6, 0xf5, 0xe6, 0x0a,
-	0xb5, 0x59, 0x28, 0xed, 0xeb, 0xcd, 0x15, 0xf4, 0xb1, 0x6c, 0x51, 0xc3, 0xb9, 0x22, 0x36, 0xa0,
-	0x2c, 0x6b, 0xc9, 0xd6, 0x35, 0xfc, 0xbf, 0xb0, 0x10, 0xd7, 0x50, 0x64, 0x95, 0x30, 0xc2, 0xfa,
-	0x7c, 0x91, 0x1a, 0xe8, 0xb9, 0xc9, 0xea, 0x19, 0x5a, 0x4a, 0x4a, 0xc2, 0x42, 0x6e, 0x7d, 0x20,
-	0x1d, 0x6a, 0x61, 0x77, 0xc7, 0xf6, 0xdb, 0xa6, 0xe3, 0xd1, 0xea, 0x89, 0x49, 0x89, 0x70, 0x01,
-	0x5e, 0xdc, 0x80, 0x63, 0x99, 0x2d, 0x31, 0xb2, 0x7b, 0xf6, 0x4b, 0x65, 0xa8, 0xc5, 0x6a, 0x59,
-	0x5f, 0x95, 0xf5, 0xc5, 0x9c, 0x52, 0xca, 0xe7, 0x06, 0xce, 0x79, 0x7e, 0xb8, 0xda, 0xa0, 0x62,
-	0xd1, 0x89, 0x90, 0x54, 0xc9, 0x11, 0x92, 0xfa, 0x96, 0x4f, 0xa4, 0x63, 0xf0, 0xed, 0xf5, 0xa6,
-	0x5a, 0x1b, 0x8d, 0x82, 0xe2, 0x92, 0x7a, 0xf4, 0x2e, 0xad, 0x8e, 0x5a, 0x52, 0x8f, 0x0b, 0x89,
-	0xc7, 0x2c, 0xb5, 0x0a, 0x5d, 0x1c, 0x8c, 0xf6, 0xf8, 0x10, 0xc5, 0xe1, 0xba, 0xa1, 0x91, 0xa5,
-	0xa3, 0xff, 0x3a, 0x53, 0xe6, 0xf8, 0x03, 0x38, 0xec, 0xba, 0xd1, 0xd8, 0xb2, 0x33, 0x64, 0x61,
-	0x7a, 0x04, 0x8d, 0xfd, 0xb7, 0x35, 0xaa, 0xb1, 0x6f, 0xe3, 0x76, 0xc7, 0x35, 0xa3, 0x71, 0x79,
-	0x88, 0xd7, 0x61, 0x2a, 0xe2, 0x14, 0x8b, 0x55, 0x80, 0x91, 0xba, 0x40, 0xed, 0x11, 0x31, 0xba,
-	0xfe, 0x55, 0x36, 0x77, 0xa2, 0x75, 0xfc, 0x92, 0xe6, 0xf3, 0xaa, 0xa4, 0xf9, 0xfe, 0xc2, 0x1d,
-	0x15, 0x12, 0xe7, 0x17, 0xd5, 0x1e, 0xf2, 0xdc, 0xb4, 0xb7, 0xd7, 0x94, 0xa3, 0xbf, 0x0f, 0x66,
-	0x95, 0x3a, 0x7a, 0x22, 0xe6, 0x40, 0x4b, 0xc5, 0x1c, 0xe8, 0xff, 0xae, 0xc1, 0x89, 0xbc, 0x6f,
-	0x3e, 0xa0, 0x4d, 0x98, 0xe9, 0x48, 0x52, 0x4b, 0xb1, 0x44, 0x09, 0x59, 0xce, 0x31, 0x14, 0x7c,
-	0x74, 0x0b, 0x66, 0xf0, 0x81, 0x63, 0xc5, 0x0a, 0x58, 0x69, 0xf8, 0xf3, 0xaa, 0x10, 0xb8, 0xbf,
-	0xaa, 0x40, 0xfa, 0xa7, 0x35, 0x78, 0xb8, 0x47, 0x02, 0x05, 0xa1, 0x7c, 0x8f, 0xaa, 0xf0, 0x4a,
-	0x6d, 0x44, 0x0e, 0x43, 0x9b, 0x00, 0x4c, 0x8f, 0xa7, 0xd5, 0xb4, 0x4b, 0x45, 0x0c, 0xfb, 0x99,
-	0x28, 0x75, 0x89, 0x82, 0xfe, 0x9d, 0x12, 0x4c, 0xb0, 0xb2, 0xc4, 0xcf, 0x43, 0x75, 0x8f, 0x25,
-	0x99, 0x0f, 0x97, 0xd4, 0x2e, 0xb0, 0xd0, 0x87, 0xe0, 0xb8, 0xe3, 0x39, 0x91, 0x63, 0xba, 0xab,
-	0xd8, 0x35, 0x8f, 0x84, 0xd8, 0x23, 0x17, 0x94, 0xc9, 0x7b, 0x20, 0x27, 0x6f, 0x4f, 0xce, 0xc0,
-	0x4f, 0xb5, 0x11, 0xb1, 0xae, 0x93, 0x11, 0xcd, 0xe2, 0xea, 0xb9, 0x4a, 0x13, 0xba, 0x08, 0x0b,
-	0x61, 0x97, 0xda, 0x99, 0xb7, 0xf7, 0x02, 0x1c, 0xee, 0xf9, 0xae, 0xad, 0x14, 0xc2, 0xcc, 0xb4,
-	0x12, 0x8c, 0x5d, 0xd3, 0x71, 0xbb, 0x01, 0x4e, 0x30, 0x26, 0x65, 0x8c, 0x74, 0xab, 0xfe, 0x47,
-	0x1a, 0x1c, 0xcf, 0x71, 0x1b, 0x30, 0xa7, 0x6e, 0xcb, 0x09, 0xa3, 0x54, 0x55, 0x92, 0x18, 0x4a,
-	0x16, 0x9a, 0x09, 0xbd, 0xaa, 0x2d, 0x82, 0xc1, 0x06, 0x27, 0xdc, 0xc5, 0x1f, 0xa8, 0xa8, 0x64,
-	0x3e, 0x50, 0xb1, 0x08, 0x13, 0xad, 0x58, 0x23, 0x88, 0xaf, 0x2d, 0x0a, 0xd2, 0xbf, 0x51, 0x82,
-	0xf9, 0x94, 0x63, 0xae, 0xef, 0x07, 0x32, 0xfa, 0x55, 0x34, 0xef, 0x5f, 0x1a, 0x88, 0xd6, 0x14,
-	0x4c, 0xd5, 0x2d, 0xa6, 0x90, 0xb8, 0xe7, 0x13, 0x99, 0x9e, 0x2f, 0x41, 0x75, 0x1f, 0x1f, 0x05,
-	0x8e, 0xd7, 0x52, 0x6d, 0x16, 0x1c, 0xa8, 0xd6, 0xfe, 0xa9, 0x8e, 0xbb, 0xf6, 0xcf, 0x54, 0xae,
-	0xf3, 0xfd, 0x73, 0x1a, 0xcc, 0xd3, 0xd4, 0x5d, 0x1e, 0xf2, 0xec, 0xf8, 0xde, 0x98, 0x58, 0xec,
-	0x22, 0x4c, 0x04, 0x84, 0xb0, 0x3a, 0xb7, 0x14, 0x44, 0xe6, 0x88, 0x52, 0x27, 0x33, 0x3b, 0x23,
-	0xe6, 0x88, 0x40, 0x68, 0xac, 0x91, 0x81, 0x3b, 0xae, 0xc3, 0xfa, 0x92, 0xe8, 0x61, 0x6f, 0x47,
-	0xac, 0x51, 0x6e, 0x47, 0x46, 0x8f, 0x35, 0xca, 0x27, 0x97, 0x8d, 0x35, 0xca, 0x7d, 0xee, 0xed,
-	0x8e, 0x35, 0xca, 0xed, 0x94, 0xb8, 0xa8, 0xbf, 0x55, 0xea, 0xd1, 0x6b, 0x1e, 0x6b, 0x34, 0x15,
-	0xb0, 0xc6, 0x50, 0xad, 0x0e, 0x2d, 0xa0, 0xc8, 0x94, 0x62, 0x7e, 0x58, 0x6f, 0xd6, 0x46, 0x5c,
-	0x99, 0x86, 0xaa, 0x00, 0xc6, 0x64, 0x15, 0xc1, 0xa9, 0x7c, 0x5f, 0x82, 0xd3, 0xe2, 0x35, 0x98,
-	0x1d, 0x8f, 0x4e, 0xf1, 0x23, 0x0d, 0xde, 0xd9, 0x67, 0x53, 0x14, 0x98, 0xb8, 0xa7, 0xe0, 0xc4,
-	0x6e, 0xd7, 0x75, 0x8f, 0xa8, 0x07, 0x02, 0xdb, 0x86, 0x78, 0x5a, 0xbe, 0x97, 0x72, 0x9f, 0x20,
-	0xca, 0xb0, 0xbf, 0x43, 0x33, 0xa3, 0xed, 0x6b, 0x49, 0xd8, 0x75, 0x59, 0xae, 0x3b, 0x9c, 0x6d,
-	0x67, 0x76, 0x07, 0xd3, 0x3e, 0x8a, 0x5f, 0xa4, 0x5c, 0x50, 0x4a, 0x13, 0xb9, 0x3c, 0x4e, 0xe6,
-	0x56, 0x78, 0x54, 0x8a, 0xc4, 0x67, 0x62, 0x87, 0xd4, 0x26, 0x36, 0x07, 0x61, 0xe2, 0xc0, 0x95,
-	0xae, 0x1a, 0x5e, 0x42, 0xf0, 0x2a, 0x54, 0x6d, 0xe7, 0xc0, 0x09, 0xfd, 0xa0, 0x40, 0xcd, 0xe9,
-	0xac, 0x8b, 0x52, 0x20, 0xeb, 0x3f, 0xd1, 0x60, 0x56, 0xf4, 0xf7, 0xa5, 0xae, 0x4f, 0x63, 0x86,
-	0xc6, 0xc1, 0x72, 0x56, 0x14, 0x96, 0x73, 0xa1, 0x58, 0x0c, 0x1d, 0xed, 0x80, 0xc4, 0x6a, 0xd6,
-	0x53, 0xac, 0xe6, 0xd2, 0x30, 0x64, 0x54, 0x16, 0xf3, 0xbb, 0x1a, 0x1c, 0x53, 0xda, 0xdf, 0xb6,
-	0x22, 0x0d, 0x79, 0x9d, 0x15, 0x2c, 0xe5, 0x9f, 0xd3, 0xbd, 0xa4, 0xac, 0xe4, 0x26, 0x54, 0xf6,
-	0xcc, 0xc0, 0xe6, 0xd6, 0xb7, 0xa7, 0x87, 0x9c, 0xcb, 0xc6, 0x75, 0x33, 0xb0, 0xf9, 0xe7, 0x75,
-	0x08, 0x19, 0x74, 0x0a, 0x26, 0x43, 0xcb, 0xef, 0xc4, 0x7e, 0x39, 0xfe, 0x6f, 0x71, 0x1f, 0x6a,
-	0xf1, 0xa3, 0x0f, 0xdc, 0x31, 0xfe, 0x85, 0x32, 0x1c, 0xcf, 0x59, 0x2f, 0x74, 0x4b, 0x19, 0xeb,
-	0x87, 0x87, 0x5e, 0xf0, 0xcc, 0x68, 0x6f, 0x51, 0xc9, 0xc4, 0xe6, 0x8b, 0x32, 0x02, 0xc1, 0xdb,
-	0x21, 0x16, 0x04, 0x09, 0xa1, 0xb7, 0x74, 0x9a, 0xc8, 0xcb, 0xe2, 0xf7, 0x3f, 0xf0, 0x35, 0xf9,
-	0xc3, 0x32, 0x9c, 0xc8, 0x0b, 0x67, 0x45, 0x77, 0x52, 0xa5, 0x51, 0x9e, 0x1b, 0x3e, 0x24, 0x96,
-	0xd5, 0x4b, 0x89, 0xb3, 0x31, 0xe8, 0x1f, 0xf4, 0x0a, 0x61, 0x73, 0xb4, 0x32, 0x8d, 0x38, 0x34,
-	0x2f, 0x8c, 0x40, 0x99, 0x17, 0xb7, 0xe1, 0xb4, 0x63, 0x8a, 0x8b, 0x6d, 0x98, 0x96, 0x5e, 0xfa,
-	0xc0, 0x97, 0xca, 0x27, 0x8c, 0x54, 0xea, 0xc9, 0x03, 0x5f, 0xae, 0xd7, 0x60, 0x4e, 0xf5, 0x63,
-	0xc4, 0x52, 0xb8, 0x96, 0x91, 0xc2, 0xeb, 0x50, 0x09, 0x7c, 0x57, 0xbd, 0x4c, 0x28, 0x24, 0xf6,
-	0xac, 0x96, 0x33, 0x9e, 0xd5, 0x45, 0x98, 0x70, 0xf1, 0x01, 0x56, 0xc5, 0x7d, 0x06, 0xd2, 0xbf,
-	0x58, 0x86, 0x49, 0x66, 0xb7, 0x1c, 0xd3, 0x7d, 0x71, 0x45, 0xf9, 0x74, 0x58, 0xa3, 0x48, 0x1d,
-	0xe2, 0xf4, 0x77, 0xc3, 0xfa, 0x0c, 0x65, 0x1b, 0x20, 0xa4, 0xd5, 0x10, 0x09, 0x0a, 0xcf, 0xa6,
-	0x7d, 0xa2, 0xd0, 0x3b, 0xb6, 0x62, 0x34, 0xf6, 0x26, 0x89, 0xce, 0x08, 0xdf, 0x29, 0x9b, 0xc9,
-	0x66, 0xd3, 0xac, 0xc3, 0x7c, 0xea, 0x1d, 0xa3, 0x5b, 0x6b, 0x35, 0x38, 0x96, 0x29, 0xd1, 0xfc,
-	0xb6, 0x7f, 0xef, 0xec, 0xcb, 0x1a, 0x00, 0xeb, 0xd5, 0xf8, 0xaf, 0xdc, 0x67, 0xd4, 0x2b, 0xf7,
-	0x4c, 0x91, 0x25, 0x15, 0x77, 0xed, 0xd7, 0x34, 0x40, 0x0c, 0x32, 0xc2, 0xc7, 0x3a, 0xdf, 0xa2,
-	0x8f, 0x94, 0xfd, 0x6b, 0x09, 0xe6, 0xd3, 0x2e, 0xcf, 0x4d, 0x98, 0xb1, 0xa4, 0x0f, 0x69, 0x16,
-	0x33, 0xa4, 0xc9, 0x9f, 0xde, 0x34, 0x14, 0x7c, 0x96, 0x97, 0xef, 0x1c, 0x38, 0x2e, 0x6e, 0xd1,
-	0x6b, 0x52, 0x72, 0xfb, 0x26, 0xf0, 0x1c, 0x47, 0x6b, 0x79, 0xdc, 0x8e, 0xd6, 0x4a, 0x31, 0x47,
-	0xeb, 0x44, 0x4f, 0x47, 0xeb, 0xb3, 0x70, 0x4a, 0xa8, 0xf8, 0xe4, 0xff, 0x55, 0xc7, 0xc5, 0x2c,
-	0x21, 0x58, 0x71, 0x66, 0xf7, 0x78, 0x46, 0xdf, 0x81, 0xe3, 0x5b, 0x38, 0x70, 0x68, 0x52, 0x9d,
-	0x9d, 0x6c, 0xeb, 0x0d, 0xa8, 0x05, 0xa9, 0x33, 0x33, 0xec, 0x27, 0x20, 0x12, 0xdb, 0xdc, 0x5f,
-	0x6b, 0x50, 0xdd, 0x62, 0xbe, 0xb3, 0x31, 0xf1, 0xcd, 0x8f, 0x28, 0x72, 0xf6, 0xfb, 0x07, 0x1d,
-	0x00, 0xfa, 0x6a, 0x49, 0xc2, 0x5e, 0x49, 0x49, 0xd8, 0x8f, 0x15, 0x23, 0xa0, 0xca, 0xd6, 0xff,
-	0xad, 0xc1, 0xdc, 0x96, 0xea, 0x11, 0x1c, 0xcf, 0xe0, 0xae, 0x41, 0x35, 0xe4, 0x8e, 0xb6, 0x42,
-	0x5f, 0x87, 0x48, 0xcf, 0xbc, 0xc0, 0xce, 0x75, 0xdd, 0x95, 0xc7, 0xe7, 0xba, 0xd3, 0x7f, 0x8f,
-	0xf2, 0x12, 0x79, 0x06, 0xc6, 0xcf, 0xeb, 0xae, 0xa8, 0x2c, 0xe7, 0x7c, 0xa1, 0x95, 0xe2, 0xbd,
-	0x11, 0x3c, 0xef, 0xd7, 0x34, 0x98, 0xe6, 0x2d, 0xe3, 0xef, 0xe0, 0x87, 0xd5, 0x0e, 0xbe, 0xb7,
-	0x50, 0x07, 0x45, 0xcf, 0xfe, 0x26, 0xe9, 0xd9, 0xe0, 0xcf, 0xb1, 0xc5, 0x9f, 0x2f, 0x29, 0xe5,
-	0x7e, 0x40, 0x4d, 0x7c, 0xfa, 0xa4, 0x9c, 0xf9, 0xf4, 0xc9, 0xa6, 0xa8, 0x98, 0x4e, 0xbf, 0x54,
-	0x54, 0x19, 0xa9, 0x9e, 0xb2, 0x44, 0x41, 0x38, 0xbe, 0x29, 0x35, 0xd9, 0x0c, 0x1d, 0x43, 0xf5,
-	0x0b, 0x94, 0xab, 0xd0, 0x61, 0x15, 0x0b, 0x74, 0xf9, 0x8b, 0x4a, 0x3c, 0x11, 0x5b, 0x2c, 0x88,
-	0x96, 0x7f, 0xce, 0x44, 0x2b, 0xe2, 0x4f, 0x92, 0xa6, 0x50, 0x7c, 0x0d, 0x72, 0x2b, 0x63, 0x66,
-	0x7a, 0xb2, 0x30, 0x97, 0xe8, 0x69, 0x58, 0xa2, 0x49, 0x50, 0x34, 0x05, 0x65, 0xbd, 0xa9, 0x66,
-	0xd1, 0xc7, 0xe0, 0x58, 0x1c, 0xab, 0x64, 0xc4, 0xb1, 0xd3, 0x30, 0x1d, 0x17, 0x86, 0x69, 0xb2,
-	0x8a, 0x24, 0x35, 0x43, 0x06, 0xa1, 0x8b, 0x70, 0xdc, 0xc6, 0x9d, 0x00, 0x5b, 0x66, 0x84, 0xed,
-	0x66, 0x77, 0xc7, 0x75, 0x2c, 0xf2, 0x24, 0x0b, 0x17, 0xcb, 0x6b, 0x42, 0x0d, 0x98, 0x0f, 0x59,
-	0xf5, 0x9a, 0xf8, 0xc3, 0xea, 0x72, 0xd6, 0x6d, 0xba, 0x11, 0x9d, 0x87, 0x39, 0x57, 0xae, 0xcd,
-	0xd7, 0x54, 0x62, 0x22, 0x52, 0x6d, 0xe8, 0x19, 0xa8, 0xcb, 0x10, 0x1e, 0x1f, 0x6f, 0x7a, 0x2d,
-	0x1c, 0xf2, 0xba, 0x20, 0x3d, 0xdb, 0xc9, 0x05, 0x26, 0x86, 0x96, 0x89, 0x90, 0x50, 0x5a, 0xc6,
-	0x67, 0x63, 0xc3, 0x84, 0x90, 0xc4, 0xaa, 0xd1, 0x36, 0xcc, 0xc8, 0xfd, 0xe3, 0x87, 0xfd, 0x62,
-	0xf1, 0xda, 0x85, 0x9c, 0xe5, 0x2b, 0x54, 0xf4, 0xdb, 0x30, 0x9f, 0x2a, 0x66, 0x1d, 0xd7, 0x2a,
-	0xd7, 0x46, 0xaf, 0x55, 0xae, 0x7f, 0x14, 0x26, 0xb6, 0x4d, 0xa7, 0x4f, 0x39, 0xa5, 0x7e, 0x5f,
-	0x90, 0x79, 0x04, 0x26, 0xf1, 0xee, 0x2e, 0xb6, 0xd4, 0x52, 0xe7, 0x1c, 0xa6, 0x7f, 0x52, 0x03,
-	0xd8, 0xf6, 0x5d, 0x61, 0xd9, 0x1b, 0xbd, 0x5e, 0x53, 0xdc, 0x85, 0x72, 0xbf, 0x2e, 0x54, 0x72,
-	0xba, 0x10, 0xc0, 0xe4, 0xc0, 0x0f, 0xf4, 0x6f, 0x8a, 0xd2, 0x33, 0x4a, 0x12, 0xc7, 0xb9, 0x22,
-	0x71, 0x57, 0x7c, 0xeb, 0x29, 0xf8, 0xfa, 0xe7, 0x34, 0x98, 0x96, 0x3e, 0xab, 0xda, 0x9f, 0xbb,
-	0xf6, 0xcf, 0x5c, 0xa4, 0x25, 0x5a, 0x08, 0x91, 0x38, 0x29, 0x2e, 0x29, 0xd1, 0x22, 0xc0, 0x68,
-	0x89, 0x7e, 0xed, 0x88, 0x3e, 0xa1, 0x78, 0x4b, 0x39, 0x50, 0x7f, 0x7d, 0x0e, 0x66, 0x14, 0xa9,
-	0x5b, 0x4e, 0xb4, 0xd3, 0xc6, 0x90, 0x68, 0xb7, 0x09, 0x53, 0x98, 0x7f, 0x18, 0xac, 0x58, 0x1a,
-	0x6f, 0xde, 0x67, 0xc4, 0x8c, 0x98, 0x46, 0x7e, 0x9e, 0x63, 0xf9, 0x2d, 0xcd, 0x73, 0xac, 0x3c,
-	0xc0, 0x3c, 0xc7, 0x0d, 0xa8, 0xb6, 0xd8, 0x97, 0x18, 0x78, 0x0c, 0xe9, 0x00, 0x4b, 0x6b, 0xce,
-	0x67, 0x1b, 0x0c, 0x41, 0x01, 0x5d, 0x87, 0x49, 0x26, 0x77, 0xf1, 0x9c, 0xc2, 0x8b, 0x45, 0xb4,
-	0x32, 0x35, 0xfd, 0x8e, 0xe1, 0x8b, 0xdc, 0xc6, 0xea, 0xc8, 0xb9, 0x8d, 0x71, 0x6a, 0xe2, 0xd4,
-	0x7d, 0xa5, 0x26, 0x2a, 0x69, 0x9b, 0xb5, 0xb1, 0xa4, 0x6d, 0x76, 0xe1, 0x64, 0x27, 0x2f, 0xd5,
-	0x98, 0x27, 0x1b, 0x3e, 0x3f, 0x42, 0x36, 0xb5, 0xf2, 0xaa, 0x7c, 0xea, 0x22, 0xd9, 0x73, 0x7a,
-	0xe4, 0x64, 0xcf, 0x71, 0xa7, 0x21, 0x26, 0x59, 0x9f, 0xb3, 0x63, 0xcb, 0xfa, 0x9c, 0xbb, 0xcf,
-	0xac, 0x4f, 0x29, 0x6f, 0x73, 0xfe, 0xbe, 0xf3, 0x36, 0xef, 0xc2, 0xb4, 0x9d, 0x7c, 0xea, 0x90,
-	0x67, 0x19, 0x7e, 0x70, 0xc8, 0x6f, 0x23, 0x72, 0xa2, 0x32, 0x25, 0x9e, 0x9b, 0x7a, 0x6c, 0xc4,
-	0xdc, 0x54, 0x25, 0xfd, 0x13, 0x8d, 0x25, 0xfd, 0xf3, 0x25, 0x1a, 0x18, 0xcf, 0xbe, 0x32, 0x56,
-	0x3f, 0x5e, 0xf0, 0xcb, 0xc1, 0xd9, 0x0f, 0xcd, 0x1b, 0x09, 0x95, 0x6c, 0x46, 0xe9, 0x89, 0x07,
-	0x9a, 0x51, 0x7a, 0x72, 0xbc, 0x19, 0xa5, 0xa7, 0xc6, 0x92, 0x51, 0x6a, 0xc3, 0x52, 0xff, 0x01,
-	0x25, 0x25, 0x26, 0x9a, 0x69, 0x95, 0x42, 0x82, 0xf7, 0xff, 0xa4, 0x8f, 0xfe, 0x79, 0x0d, 0x1e,
-	0xee, 0x91, 0x67, 0x34, 0x20, 0x7e, 0xe9, 0x2e, 0xcc, 0x77, 0x54, 0x84, 0xc2, 0x31, 0x7a, 0x4a,
-	0x36, 0x53, 0x9a, 0xca, 0x95, 0x8b, 0x3f, 0x78, 0x63, 0xe9, 0xa1, 0x1f, 0xbe, 0xb1, 0xf4, 0xd0,
-	0x4f, 0xdf, 0x58, 0xd2, 0x3e, 0xf9, 0xe6, 0x92, 0xf6, 0xf5, 0x37, 0x97, 0xb4, 0xef, 0xbd, 0xb9,
-	0xa4, 0xfd, 0xe0, 0xcd, 0x25, 0xed, 0x1f, 0xde, 0x5c, 0xd2, 0xfe, 0xe5, 0xcd, 0xa5, 0x87, 0x7e,
-	0xfa, 0xe6, 0x92, 0xf6, 0xf9, 0x7f, 0x5c, 0x7a, 0xe8, 0x63, 0xa5, 0x83, 0x4b, 0xff, 0x13, 0x00,
-	0x00, 0xff, 0xff, 0x2e, 0x6c, 0xff, 0x5d, 0xcb, 0x8b, 0x00, 0x00,
+	0xfa, 0xf7, 0x34, 0x98, 0x5d, 0xc5, 0x2e, 0x8e, 0xf0, 0xcd, 0x0e, 0x55, 0x93, 0xd0, 0x25, 0x40,
+	0xad, 0xc0, 0xb4, 0x70, 0x13, 0x07, 0x8e, 0x6f, 0x6f, 0x61, 0xa2, 0x41, 0x85, 0x14, 0x53, 0xf0,
+	0xea, 0x9c, 0x76, 0xf4, 0x22, 0xcc, 0x76, 0x02, 0xac, 0x68, 0x6c, 0xda, 0x60, 0x11, 0xa9, 0x29,
+	0xa3, 0x18, 0x2a, 0x05, 0x74, 0x1e, 0x16, 0xfc, 0xa0, 0xb3, 0x6b, 0x7a, 0xab, 0xb8, 0x83, 0x3d,
+	0x9b, 0xc8, 0x2f, 0x8a, 0x42, 0x9c, 0x69, 0xd5, 0x7f, 0xaa, 0xc1, 0xf1, 0x55, 0xff, 0x9e, 0x77,
+	0xcf, 0x0c, 0xec, 0xe5, 0xe6, 0x3a, 0x13, 0x56, 0xa8, 0x79, 0x40, 0x18, 0x1e, 0xb4, 0x8c, 0xe1,
+	0xe1, 0x06, 0x4c, 0xed, 0x38, 0xd8, 0xb5, 0x0d, 0xbc, 0xc3, 0xfb, 0x7c, 0xa1, 0x88, 0x76, 0x75,
+	0x85, 0xe0, 0x08, 0xbd, 0xc5, 0x88, 0x49, 0xa0, 0x8f, 0xc0, 0x82, 0x10, 0xb1, 0xae, 0x08, 0xb2,
+	0xe5, 0x22, 0x9c, 0xda, 0x90, 0xb1, 0x62, 0xc2, 0x19, 0x62, 0x64, 0x24, 0x6d, 0xc2, 0xd5, 0x2a,
+	0xf2, 0x52, 0x12, 0x88, 0xfe, 0x29, 0x0d, 0x1e, 0xce, 0x8c, 0x9e, 0x2b, 0x08, 0xeb, 0x42, 0x70,
+	0x67, 0x86, 0xc1, 0x01, 0x7d, 0xc9, 0x9d, 0xc3, 0x1e, 0x42, 0x7c, 0xa9, 0x97, 0x10, 0x7f, 0x09,
+	0x8e, 0xad, 0xb5, 0x3b, 0xd1, 0xc1, 0xaa, 0xa3, 0xda, 0x47, 0x1e, 0x81, 0xc9, 0x36, 0xb6, 0x9d,
+	0x6e, 0x5b, 0xe5, 0x21, 0x0c, 0xa6, 0xff, 0xb1, 0x06, 0xf3, 0x62, 0xdb, 0x2e, 0xdb, 0x76, 0x80,
+	0xc3, 0x10, 0x1d, 0x83, 0x92, 0xd3, 0x51, 0x9e, 0x2e, 0x39, 0x1d, 0xb4, 0x01, 0x35, 0x66, 0xbe,
+	0x4a, 0x56, 0x6e, 0x48, 0xf3, 0x57, 0x82, 0x2f, 0xe4, 0x08, 0xca, 0x8a, 0x64, 0x8e, 0x1f, 0x43,
+	0xc9, 0x13, 0x9e, 0x6f, 0x33, 0x0b, 0xa0, 0x22, 0x1b, 0x08, 0xa8, 0x6e, 0xc3, 0x8c, 0xe8, 0xf9,
+	0x00, 0xa9, 0x85, 0xec, 0xc6, 0xb4, 0xc4, 0x42, 0x21, 0x8a, 0x04, 0x52, 0xce, 0x93, 0x40, 0xf4,
+	0xff, 0xd4, 0x60, 0x4e, 0xbc, 0x66, 0xab, 0xbb, 0x1d, 0x62, 0x72, 0x47, 0xd4, 0x4c, 0x36, 0x55,
+	0x58, 0x2c, 0xf0, 0xe3, 0x83, 0x34, 0x0b, 0x65, 0x86, 0x8d, 0x04, 0x1f, 0xbd, 0x0c, 0x47, 0x3c,
+	0x3f, 0x32, 0x08, 0x5b, 0x5b, 0x8e, 0x89, 0x96, 0x46, 0x21, 0x9a, 0xa5, 0x83, 0x9e, 0x17, 0x0a,
+	0x54, 0x99, 0x12, 0x3c, 0x53, 0x8c, 0xa0, 0xa4, 0x3f, 0xe9, 0xbf, 0xa6, 0x41, 0x4d, 0xc0, 0xc7,
+	0x65, 0x6a, 0xba, 0x02, 0xd5, 0x90, 0xce, 0xa4, 0x18, 0xe8, 0xd9, 0x62, 0xfd, 0x62, 0xd3, 0x6f,
+	0x08, 0x64, 0x6a, 0x3d, 0x88, 0xfb, 0xf6, 0x56, 0x5b, 0x0f, 0xe2, 0x8e, 0x08, 0xeb, 0xc1, 0x27,
+	0x35, 0x98, 0x64, 0x1a, 0x65, 0x7f, 0x8d, 0xba, 0x97, 0xe5, 0x06, 0x5d, 0x83, 0x1a, 0xfd, 0x71,
+	0x25, 0xf0, 0xdb, 0x9c, 0xa7, 0x9d, 0x29, 0xa2, 0xc0, 0xb2, 0x73, 0x6f, 0x24, 0xc8, 0xfa, 0x4f,
+	0x4a, 0xe4, 0xa8, 0x24, 0x6d, 0x0a, 0x13, 0xd6, 0x0e, 0x87, 0x09, 0x97, 0xc6, 0xc9, 0x84, 0x5f,
+	0x81, 0x79, 0x4b, 0xb2, 0x5f, 0x25, 0x4c, 0xfe, 0x62, 0x41, 0x93, 0x8e, 0x64, 0xf4, 0x32, 0xd2,
+	0xa4, 0xd0, 0x16, 0xcc, 0x30, 0x33, 0x34, 0x27, 0x5d, 0x19, 0xb8, 0x73, 0x98, 0xea, 0xc7, 0x30,
+	0x62, 0xba, 0x0a, 0x11, 0xfd, 0xe3, 0x15, 0x98, 0x58, 0xdb, 0xc7, 0x5e, 0x34, 0xa6, 0x43, 0x73,
+	0x1b, 0xe6, 0x1c, 0x6f, 0xdf, 0x77, 0xf7, 0xb1, 0xcd, 0xda, 0x47, 0xe3, 0xc1, 0x29, 0x22, 0x0f,
+	0x28, 0x78, 0x2f, 0xc3, 0x24, 0x5b, 0x29, 0x2e, 0x75, 0x0f, 0xb0, 0x66, 0xd0, 0xf9, 0xe0, 0xdb,
+	0x93, 0x23, 0xa2, 0x2d, 0x98, 0xdb, 0x71, 0x82, 0x30, 0x22, 0xc2, 0x73, 0x18, 0x99, 0xed, 0xce,
+	0x28, 0x42, 0x77, 0x8a, 0x04, 0x91, 0x8e, 0x88, 0x20, 0x99, 0xd0, 0xac, 0x0e, 0x4f, 0x53, 0xa5,
+	0x40, 0x4e, 0xaa, 0x45, 0x65, 0xcd, 0x29, 0xe9, 0x12, 0x61, 0xa0, 0xd8, 0x13, 0x50, 0x4b, 0x7b,
+	0x02, 0xf4, 0xcf, 0x13, 0xf6, 0x49, 0x46, 0x3d, 0x7e, 0xf6, 0xf4, 0x94, 0xca, 0x9e, 0xde, 0x55,
+	0x60, 0xea, 0x05, 0x6b, 0xda, 0x80, 0x69, 0x69, 0x29, 0x90, 0x0e, 0x35, 0x4b, 0x18, 0xc6, 0x15,
+	0x1e, 0x95, 0x80, 0xc9, 0x10, 0xc9, 0xd5, 0xac, 0x7a, 0x92, 0x08, 0x44, 0x7f, 0x14, 0x60, 0xed,
+	0x3e, 0xb6, 0x96, 0x2d, 0xee, 0x14, 0x89, 0xcd, 0x80, 0x9a, 0x62, 0x06, 0xd4, 0xd7, 0x61, 0x76,
+	0xed, 0x3e, 0xb9, 0x54, 0x84, 0xe0, 0xfb, 0x08, 0x4c, 0x62, 0x0a, 0xa0, 0xef, 0x14, 0x52, 0x26,
+	0x87, 0x51, 0x2f, 0xc8, 0x7d, 0x93, 0x6f, 0xf3, 0x58, 0xfc, 0xa7, 0x20, 0xc2, 0x5a, 0xe7, 0xae,
+	0xac, 0x28, 0x52, 0xce, 0x12, 0x00, 0x93, 0x2e, 0xee, 0xde, 0xdd, 0x14, 0x36, 0x10, 0x09, 0x82,
+	0x4e, 0x40, 0xd9, 0xed, 0x7a, 0x8a, 0x04, 0x40, 0x00, 0x92, 0x6f, 0xa8, 0x3c, 0xc0, 0x37, 0x94,
+	0xef, 0x6d, 0x7f, 0xbd, 0x04, 0x0b, 0x57, 0x5c, 0x7c, 0x3f, 0x2d, 0x72, 0xd9, 0x81, 0xb3, 0x8f,
+	0x03, 0x55, 0xe4, 0x62, 0xb0, 0x01, 0xee, 0x28, 0xc5, 0xb1, 0x56, 0x1e, 0xb7, 0x63, 0x2d, 0x77,
+	0x10, 0xe8, 0x36, 0x54, 0x7d, 0xb6, 0x28, 0xf5, 0x09, 0xba, 0x99, 0x3e, 0xd8, 0xff, 0x8d, 0xe9,
+	0x01, 0x37, 0xf8, 0x92, 0x32, 0xc7, 0x85, 0xa0, 0xb5, 0x78, 0x05, 0x66, 0xe4, 0x86, 0x91, 0xdd,
+	0x17, 0x18, 0x8e, 0x5e, 0x71, 0x7d, 0x6b, 0x2f, 0xe5, 0xf8, 0x23, 0x82, 0xb1, 0x19, 0x99, 0x61,
+	0x8e, 0x2f, 0x59, 0x6e, 0x90, 0x9e, 0xbb, 0x7d, 0x7b, 0x7d, 0x55, 0x79, 0x89, 0xdc, 0xa0, 0x7f,
+	0x45, 0x83, 0x77, 0x5c, 0x5d, 0x59, 0x6b, 0x92, 0x43, 0x17, 0x46, 0xd8, 0x8b, 0x32, 0x0e, 0xf8,
+	0x47, 0x60, 0xb2, 0x63, 0x67, 0x5e, 0xc6, 0x61, 0x6f, 0x4a, 0x70, 0xc7, 0xcf, 0x6b, 0x70, 0xf4,
+	0xaa, 0x13, 0x19, 0xb8, 0xe3, 0xa7, 0xdd, 0xea, 0x01, 0xee, 0xf8, 0xa1, 0x13, 0xf9, 0x81, 0x3a,
+	0xc3, 0x12, 0x9c, 0xd1, 0xdf, 0x77, 0x08, 0x4f, 0x51, 0xfa, 0x18, 0x43, 0x49, 0x2f, 0x6d, 0x27,
+	0xa0, 0xf7, 0xd9, 0x81, 0x72, 0x22, 0x12, 0xb0, 0x7e, 0x0f, 0x8e, 0x5f, 0x75, 0xbb, 0x61, 0x84,
+	0x83, 0x9d, 0x50, 0xe9, 0x84, 0x0e, 0x35, 0x2c, 0xa4, 0x20, 0x95, 0x8f, 0xc4, 0xe0, 0x3e, 0x1e,
+	0xe9, 0xc1, 0x7e, 0xd8, 0x9f, 0x68, 0x30, 0x7b, 0xed, 0xd6, 0xad, 0xe6, 0x55, 0x1c, 0xc5, 0xdc,
+	0xa6, 0x97, 0x9a, 0x79, 0x59, 0x12, 0xf9, 0xa7, 0x2f, 0x36, 0x7a, 0xec, 0xe7, 0x6e, 0xe4, 0xb8,
+	0x0d, 0x16, 0xf2, 0xd3, 0x58, 0xf7, 0xa2, 0x9b, 0xc1, 0x56, 0x14, 0x38, 0x5e, 0x8b, 0x2b, 0x07,
+	0x82, 0xe7, 0x95, 0xd3, 0x3c, 0x8f, 0x1a, 0xb3, 0xac, 0x5d, 0x9c, 0x52, 0x4d, 0x38, 0x0c, 0xbd,
+	0x00, 0xd3, 0xbb, 0x51, 0xd4, 0xb9, 0x86, 0x4d, 0x1b, 0x07, 0xe2, 0x48, 0x0d, 0xb8, 0xf3, 0xc9,
+	0xb8, 0x18, 0x82, 0x21, 0x23, 0xeb, 0x97, 0x01, 0x92, 0xa6, 0xd1, 0x04, 0x49, 0xfd, 0xaf, 0x35,
+	0xa8, 0x5e, 0x33, 0x3d, 0xdb, 0xc5, 0x01, 0x7a, 0x06, 0x2a, 0xf8, 0x3e, 0xb6, 0x8a, 0x09, 0x22,
+	0x09, 0x5f, 0x37, 0x28, 0x16, 0x5a, 0x83, 0x2a, 0xe9, 0xdc, 0xd5, 0x38, 0x00, 0xe2, 0xb1, 0xc1,
+	0xa3, 0x8a, 0x57, 0xcb, 0x10, 0xb8, 0x54, 0x95, 0xb4, 0x3a, 0x5b, 0xe4, 0x48, 0x47, 0xc5, 0x42,
+	0x7e, 0x6e, 0xad, 0x34, 0xd9, 0xe3, 0x9c, 0x54, 0x82, 0xaf, 0x9f, 0x87, 0x63, 0xd7, 0xfc, 0x30,
+	0x6a, 0x9a, 0xd1, 0xae, 0xb2, 0x1b, 0x7b, 0xee, 0x0d, 0x32, 0x1f, 0x47, 0xd6, 0xb7, 0x56, 0xb6,
+	0x54, 0x95, 0xfd, 0x34, 0xcc, 0xb0, 0xfb, 0x82, 0xa8, 0x3f, 0xa6, 0xab, 0xe0, 0x29, 0x2d, 0x84,
+	0x8f, 0x39, 0xaf, 0xaa, 0x27, 0x88, 0x00, 0xc4, 0x1d, 0x53, 0x4e, 0xdf, 0x31, 0x67, 0x61, 0xce,
+	0x09, 0xad, 0xd0, 0x59, 0xf7, 0xc8, 0x99, 0x31, 0x2d, 0x75, 0xd7, 0xa4, 0xda, 0x24, 0x36, 0x32,
+	0x31, 0xe0, 0x46, 0xca, 0x8f, 0x92, 0xb8, 0x0b, 0xb5, 0xd8, 0x11, 0xd8, 0x93, 0xe5, 0xf6, 0x0d,
+	0x0c, 0x69, 0xa7, 0x9d, 0x85, 0xcc, 0xde, 0xf1, 0x59, 0x0d, 0x6a, 0xb1, 0xaf, 0x06, 0xad, 0x40,
+	0xad, 0xe3, 0x53, 0x5b, 0x5d, 0x20, 0x2c, 0xcb, 0xef, 0x1e, 0xb0, 0x19, 0xd8, 0x16, 0x34, 0x12,
+	0x3c, 0xf4, 0x1c, 0x54, 0x3b, 0x01, 0xde, 0x8a, 0x68, 0xa4, 0xcb, 0x10, 0x24, 0x04, 0x96, 0xfe,
+	0xcb, 0x1a, 0xc0, 0x75, 0xa7, 0xed, 0x44, 0x86, 0xe9, 0xb5, 0xf0, 0x98, 0x44, 0xed, 0xe7, 0xa1,
+	0x12, 0x76, 0xb0, 0x55, 0xcc, 0x10, 0x9a, 0xbc, 0x7d, 0xab, 0x83, 0x2d, 0x83, 0x62, 0xea, 0xdf,
+	0x9c, 0x82, 0xb9, 0xa4, 0x61, 0x3d, 0xc2, 0xed, 0x3e, 0xd1, 0x22, 0x57, 0xa1, 0xdc, 0x36, 0xef,
+	0x73, 0x31, 0xee, 0xfd, 0x45, 0xdf, 0x46, 0x88, 0x36, 0x6e, 0x98, 0xf7, 0xd9, 0x9d, 0x4b, 0x28,
+	0x50, 0x42, 0x8e, 0xc7, 0x75, 0xfd, 0x21, 0x09, 0x39, 0x9e, 0x20, 0xe4, 0x78, 0x68, 0x0b, 0xaa,
+	0xdc, 0xb2, 0x44, 0x9d, 0xb6, 0xd3, 0x17, 0x9f, 0x1a, 0x8a, 0xd8, 0x2a, 0xc3, 0xe5, 0xd2, 0x00,
+	0xa7, 0x84, 0x76, 0x61, 0x8e, 0xff, 0x34, 0xf0, 0xab, 0x5d, 0x1c, 0x46, 0x9c, 0x31, 0x3e, 0x3f,
+	0x0a, 0x6d, 0x4e, 0x82, 0xbd, 0x22, 0x45, 0x17, 0xbd, 0x06, 0xc7, 0xda, 0xe6, 0x7d, 0x86, 0xc8,
+	0x40, 0x86, 0x19, 0x39, 0x3e, 0xf7, 0x22, 0x5f, 0x19, 0x76, 0x86, 0x33, 0x84, 0xd8, 0x5b, 0x73,
+	0xdf, 0xb1, 0xf8, 0x51, 0x98, 0x12, 0x8b, 0xd2, 0xf3, 0xf0, 0x5d, 0x96, 0x79, 0x75, 0xff, 0x0d,
+	0x26, 0x34, 0xe1, 0xc6, 0x8b, 0x5d, 0xd3, 0x8b, 0x9c, 0xe8, 0x40, 0x92, 0x8b, 0xe8, 0xbb, 0xf8,
+	0xba, 0x1d, 0xfa, 0xbb, 0x3c, 0x98, 0x91, 0x97, 0xf5, 0xd0, 0xdf, 0xd7, 0x85, 0xa3, 0x39, 0x4b,
+	0x7d, 0xe8, 0xaf, 0xfd, 0x39, 0x78, 0x5b, 0xcf, 0x15, 0x3f, 0xec, 0x97, 0xeb, 0x5f, 0xd2, 0x64,
+	0xae, 0x31, 0x7e, 0x8d, 0xf1, 0x59, 0x55, 0x63, 0x3c, 0x5d, 0xf4, 0x20, 0x08, 0xb5, 0xf1, 0x8e,
+	0xdc, 0x3d, 0xc2, 0xed, 0xd0, 0x2a, 0x4c, 0xba, 0x04, 0x22, 0xcc, 0xa0, 0x67, 0x87, 0x39, 0x5b,
+	0x06, 0xc7, 0xd5, 0xbf, 0xa8, 0x41, 0x65, 0xfc, 0xa3, 0x5d, 0x56, 0x47, 0xdb, 0x4b, 0x52, 0xe1,
+	0x41, 0xe2, 0x0d, 0xc3, 0xbc, 0xb7, 0x76, 0x3f, 0xc2, 0x1e, 0x21, 0x28, 0x06, 0xfc, 0xb7, 0x1a,
+	0x4c, 0x13, 0xca, 0x42, 0x63, 0x3d, 0x03, 0xb3, 0xae, 0xb9, 0x8d, 0x5d, 0x61, 0xf2, 0x51, 0xb6,
+	0x82, 0xda, 0x44, 0x9e, 0xdd, 0x91, 0xad, 0x5a, 0xca, 0x55, 0xab, 0x36, 0x11, 0xe1, 0xed, 0x9e,
+	0x19, 0x59, 0xbb, 0x8a, 0xdc, 0xcb, 0x40, 0xa8, 0x01, 0xf3, 0x62, 0xd3, 0xdc, 0x61, 0xc3, 0x55,
+	0xa4, 0x87, 0x74, 0x23, 0x11, 0x36, 0xc8, 0x78, 0xfc, 0x6e, 0x24, 0x5c, 0x49, 0x13, 0x92, 0x2b,
+	0x29, 0xd5, 0xa6, 0xdf, 0x80, 0xa3, 0xd7, 0x7d, 0xd3, 0xbe, 0x6c, 0xba, 0xa6, 0x67, 0xe1, 0x60,
+	0xdd, 0x6b, 0xf5, 0xf1, 0x00, 0xc8, 0x46, 0xfb, 0x52, 0x9e, 0xd1, 0x5e, 0x37, 0x01, 0xc9, 0xe4,
+	0xb8, 0xcf, 0x71, 0x03, 0xaa, 0x0e, 0x23, 0xcc, 0xb7, 0xc9, 0x85, 0x41, 0x0a, 0x6d, 0xa6, 0x47,
+	0x86, 0xa0, 0x40, 0xc4, 0xbd, 0x3c, 0x85, 0xb7, 0xb7, 0x68, 0xac, 0xef, 0xc1, 0xfc, 0x66, 0x2a,
+	0x66, 0x96, 0xc8, 0xef, 0x38, 0xc8, 0x28, 0xe8, 0x0c, 0xf6, 0x40, 0x3a, 0xca, 0x5f, 0x69, 0x50,
+	0x23, 0xda, 0x60, 0xd8, 0x21, 0xb2, 0xdc, 0x78, 0xe4, 0x91, 0xe7, 0x14, 0x79, 0x64, 0x80, 0xc8,
+	0x1d, 0xbf, 0x3c, 0x11, 0x47, 0xd0, 0x5a, 0x1c, 0x8f, 0x5a, 0x48, 0xd8, 0x4e, 0x48, 0xb0, 0x28,
+	0x49, 0x8e, 0x4c, 0xed, 0xed, 0x71, 0xdb, 0x5b, 0x6d, 0x6f, 0x8f, 0x3b, 0x22, 0x0e, 0xeb, 0x39,
+	0xa9, 0x73, 0x94, 0x39, 0x2d, 0x51, 0x57, 0xbe, 0xe9, 0x3a, 0xaf, 0xe1, 0x38, 0x34, 0x5a, 0x82,
+	0xe8, 0x8f, 0xc3, 0x7c, 0x6a, 0xa4, 0xe4, 0x20, 0x76, 0x76, 0xcd, 0x50, 0xdd, 0x45, 0x0c, 0xa4,
+	0x7f, 0x4f, 0x83, 0xca, 0xa6, 0x6f, 0x8f, 0x6b, 0x51, 0x9f, 0x56, 0x16, 0xf5, 0xd1, 0xc1, 0x19,
+	0x19, 0xd2, 0x7a, 0x3e, 0x9f, 0x5a, 0xcf, 0xd3, 0x05, 0xb0, 0xd5, 0xa5, 0xbc, 0x0a, 0xd3, 0x34,
+	0xcb, 0x83, 0x7b, 0xfc, 0x7a, 0x0b, 0xa7, 0x4b, 0x50, 0xe5, 0xbe, 0x2a, 0x35, 0xc6, 0x80, 0x03,
+	0xf5, 0x3f, 0x2b, 0xc1, 0x8c, 0x9c, 0x2f, 0x82, 0x3e, 0xa7, 0x41, 0x23, 0x60, 0x21, 0x70, 0xf6,
+	0x6a, 0x97, 0x68, 0xd3, 0x5b, 0xd6, 0x2e, 0xb6, 0xbb, 0xae, 0xe3, 0xb5, 0xd6, 0x5b, 0x9e, 0x1f,
+	0x83, 0x89, 0x72, 0xd9, 0xa5, 0xd6, 0x90, 0xc2, 0x49, 0x29, 0xb1, 0xa9, 0x7d, 0xc8, 0x37, 0xa0,
+	0x2f, 0x6b, 0x70, 0x8e, 0xe5, 0x59, 0x14, 0xef, 0x55, 0x21, 0x79, 0xbc, 0x29, 0x88, 0x26, 0xe4,
+	0x6e, 0xe1, 0xa0, 0x6d, 0x0c, 0xfb, 0x36, 0xfd, 0x5b, 0x25, 0x98, 0x25, 0x43, 0x7c, 0xf0, 0xf0,
+	0xf2, 0x0f, 0xc3, 0x11, 0xd7, 0x0c, 0xa3, 0x6b, 0xd8, 0x0c, 0xa2, 0x6d, 0x6c, 0x52, 0x13, 0x36,
+	0xdf, 0x27, 0x43, 0xd9, 0xbf, 0xb3, 0x54, 0xd0, 0xcb, 0x80, 0xa8, 0x51, 0x3c, 0x30, 0xbd, 0x90,
+	0x76, 0x92, 0xd2, 0xae, 0x0c, 0x4f, 0x3b, 0x87, 0x8c, 0xe4, 0x89, 0x98, 0xe8, 0xef, 0x89, 0x98,
+	0xcc, 0x8b, 0x75, 0x69, 0xc3, 0x51, 0x32, 0x7d, 0x6a, 0x1c, 0x46, 0x88, 0xee, 0xc0, 0x3c, 0xe9,
+	0x8f, 0x8b, 0x23, 0x01, 0xe3, 0xbb, 0x6d, 0x80, 0xa4, 0xa2, 0xd2, 0x31, 0xd2, 0x44, 0x88, 0x2e,
+	0x3c, 0x45, 0xde, 0x37, 0x7e, 0x2e, 0xf8, 0xa4, 0xca, 0x05, 0xf5, 0xc1, 0xa7, 0x42, 0x30, 0xc0,
+	0xb3, 0xb0, 0x40, 0xfe, 0x36, 0x03, 0xff, 0xfe, 0x81, 0x90, 0x58, 0x7a, 0x1b, 0x41, 0x5c, 0x76,
+	0x6e, 0x63, 0x19, 0xe4, 0x15, 0x38, 0xe2, 0x49, 0xff, 0xc9, 0x2e, 0x16, 0xd7, 0x75, 0xa3, 0xf8,
+	0xc9, 0xa4, 0x9b, 0x3f, 0x4b, 0x48, 0xdf, 0x83, 0x87, 0x95, 0x03, 0x9c, 0xc4, 0xc8, 0xf6, 0x94,
+	0xaa, 0x4f, 0xc2, 0x94, 0xdf, 0xc1, 0x81, 0x99, 0x96, 0x9d, 0x62, 0x28, 0x3a, 0x01, 0x93, 0x54,
+	0x78, 0x0e, 0x79, 0xc4, 0x31, 0xff, 0xa7, 0x77, 0xd9, 0x44, 0xc8, 0x3d, 0x40, 0x26, 0x2c, 0xb4,
+	0x89, 0x3c, 0xb5, 0x76, 0xbf, 0x43, 0xf8, 0x16, 0xb5, 0x75, 0x6b, 0x45, 0x4e, 0x78, 0x8f, 0x6e,
+	0x1b, 0x19, 0x72, 0xfa, 0x6f, 0xf2, 0x3d, 0xc1, 0x2f, 0x9f, 0x6a, 0xc7, 0xb7, 0x57, 0xd6, 0x57,
+	0x0d, 0x65, 0x64, 0x02, 0x88, 0x4e, 0x01, 0xe0, 0xfb, 0x11, 0x0e, 0x3c, 0xd3, 0x4d, 0xd9, 0xa4,
+	0x25, 0x38, 0x79, 0xaa, 0x13, 0xf8, 0xfb, 0x8e, 0x4d, 0x03, 0x90, 0x64, 0x3b, 0xa4, 0x04, 0x27,
+	0xa2, 0x66, 0xd7, 0x0b, 0x19, 0x87, 0x31, 0xb7, 0x79, 0xd2, 0x8e, 0x10, 0x4d, 0xd4, 0x26, 0xfd,
+	0x5b, 0x55, 0x80, 0xe4, 0x3e, 0x40, 0x06, 0x4c, 0x59, 0x66, 0xc7, 0xb4, 0x58, 0x6e, 0x60, 0x79,
+	0x70, 0x38, 0x62, 0x82, 0xdb, 0x58, 0xe1, 0x88, 0x4c, 0x1d, 0x8e, 0xe9, 0xa0, 0x97, 0x61, 0xda,
+	0x74, 0x5d, 0xdf, 0x32, 0x23, 0xda, 0x99, 0x52, 0x11, 0x0b, 0x82, 0x44, 0x76, 0x39, 0xc1, 0x65,
+	0x94, 0x65, 0x6a, 0xc9, 0x0d, 0x5d, 0xce, 0xdc, 0xd0, 0x68, 0x43, 0x49, 0x61, 0xa9, 0x14, 0x89,
+	0x19, 0x57, 0x58, 0xae, 0x9c, 0xbd, 0x82, 0xae, 0xca, 0x41, 0x1e, 0x13, 0x45, 0x62, 0xb5, 0xa5,
+	0x0b, 0x55, 0x0d, 0xf0, 0x98, 0xb7, 0x55, 0xae, 0xc4, 0x3d, 0x9c, 0x17, 0x06, 0x93, 0x4b, 0xb1,
+	0x33, 0x23, 0x4d, 0x09, 0x5d, 0x63, 0x51, 0x32, 0xeb, 0xde, 0x8e, 0xcf, 0x7d, 0x9c, 0x67, 0x0b,
+	0x4c, 0xf4, 0x41, 0x18, 0xe1, 0x36, 0xc1, 0x31, 0x62, 0x6c, 0xa2, 0xca, 0xd1, 0xb8, 0xb7, 0xb0,
+	0x3e, 0x55, 0x44, 0x95, 0x53, 0xa3, 0x8f, 0x0d, 0x8e, 0x8b, 0x74, 0x11, 0xe4, 0x1e, 0xae, 0x7b,
+	0xb7, 0x43, 0x4c, 0x83, 0xdc, 0x6b, 0x86, 0x02, 0x23, 0x3c, 0x99, 0xff, 0x17, 0x49, 0x9a, 0x75,
+	0x28, 0xf2, 0x4a, 0x35, 0xa5, 0xd3, 0x48, 0x13, 0x59, 0xf4, 0x61, 0x56, 0xd9, 0x92, 0x87, 0x6e,
+	0x2c, 0x08, 0x60, 0x21, 0xbd, 0x59, 0x0f, 0xdd, 0x46, 0xf0, 0xed, 0x32, 0xcc, 0xa9, 0x6b, 0x88,
+	0x74, 0xa8, 0xb5, 0x69, 0xee, 0x66, 0x3a, 0x03, 0x2e, 0x01, 0xd3, 0xa4, 0x3e, 0x8a, 0x91, 0x71,
+	0x81, 0x49, 0x70, 0x72, 0x05, 0x6f, 0xfb, 0x7e, 0x94, 0x62, 0x35, 0x1c, 0x46, 0xd8, 0xcc, 0x1e,
+	0xe9, 0xab, 0x9b, 0xa7, 0x87, 0xaa, 0x4d, 0x84, 0xfd, 0xf9, 0x21, 0xdd, 0x1a, 0xca, 0x6d, 0x2e,
+	0x80, 0xe8, 0x59, 0x78, 0x38, 0x8e, 0xa0, 0x34, 0x98, 0x06, 0x2e, 0xa8, 0xca, 0xd7, 0x7b, 0xaf,
+	0x87, 0x88, 0x96, 0xcb, 0xaf, 0x64, 0x81, 0x26, 0x47, 0x70, 0xa6, 0xda, 0xd0, 0x79, 0x58, 0x20,
+	0x10, 0x7a, 0x33, 0x8a, 0xe7, 0xe5, 0x68, 0xce, 0x4c, 0x2b, 0xd1, 0xba, 0xd9, 0x35, 0x43, 0x64,
+	0x37, 0x3a, 0x41, 0x8a, 0x73, 0x3f, 0xdd, 0x88, 0x4e, 0xc3, 0x8c, 0x19, 0x58, 0xbb, 0x4e, 0x84,
+	0xad, 0xa8, 0x1b, 0xb0, 0x64, 0x8c, 0xd8, 0x79, 0x20, 0xb7, 0xe8, 0x1f, 0x81, 0xa3, 0x39, 0xc1,
+	0x34, 0x64, 0x81, 0xcc, 0x8e, 0x23, 0x3a, 0xa7, 0x38, 0xf0, 0x12, 0x38, 0x59, 0x6a, 0x6a, 0x39,
+	0xc8, 0xe4, 0x2a, 0x27, 0x60, 0xfd, 0x87, 0x55, 0x80, 0x44, 0xe3, 0xe8, 0xe3, 0x32, 0x3a, 0x0d,
+	0x33, 0x22, 0xcd, 0x3d, 0x93, 0x67, 0xab, 0xb4, 0x90, 0xd7, 0x7a, 0x42, 0x53, 0x52, 0xbd, 0x82,
+	0x31, 0x98, 0x5c, 0xd7, 0x21, 0x76, 0x77, 0xae, 0x3b, 0xde, 0x9e, 0x1a, 0xaf, 0x27, 0xa0, 0xe4,
+	0x68, 0x74, 0x1d, 0x5b, 0xd9, 0x0f, 0x04, 0x90, 0x67, 0xe1, 0x98, 0xec, 0x67, 0xe1, 0x38, 0x05,
+	0xc0, 0x7b, 0x27, 0xd6, 0x5d, 0x58, 0x37, 0x24, 0x38, 0x11, 0x83, 0xad, 0x00, 0x9b, 0x42, 0xbc,
+	0x64, 0x61, 0x20, 0x53, 0x23, 0x88, 0xc1, 0x19, 0x2a, 0x84, 0xb4, 0x4d, 0xb6, 0x97, 0x42, 0xba,
+	0x36, 0x02, 0xe9, 0x0c, 0x15, 0xb4, 0x0a, 0x8b, 0x02, 0x78, 0x35, 0x1b, 0x14, 0x0c, 0xd2, 0x58,
+	0xfb, 0x3c, 0x87, 0xae, 0xc3, 0x24, 0x35, 0x46, 0x85, 0xf5, 0x69, 0xca, 0x58, 0x2f, 0x15, 0xd5,
+	0x4f, 0x1b, 0xd7, 0x29, 0x1a, 0xbb, 0x77, 0x39, 0x0d, 0x7a, 0x9f, 0x7b, 0x9e, 0x1f, 0x99, 0xec,
+	0x5e, 0x9d, 0x29, 0x72, 0x9f, 0x4b, 0x24, 0x97, 0x13, 0x5c, 0x71, 0x9f, 0x27, 0x10, 0x72, 0x19,
+	0xf8, 0xf7, 0xc8, 0xf9, 0x16, 0x86, 0x9c, 0xb0, 0x3e, 0x5b, 0xe4, 0x32, 0xb8, 0xa9, 0x20, 0x19,
+	0x69, 0x22, 0x29, 0xe5, 0x7f, 0x2e, 0xad, 0xfc, 0xd3, 0xd8, 0x6e, 0xe6, 0xc4, 0xa6, 0x7b, 0x7f,
+	0x5e, 0x89, 0xed, 0x4e, 0x1a, 0x16, 0xd7, 0x60, 0x5a, 0x9a, 0x93, 0x51, 0x43, 0x18, 0x16, 0x5f,
+	0x80, 0x85, 0xf4, 0x3c, 0x8c, 0x1c, 0x0e, 0xf1, 0x53, 0x0d, 0xe6, 0x73, 0xac, 0x5f, 0x7b, 0x0e,
+	0x8d, 0xb9, 0x91, 0x4e, 0x39, 0x81, 0xa8, 0x67, 0xb7, 0x94, 0x7f, 0x76, 0x05, 0x8f, 0x28, 0x67,
+	0x78, 0x04, 0x3f, 0xb3, 0x95, 0xf4, 0x99, 0x55, 0xd9, 0xd5, 0x44, 0x0f, 0x76, 0x35, 0xec, 0xc9,
+	0x56, 0xd8, 0x5b, 0x35, 0x9f, 0xbd, 0x7d, 0x55, 0x83, 0x39, 0x75, 0xf1, 0xfb, 0x0c, 0xfe, 0xb0,
+	0x06, 0x76, 0x8a, 0x4a, 0x9a, 0x51, 0xe0, 0xbb, 0x2e, 0x0e, 0x14, 0x3f, 0xac, 0x04, 0xd7, 0xff,
+	0x4d, 0x83, 0x85, 0x24, 0x9a, 0x84, 0x57, 0xa2, 0x18, 0x57, 0x08, 0xad, 0x6c, 0x3d, 0x1a, 0x54,
+	0x77, 0x22, 0xd5, 0x07, 0xc9, 0x92, 0x74, 0x3d, 0x65, 0x49, 0xba, 0x34, 0x24, 0x25, 0xd5, 0xaa,
+	0xf4, 0x5f, 0x1a, 0x1c, 0x4f, 0x3f, 0xb2, 0xe2, 0x9a, 0x4e, 0x7b, 0x4c, 0xa3, 0xde, 0x50, 0x46,
+	0xfd, 0xc4, 0x70, 0x7d, 0xa5, 0x1d, 0x91, 0x86, 0xfe, 0x62, 0x6a, 0xe8, 0x4f, 0x8d, 0x42, 0x4e,
+	0x1d, 0xff, 0x37, 0x35, 0x78, 0x5b, 0xee, 0x73, 0xe3, 0x37, 0x13, 0xac, 0xab, 0x66, 0x82, 0xf7,
+	0x8d, 0xd0, 0x79, 0x61, 0x37, 0xf8, 0x44, 0xa9, 0x47, 0xaf, 0xa9, 0x22, 0x7b, 0x12, 0xa6, 0x4d,
+	0xcb, 0xc2, 0x61, 0x78, 0xc3, 0xb7, 0xe3, 0xec, 0x42, 0x19, 0xa4, 0xa6, 0xca, 0x96, 0xc6, 0x91,
+	0x2a, 0x7b, 0x0a, 0x80, 0x09, 0xf7, 0x9b, 0xe9, 0xc3, 0x2b, 0xc1, 0x51, 0x93, 0x4a, 0x1c, 0xcc,
+	0xb9, 0x52, 0x19, 0xb8, 0x7b, 0x95, 0xf9, 0x94, 0x3d, 0x35, 0x46, 0x4c, 0x45, 0xff, 0xfd, 0x12,
+	0xbc, 0xbd, 0xcf, 0x3a, 0xf7, 0x33, 0x0f, 0xa7, 0xe7, 0xa9, 0x94, 0x9d, 0x27, 0x4b, 0xd2, 0xb5,
+	0x99, 0x8f, 0xfe, 0xea, 0xc8, 0x5b, 0xae, 0x97, 0xf2, 0xfd, 0xa6, 0x2b, 0x41, 0xba, 0x03, 0xef,
+	0xcc, 0xed, 0x67, 0x3a, 0x32, 0xcc, 0x22, 0xc0, 0x4c, 0xec, 0x5c, 0x02, 0x56, 0x7c, 0x2b, 0xa5,
+	0x5c, 0xdf, 0xca, 0xd7, 0x34, 0x38, 0x96, 0x7e, 0xd7, 0xf8, 0x4f, 0xd6, 0xaa, 0x7a, 0xb2, 0x1a,
+	0xc3, 0xad, 0x91, 0x38, 0x54, 0x5f, 0x9a, 0x86, 0x13, 0x19, 0x6e, 0xc9, 0x26, 0xc3, 0x81, 0x23,
+	0x2d, 0x2a, 0xb1, 0x49, 0x61, 0x86, 0xbc, 0xdb, 0x03, 0xe2, 0x2e, 0xfb, 0x46, 0x27, 0x1a, 0x59,
+	0xaa, 0x28, 0x80, 0x63, 0xe6, 0xbd, 0x30, 0x53, 0xb5, 0x8a, 0xaf, 0xf9, 0xb3, 0x03, 0xf4, 0xed,
+	0x01, 0xf5, 0xae, 0x8c, 0x5c, 0xda, 0x68, 0x93, 0xa7, 0x08, 0x93, 0x3b, 0xbc, 0x50, 0xfc, 0x6a,
+	0x5e, 0xf4, 0x96, 0x11, 0xd3, 0x40, 0x2f, 0x42, 0xad, 0x25, 0xc2, 0x0d, 0xf9, 0x39, 0x1f, 0xc0,
+	0xed, 0x72, 0xa3, 0x13, 0x8d, 0x84, 0x0a, 0x7a, 0x0e, 0xca, 0xde, 0x4e, 0xc8, 0x63, 0xd6, 0x07,
+	0x39, 0xc3, 0x54, 0xd7, 0xa1, 0x41, 0x30, 0x09, 0x81, 0x60, 0xdb, 0xe6, 0x76, 0x9c, 0x01, 0x04,
+	0x8c, 0xcb, 0xab, 0x2a, 0x81, 0x60, 0xdb, 0x46, 0x6b, 0x30, 0x41, 0xc3, 0xbe, 0xb8, 0xd1, 0x66,
+	0x40, 0xae, 0x41, 0x26, 0x58, 0xcd, 0x60, 0xd8, 0xe8, 0x1a, 0x4c, 0x5a, 0xb4, 0x22, 0x0e, 0xd7,
+	0x6c, 0x06, 0x15, 0x6c, 0xc9, 0x54, 0xcf, 0x31, 0x38, 0x3e, 0xa5, 0x84, 0x3b, 0xbb, 0x3b, 0x21,
+	0x57, 0x64, 0x06, 0x51, 0xca, 0xd4, 0x21, 0x32, 0x38, 0x3e, 0x7a, 0x06, 0x4a, 0x3b, 0x16, 0xaf,
+	0x46, 0x30, 0x40, 0x88, 0x57, 0x63, 0xb8, 0x8d, 0xd2, 0x8e, 0x85, 0x36, 0xa0, 0xba, 0xc3, 0x62,
+	0x7d, 0x79, 0x11, 0x82, 0x0b, 0x83, 0x42, 0x91, 0x33, 0x81, 0xc1, 0x86, 0xa0, 0x80, 0x36, 0x01,
+	0x76, 0xe2, 0x50, 0x65, 0x5e, 0x8c, 0xa0, 0x31, 0x5c, 0x68, 0xb3, 0x21, 0x51, 0x20, 0x5b, 0xd1,
+	0x14, 0x55, 0xad, 0x68, 0x1d, 0x82, 0x81, 0x5b, 0x31, 0xb7, 0x08, 0x96, 0x91, 0x50, 0x41, 0xdb,
+	0x30, 0xbb, 0x1f, 0x76, 0x76, 0xb1, 0x38, 0x5a, 0xb4, 0x4e, 0xc1, 0xf4, 0xc5, 0x67, 0x06, 0x94,
+	0x85, 0xe0, 0x28, 0x4e, 0x10, 0x75, 0x4d, 0x37, 0xc3, 0x09, 0x54, 0x92, 0x64, 0x4e, 0x5f, 0xed,
+	0xfa, 0xdb, 0x07, 0x11, 0xe6, 0x55, 0x0d, 0x06, 0xcc, 0xe9, 0x8b, 0xec, 0x61, 0x75, 0x4e, 0x39,
+	0x85, 0x78, 0x0e, 0x28, 0xd7, 0x5a, 0x28, 0x3c, 0x07, 0x99, 0x3e, 0x26, 0x54, 0x08, 0x97, 0xea,
+	0xec, 0xfa, 0x91, 0xef, 0xa5, 0x78, 0xe2, 0x91, 0x22, 0x5c, 0xaa, 0x99, 0x83, 0xa9, 0x72, 0xa9,
+	0x3c, 0xda, 0xfa, 0xa7, 0x2a, 0xd9, 0xbb, 0x84, 0xca, 0x3b, 0xaf, 0x64, 0x2c, 0xe2, 0xcf, 0x0f,
+	0x2f, 0x5d, 0xf7, 0xb4, 0x8d, 0xbb, 0x70, 0xa2, 0x93, 0x7b, 0x2b, 0x70, 0x96, 0x3c, 0xac, 0xfc,
+	0xcd, 0x86, 0xd8, 0x83, 0x66, 0x5a, 0x26, 0x29, 0x67, 0x65, 0x92, 0x75, 0x98, 0xa2, 0x37, 0x70,
+	0x92, 0xf6, 0x34, 0x64, 0x3e, 0x51, 0x8c, 0x8e, 0x5e, 0x80, 0x77, 0xa4, 0xbb, 0x61, 0x60, 0xda,
+	0xca, 0x2b, 0x70, 0xc8, 0xca, 0x54, 0xff, 0x47, 0xdf, 0x7c, 0x29, 0x26, 0xc8, 0xb9, 0xad, 0x07,
+	0xcb, 0x7c, 0x03, 0x12, 0xf0, 0xfb, 0x27, 0x57, 0xe9, 0x2f, 0xc1, 0xc9, 0x41, 0x9b, 0x97, 0xfa,
+	0xef, 0xec, 0x94, 0x59, 0x97, 0x42, 0xfa, 0x67, 0x1b, 0xe8, 0xdf, 0xd1, 0xa0, 0xdc, 0xf4, 0xed,
+	0x31, 0xe9, 0x5d, 0x4f, 0x29, 0x7a, 0xd7, 0xbb, 0x07, 0x56, 0x67, 0x94, 0xb4, 0xac, 0xe7, 0x52,
+	0x5a, 0xd6, 0x7b, 0x06, 0x23, 0xab, 0x3a, 0xd5, 0x77, 0x4a, 0x30, 0x2d, 0x55, 0x90, 0x44, 0x5f,
+	0x18, 0x25, 0xbe, 0xa0, 0x5c, 0xac, 0xa8, 0x24, 0x7f, 0x07, 0x75, 0x62, 0xfe, 0xcc, 0x84, 0x18,
+	0xdc, 0xc5, 0x4e, 0x6b, 0x37, 0xc2, 0x76, 0xba, 0x83, 0x43, 0x87, 0x18, 0xfc, 0xa1, 0x06, 0xf3,
+	0x29, 0x22, 0xe8, 0xa5, 0xbc, 0x88, 0xb6, 0x51, 0x15, 0xa9, 0x54, 0x04, 0xdc, 0x12, 0x40, 0x6c,
+	0x62, 0x12, 0x0a, 0x91, 0x04, 0x41, 0x8f, 0xc2, 0x74, 0xe4, 0x77, 0x7c, 0xd7, 0x6f, 0x1d, 0x6c,
+	0x60, 0x35, 0xdb, 0x44, 0x6e, 0xd0, 0xff, 0xbc, 0xc4, 0xfa, 0x2d, 0x55, 0xf8, 0xfc, 0xbf, 0x5d,
+	0x30, 0xf2, 0x2e, 0xf8, 0x1d, 0x0d, 0x16, 0x08, 0x11, 0xea, 0x35, 0x13, 0x61, 0x02, 0x71, 0x99,
+	0x22, 0x2d, 0x5b, 0xa6, 0x88, 0x46, 0x9b, 0xd8, 0x7e, 0x57, 0xcd, 0xc4, 0xe3, 0x30, 0xde, 0x8a,
+	0x83, 0x40, 0x89, 0x87, 0xe3, 0x30, 0x51, 0xbe, 0xa8, 0x92, 0x2a, 0x5f, 0xc4, 0x32, 0x0e, 0xb9,
+	0x67, 0x47, 0xb9, 0x17, 0x12, 0xb0, 0xfe, 0x07, 0x25, 0x98, 0x69, 0xfa, 0xf6, 0x83, 0x07, 0xc4,
+	0xf0, 0x64, 0x50, 0x5a, 0x9e, 0x6a, 0xd4, 0x60, 0x18, 0x95, 0xc2, 0xcf, 0x72, 0x20, 0xcc, 0xb7,
+	0x35, 0x98, 0x6b, 0xfa, 0x36, 0x59, 0xf0, 0x9f, 0xe1, 0xd5, 0x95, 0xf3, 0x44, 0x27, 0xd5, 0x3c,
+	0xd1, 0x5f, 0xd2, 0xa0, 0xda, 0xf4, 0xed, 0xf1, 0x2b, 0xf6, 0x4f, 0xa8, 0x8a, 0xfd, 0x3b, 0x07,
+	0x72, 0x02, 0xa1, 0xcb, 0xff, 0xa0, 0x04, 0xb3, 0xa4, 0x47, 0x7e, 0x4b, 0xcc, 0xa8, 0x32, 0x42,
+	0x2d, 0x7f, 0x84, 0xe4, 0x82, 0xf6, 0x5d, 0xd7, 0xbf, 0xa7, 0xce, 0x2c, 0x83, 0xb1, 0xc2, 0x13,
+	0x78, 0xdf, 0xf1, 0xbb, 0x6a, 0x91, 0x95, 0x18, 0x8a, 0x4e, 0xc3, 0x4c, 0xe8, 0x78, 0x16, 0x16,
+	0xce, 0x9f, 0x8a, 0xe4, 0xfc, 0x51, 0x5a, 0x68, 0xf9, 0x23, 0xf2, 0x9f, 0x6e, 0xc2, 0x91, 0xca,
+	0x1f, 0x09, 0x6c, 0x74, 0x0a, 0x20, 0x12, 0xce, 0xa8, 0x50, 0x35, 0x6c, 0x27, 0x70, 0x32, 0xfc,
+	0xc8, 0x74, 0xdc, 0xeb, 0x8e, 0x87, 0x43, 0xc5, 0x01, 0x97, 0x80, 0x09, 0x25, 0x1a, 0xde, 0xcd,
+	0x4a, 0x8f, 0x4d, 0xc9, 0x5e, 0xba, 0x04, 0xae, 0x3f, 0x46, 0x59, 0x7b, 0xc1, 0x90, 0xa5, 0x4f,
+	0x96, 0x00, 0x35, 0xa9, 0x97, 0x4b, 0xa9, 0xb1, 0x76, 0x0b, 0xe6, 0x42, 0x7c, 0xdd, 0xf1, 0xba,
+	0xf7, 0x39, 0x89, 0x62, 0x21, 0x5e, 0x5b, 0x6b, 0x32, 0x8e, 0x91, 0xa2, 0x41, 0xc6, 0x18, 0x74,
+	0xbd, 0xe5, 0xf0, 0x76, 0x88, 0x03, 0xb5, 0x72, 0x5a, 0x0c, 0xa6, 0x65, 0x88, 0xc8, 0x9f, 0x4d,
+	0xdf, 0x33, 0x7c, 0x3f, 0x52, 0x16, 0x52, 0x69, 0x41, 0x0d, 0x40, 0x61, 0xb7, 0xd3, 0x71, 0xa9,
+	0xad, 0xd3, 0x74, 0xaf, 0x06, 0x7e, 0xb7, 0xc3, 0x42, 0x54, 0xca, 0x46, 0x4e, 0x0b, 0x39, 0xe5,
+	0x3b, 0x21, 0xfd, 0xad, 0x84, 0x6f, 0x0b, 0xa0, 0xbe, 0x4d, 0x79, 0xe3, 0x96, 0xd3, 0xf2, 0xcc,
+	0xa8, 0x1b, 0x60, 0x64, 0xc0, 0x6c, 0x87, 0xf2, 0x4a, 0xe1, 0x93, 0x28, 0x34, 0x05, 0x29, 0x27,
+	0x9a, 0x4a, 0x42, 0xff, 0x85, 0x29, 0x7a, 0x10, 0xa9, 0x56, 0xf4, 0x2c, 0x54, 0x79, 0xb8, 0x05,
+	0xbf, 0x47, 0x4f, 0x15, 0xa9, 0x5b, 0x68, 0x08, 0x24, 0x74, 0x95, 0x39, 0x4c, 0xe8, 0xc9, 0x28,
+	0x5e, 0x8e, 0x93, 0xbb, 0xfe, 0x25, 0x54, 0x74, 0x06, 0x66, 0x79, 0x7d, 0x27, 0xae, 0x55, 0xc8,
+	0x62, 0x83, 0xda, 0x44, 0x34, 0x12, 0xa9, 0x3e, 0x60, 0x8e, 0x3f, 0x55, 0x3e, 0x52, 0xfd, 0x1f,
+	0x45, 0x4f, 0xc3, 0x71, 0xd3, 0x8a, 0x9c, 0x7d, 0xbc, 0x8a, 0x4d, 0xdb, 0x75, 0x3c, 0x9c, 0x17,
+	0x5d, 0x9f, 0xff, 0x08, 0x4d, 0xaa, 0xf5, 0x42, 0xde, 0xdf, 0x49, 0x25, 0xa9, 0x56, 0x80, 0xd1,
+	0xcb, 0xac, 0x50, 0x7b, 0x2c, 0x87, 0xb1, 0x82, 0x95, 0x4f, 0x14, 0x12, 0xb5, 0x95, 0x18, 0x35,
+	0xa6, 0x71, 0x2a, 0xc4, 0xd0, 0x25, 0x40, 0x21, 0x0e, 0xf6, 0x1d, 0x0b, 0x2f, 0x5b, 0xb4, 0x62,
+	0x01, 0xb5, 0xc3, 0xca, 0x11, 0x10, 0x39, 0xed, 0xe8, 0x2c, 0x39, 0x57, 0x32, 0x54, 0x09, 0x81,
+	0x48, 0xb5, 0x29, 0xf5, 0x7a, 0x20, 0xaf, 0x5e, 0x0f, 0x91, 0xf7, 0x76, 0xfd, 0x30, 0xda, 0xc4,
+	0xd1, 0x3d, 0x3f, 0xd8, 0xa3, 0xe6, 0x1d, 0x71, 0x58, 0xe4, 0x06, 0xb2, 0xf7, 0xa9, 0xf1, 0x6f,
+	0x7d, 0x95, 0x9a, 0x6c, 0xc4, 0x33, 0x02, 0x28, 0xda, 0xd7, 0x9b, 0x2b, 0xd4, 0x06, 0xa3, 0xb4,
+	0xaf, 0x37, 0x57, 0xd0, 0x4b, 0xd9, 0x62, 0x8e, 0x73, 0x45, 0x6c, 0x5a, 0x59, 0xd6, 0x92, 0xad,
+	0xe7, 0xf8, 0xff, 0x61, 0x21, 0xae, 0x1d, 0xc9, 0x2a, 0x80, 0x84, 0xf5, 0xf9, 0x22, 0xb5, 0xdf,
+	0x73, 0x93, 0xf4, 0x33, 0xb4, 0x94, 0x14, 0x8b, 0x85, 0xdc, 0xba, 0x48, 0x3a, 0xd4, 0xc2, 0xee,
+	0xb6, 0xed, 0xb7, 0x4d, 0xc7, 0xa3, 0x16, 0x92, 0xa4, 0x34, 0xba, 0x00, 0x2f, 0x6e, 0xc0, 0x91,
+	0xcc, 0x96, 0x18, 0xd9, 0xdd, 0xfc, 0xf9, 0x32, 0xd4, 0x62, 0xb5, 0xac, 0xaf, 0x3a, 0xfc, 0x42,
+	0x4e, 0x09, 0xe9, 0x33, 0x03, 0xe7, 0x3c, 0x3f, 0xfc, 0x6e, 0x50, 0x91, 0xec, 0x44, 0x48, 0xaa,
+	0xe4, 0x08, 0x49, 0x7d, 0xcb, 0x46, 0xd2, 0x31, 0xf8, 0xf6, 0x7a, 0x53, 0xad, 0x09, 0x47, 0x41,
+	0x71, 0x29, 0x41, 0x7a, 0x97, 0x56, 0x47, 0x2d, 0x25, 0xc8, 0x85, 0xc4, 0x23, 0x96, 0x5a, 0x7d,
+	0x2f, 0x0e, 0xae, 0x7b, 0x7c, 0x88, 0xa2, 0x78, 0xdd, 0xd0, 0xc8, 0xd2, 0xd1, 0x7f, 0x95, 0x29,
+	0x73, 0xfc, 0x01, 0x1c, 0x76, 0xdd, 0x68, 0x6c, 0xd9, 0x26, 0xb2, 0x30, 0x3d, 0x82, 0xc6, 0xfe,
+	0x1b, 0x1a, 0xd5, 0xd8, 0x6f, 0xe1, 0x76, 0xc7, 0x35, 0xa3, 0x71, 0x79, 0xbc, 0xd7, 0x61, 0x2a,
+	0xe2, 0x14, 0x8b, 0x55, 0xbe, 0x91, 0xba, 0x40, 0xed, 0x11, 0x31, 0xba, 0xfe, 0x65, 0x36, 0x77,
+	0xa2, 0x75, 0xfc, 0x92, 0xe6, 0x73, 0xaa, 0xa4, 0xf9, 0xde, 0xc2, 0x1d, 0x15, 0x12, 0xe7, 0xe7,
+	0xd4, 0x1e, 0xf2, 0x5c, 0xbb, 0xb7, 0xd6, 0x94, 0xa3, 0xbf, 0x07, 0x66, 0x95, 0xfa, 0x81, 0x22,
+	0x86, 0x42, 0x4b, 0xc5, 0x50, 0xe8, 0xff, 0xa1, 0xc1, 0xb1, 0xbc, 0x6f, 0x5d, 0xa0, 0x4d, 0x98,
+	0xe9, 0x48, 0x52, 0x4b, 0xb1, 0xc4, 0x0f, 0x59, 0xce, 0x31, 0x14, 0x7c, 0x74, 0x13, 0x66, 0xf0,
+	0xbe, 0x63, 0xc5, 0x0a, 0x58, 0x69, 0xf8, 0xf3, 0xaa, 0x10, 0x78, 0xb0, 0x6a, 0x48, 0xfa, 0x27,
+	0x34, 0x78, 0xb8, 0x47, 0x42, 0x08, 0xa1, 0x7c, 0x8f, 0xaa, 0xf0, 0x4a, 0x4d, 0x48, 0x0e, 0x43,
+	0x9b, 0x00, 0x4c, 0x8f, 0xa7, 0x55, 0xc4, 0x4b, 0x45, 0x1c, 0x15, 0x99, 0xa8, 0x7b, 0x89, 0x82,
+	0xfe, 0xed, 0x12, 0x4c, 0xb0, 0x72, 0xcc, 0xcf, 0x41, 0x75, 0x97, 0x25, 0xcd, 0x0f, 0x97, 0xa4,
+	0x2f, 0xb0, 0xd0, 0x07, 0xe0, 0xa8, 0xe3, 0x39, 0x91, 0x63, 0xba, 0xab, 0xd8, 0x35, 0x0f, 0x84,
+	0xd8, 0x23, 0x17, 0xd2, 0xc9, 0x7b, 0x20, 0x27, 0x0f, 0x51, 0xae, 0x28, 0x90, 0x6a, 0x23, 0x62,
+	0x5d, 0x27, 0x23, 0x9a, 0xc5, 0x55, 0x83, 0x95, 0x26, 0x74, 0x1e, 0x16, 0xc2, 0x2e, 0xb5, 0x61,
+	0xdf, 0xda, 0x0d, 0x70, 0xb8, 0xeb, 0xbb, 0xb6, 0x52, 0x00, 0x34, 0xd3, 0x4a, 0x30, 0x76, 0x4c,
+	0xc7, 0xed, 0x06, 0x38, 0xc1, 0x98, 0x94, 0x31, 0xd2, 0xad, 0xfa, 0xd7, 0x35, 0x38, 0x9a, 0xe3,
+	0x06, 0x61, 0x4e, 0xea, 0x96, 0x13, 0x46, 0xa9, 0x2a, 0x2b, 0x31, 0x94, 0x2c, 0x34, 0x13, 0x7a,
+	0x55, 0x5b, 0x04, 0x83, 0x0d, 0x4e, 0x20, 0x8c, 0x3f, 0xcc, 0x51, 0xc9, 0x7c, 0x98, 0x63, 0x11,
+	0x26, 0x5a, 0xb1, 0x46, 0x10, 0x5f, 0x5b, 0x14, 0xa4, 0x7f, 0xa3, 0x04, 0xf3, 0x29, 0x47, 0x63,
+	0xdf, 0x0f, 0x83, 0xf4, 0xab, 0xe4, 0xde, 0xbf, 0x24, 0x12, 0xad, 0xa5, 0x98, 0xaa, 0xd7, 0x4c,
+	0x21, 0x71, 0xcf, 0x27, 0x32, 0x3d, 0x5f, 0x82, 0xea, 0x1e, 0x3e, 0x08, 0x1c, 0xaf, 0xa5, 0xda,
+	0x2c, 0x38, 0x50, 0xad, 0x79, 0x54, 0x1d, 0x77, 0xcd, 0xa3, 0xa9, 0xdc, 0x60, 0x82, 0x4f, 0x6b,
+	0x30, 0x4f, 0x53, 0x91, 0x79, 0x08, 0xb7, 0xe3, 0x7b, 0x63, 0x62, 0xb1, 0x8b, 0x30, 0x11, 0x10,
+	0xc2, 0xea, 0xdc, 0x52, 0x10, 0x99, 0x23, 0x4a, 0x9d, 0xcc, 0xec, 0x8c, 0x98, 0x23, 0x02, 0xa1,
+	0xb1, 0x53, 0x06, 0xee, 0xb8, 0x0e, 0xeb, 0x4b, 0xa2, 0x87, 0xbd, 0x15, 0xb1, 0x53, 0xb9, 0x1d,
+	0x19, 0x3d, 0x76, 0x2a, 0x9f, 0x9c, 0x2a, 0x35, 0xfc, 0xbb, 0x06, 0x4b, 0xb9, 0xcf, 0x3d, 0xb8,
+	0x01, 0x30, 0xdf, 0x5a, 0x57, 0x1e, 0xb7, 0xb5, 0xae, 0xd2, 0xff, 0xca, 0x98, 0xc8, 0xbb, 0x32,
+	0xbe, 0xa9, 0xc1, 0xdb, 0x72, 0x47, 0xfd, 0x56, 0x47, 0x8c, 0xe5, 0x76, 0x4a, 0x88, 0x27, 0xff,
+	0x50, 0xea, 0xd1, 0x6b, 0x1e, 0x31, 0x36, 0x15, 0xb0, 0xc6, 0x50, 0xad, 0x05, 0x2e, 0xa0, 0xc8,
+	0x94, 0x22, 0xb7, 0x58, 0x6f, 0xd6, 0x46, 0xdc, 0x8f, 0x0d, 0x55, 0xed, 0x8d, 0xc9, 0x2a, 0xe2,
+	0x62, 0xf9, 0x81, 0xc4, 0x45, 0xd4, 0x80, 0xf9, 0xb6, 0xe3, 0xd1, 0xca, 0xaa, 0x79, 0xb7, 0x53,
+	0xba, 0x71, 0xf1, 0x2a, 0xcc, 0x8e, 0x47, 0xf3, 0xfa, 0xd7, 0x12, 0xbc, 0xbd, 0xcf, 0xd1, 0x29,
+	0x30, 0xd1, 0x4f, 0xc2, 0xb1, 0x9d, 0xae, 0xeb, 0x1e, 0x50, 0x3f, 0x0d, 0xb6, 0x0d, 0xf1, 0xb4,
+	0x7c, 0x7b, 0xe7, 0x3e, 0x81, 0x2e, 0x01, 0xf2, 0xb7, 0x69, 0x3e, 0xbc, 0x7d, 0x35, 0x09, 0xb6,
+	0x2f, 0xcb, 0x55, 0xa9, 0xb3, 0xed, 0xcc, 0x3a, 0x63, 0xda, 0x07, 0xf1, 0x8b, 0x94, 0x6b, 0x5c,
+	0x69, 0x42, 0x17, 0xe1, 0x88, 0xb9, 0x6f, 0x3a, 0x34, 0x2d, 0x2d, 0x7e, 0x5e, 0xbe, 0xc7, 0xb3,
+	0xcd, 0xe8, 0x15, 0x45, 0xc3, 0x64, 0xf5, 0x5c, 0x9e, 0x19, 0x61, 0xeb, 0xe4, 0x7f, 0xb0, 0xe8,
+	0xeb, 0x94, 0x05, 0xe7, 0x54, 0x24, 0x55, 0x3e, 0x6a, 0x90, 0x89, 0x61, 0x53, 0x9b, 0xd8, 0xaa,
+	0x84, 0x89, 0x53, 0x5f, 0x12, 0x11, 0x78, 0xc9, 0xcb, 0x2b, 0x50, 0xb5, 0x9d, 0x7d, 0x27, 0xf4,
+	0x83, 0x02, 0x35, 0xd2, 0xb3, 0x6e, 0x6b, 0x81, 0xac, 0xff, 0x48, 0x83, 0x59, 0xd1, 0xdf, 0x17,
+	0xbb, 0x3e, 0x8d, 0x5d, 0x1b, 0xc7, 0x55, 0xb1, 0xa2, 0x5c, 0x15, 0xe7, 0x8a, 0xc5, 0x72, 0xd2,
+	0x0e, 0x48, 0x57, 0xc4, 0x7a, 0xea, 0x8a, 0xb8, 0x30, 0x0c, 0x19, 0xf5, 0x6a, 0xf8, 0x2d, 0x0d,
+	0x8e, 0x28, 0xed, 0x6f, 0x59, 0xb1, 0x90, 0xbc, 0xce, 0x0a, 0xa6, 0xf8, 0x4f, 0xe9, 0x5e, 0x52,
+	0x66, 0x78, 0x03, 0x2a, 0xbb, 0x66, 0x60, 0x73, 0xab, 0xe9, 0x53, 0x43, 0xce, 0x65, 0xe3, 0x9a,
+	0x19, 0xd8, 0xfc, 0x73, 0x50, 0x84, 0x0c, 0x3a, 0x01, 0x93, 0xa1, 0xe5, 0x77, 0x62, 0x7f, 0x2a,
+	0xff, 0xb7, 0xb8, 0x07, 0xb5, 0xf8, 0xd1, 0x43, 0x0f, 0x96, 0xf8, 0x6c, 0x19, 0x8e, 0xe6, 0xac,
+	0x17, 0xba, 0xa9, 0x8c, 0xf5, 0x83, 0x43, 0x2f, 0x78, 0x66, 0xb4, 0x37, 0xa9, 0x44, 0x69, 0xf3,
+	0x45, 0x19, 0x81, 0xe0, 0xed, 0x10, 0x0b, 0x82, 0x84, 0xd0, 0x9b, 0x3a, 0x4d, 0xe4, 0x65, 0xf1,
+	0xfb, 0x0f, 0x7d, 0x4d, 0x7e, 0xaf, 0x0c, 0xc7, 0xf2, 0xc2, 0xaa, 0xd1, 0x9d, 0x54, 0x89, 0x9e,
+	0x67, 0x87, 0x0f, 0xcd, 0x66, 0x75, 0x7b, 0xe2, 0xac, 0x20, 0xfa, 0x07, 0xbd, 0x42, 0xd8, 0x1c,
+	0xad, 0x90, 0x24, 0x0e, 0xcd, 0xf3, 0x23, 0x50, 0xe6, 0x45, 0x96, 0x38, 0xed, 0x98, 0xe2, 0x62,
+	0x1b, 0xa6, 0xa5, 0x97, 0x1e, 0xfa, 0x52, 0xf9, 0x84, 0x91, 0x4a, 0x3d, 0x39, 0xf4, 0xe5, 0x7a,
+	0x0d, 0xe6, 0x54, 0xff, 0x53, 0xac, 0x3d, 0x69, 0x19, 0xed, 0xa9, 0x0e, 0x95, 0xc0, 0x77, 0xd5,
+	0xcb, 0x84, 0x42, 0x62, 0x81, 0xb8, 0x9c, 0x11, 0x88, 0x17, 0x61, 0xc2, 0xc5, 0xfb, 0x58, 0x55,
+	0xd3, 0x18, 0x48, 0xff, 0x5c, 0x19, 0x26, 0x99, 0xbd, 0x79, 0x4c, 0xf7, 0xc5, 0x65, 0xe5, 0x53,
+	0x77, 0x8d, 0x22, 0x75, 0xb3, 0xd3, 0xdf, 0xb9, 0xeb, 0x33, 0x94, 0x5b, 0x00, 0x21, 0xad, 0xca,
+	0x49, 0x50, 0x78, 0x56, 0xf7, 0xa5, 0x42, 0xef, 0xd8, 0x8a, 0xd1, 0xd8, 0x9b, 0x24, 0x3a, 0x23,
+	0x7c, 0x57, 0x6f, 0x26, 0x9b, 0xd5, 0xb5, 0x0e, 0xf3, 0xa9, 0x77, 0x8c, 0x6e, 0x65, 0xd7, 0xe0,
+	0x48, 0xa6, 0xa4, 0xf8, 0x5b, 0xfe, 0x7d, 0xbe, 0x2f, 0x68, 0x00, 0xac, 0x57, 0xe3, 0xbf, 0x72,
+	0x9f, 0x56, 0xaf, 0xdc, 0x53, 0x45, 0x96, 0x54, 0xdc, 0xb5, 0x5f, 0xd1, 0x00, 0x31, 0xc8, 0x08,
+	0x1f, 0x97, 0x7d, 0x93, 0x3e, 0xaa, 0xf7, 0x2f, 0x25, 0x98, 0x4f, 0xbb, 0xaa, 0x37, 0x61, 0xc6,
+	0x92, 0x3e, 0xfc, 0x5a, 0xcc, 0x00, 0x2a, 0x7f, 0x2a, 0xd6, 0x50, 0xf0, 0x59, 0x7d, 0x08, 0x67,
+	0xdf, 0x71, 0x71, 0x8b, 0x5e, 0x93, 0x92, 0xbb, 0x3e, 0x81, 0xe7, 0x38, 0xc8, 0xcb, 0xe3, 0x76,
+	0x90, 0x57, 0x8a, 0x39, 0xc8, 0x27, 0x7a, 0x3a, 0xc8, 0x9f, 0x81, 0x13, 0xc2, 0x34, 0x43, 0xfe,
+	0x5f, 0x71, 0x5c, 0xcc, 0x12, 0xd3, 0x95, 0x20, 0x84, 0x1e, 0xcf, 0xe8, 0xdb, 0x70, 0x74, 0x0b,
+	0x07, 0x0e, 0x4d, 0xee, 0xb4, 0x93, 0x6d, 0xbd, 0x01, 0xb5, 0x20, 0x75, 0x66, 0x86, 0xfd, 0x64,
+	0x49, 0x62, 0x53, 0xfd, 0x0b, 0x0d, 0xaa, 0x5b, 0xcc, 0xe7, 0x39, 0x26, 0xbe, 0xf9, 0x21, 0x45,
+	0xce, 0x7e, 0xef, 0xa0, 0x03, 0x40, 0x5f, 0x2d, 0x49, 0xd8, 0x2b, 0x29, 0x09, 0xfb, 0xb1, 0x62,
+	0x04, 0x54, 0xd9, 0xfa, 0x7f, 0x34, 0x98, 0xdb, 0x52, 0x3d, 0xb9, 0xe3, 0x19, 0xdc, 0x55, 0xa8,
+	0x86, 0xdc, 0x41, 0x5a, 0xe8, 0x6b, 0x26, 0xe9, 0x99, 0x17, 0xd8, 0xb9, 0x2e, 0xd7, 0xf2, 0xf8,
+	0x5c, 0xae, 0xfa, 0x6f, 0x53, 0x5e, 0x22, 0xcf, 0xc0, 0xf8, 0x79, 0xdd, 0x65, 0x95, 0xe5, 0x9c,
+	0x2d, 0xb4, 0x52, 0xbc, 0x37, 0x82, 0xe7, 0xfd, 0x8a, 0x06, 0xd3, 0xbc, 0x65, 0xfc, 0x1d, 0xfc,
+	0xa0, 0xda, 0xc1, 0x77, 0x17, 0xea, 0xa0, 0xe8, 0xd9, 0x5f, 0x26, 0x3d, 0x1b, 0xfc, 0xf9, 0xc0,
+	0xf8, 0x73, 0x3b, 0xa5, 0xdc, 0x0f, 0xfe, 0x89, 0x4f, 0xf5, 0x94, 0x33, 0x9f, 0xea, 0xd9, 0x14,
+	0x15, 0xfe, 0xe9, 0x97, 0xb5, 0x2a, 0x23, 0xd5, 0xf5, 0x96, 0x28, 0x88, 0x80, 0x05, 0x4a, 0x4d,
+	0x36, 0x3b, 0xc4, 0x50, 0xfd, 0x1c, 0xe5, 0x2a, 0x74, 0x58, 0xc5, 0x02, 0x94, 0xfe, 0xb4, 0x12,
+	0x4f, 0xc4, 0x16, 0x0b, 0x7e, 0xe6, 0x9f, 0xdf, 0xd1, 0x8a, 0xf8, 0x01, 0xa5, 0x29, 0x14, 0x5f,
+	0x2f, 0xdd, 0xca, 0x18, 0xca, 0x9e, 0x28, 0xcc, 0x25, 0x7a, 0x9a, 0xc6, 0x68, 0x32, 0x1e, 0x4d,
+	0x85, 0x5a, 0x6f, 0xaa, 0xd5, 0x1c, 0x62, 0x70, 0x2c, 0x8e, 0x55, 0x32, 0xe2, 0xd8, 0x49, 0x98,
+	0x8e, 0x0b, 0x14, 0x35, 0x59, 0x65, 0x9c, 0x9a, 0x21, 0x83, 0xd0, 0x79, 0x38, 0x6a, 0xe3, 0x4e,
+	0x80, 0x2d, 0x33, 0xc2, 0x76, 0xb3, 0xbb, 0xed, 0x3a, 0x16, 0x79, 0x92, 0x85, 0xf9, 0xe5, 0x35,
+	0xa1, 0x06, 0xcc, 0x87, 0xac, 0x8a, 0x92, 0x88, 0x6d, 0x55, 0xb2, 0xbf, 0xd3, 0x8d, 0xe8, 0x2c,
+	0xcc, 0xb9, 0x72, 0x8d, 0xc8, 0xa6, 0x12, 0xcb, 0x92, 0x6a, 0x43, 0x4f, 0x43, 0x5d, 0x86, 0xf0,
+	0x9c, 0x09, 0xd3, 0x6b, 0xe1, 0x90, 0xd7, 0xa7, 0xe9, 0xd9, 0x4e, 0x2e, 0x30, 0x31, 0xb4, 0x4c,
+	0x64, 0x8b, 0xd2, 0x32, 0x3e, 0xab, 0x1f, 0x26, 0x84, 0x24, 0x56, 0x8d, 0x6e, 0xc1, 0x8c, 0xdc,
+	0x3f, 0x7e, 0xd8, 0xcf, 0x17, 0xaf, 0xa1, 0xc9, 0x59, 0xbe, 0x42, 0x45, 0xbf, 0x0d, 0xf3, 0xa9,
+	0xa2, 0xea, 0x71, 0xcd, 0x7c, 0x6d, 0xf4, 0x9a, 0xf9, 0xfa, 0x87, 0x61, 0xe2, 0x96, 0xe9, 0xf4,
+	0x29, 0xeb, 0xd5, 0xef, 0x8b, 0x47, 0x8f, 0xc0, 0x24, 0xde, 0xd9, 0xc1, 0x96, 0x5a, 0x72, 0x9f,
+	0xc3, 0xf4, 0x8f, 0x69, 0x00, 0xb7, 0x7c, 0x57, 0xd8, 0x1a, 0x47, 0xaf, 0x1b, 0x16, 0x77, 0xa1,
+	0xdc, 0xaf, 0x0b, 0x95, 0x9c, 0x2e, 0x04, 0x30, 0xc9, 0x73, 0xaa, 0x7a, 0xf3, 0xb8, 0x4d, 0x51,
+	0x02, 0x49, 0x49, 0xec, 0x39, 0x53, 0x24, 0x5e, 0x8e, 0x6f, 0x3d, 0x05, 0x5f, 0xff, 0xb4, 0x06,
+	0xd3, 0xd2, 0x67, 0x80, 0xfb, 0x73, 0xd7, 0xfe, 0x19, 0xb4, 0xb4, 0x54, 0x10, 0x21, 0x12, 0x27,
+	0x67, 0x26, 0xa5, 0x82, 0x04, 0x18, 0x2d, 0xd1, 0xaf, 0x73, 0xd1, 0x27, 0x14, 0x2f, 0x37, 0x07,
+	0xea, 0x5f, 0x9a, 0x87, 0x19, 0x45, 0xea, 0x96, 0x13, 0x3e, 0xb5, 0x31, 0x24, 0x7c, 0x6e, 0xc2,
+	0x14, 0xe6, 0x1f, 0xb2, 0x2b, 0x96, 0x4e, 0x9e, 0xf7, 0xd9, 0x3b, 0x23, 0xa6, 0x91, 0x9f, 0x6f,
+	0x5b, 0x7e, 0x53, 0xf3, 0x6d, 0x2b, 0x87, 0x98, 0x6f, 0xbb, 0x01, 0xd5, 0x16, 0xfb, 0x22, 0x08,
+	0x8f, 0xfd, 0x1d, 0x60, 0x69, 0xcd, 0xf9, 0x7c, 0x88, 0x21, 0x28, 0xa0, 0x6b, 0x30, 0xc9, 0xe4,
+	0x2e, 0x9e, 0xdb, 0x7a, 0xbe, 0x88, 0x56, 0xa6, 0xa6, 0x81, 0x32, 0x7c, 0x91, 0x63, 0x5b, 0x1d,
+	0x39, 0xc7, 0x36, 0x4e, 0x91, 0x9d, 0x7a, 0xa0, 0x14, 0x59, 0x25, 0x7d, 0xb8, 0x36, 0x96, 0xf4,
+	0xe1, 0x2e, 0x1c, 0xef, 0xe4, 0xa5, 0xbc, 0xf3, 0xa4, 0xd7, 0xe7, 0x46, 0xc8, 0xea, 0x57, 0x5e,
+	0x95, 0x4f, 0x5d, 0x24, 0x1d, 0x4f, 0x8f, 0x9c, 0x74, 0x3c, 0xee, 0x74, 0xd8, 0x24, 0xfb, 0x78,
+	0x76, 0x6c, 0xd9, 0xc7, 0x73, 0x0f, 0x98, 0x7d, 0x2c, 0xe5, 0x0f, 0xcf, 0x3f, 0x70, 0xfe, 0xf0,
+	0x5d, 0x98, 0xb6, 0x93, 0x4f, 0x73, 0xf2, 0x6c, 0xd7, 0xf7, 0x0f, 0xf9, 0x2d, 0x4f, 0x4e, 0x54,
+	0xa6, 0xc4, 0x73, 0xa4, 0x8f, 0x8c, 0x98, 0x23, 0xad, 0xa4, 0x21, 0xa3, 0xb1, 0xa4, 0x21, 0xbf,
+	0x48, 0x13, 0x1a, 0xd8, 0x57, 0xf1, 0xea, 0x47, 0x0b, 0x7e, 0xe9, 0x9a, 0x3d, 0xae, 0x92, 0x8c,
+	0xa9, 0x64, 0x33, 0x9b, 0x8f, 0x1d, 0x6a, 0x66, 0xf3, 0xf1, 0xf1, 0x66, 0x36, 0x9f, 0x38, 0xd4,
+	0xcc, 0xe6, 0x87, 0x0f, 0x31, 0xb3, 0xd9, 0x86, 0xa5, 0xfe, 0x93, 0x98, 0x94, 0x57, 0x69, 0xa6,
+	0xd5, 0x18, 0x09, 0x3e, 0x20, 0xc1, 0xf4, 0x33, 0x1a, 0x3c, 0xdc, 0x23, 0x27, 0x6d, 0x40, 0xac,
+	0xdb, 0x5d, 0x98, 0xef, 0xa8, 0x08, 0x85, 0xe3, 0x39, 0x95, 0xcc, 0xb7, 0x34, 0x95, 0xcb, 0xe7,
+	0xbf, 0xff, 0xfa, 0xd2, 0x43, 0x3f, 0x78, 0x7d, 0xe9, 0xa1, 0x1f, 0xbf, 0xbe, 0xa4, 0x7d, 0xec,
+	0x8d, 0x25, 0xed, 0xab, 0x6f, 0x2c, 0x69, 0xdf, 0x7d, 0x63, 0x49, 0xfb, 0xfe, 0x1b, 0x4b, 0xda,
+	0xdf, 0xbd, 0xb1, 0xa4, 0xfd, 0xf3, 0x1b, 0x4b, 0x0f, 0xfd, 0xf8, 0x8d, 0x25, 0xed, 0x33, 0x7f,
+	0xbf, 0xf4, 0xd0, 0x4b, 0xa5, 0xfd, 0x0b, 0xff, 0x1b, 0x00, 0x00, 0xff, 0xff, 0xcf, 0x3d, 0x1a,
+	0x15, 0xef, 0x8e, 0x00, 0x00,
 }

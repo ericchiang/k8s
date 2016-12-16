@@ -14,8 +14,6 @@
 		JobList
 		JobSpec
 		JobStatus
-		LabelSelector
-		LabelSelectorRequirement
 */
 package v1
 
@@ -33,7 +31,6 @@ import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 import sort "sort"
 import strconv "strconv"
 import reflect "reflect"
-import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 
 import io "io"
 
@@ -51,13 +48,16 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 // Job represents the configuration of a single job.
 type Job struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec is a structure defining the expected behavior of a job.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Spec *JobSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is a structure describing current status of a job.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status *JobStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 }
 
@@ -93,12 +93,16 @@ type JobCondition struct {
 	// Status of the condition, one of True, False, Unknown.
 	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
 	// Last time the condition was checked.
+	// +optional
 	LastProbeTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=lastProbeTime" json:"lastProbeTime,omitempty"`
 	// Last time the condition transit from one status to another.
+	// +optional
 	LastTransitionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,4,opt,name=lastTransitionTime" json:"lastTransitionTime,omitempty"`
 	// (brief) reason for the condition's last transition.
+	// +optional
 	Reason string `protobuf:"bytes,5,opt,name=reason" json:"reason"`
 	// Human readable message indicating details about last transition.
+	// +optional
 	Message string `protobuf:"bytes,6,opt,name=message" json:"message"`
 }
 
@@ -151,7 +155,8 @@ func (m *JobCondition) GetMessage() string {
 // JobList is a collection of jobs.
 type JobList struct {
 	// Standard list metadata
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of Job.
 	Items []*Job `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -181,22 +186,26 @@ type JobSpec struct {
 	// run at any given time. The actual number of pods running in steady state will
 	// be less than this number when ((.spec.completions - .status.successful) < .spec.parallelism),
 	// i.e. when the work left to do is less than max parallelism.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/jobs.md
+	// More info: http://kubernetes.io/docs/user-guide/jobs
+	// +optional
 	Parallelism int32 `protobuf:"varint,1,opt,name=parallelism" json:"parallelism"`
 	// Completions specifies the desired number of successfully finished pods the
 	// job should be run with.  Setting to nil means that the success of any
 	// pod signals the success of all pods, and allows parallelism to have any positive
 	// value.  Setting to 1 means that parallelism is limited to 1 and the success of that
 	// pod signals the success of the job.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/jobs.md
+	// More info: http://kubernetes.io/docs/user-guide/jobs
+	// +optional
 	Completions int32 `protobuf:"varint,2,opt,name=completions" json:"completions"`
 	// Optional duration in seconds relative to the startTime that the job may be active
 	// before the system tries to terminate it; value must be positive integer
+	// +optional
 	ActiveDeadlineSeconds int64 `protobuf:"varint,3,opt,name=activeDeadlineSeconds" json:"activeDeadlineSeconds"`
 	// Selector is a label query over pods that should match the pod count.
 	// Normally, the system sets this field for you.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/labels.md#label-selectors
-	Selector *LabelSelector `protobuf:"bytes,4,opt,name=selector" json:"selector,omitempty"`
+	// More info: http://kubernetes.io/docs/user-guide/labels#label-selectors
+	// +optional
+	Selector *k8s_io_kubernetes_pkg_api_unversioned.LabelSelector `protobuf:"bytes,4,opt,name=selector" json:"selector,omitempty"`
 	// ManualSelector controls generation of pod labels and pod selectors.
 	// Leave `manualSelector` unset unless you are certain what you are doing.
 	// When false or unset, the system pick labels unique to this job
@@ -206,11 +215,12 @@ type JobSpec struct {
 	// and other jobs to not function correctly.  However, You may see
 	// `manualSelector=true` in jobs that were created with the old `extensions/v1beta1`
 	// API.
-	// More info: http://releases.k8s.io/release-1.4/docs/design/selector-generation.md
+	// More info: http://releases.k8s.io/HEAD/docs/design/selector-generation.md
+	// +optional
 	ManualSelector bool `protobuf:"varint,5,opt,name=manualSelector" json:"manualSelector"`
 	// Template is the object that describes the pod that will be created when
 	// executing a job.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/jobs.md
+	// More info: http://kubernetes.io/docs/user-guide/jobs
 	Template *k8s_io_kubernetes_pkg_api_v1.PodTemplateSpec `protobuf:"bytes,6,opt,name=template" json:"template,omitempty"`
 }
 
@@ -239,7 +249,7 @@ func (m *JobSpec) GetActiveDeadlineSeconds() int64 {
 	return 0
 }
 
-func (m *JobSpec) GetSelector() *LabelSelector {
+func (m *JobSpec) GetSelector() *k8s_io_kubernetes_pkg_api_unversioned.LabelSelector {
 	if m != nil {
 		return m.Selector
 	}
@@ -263,21 +273,27 @@ func (m *JobSpec) GetTemplate() *k8s_io_kubernetes_pkg_api_v1.PodTemplateSpec {
 // JobStatus represents the current state of a Job.
 type JobStatus struct {
 	// Conditions represent the latest available observations of an object's current state.
-	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/jobs.md
+	// More info: http://kubernetes.io/docs/user-guide/jobs
+	// +optional
 	Conditions []*JobCondition `protobuf:"bytes,1,rep,name=conditions" json:"conditions,omitempty"`
 	// StartTime represents time when the job was acknowledged by the Job Manager.
 	// It is not guaranteed to be set in happens-before order across separate operations.
 	// It is represented in RFC3339 form and is in UTC.
+	// +optional
 	StartTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,2,opt,name=startTime" json:"startTime,omitempty"`
 	// CompletionTime represents time when the job was completed. It is not guaranteed to
 	// be set in happens-before order across separate operations.
 	// It is represented in RFC3339 form and is in UTC.
+	// +optional
 	CompletionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=completionTime" json:"completionTime,omitempty"`
 	// Active is the number of actively running pods.
+	// +optional
 	Active int32 `protobuf:"varint,4,opt,name=active" json:"active"`
 	// Succeeded is the number of pods which reached Phase Succeeded.
+	// +optional
 	Succeeded int32 `protobuf:"varint,5,opt,name=succeeded" json:"succeeded"`
 	// Failed is the number of pods which reached Phase Failed.
+	// +optional
 	Failed int32 `protobuf:"varint,6,opt,name=failed" json:"failed"`
 }
 
@@ -327,86 +343,12 @@ func (m *JobStatus) GetFailed() int32 {
 	return 0
 }
 
-// A label selector is a label query over a set of resources. The result of matchLabels and
-// matchExpressions are ANDed. An empty label selector matches all objects. A null
-// label selector matches no objects.
-type LabelSelector struct {
-	// matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-	// map is equivalent to an element of matchExpressions, whose key field is "key", the
-	// operator is "In", and the values array contains only "value". The requirements are ANDed.
-	MatchLabels map[string]string `protobuf:"bytes,1,rep,name=matchLabels" json:"matchLabels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// matchExpressions is a list of label selector requirements. The requirements are ANDed.
-	MatchExpressions []*LabelSelectorRequirement `protobuf:"bytes,2,rep,name=matchExpressions" json:"matchExpressions,omitempty"`
-}
-
-func (m *LabelSelector) Reset()                    { *m = LabelSelector{} }
-func (*LabelSelector) ProtoMessage()               {}
-func (*LabelSelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{5} }
-
-func (m *LabelSelector) GetMatchLabels() map[string]string {
-	if m != nil {
-		return m.MatchLabels
-	}
-	return nil
-}
-
-func (m *LabelSelector) GetMatchExpressions() []*LabelSelectorRequirement {
-	if m != nil {
-		return m.MatchExpressions
-	}
-	return nil
-}
-
-// A label selector requirement is a selector that contains values, a key, and an operator that
-// relates the key and values.
-type LabelSelectorRequirement struct {
-	// key is the label key that the selector applies to.
-	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
-	// operator represents a key's relationship to a set of values.
-	// Valid operators ard In, NotIn, Exists and DoesNotExist.
-	Operator string `protobuf:"bytes,2,opt,name=operator" json:"operator"`
-	// values is an array of string values. If the operator is In or NotIn,
-	// the values array must be non-empty. If the operator is Exists or DoesNotExist,
-	// the values array must be empty. This array is replaced during a strategic
-	// merge patch.
-	Values []string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty"`
-}
-
-func (m *LabelSelectorRequirement) Reset()      { *m = LabelSelectorRequirement{} }
-func (*LabelSelectorRequirement) ProtoMessage() {}
-func (*LabelSelectorRequirement) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{6}
-}
-
-func (m *LabelSelectorRequirement) GetKey() string {
-	if m != nil {
-		return m.Key
-	}
-	return ""
-}
-
-func (m *LabelSelectorRequirement) GetOperator() string {
-	if m != nil {
-		return m.Operator
-	}
-	return ""
-}
-
-func (m *LabelSelectorRequirement) GetValues() []string {
-	if m != nil {
-		return m.Values
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterType((*Job)(nil), "github.com/ericchiang.k8s.apis.batch.v1.Job")
 	proto.RegisterType((*JobCondition)(nil), "github.com/ericchiang.k8s.apis.batch.v1.JobCondition")
 	proto.RegisterType((*JobList)(nil), "github.com/ericchiang.k8s.apis.batch.v1.JobList")
 	proto.RegisterType((*JobSpec)(nil), "github.com/ericchiang.k8s.apis.batch.v1.JobSpec")
 	proto.RegisterType((*JobStatus)(nil), "github.com/ericchiang.k8s.apis.batch.v1.JobStatus")
-	proto.RegisterType((*LabelSelector)(nil), "github.com/ericchiang.k8s.apis.batch.v1.LabelSelector")
-	proto.RegisterType((*LabelSelectorRequirement)(nil), "github.com/ericchiang.k8s.apis.batch.v1.LabelSelectorRequirement")
 }
 func (this *Job) Equal(that interface{}) bool {
 	if that == nil {
@@ -622,90 +564,6 @@ func (this *JobStatus) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *LabelSelector) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LabelSelector)
-	if !ok {
-		that2, ok := that.(LabelSelector)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.MatchLabels) != len(that1.MatchLabels) {
-		return false
-	}
-	for i := range this.MatchLabels {
-		if this.MatchLabels[i] != that1.MatchLabels[i] {
-			return false
-		}
-	}
-	if len(this.MatchExpressions) != len(that1.MatchExpressions) {
-		return false
-	}
-	for i := range this.MatchExpressions {
-		if !this.MatchExpressions[i].Equal(that1.MatchExpressions[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LabelSelectorRequirement) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LabelSelectorRequirement)
-	if !ok {
-		that2, ok := that.(LabelSelectorRequirement)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	if this.Operator != that1.Operator {
-		return false
-	}
-	if len(this.Values) != len(that1.Values) {
-		return false
-	}
-	for i := range this.Values {
-		if this.Values[i] != that1.Values[i] {
-			return false
-		}
-	}
-	return true
-}
 func (this *Job) GoString() string {
 	if this == nil {
 		return "nil"
@@ -795,45 +653,6 @@ func (this *JobStatus) GoString() string {
 	s = append(s, "Active: "+fmt.Sprintf("%#v", this.Active)+",\n")
 	s = append(s, "Succeeded: "+fmt.Sprintf("%#v", this.Succeeded)+",\n")
 	s = append(s, "Failed: "+fmt.Sprintf("%#v", this.Failed)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LabelSelector) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.LabelSelector{")
-	keysForMatchLabels := make([]string, 0, len(this.MatchLabels))
-	for k, _ := range this.MatchLabels {
-		keysForMatchLabels = append(keysForMatchLabels, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMatchLabels)
-	mapStringForMatchLabels := "map[string]string{"
-	for _, k := range keysForMatchLabels {
-		mapStringForMatchLabels += fmt.Sprintf("%#v: %#v,", k, this.MatchLabels[k])
-	}
-	mapStringForMatchLabels += "}"
-	if this.MatchLabels != nil {
-		s = append(s, "MatchLabels: "+mapStringForMatchLabels+",\n")
-	}
-	if this.MatchExpressions != nil {
-		s = append(s, "MatchExpressions: "+fmt.Sprintf("%#v", this.MatchExpressions)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LabelSelectorRequirement) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.LabelSelectorRequirement{")
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "Operator: "+fmt.Sprintf("%#v", this.Operator)+",\n")
-	if this.Values != nil {
-		s = append(s, "Values: "+fmt.Sprintf("%#v", this.Values)+",\n")
-	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1119,94 +938,6 @@ func (m *JobStatus) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *LabelSelector) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LabelSelector) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.MatchLabels) > 0 {
-		for k, _ := range m.MatchLabels {
-			dAtA[i] = 0xa
-			i++
-			v := m.MatchLabels[k]
-			mapSize := 1 + len(k) + sovGenerated(uint64(len(k))) + 1 + len(v) + sovGenerated(uint64(len(v)))
-			i = encodeVarintGenerated(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintGenerated(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintGenerated(dAtA, i, uint64(len(v)))
-			i += copy(dAtA[i:], v)
-		}
-	}
-	if len(m.MatchExpressions) > 0 {
-		for _, msg := range m.MatchExpressions {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *LabelSelectorRequirement) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LabelSelectorRequirement) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Operator)))
-	i += copy(dAtA[i:], m.Operator)
-	if len(m.Values) > 0 {
-		for _, s := range m.Values {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	return i, nil
-}
-
 func encodeFixed64Generated(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	dAtA[offset+1] = uint8(v >> 8)
@@ -1331,42 +1062,6 @@ func (m *JobStatus) Size() (n int) {
 	return n
 }
 
-func (m *LabelSelector) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.MatchLabels) > 0 {
-		for k, v := range m.MatchLabels {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovGenerated(uint64(len(k))) + 1 + len(v) + sovGenerated(uint64(len(v)))
-			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
-		}
-	}
-	if len(m.MatchExpressions) > 0 {
-		for _, e := range m.MatchExpressions {
-			l = e.Size()
-			n += 1 + l + sovGenerated(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *LabelSelectorRequirement) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Operator)
-	n += 1 + l + sovGenerated(uint64(l))
-	if len(m.Values) > 0 {
-		for _, s := range m.Values {
-			l = len(s)
-			n += 1 + l + sovGenerated(uint64(l))
-		}
-	}
-	return n
-}
-
 func sovGenerated(x uint64) (n int) {
 	for {
 		n++
@@ -1426,7 +1121,7 @@ func (this *JobSpec) String() string {
 		`Parallelism:` + fmt.Sprintf("%v", this.Parallelism) + `,`,
 		`Completions:` + fmt.Sprintf("%v", this.Completions) + `,`,
 		`ActiveDeadlineSeconds:` + fmt.Sprintf("%v", this.ActiveDeadlineSeconds) + `,`,
-		`Selector:` + strings.Replace(fmt.Sprintf("%v", this.Selector), "LabelSelector", "LabelSelector", 1) + `,`,
+		`Selector:` + strings.Replace(fmt.Sprintf("%v", this.Selector), "LabelSelector", "github.com/ericchiang.k8s.api_unversioned.LabelSelector", 1) + `,`,
 		`ManualSelector:` + fmt.Sprintf("%v", this.ManualSelector) + `,`,
 		`Template:` + strings.Replace(fmt.Sprintf("%v", this.Template), "PodTemplateSpec", "github.com/ericchiang.k8s.api_v1.PodTemplateSpec", 1) + `,`,
 		`}`,
@@ -1444,39 +1139,6 @@ func (this *JobStatus) String() string {
 		`Active:` + fmt.Sprintf("%v", this.Active) + `,`,
 		`Succeeded:` + fmt.Sprintf("%v", this.Succeeded) + `,`,
 		`Failed:` + fmt.Sprintf("%v", this.Failed) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LabelSelector) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForMatchLabels := make([]string, 0, len(this.MatchLabels))
-	for k, _ := range this.MatchLabels {
-		keysForMatchLabels = append(keysForMatchLabels, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMatchLabels)
-	mapStringForMatchLabels := "map[string]string{"
-	for _, k := range keysForMatchLabels {
-		mapStringForMatchLabels += fmt.Sprintf("%v: %v,", k, this.MatchLabels[k])
-	}
-	mapStringForMatchLabels += "}"
-	s := strings.Join([]string{`&LabelSelector{`,
-		`MatchLabels:` + mapStringForMatchLabels + `,`,
-		`MatchExpressions:` + strings.Replace(fmt.Sprintf("%v", this.MatchExpressions), "LabelSelectorRequirement", "LabelSelectorRequirement", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LabelSelectorRequirement) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LabelSelectorRequirement{`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`Operator:` + fmt.Sprintf("%v", this.Operator) + `,`,
-		`Values:` + fmt.Sprintf("%v", this.Values) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2097,7 +1759,7 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Selector == nil {
-				m.Selector = &LabelSelector{}
+				m.Selector = &k8s_io_kubernetes_pkg_api_unversioned.LabelSelector{}
 			}
 			if err := m.Selector.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2381,340 +2043,6 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *LabelSelector) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowGenerated
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LabelSelector: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LabelSelector: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MatchLabels", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			var keykey uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				keykey |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			var stringLenmapkey uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLenmapkey |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLenmapkey := int(stringLenmapkey)
-			if intStringLenmapkey < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postStringIndexmapkey := iNdEx + intStringLenmapkey
-			if postStringIndexmapkey > l {
-				return io.ErrUnexpectedEOF
-			}
-			mapkey := string(dAtA[iNdEx:postStringIndexmapkey])
-			iNdEx = postStringIndexmapkey
-			if m.MatchLabels == nil {
-				m.MatchLabels = make(map[string]string)
-			}
-			if iNdEx < postIndex {
-				var valuekey uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowGenerated
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					valuekey |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				var stringLenmapvalue uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowGenerated
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLenmapvalue |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLenmapvalue := int(stringLenmapvalue)
-				if intStringLenmapvalue < 0 {
-					return ErrInvalidLengthGenerated
-				}
-				postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-				if postStringIndexmapvalue > l {
-					return io.ErrUnexpectedEOF
-				}
-				mapvalue := string(dAtA[iNdEx:postStringIndexmapvalue])
-				iNdEx = postStringIndexmapvalue
-				m.MatchLabels[mapkey] = mapvalue
-			} else {
-				var mapvalue string
-				m.MatchLabels[mapkey] = mapvalue
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MatchExpressions", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MatchExpressions = append(m.MatchExpressions, &LabelSelectorRequirement{})
-			if err := m.MatchExpressions[len(m.MatchExpressions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipGenerated(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LabelSelectorRequirement) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowGenerated
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LabelSelectorRequirement: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LabelSelectorRequirement: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Key = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Operator", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Operator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Values", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Values = append(m.Values, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipGenerated(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func skipGenerated(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2825,56 +2153,48 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 811 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x55, 0x4f, 0x6f, 0xe3, 0x44,
-	0x14, 0x8f, 0x9d, 0xa4, 0x9b, 0x4c, 0xd8, 0xd5, 0x6a, 0x24, 0x56, 0x56, 0x84, 0xcc, 0x2a, 0x48,
-	0xa8, 0x12, 0x5d, 0x9b, 0x04, 0x21, 0xad, 0x56, 0x02, 0xa1, 0xdd, 0x2d, 0x52, 0x43, 0x0b, 0xad,
-	0xd3, 0x13, 0x9c, 0xc6, 0xf6, 0x23, 0x0c, 0xb1, 0x3d, 0x66, 0x66, 0x1c, 0xd1, 0x1b, 0x1f, 0x81,
-	0x13, 0x9f, 0x81, 0x0b, 0x37, 0x3e, 0x44, 0x8f, 0xbd, 0x20, 0x71, 0xaa, 0x68, 0xb8, 0x70, 0xec,
-	0x47, 0x40, 0x33, 0x76, 0x1c, 0xe7, 0x5f, 0x95, 0xf6, 0x98, 0xdf, 0x7b, 0xbf, 0xdf, 0xbc, 0xf7,
-	0x7e, 0xef, 0x39, 0xe8, 0x93, 0xc9, 0x4b, 0xe1, 0x50, 0xe6, 0x4e, 0x32, 0x1f, 0x78, 0x02, 0x12,
-	0x84, 0x9b, 0x4e, 0xc6, 0x2e, 0x49, 0xa9, 0x70, 0x7d, 0x22, 0x83, 0x1f, 0xdc, 0x69, 0xdf, 0x1d,
-	0x43, 0x02, 0x9c, 0x48, 0x08, 0x9d, 0x94, 0x33, 0xc9, 0xf0, 0x07, 0x39, 0xc9, 0x59, 0x90, 0x9c,
-	0x74, 0x32, 0x76, 0x14, 0xc9, 0xd1, 0x24, 0x67, 0xda, 0xef, 0x0e, 0xb6, 0x2a, 0xbb, 0x1c, 0x04,
-	0xcb, 0x78, 0x00, 0xab, 0xc2, 0xdd, 0x4f, 0xb7, 0x73, 0xb2, 0x64, 0x0a, 0x5c, 0x50, 0x96, 0x40,
-	0xb8, 0x46, 0x3b, 0xd8, 0x4e, 0x5b, 0xaf, 0xbe, 0xfb, 0x62, 0x73, 0x36, 0xcf, 0x12, 0x49, 0xe3,
-	0xf5, 0x9a, 0xfa, 0x9b, 0xd3, 0x33, 0x49, 0x23, 0x97, 0x26, 0x52, 0x48, 0xbe, 0x4a, 0xe9, 0xfd,
-	0x65, 0xa0, 0xfa, 0x90, 0xf9, 0xf8, 0x2d, 0x6a, 0xc5, 0x20, 0x49, 0x48, 0x24, 0xb1, 0x8c, 0xe7,
-	0xc6, 0x7e, 0x67, 0xb0, 0xef, 0x6c, 0x1d, 0x9d, 0x33, 0xed, 0x3b, 0xdf, 0xf8, 0x3f, 0x42, 0x20,
-	0x4f, 0x40, 0x12, 0xaf, 0x64, 0xe2, 0x2f, 0x50, 0x43, 0xa4, 0x10, 0x58, 0xa6, 0x56, 0x38, 0x70,
-	0x76, 0x18, 0xbe, 0x33, 0x64, 0xfe, 0x28, 0x85, 0xc0, 0xd3, 0x4c, 0xfc, 0x25, 0xda, 0x13, 0x92,
-	0xc8, 0x4c, 0x58, 0x75, 0xad, 0xe1, 0xec, 0xac, 0xa1, 0x59, 0x5e, 0xc1, 0xee, 0xfd, 0x69, 0xa2,
-	0x77, 0x86, 0xcc, 0x7f, 0xc3, 0x92, 0x90, 0x4a, 0xca, 0x12, 0x6c, 0xa1, 0x86, 0xbc, 0x48, 0x41,
-	0x37, 0xd7, 0x7e, 0xdd, 0xb8, 0xbc, 0x7e, 0xbf, 0xe6, 0x69, 0x04, 0xbf, 0x57, 0x3e, 0x69, 0x56,
-	0x62, 0x05, 0x86, 0xcf, 0xd0, 0xe3, 0x88, 0x08, 0x79, 0xca, 0x99, 0x0f, 0xe7, 0x34, 0x86, 0xa2,
-	0xae, 0x8f, 0xee, 0x98, 0x4e, 0xc5, 0x7f, 0x47, 0x51, 0xbc, 0x65, 0x05, 0xfc, 0x1d, 0xc2, 0x0a,
-	0x38, 0xe7, 0x24, 0x11, 0xba, 0x38, 0xad, 0xdb, 0xb8, 0xbf, 0xee, 0x06, 0x19, 0xd5, 0x0d, 0x07,
-	0x22, 0x58, 0x62, 0x35, 0xab, 0xdd, 0xe4, 0x18, 0xb6, 0xd1, 0xa3, 0x18, 0x84, 0x20, 0x63, 0xb0,
-	0xf6, 0x2a, 0xe1, 0x39, 0xd8, 0xfb, 0xcd, 0x40, 0x8f, 0x86, 0xcc, 0x3f, 0xa6, 0x42, 0xe2, 0xaf,
-	0xd6, 0x56, 0xc2, 0xdd, 0xb1, 0x38, 0x45, 0x5f, 0xd9, 0x8c, 0xcf, 0x51, 0x93, 0x4a, 0x88, 0xd5,
-	0x8c, 0xeb, 0x77, 0x2f, 0xd7, 0xb2, 0xad, 0x5e, 0x4e, 0xeb, 0x5d, 0x9b, 0xba, 0x30, 0xb5, 0x29,
-	0xf8, 0x43, 0xd4, 0x49, 0x09, 0x27, 0x51, 0x04, 0x11, 0x15, 0xb1, 0xae, 0xad, 0x59, 0x34, 0x52,
-	0x0d, 0xa8, 0xbc, 0x80, 0xc5, 0x69, 0x04, 0x6a, 0x38, 0xb9, 0xbb, 0x65, 0x5e, 0x25, 0x80, 0x5f,
-	0xa1, 0x77, 0x49, 0x20, 0xe9, 0x14, 0xde, 0x02, 0x09, 0x23, 0x9a, 0xc0, 0x08, 0x02, 0x96, 0x84,
-	0xf9, 0x0a, 0xd6, 0x0b, 0xc6, 0xe6, 0x14, 0xfc, 0x35, 0x6a, 0x09, 0x88, 0x20, 0x90, 0x8c, 0x17,
-	0x0e, 0x0e, 0x76, 0x6a, 0xed, 0x98, 0xf8, 0x10, 0x8d, 0x0a, 0xa6, 0x57, 0x6a, 0xe0, 0x03, 0xf4,
-	0x24, 0x26, 0x49, 0x46, 0xca, 0x98, 0xb6, 0xb1, 0x55, 0x14, 0xb1, 0x12, 0xc3, 0x47, 0xa8, 0x25,
-	0x21, 0x4e, 0x23, 0x22, 0x73, 0x3f, 0x3b, 0x83, 0x17, 0x77, 0x5f, 0xed, 0x29, 0x0b, 0xcf, 0x0b,
-	0x82, 0x3e, 0xba, 0x92, 0xae, 0x06, 0xdc, 0x2e, 0xcf, 0x08, 0x9f, 0x21, 0x14, 0xcc, 0x4f, 0x47,
-	0x58, 0x86, 0xf6, 0xac, 0xbf, 0xab, 0x67, 0xe5, 0xd1, 0x79, 0x15, 0x11, 0x7c, 0x84, 0xda, 0x42,
-	0x12, 0x2e, 0xf5, 0xb2, 0x9b, 0xf7, 0x5f, 0xf6, 0x05, 0x1b, 0x8f, 0xd0, 0x93, 0x85, 0x7f, 0x0f,
-	0x3d, 0xca, 0x15, 0x09, 0x75, 0x38, 0xb9, 0xc5, 0xda, 0xc7, 0xf9, 0xa2, 0x14, 0x18, 0xee, 0xa1,
-	0xb6, 0xc8, 0x82, 0x00, 0x20, 0x84, 0x50, 0x5b, 0x32, 0x4f, 0x58, 0xc0, 0x4a, 0xe1, 0x7b, 0x42,
-	0x23, 0x08, 0xb5, 0x17, 0xa5, 0x42, 0x8e, 0xf5, 0xfe, 0x30, 0xd1, 0xe3, 0x25, 0xd7, 0x31, 0xa0,
-	0x4e, 0xac, 0xc6, 0xa6, 0xd1, 0xf9, 0x94, 0xdf, 0xdc, 0x7f, 0x7d, 0x9c, 0x93, 0x85, 0xca, 0x61,
-	0x22, 0xf9, 0x85, 0x57, 0xd5, 0xc5, 0x14, 0x3d, 0xd5, 0x3f, 0x0f, 0x7f, 0x4e, 0x39, 0x08, 0x51,
-	0xdc, 0x82, 0x7a, 0xeb, 0xb3, 0x07, 0xac, 0x2a, 0xfc, 0x94, 0x51, 0x0e, 0x31, 0x24, 0xd2, 0x5b,
-	0x93, 0xed, 0x0e, 0xd1, 0xd3, 0xd5, 0x5a, 0xf0, 0x33, 0x54, 0x9f, 0xc0, 0xc5, 0xd2, 0x77, 0x57,
-	0x01, 0xb8, 0x8b, 0x9a, 0x53, 0x12, 0x65, 0xb0, 0xf4, 0xd5, 0xcd, 0xa1, 0x57, 0xe6, 0x4b, 0xa3,
-	0x17, 0x21, 0x6b, 0xdb, 0xcb, 0x5b, 0x35, 0x9f, 0xa3, 0x16, 0x4b, 0xd5, 0xff, 0x1b, 0xe3, 0x4b,
-	0xb2, 0x25, 0x8a, 0x9f, 0xa1, 0x3d, 0xfd, 0x84, 0x3a, 0xee, 0xfa, 0x7e, 0xdb, 0x2b, 0x7e, 0xbd,
-	0xfe, 0xf8, 0xea, 0xc6, 0xae, 0xfd, 0x7d, 0x63, 0xd7, 0x6e, 0x6f, 0x6c, 0xe3, 0x97, 0x99, 0x6d,
-	0xfc, 0x3e, 0xb3, 0x8d, 0xcb, 0x99, 0x6d, 0x5c, 0xcd, 0x6c, 0xe3, 0x9f, 0x99, 0x6d, 0xfc, 0x37,
-	0xb3, 0x6b, 0xb7, 0x33, 0xdb, 0xf8, 0xf5, 0x5f, 0xbb, 0xf6, 0xad, 0x39, 0xed, 0xff, 0x1f, 0x00,
-	0x00, 0xff, 0xff, 0xa0, 0x8a, 0xc7, 0x86, 0x8f, 0x08, 0x00, 0x00,
+	// 685 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x93, 0xcf, 0x6e, 0xd3, 0x4a,
+	0x14, 0xc6, 0xe3, 0x24, 0x6d, 0x93, 0xe9, 0xbd, 0x5d, 0x8c, 0x74, 0x25, 0xab, 0xba, 0x32, 0x28,
+	0x48, 0xa8, 0x12, 0xed, 0x98, 0x14, 0x90, 0x10, 0x0b, 0x84, 0x4a, 0x85, 0xd4, 0x00, 0xa2, 0x75,
+	0xba, 0x82, 0xd5, 0xd8, 0x3e, 0x84, 0x21, 0xb6, 0xc7, 0x9a, 0x19, 0x47, 0x62, 0xc7, 0x23, 0xb0,
+	0xe2, 0x19, 0x78, 0x00, 0x1e, 0xa2, 0xcb, 0x6e, 0x90, 0x58, 0x55, 0xad, 0xd9, 0xb0, 0xec, 0x23,
+	0x20, 0x8f, 0x1d, 0xc7, 0xcd, 0x9f, 0x2a, 0x65, 0x7b, 0xce, 0xf9, 0x7d, 0x73, 0xe6, 0x7c, 0xe7,
+	0xa0, 0x07, 0xc3, 0xc7, 0x92, 0x30, 0x6e, 0x0f, 0x13, 0x17, 0x44, 0x04, 0x0a, 0xa4, 0x1d, 0x0f,
+	0x07, 0x36, 0x8d, 0x99, 0xb4, 0x5d, 0xaa, 0xbc, 0x0f, 0xf6, 0xa8, 0x6b, 0x0f, 0x20, 0x02, 0x41,
+	0x15, 0xf8, 0x24, 0x16, 0x5c, 0x71, 0x7c, 0x27, 0x87, 0xc8, 0x04, 0x22, 0xf1, 0x70, 0x40, 0x32,
+	0x88, 0x68, 0x88, 0x8c, 0xba, 0x9b, 0xbb, 0x0b, 0x95, 0x6d, 0x01, 0x92, 0x27, 0xc2, 0x83, 0x69,
+	0xe1, 0xcd, 0x47, 0x8b, 0x99, 0x24, 0x1a, 0x81, 0x90, 0x8c, 0x47, 0xe0, 0xcf, 0x60, 0xdb, 0x8b,
+	0xb1, 0xd9, 0xee, 0x37, 0x77, 0xe6, 0x57, 0x8b, 0x24, 0x52, 0x2c, 0x9c, 0xed, 0xa9, 0x3b, 0xbf,
+	0x3c, 0x51, 0x2c, 0xb0, 0x59, 0xa4, 0xa4, 0x12, 0xd3, 0x48, 0xe7, 0x87, 0x81, 0x1a, 0x3d, 0xee,
+	0xe2, 0x7d, 0xd4, 0x0a, 0x41, 0x51, 0x9f, 0x2a, 0x6a, 0x1a, 0xb7, 0x8d, 0xad, 0xf5, 0xdd, 0x2d,
+	0xb2, 0x70, 0x74, 0x64, 0xd4, 0x25, 0x6f, 0xdc, 0x8f, 0xe0, 0xa9, 0xd7, 0xa0, 0xa8, 0x53, 0x92,
+	0xf8, 0x19, 0x6a, 0xca, 0x18, 0x3c, 0xb3, 0xae, 0x15, 0xb6, 0xc9, 0x12, 0xc3, 0x27, 0x3d, 0xee,
+	0xf6, 0x63, 0xf0, 0x1c, 0x4d, 0xe2, 0x17, 0x68, 0x55, 0x2a, 0xaa, 0x12, 0x69, 0x36, 0xb4, 0x06,
+	0x59, 0x5a, 0x43, 0x53, 0x4e, 0x41, 0x77, 0xbe, 0xd7, 0xd1, 0x3f, 0x3d, 0xee, 0x3e, 0xe7, 0x91,
+	0xcf, 0x14, 0xe3, 0x11, 0x36, 0x51, 0x53, 0x7d, 0x8a, 0x41, 0x7f, 0xae, 0xbd, 0xd7, 0x3c, 0x39,
+	0xbb, 0x55, 0x73, 0x74, 0x04, 0xff, 0x5f, 0x3e, 0x59, 0xaf, 0xe4, 0x8a, 0x18, 0x3e, 0x42, 0xff,
+	0x06, 0x54, 0xaa, 0x43, 0xc1, 0x5d, 0x38, 0x66, 0x21, 0x14, 0x7d, 0xdd, 0xbb, 0x66, 0x3a, 0x15,
+	0xff, 0x49, 0x86, 0x38, 0x57, 0x15, 0xf0, 0x3b, 0x84, 0xb3, 0xc0, 0xb1, 0xa0, 0x91, 0xd4, 0xcd,
+	0x69, 0xdd, 0xe6, 0xcd, 0x75, 0xe7, 0xc8, 0x64, 0xbf, 0x11, 0x40, 0x25, 0x8f, 0xcc, 0x95, 0xea,
+	0x6f, 0xf2, 0x18, 0xb6, 0xd0, 0x5a, 0x08, 0x52, 0xd2, 0x01, 0x98, 0xab, 0x95, 0xf4, 0x38, 0xd8,
+	0xf9, 0x6a, 0xa0, 0xb5, 0x1e, 0x77, 0x5f, 0x31, 0xa9, 0xf0, 0xcb, 0x99, 0x95, 0xb0, 0x97, 0x6c,
+	0x2e, 0xc3, 0xa7, 0x36, 0xe3, 0x29, 0x5a, 0x61, 0x0a, 0xc2, 0x6c, 0xc6, 0x8d, 0xeb, 0x97, 0xeb,
+	0xaa, 0xad, 0x4e, 0x8e, 0x75, 0xce, 0xeb, 0xba, 0xb1, 0x6c, 0x53, 0xf0, 0x5d, 0xb4, 0x1e, 0x53,
+	0x41, 0x83, 0x00, 0x02, 0x26, 0x43, 0xdd, 0xdb, 0x4a, 0xf1, 0x91, 0x6a, 0x22, 0xab, 0xf3, 0x78,
+	0x18, 0x07, 0x90, 0x0d, 0x27, 0x77, 0xb7, 0xac, 0xab, 0x24, 0xf0, 0x13, 0xf4, 0x1f, 0xf5, 0x14,
+	0x1b, 0xc1, 0x3e, 0x50, 0x3f, 0x60, 0x11, 0xf4, 0xc1, 0xe3, 0x91, 0x9f, 0xaf, 0x60, 0xa3, 0x20,
+	0xe6, 0x97, 0xe0, 0x43, 0xd4, 0x92, 0x10, 0x80, 0xa7, 0xb8, 0x28, 0x1c, 0x7c, 0xb8, 0xec, 0x90,
+	0xa8, 0x0b, 0x41, 0xbf, 0x60, 0x9d, 0x52, 0x05, 0x6f, 0xa3, 0x8d, 0x90, 0x46, 0x09, 0x2d, 0x73,
+	0xda, 0xc8, 0x56, 0xd1, 0xc6, 0x54, 0x0e, 0x1f, 0xa0, 0x96, 0x82, 0x30, 0x0e, 0xa8, 0xca, 0x1d,
+	0x5d, 0xdf, 0xdd, 0xb9, 0xfe, 0x6e, 0x0f, 0xb9, 0x7f, 0x5c, 0x00, 0xfa, 0xec, 0x4a, 0xbc, 0x73,
+	0x56, 0x47, 0xed, 0xf2, 0x90, 0xf0, 0x11, 0x42, 0xde, 0xf8, 0x78, 0xa4, 0x69, 0x68, 0xd7, 0xba,
+	0xcb, 0xba, 0x56, 0x9e, 0x9d, 0x53, 0x11, 0xc1, 0x07, 0xa8, 0x2d, 0x15, 0x15, 0x4a, 0xaf, 0x7b,
+	0xfd, 0xe6, 0xeb, 0x3e, 0xa1, 0x71, 0x1f, 0x6d, 0x4c, 0x1c, 0xfc, 0xdb, 0xb3, 0x9c, 0x92, 0xc8,
+	0x4e, 0x27, 0x37, 0x59, 0x3b, 0x39, 0x5e, 0x95, 0x22, 0x86, 0x3b, 0xa8, 0x2d, 0x13, 0xcf, 0x03,
+	0xf0, 0xc1, 0xd7, 0x96, 0x8c, 0x0b, 0x26, 0xe1, 0x4c, 0xe1, 0x3d, 0x65, 0x01, 0xf8, 0xda, 0x8b,
+	0x52, 0x21, 0x8f, 0xed, 0xdd, 0x3f, 0xbd, 0xb0, 0x6a, 0x3f, 0x2f, 0xac, 0xda, 0xe5, 0x85, 0x65,
+	0x7c, 0x4e, 0x2d, 0xe3, 0x5b, 0x6a, 0x19, 0x27, 0xa9, 0x65, 0x9c, 0xa6, 0x96, 0x71, 0x9e, 0x5a,
+	0xc6, 0xef, 0xd4, 0xaa, 0x5d, 0xa6, 0x96, 0xf1, 0xe5, 0x97, 0x55, 0x7b, 0x5b, 0x1f, 0x75, 0xff,
+	0x04, 0x00, 0x00, 0xff, 0xff, 0x9d, 0xeb, 0x2a, 0xad, 0xf3, 0x06, 0x00, 0x00,
 }

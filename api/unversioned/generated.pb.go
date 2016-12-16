@@ -71,6 +71,7 @@ type APIGroup struct {
 	Versions []*GroupVersionForDiscovery `protobuf:"bytes,2,rep,name=versions" json:"versions,omitempty"`
 	// preferredVersion is the version preferred by the API server, which
 	// probably is the storage version.
+	// +optional
 	PreferredVersion *GroupVersionForDiscovery `protobuf:"bytes,3,opt,name=preferredVersion" json:"preferredVersion,omitempty"`
 	// a map of client CIDR to server address that is serving this group.
 	// This is to help clients reach servers in the most network-efficient way possible.
@@ -461,8 +462,10 @@ type LabelSelector struct {
 	// matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
 	// map is equivalent to an element of matchExpressions, whose key field is "key", the
 	// operator is "In", and the values array contains only "value". The requirements are ANDed.
+	// +optional
 	MatchLabels map[string]string `protobuf:"bytes,1,rep,name=matchLabels" json:"matchLabels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// matchExpressions is a list of label selector requirements. The requirements are ANDed.
+	// +optional
 	MatchExpressions []*LabelSelectorRequirement `protobuf:"bytes,2,rep,name=matchExpressions" json:"matchExpressions,omitempty"`
 }
 
@@ -496,6 +499,7 @@ type LabelSelectorRequirement struct {
 	// the values array must be non-empty. If the operator is Exists or DoesNotExist,
 	// the values array must be empty. This array is replaced during a strategic
 	// merge patch.
+	// +optional
 	Values []string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty"`
 }
 
@@ -532,13 +536,15 @@ type ListMeta struct {
 	// SelfLink is a URL representing this object.
 	// Populated by the system.
 	// Read-only.
+	// +optional
 	SelfLink string `protobuf:"bytes,1,opt,name=selfLink" json:"selfLink"`
 	// String that identifies the server's internal version of this object that
 	// can be used by clients to determine when objects have changed.
 	// Value must be treated as opaque by clients and passed unmodified back to the server.
 	// Populated by the system.
 	// Read-only.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#concurrency-control-and-consistency
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#concurrency-control-and-consistency
+	// +optional
 	ResourceVersion string `protobuf:"bytes,2,opt,name=resourceVersion" json:"resourceVersion"`
 }
 
@@ -610,25 +616,31 @@ func (m *ServerAddressByClientCIDR) GetServerAddress() string {
 // Status is a return value for calls that don't return other objects.
 type Status struct {
 	// Standard list metadata.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Metadata *ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Status of the operation.
 	// One of: "Success" or "Failure".
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
+	// +optional
 	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
 	// A human-readable description of the status of this operation.
+	// +optional
 	Message string `protobuf:"bytes,3,opt,name=message" json:"message"`
 	// A machine-readable description of why this operation is in the
 	// "Failure" status. If this value is empty there
 	// is no information available. A Reason clarifies an HTTP status
 	// code but does not override it.
+	// +optional
 	Reason string `protobuf:"bytes,4,opt,name=reason" json:"reason"`
 	// Extended data associated with the reason.  Each reason may define its
 	// own extended details. This field is optional and the data returned
 	// is not guaranteed to conform to any schema except that defined by
 	// the reason type.
+	// +optional
 	Details *StatusDetails `protobuf:"bytes,5,opt,name=details" json:"details,omitempty"`
 	// Suggested HTTP return code for this status, 0 if not set.
+	// +optional
 	Code int32 `protobuf:"varint,6,opt,name=code" json:"code"`
 }
 
@@ -683,9 +695,11 @@ func (m *Status) GetCode() int32 {
 type StatusCause struct {
 	// A machine-readable description of the cause of the error. If this value is
 	// empty there is no information available.
+	// +optional
 	Reason string `protobuf:"bytes,1,opt,name=reason" json:"reason"`
 	// A human-readable description of the cause of the error.  This field may be
 	// presented as-is to a reader.
+	// +optional
 	Message string `protobuf:"bytes,2,opt,name=message" json:"message"`
 	// The field of the resource that has caused this error, as named by its JSON
 	// serialization. May include dot and postfix notation for nested attributes.
@@ -696,6 +710,7 @@ type StatusCause struct {
 	// Examples:
 	//   "name" - the field "name" on the current resource
 	//   "items[0].name" - the field "name" on the first array entry in "items"
+	// +optional
 	Field string `protobuf:"bytes,3,opt,name=field" json:"field"`
 }
 
@@ -733,17 +748,22 @@ func (m *StatusCause) GetField() string {
 type StatusDetails struct {
 	// The name attribute of the resource associated with the status StatusReason
 	// (when there is a single name which can be described).
+	// +optional
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
 	// The group attribute of the resource associated with the status StatusReason.
+	// +optional
 	Group string `protobuf:"bytes,2,opt,name=group" json:"group"`
 	// The kind attribute of the resource associated with the status StatusReason.
 	// On some operations may differ from the requested resource Kind.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Kind string `protobuf:"bytes,3,opt,name=kind" json:"kind"`
 	// The Causes array includes more details associated with the StatusReason
 	// failure. Not all StatusReasons may provide detailed causes.
+	// +optional
 	Causes []*StatusCause `protobuf:"bytes,4,rep,name=causes" json:"causes,omitempty"`
 	// If specified, the time in seconds before the operation should be retried.
+	// +optional
 	RetryAfterSeconds int32 `protobuf:"varint,5,opt,name=retryAfterSeconds" json:"retryAfterSeconds"`
 }
 
@@ -864,12 +884,14 @@ type TypeMeta struct {
 	// Servers may infer this from the endpoint the client submits requests to.
 	// Cannot be updated.
 	// In CamelCase.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds
+	// +optional
 	Kind string `protobuf:"bytes,1,opt,name=kind" json:"kind"`
 	// APIVersion defines the versioned schema of this representation of an object.
 	// Servers should convert recognized schemas to the latest internal value, and
 	// may reject unrecognized values.
-	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#resources
+	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#resources
+	// +optional
 	ApiVersion string `protobuf:"bytes,2,opt,name=apiVersion" json:"apiVersion"`
 }
 

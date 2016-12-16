@@ -86,6 +86,7 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 //
 // +k8s:deepcopy-gen=true
 // +protobuf=true
+// +k8s:openapi-gen=true
 type RawExtension struct {
 	// Raw is the underlying serialization of this object.
 	//
@@ -117,9 +118,12 @@ func (m *RawExtension) GetRaw() []byte {
 //
 // +k8s:deepcopy-gen=true
 // +protobuf=true
+// +k8s:openapi-gen=true
 type TypeMeta struct {
+	// +optional
 	ApiVersion string `protobuf:"bytes,1,opt,name=apiVersion" json:"apiVersion"`
-	Kind       string `protobuf:"bytes,2,opt,name=kind" json:"kind"`
+	// +optional
+	Kind string `protobuf:"bytes,2,opt,name=kind" json:"kind"`
 }
 
 func (m *TypeMeta) Reset()                    { *m = TypeMeta{} }
@@ -148,6 +152,7 @@ func (m *TypeMeta) GetKind() string {
 //
 // +k8s:deepcopy-gen=true
 // +protobuf=true
+// +k8s:openapi-gen=true
 type Unknown struct {
 	TypeMeta *TypeMeta `protobuf:"bytes,1,opt,name=typeMeta" json:"typeMeta,omitempty"`
 	// Raw will hold the complete serialized object which couldn't be matched

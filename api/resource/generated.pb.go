@@ -98,6 +98,7 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 // +protobuf.embed=string
 // +protobuf.options.marshal=false
 // +protobuf.options.(gogoproto.goproto_stringer)=false
+// +k8s:openapi-gen=true
 type Quantity struct {
 	String_ string `protobuf:"bytes,1,opt,name=string" json:"string"`
 }

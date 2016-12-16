@@ -18,6 +18,7 @@
 		RoleBinding
 		RoleBindingList
 		RoleList
+		RoleRef
 		Subject
 */
 package v1alpha1
@@ -53,6 +54,7 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 // ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding or ClusterRoleBinding.
 type ClusterRole struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Rules holds all the PolicyRules for this ClusterRole
 	Rules []*PolicyRule `protobuf:"bytes,2,rep,name=rules" json:"rules,omitempty"`
@@ -80,12 +82,13 @@ func (m *ClusterRole) GetRules() []*PolicyRule {
 // and adds who information via Subject.
 type ClusterRoleBinding struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Subjects holds references to the objects the role applies to.
 	Subjects []*Subject `protobuf:"bytes,2,rep,name=subjects" json:"subjects,omitempty"`
 	// RoleRef can only reference a ClusterRole in the global namespace.
 	// If the RoleRef cannot be resolved, the Authorizer must return an error.
-	RoleRef *k8s_io_kubernetes_pkg_api_v1.ObjectReference `protobuf:"bytes,3,opt,name=roleRef" json:"roleRef,omitempty"`
+	RoleRef *RoleRef `protobuf:"bytes,3,opt,name=roleRef" json:"roleRef,omitempty"`
 }
 
 func (m *ClusterRoleBinding) Reset()                    { *m = ClusterRoleBinding{} }
@@ -106,7 +109,7 @@ func (m *ClusterRoleBinding) GetSubjects() []*Subject {
 	return nil
 }
 
-func (m *ClusterRoleBinding) GetRoleRef() *k8s_io_kubernetes_pkg_api_v1.ObjectReference {
+func (m *ClusterRoleBinding) GetRoleRef() *RoleRef {
 	if m != nil {
 		return m.RoleRef
 	}
@@ -116,6 +119,7 @@ func (m *ClusterRoleBinding) GetRoleRef() *k8s_io_kubernetes_pkg_api_v1.ObjectRe
 // ClusterRoleBindingList is a collection of ClusterRoleBindings
 type ClusterRoleBindingList struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of ClusterRoleBindings
 	Items []*ClusterRoleBinding `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -142,6 +146,7 @@ func (m *ClusterRoleBindingList) GetItems() []*ClusterRoleBinding {
 // ClusterRoleList is a collection of ClusterRoles
 type ClusterRoleList struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of ClusterRoles
 	Items []*ClusterRole `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -172,18 +177,23 @@ type PolicyRule struct {
 	Verbs []string `protobuf:"bytes,1,rep,name=verbs" json:"verbs,omitempty"`
 	// AttributeRestrictions will vary depending on what the Authorizer/AuthorizationAttributeBuilder pair supports.
 	// If the Authorizer does not recognize how to handle the AttributeRestrictions, the Authorizer should report an error.
+	// +optional
 	AttributeRestrictions *k8s_io_kubernetes_pkg_runtime.RawExtension `protobuf:"bytes,2,opt,name=attributeRestrictions" json:"attributeRestrictions,omitempty"`
 	// APIGroups is the name of the APIGroup that contains the resources.  If multiple API groups are specified, any action requested against one of
 	// the enumerated resources in any API group will be allowed.
+	// +optional
 	ApiGroups []string `protobuf:"bytes,3,rep,name=apiGroups" json:"apiGroups,omitempty"`
 	// Resources is a list of resources this rule applies to.  ResourceAll represents all resources.
+	// +optional
 	Resources []string `protobuf:"bytes,4,rep,name=resources" json:"resources,omitempty"`
 	// ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.
+	// +optional
 	ResourceNames []string `protobuf:"bytes,5,rep,name=resourceNames" json:"resourceNames,omitempty"`
 	// NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path
 	// This name is intentionally different than the internal type so that the DefaultConvert works nicely and because the ordering may be different.
 	// Since non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding.
 	// Rules can either apply to API resources (such as "pods" or "secrets") or non-resource URL paths (such as "/api"),  but not both.
+	// +optional
 	NonResourceURLs []string `protobuf:"bytes,6,rep,name=nonResourceURLs" json:"nonResourceURLs,omitempty"`
 }
 
@@ -236,6 +246,7 @@ func (m *PolicyRule) GetNonResourceURLs() []string {
 // Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding.
 type Role struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Rules holds all the PolicyRules for this Role
 	Rules []*PolicyRule `protobuf:"bytes,2,rep,name=rules" json:"rules,omitempty"`
@@ -264,12 +275,13 @@ func (m *Role) GetRules() []*PolicyRule {
 // namespace only have effect in that namespace.
 type RoleBinding struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Subjects holds references to the objects the role applies to.
 	Subjects []*Subject `protobuf:"bytes,2,rep,name=subjects" json:"subjects,omitempty"`
 	// RoleRef can reference a Role in the current namespace or a ClusterRole in the global namespace.
 	// If the RoleRef cannot be resolved, the Authorizer must return an error.
-	RoleRef *k8s_io_kubernetes_pkg_api_v1.ObjectReference `protobuf:"bytes,3,opt,name=roleRef" json:"roleRef,omitempty"`
+	RoleRef *RoleRef `protobuf:"bytes,3,opt,name=roleRef" json:"roleRef,omitempty"`
 }
 
 func (m *RoleBinding) Reset()                    { *m = RoleBinding{} }
@@ -290,7 +302,7 @@ func (m *RoleBinding) GetSubjects() []*Subject {
 	return nil
 }
 
-func (m *RoleBinding) GetRoleRef() *k8s_io_kubernetes_pkg_api_v1.ObjectReference {
+func (m *RoleBinding) GetRoleRef() *RoleRef {
 	if m != nil {
 		return m.RoleRef
 	}
@@ -300,6 +312,7 @@ func (m *RoleBinding) GetRoleRef() *k8s_io_kubernetes_pkg_api_v1.ObjectReference
 // RoleBindingList is a collection of RoleBindings
 type RoleBindingList struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of RoleBindings
 	Items []*RoleBinding `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -326,6 +339,7 @@ func (m *RoleBindingList) GetItems() []*RoleBinding {
 // RoleList is a collection of Roles
 type RoleList struct {
 	// Standard object's metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of Roles
 	Items []*Role `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -349,6 +363,41 @@ func (m *RoleList) GetItems() []*Role {
 	return nil
 }
 
+// RoleRef contains information that points to the role being used
+type RoleRef struct {
+	// APIGroup is the group for the resource being referenced
+	ApiGroup string `protobuf:"bytes,1,opt,name=apiGroup" json:"apiGroup"`
+	// Kind is the type of resource being referenced
+	Kind string `protobuf:"bytes,2,opt,name=kind" json:"kind"`
+	// Name is the name of resource being referenced
+	Name string `protobuf:"bytes,3,opt,name=name" json:"name"`
+}
+
+func (m *RoleRef) Reset()                    { *m = RoleRef{} }
+func (*RoleRef) ProtoMessage()               {}
+func (*RoleRef) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{9} }
+
+func (m *RoleRef) GetApiGroup() string {
+	if m != nil {
+		return m.ApiGroup
+	}
+	return ""
+}
+
+func (m *RoleRef) GetKind() string {
+	if m != nil {
+		return m.Kind
+	}
+	return ""
+}
+
+func (m *RoleRef) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
 // Subject contains a reference to the object or user identities a role binding applies to.  This can either hold a direct API object reference,
 // or a value for non-objects such as user and group names.
 type Subject struct {
@@ -356,17 +405,19 @@ type Subject struct {
 	// If the Authorizer does not recognized the kind value, the Authorizer should report an error.
 	Kind string `protobuf:"bytes,1,opt,name=kind" json:"kind"`
 	// APIVersion holds the API group and version of the referenced object.
+	// +optional
 	ApiVersion string `protobuf:"bytes,2,opt,name=apiVersion" json:"apiVersion"`
 	// Name of the object being referenced.
 	Name string `protobuf:"bytes,3,opt,name=name" json:"name"`
 	// Namespace of the referenced object.  If the object kind is non-namespace, such as "User" or "Group", and this value is not empty
 	// the Authorizer should report an error.
+	// +optional
 	Namespace string `protobuf:"bytes,4,opt,name=namespace" json:"namespace"`
 }
 
 func (m *Subject) Reset()                    { *m = Subject{} }
 func (*Subject) ProtoMessage()               {}
-func (*Subject) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{9} }
+func (*Subject) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{10} }
 
 func (m *Subject) GetKind() string {
 	if m != nil {
@@ -406,6 +457,7 @@ func init() {
 	proto.RegisterType((*RoleBinding)(nil), "github.com/ericchiang.k8s.apis.rbac.v1alpha1.RoleBinding")
 	proto.RegisterType((*RoleBindingList)(nil), "github.com/ericchiang.k8s.apis.rbac.v1alpha1.RoleBindingList")
 	proto.RegisterType((*RoleList)(nil), "github.com/ericchiang.k8s.apis.rbac.v1alpha1.RoleList")
+	proto.RegisterType((*RoleRef)(nil), "github.com/ericchiang.k8s.apis.rbac.v1alpha1.RoleRef")
 	proto.RegisterType((*Subject)(nil), "github.com/ericchiang.k8s.apis.rbac.v1alpha1.Subject")
 }
 func (this *ClusterRole) Equal(that interface{}) bool {
@@ -788,6 +840,42 @@ func (this *RoleList) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *RoleRef) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*RoleRef)
+	if !ok {
+		that2, ok := that.(RoleRef)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.ApiGroup != that1.ApiGroup {
+		return false
+	}
+	if this.Kind != that1.Kind {
+		return false
+	}
+	if this.Name != that1.Name {
+		return false
+	}
+	return true
+}
 func (this *Subject) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
@@ -977,6 +1065,18 @@ func (this *RoleList) GoString() string {
 	if this.Items != nil {
 		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
 	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *RoleRef) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&v1alpha1.RoleRef{")
+	s = append(s, "ApiGroup: "+fmt.Sprintf("%#v", this.ApiGroup)+",\n")
+	s = append(s, "Kind: "+fmt.Sprintf("%#v", this.Kind)+",\n")
+	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1462,6 +1562,36 @@ func (m *RoleList) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *RoleRef) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RoleRef) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0xa
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ApiGroup)))
+	i += copy(dAtA[i:], m.ApiGroup)
+	dAtA[i] = 0x12
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Kind)))
+	i += copy(dAtA[i:], m.Kind)
+	dAtA[i] = 0x1a
+	i++
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
+	i += copy(dAtA[i:], m.Name)
+	return i, nil
+}
+
 func (m *Subject) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1699,6 +1829,18 @@ func (m *RoleList) Size() (n int) {
 	return n
 }
 
+func (m *RoleRef) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.ApiGroup)
+	n += 1 + l + sovGenerated(uint64(l))
+	l = len(m.Kind)
+	n += 1 + l + sovGenerated(uint64(l))
+	l = len(m.Name)
+	n += 1 + l + sovGenerated(uint64(l))
+	return n
+}
+
 func (m *Subject) Size() (n int) {
 	var l int
 	_ = l
@@ -1744,7 +1886,7 @@ func (this *ClusterRoleBinding) String() string {
 	s := strings.Join([]string{`&ClusterRoleBinding{`,
 		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
 		`Subjects:` + strings.Replace(fmt.Sprintf("%v", this.Subjects), "Subject", "Subject", 1) + `,`,
-		`RoleRef:` + strings.Replace(fmt.Sprintf("%v", this.RoleRef), "ObjectReference", "github.com/ericchiang.k8s.api_v1.ObjectReference", 1) + `,`,
+		`RoleRef:` + strings.Replace(fmt.Sprintf("%v", this.RoleRef), "RoleRef", "RoleRef", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1804,7 +1946,7 @@ func (this *RoleBinding) String() string {
 	s := strings.Join([]string{`&RoleBinding{`,
 		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
 		`Subjects:` + strings.Replace(fmt.Sprintf("%v", this.Subjects), "Subject", "Subject", 1) + `,`,
-		`RoleRef:` + strings.Replace(fmt.Sprintf("%v", this.RoleRef), "ObjectReference", "github.com/ericchiang.k8s.api_v1.ObjectReference", 1) + `,`,
+		`RoleRef:` + strings.Replace(fmt.Sprintf("%v", this.RoleRef), "RoleRef", "RoleRef", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1827,6 +1969,18 @@ func (this *RoleList) String() string {
 	s := strings.Join([]string{`&RoleList{`,
 		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
 		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Role", "Role", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *RoleRef) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&RoleRef{`,
+		`ApiGroup:` + fmt.Sprintf("%v", this.ApiGroup) + `,`,
+		`Kind:` + fmt.Sprintf("%v", this.Kind) + `,`,
+		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2086,7 +2240,7 @@ func (m *ClusterRoleBinding) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.RoleRef == nil {
-				m.RoleRef = &k8s_io_kubernetes_pkg_api_v1.ObjectReference{}
+				m.RoleRef = &RoleRef{}
 			}
 			if err := m.RoleRef.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2803,7 +2957,7 @@ func (m *RoleBinding) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.RoleRef == nil {
-				m.RoleRef = &k8s_io_kubernetes_pkg_api_v1.ObjectReference{}
+				m.RoleRef = &RoleRef{}
 			}
 			if err := m.RoleRef.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3036,6 +3190,143 @@ func (m *RoleList) Unmarshal(dAtA []byte) error {
 			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RoleRef) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RoleRef: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RoleRef: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ApiGroup", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ApiGroup = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Kind", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Kind = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3334,47 +3625,48 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 658 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe4, 0x94, 0x41, 0x6b, 0x13, 0x4f,
-	0x18, 0xc6, 0x33, 0x4d, 0xf2, 0x6f, 0x32, 0xe1, 0x4f, 0x61, 0x50, 0x59, 0x8a, 0xac, 0x25, 0xf4,
-	0x10, 0xd0, 0xce, 0x92, 0x62, 0xa5, 0x07, 0x4f, 0xb5, 0x52, 0xb0, 0xad, 0xca, 0x88, 0x1e, 0xbc,
-	0x4d, 0x36, 0x6f, 0xe3, 0x98, 0xcd, 0xec, 0x32, 0x33, 0x1b, 0xf5, 0xe6, 0xcd, 0xab, 0xde, 0xbc,
-	0x88, 0x57, 0xc1, 0x4f, 0xe0, 0x37, 0xe8, 0xb1, 0x47, 0x4f, 0x62, 0xd7, 0x8b, 0xe0, 0xa5, 0xf8,
-	0x09, 0x64, 0x77, 0xbb, 0x49, 0x9a, 0x4d, 0x24, 0x96, 0x16, 0x04, 0x4f, 0x61, 0x9f, 0x77, 0x9e,
-	0x77, 0x7e, 0x4f, 0x66, 0xde, 0xc1, 0xeb, 0xdd, 0x75, 0x4d, 0x85, 0xef, 0x74, 0xc3, 0x16, 0x28,
-	0x09, 0x06, 0xb4, 0x13, 0x74, 0x3b, 0x0e, 0x0f, 0x84, 0x76, 0x54, 0x8b, 0xbb, 0x4e, 0xbf, 0xc9,
-	0xbd, 0xe0, 0x09, 0x6f, 0x3a, 0x1d, 0x90, 0xa0, 0xb8, 0x81, 0x36, 0x0d, 0x94, 0x6f, 0x7c, 0xd2,
-	0x48, 0x9d, 0x74, 0xe8, 0xa4, 0x41, 0xb7, 0x43, 0x63, 0x27, 0x8d, 0x9d, 0x34, 0x73, 0x2e, 0xae,
-	0x4e, 0xdd, 0xc3, 0x51, 0xa0, 0xfd, 0x50, 0xb9, 0x30, 0xde, 0x7d, 0x71, 0x6d, 0xba, 0x27, 0x94,
-	0x7d, 0x50, 0x5a, 0xf8, 0x12, 0xda, 0x39, 0xdb, 0xb5, 0xe9, 0xb6, 0x7e, 0x2e, 0xc2, 0xe2, 0xca,
-	0xe4, 0xd5, 0x2a, 0x94, 0x46, 0xf4, 0xf2, 0x4c, 0xcd, 0xc9, 0xcb, 0x43, 0x23, 0x3c, 0x47, 0x48,
-	0xa3, 0x8d, 0x1a, 0xb7, 0xd4, 0xdf, 0x23, 0x5c, 0xbb, 0xe5, 0x85, 0xda, 0x80, 0x62, 0xbe, 0x07,
-	0x64, 0x13, 0x57, 0x7a, 0x60, 0x78, 0x9b, 0x1b, 0x6e, 0xa1, 0x25, 0xd4, 0xa8, 0xad, 0x36, 0xe8,
-	0xd4, 0xff, 0x91, 0xf6, 0x9b, 0xf4, 0x5e, 0xeb, 0x29, 0xb8, 0x66, 0x17, 0x0c, 0x67, 0x03, 0x27,
-	0xb9, 0x83, 0xcb, 0x2a, 0xf4, 0x40, 0x5b, 0x73, 0x4b, 0xc5, 0x46, 0x6d, 0xf5, 0x3a, 0x9d, 0xf5,
-	0x28, 0xe8, 0x7d, 0xdf, 0x13, 0xee, 0x0b, 0x16, 0x7a, 0xc0, 0xd2, 0x16, 0xf5, 0x9f, 0x08, 0x93,
-	0x11, 0xc2, 0x0d, 0x21, 0xdb, 0x42, 0x76, 0xce, 0x08, 0x74, 0x17, 0x57, 0x74, 0x98, 0x14, 0x32,
-	0xd6, 0xe6, 0xec, 0xac, 0x0f, 0x52, 0x27, 0x1b, 0xb4, 0x20, 0x5b, 0x78, 0x5e, 0xf9, 0x1e, 0x30,
-	0xd8, 0xb3, 0x8a, 0x09, 0xd3, 0xca, 0x2c, 0x4c, 0x0c, 0xf6, 0x40, 0x81, 0x74, 0x81, 0x65, 0xee,
-	0xfa, 0x27, 0x84, 0x2f, 0xe5, 0x43, 0xef, 0x08, 0x6d, 0xc8, 0x76, 0x2e, 0xb8, 0xf3, 0x9b, 0x4d,
-	0x46, 0xee, 0x22, 0x8d, 0xed, 0x63, 0xf9, 0x19, 0x2e, 0x0b, 0x03, 0xbd, 0x2c, 0xfc, 0xcd, 0xd9,
-	0xc3, 0xe7, 0xe9, 0x58, 0xda, 0xaa, 0xfe, 0x11, 0xe1, 0x85, 0x91, 0xea, 0xd9, 0x43, 0x6f, 0x9f,
-	0x84, 0x5e, 0x3b, 0x15, 0x74, 0x46, 0xfb, 0x66, 0x0e, 0xe3, 0xe1, 0xa5, 0x23, 0x17, 0x70, 0xb9,
-	0x0f, 0xaa, 0xa5, 0x2d, 0xb4, 0x54, 0x6c, 0x54, 0x59, 0xfa, 0x41, 0x38, 0xbe, 0xc8, 0x8d, 0x51,
-	0xa2, 0x15, 0x1a, 0x60, 0xa0, 0x8d, 0x12, 0xae, 0x11, 0xbe, 0x8c, 0x09, 0xe2, 0x2c, 0x57, 0xa7,
-	0x10, 0x1c, 0xcf, 0x29, 0x65, 0xfc, 0xd9, 0xed, 0xe7, 0x06, 0x64, 0x1c, 0x89, 0x4d, 0xee, 0x44,
-	0x2e, 0xe3, 0x2a, 0x0f, 0xc4, 0x96, 0xf2, 0xc3, 0x40, 0x5b, 0xc5, 0x64, 0xf3, 0xa1, 0x10, 0x57,
-	0xb3, 0x97, 0x48, 0x5b, 0xa5, 0xb4, 0x3a, 0x10, 0xc8, 0x32, 0xfe, 0x3f, 0xfb, 0xb8, 0xcb, 0x7b,
-	0xa0, 0xad, 0x72, 0xb2, 0xe2, 0xa4, 0x48, 0x1a, 0x78, 0x41, 0xfa, 0x92, 0x1d, 0x6b, 0x0f, 0xd9,
-	0x8e, 0xb6, 0xfe, 0x4b, 0xd6, 0x8d, 0xcb, 0xf5, 0xb7, 0x08, 0x97, 0xfe, 0xd2, 0xd7, 0xe0, 0x07,
-	0xc2, 0xb5, 0x7f, 0xe7, 0x19, 0x88, 0x47, 0xe9, 0x5c, 0xe7, 0xff, 0xf4, 0xa3, 0x34, 0x61, 0xf0,
-	0xdf, 0x21, 0x5c, 0x39, 0x9f, 0x89, 0xdf, 0x3c, 0x89, 0x49, 0xff, 0x0c, 0x33, 0xe3, 0x7b, 0x85,
-	0xf0, 0xfc, 0xf1, 0x61, 0x11, 0x0b, 0x97, 0xba, 0x42, 0xb6, 0x13, 0xb4, 0xea, 0x46, 0x69, 0xff,
-	0xcb, 0x95, 0x02, 0x4b, 0x14, 0xb2, 0x8c, 0x31, 0x0f, 0xc4, 0xa3, 0x14, 0x27, 0x19, 0xf0, 0xac,
-	0x3e, 0xa2, 0xc7, 0x7e, 0xc9, 0x7b, 0x90, 0x9c, 0xef, 0xc0, 0x1f, 0x2b, 0xa4, 0x8e, 0xab, 0xf1,
-	0xaf, 0x0e, 0xb8, 0x0b, 0x56, 0x69, 0xa4, 0x3c, 0x94, 0x37, 0x6e, 0x1c, 0x1c, 0xda, 0x85, 0xcf,
-	0x87, 0x76, 0xe1, 0xe8, 0xd0, 0x46, 0x2f, 0x23, 0x1b, 0x7d, 0x88, 0x6c, 0xb4, 0x1f, 0xd9, 0xe8,
-	0x20, 0xb2, 0xd1, 0xd7, 0xc8, 0x46, 0xdf, 0x23, 0xbb, 0x70, 0x14, 0xd9, 0xe8, 0xf5, 0x37, 0xbb,
-	0xf0, 0xb8, 0x92, 0xa5, 0xf9, 0x15, 0x00, 0x00, 0xff, 0xff, 0x0b, 0xc4, 0x44, 0x06, 0x0d, 0x09,
-	0x00, 0x00,
+	// 675 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe4, 0x94, 0xcf, 0x6b, 0x13, 0x41,
+	0x14, 0xc7, 0x33, 0x4d, 0x62, 0x93, 0x09, 0x52, 0x18, 0x54, 0x96, 0x22, 0x6b, 0x08, 0x3d, 0x04,
+	0xd4, 0x59, 0x52, 0xac, 0xf4, 0xe0, 0xa9, 0x56, 0x04, 0xdb, 0xaa, 0x8c, 0xe8, 0xc1, 0x8b, 0x4c,
+	0x92, 0x67, 0x1c, 0xb3, 0x99, 0x5d, 0x66, 0x66, 0xa3, 0xde, 0xbc, 0x79, 0xd5, 0x9b, 0x17, 0xf1,
+	0x2a, 0xf8, 0x17, 0xf8, 0x1f, 0xf4, 0xd8, 0xa3, 0x27, 0xb1, 0xeb, 0xc5, 0x9b, 0x3d, 0x79, 0x96,
+	0xdd, 0xcd, 0xe6, 0xd7, 0x26, 0xd2, 0x96, 0x16, 0x04, 0x4f, 0xcb, 0x7e, 0xdf, 0x7c, 0xdf, 0x7c,
+	0xde, 0x9b, 0x79, 0x83, 0xd7, 0xbb, 0xeb, 0x9a, 0x0a, 0xcf, 0xe9, 0x06, 0x4d, 0x50, 0x12, 0x0c,
+	0x68, 0xc7, 0xef, 0x76, 0x1c, 0xee, 0x0b, 0xed, 0xa8, 0x26, 0x6f, 0x39, 0xfd, 0x06, 0x77, 0xfd,
+	0x67, 0xbc, 0xe1, 0x74, 0x40, 0x82, 0xe2, 0x06, 0xda, 0xd4, 0x57, 0x9e, 0xf1, 0x48, 0x3d, 0x71,
+	0xd2, 0x91, 0x93, 0xfa, 0xdd, 0x0e, 0x8d, 0x9c, 0x34, 0x72, 0xd2, 0xd4, 0xb9, 0xbc, 0x3a, 0x77,
+	0x0f, 0x47, 0x81, 0xf6, 0x02, 0xd5, 0x82, 0xe9, 0xec, 0xcb, 0x6b, 0xf3, 0x3d, 0x81, 0xec, 0x83,
+	0xd2, 0xc2, 0x93, 0xd0, 0xce, 0xd8, 0xae, 0xcc, 0xb7, 0xf5, 0x33, 0x25, 0x2c, 0x5f, 0x9d, 0xbd,
+	0x5a, 0x05, 0xd2, 0x88, 0x5e, 0x96, 0xa9, 0x31, 0x7b, 0x79, 0x60, 0x84, 0xeb, 0x08, 0x69, 0xb4,
+	0x51, 0xd3, 0x96, 0xda, 0x47, 0x84, 0x2b, 0x37, 0xdd, 0x40, 0x1b, 0x50, 0xcc, 0x73, 0x81, 0x6c,
+	0xe2, 0x52, 0x0f, 0x0c, 0x6f, 0x73, 0xc3, 0x2d, 0x54, 0x45, 0xf5, 0xca, 0x6a, 0x9d, 0xce, 0xed,
+	0x23, 0xed, 0x37, 0xe8, 0xbd, 0xe6, 0x73, 0x68, 0x99, 0x1d, 0x30, 0x9c, 0x0d, 0x9d, 0xe4, 0x0e,
+	0x2e, 0xaa, 0xc0, 0x05, 0x6d, 0x2d, 0x54, 0xf3, 0xf5, 0xca, 0xea, 0x35, 0x7a, 0xd8, 0xa3, 0xa0,
+	0xf7, 0x3d, 0x57, 0xb4, 0x5e, 0xb1, 0xc0, 0x05, 0x96, 0xa4, 0xa8, 0xfd, 0x46, 0x98, 0x8c, 0x11,
+	0x6e, 0x08, 0xd9, 0x16, 0xb2, 0x73, 0x42, 0xa0, 0x3b, 0xb8, 0xa4, 0x83, 0x38, 0x90, 0xb2, 0x36,
+	0x0e, 0xcf, 0xfa, 0x20, 0x71, 0xb2, 0x61, 0x0a, 0xb2, 0x85, 0x17, 0x95, 0xe7, 0x02, 0x83, 0xa7,
+	0x56, 0x3e, 0x66, 0x3a, 0x42, 0x36, 0x96, 0x18, 0x59, 0x9a, 0xa1, 0xf6, 0x05, 0xe1, 0x0b, 0xd9,
+	0xc2, 0xb7, 0x85, 0x36, 0x64, 0x2b, 0x53, 0xbc, 0xf3, 0x97, 0xe2, 0xc7, 0xee, 0x23, 0x8d, 0xec,
+	0x53, 0x3d, 0x60, 0xb8, 0x28, 0x0c, 0xf4, 0xd2, 0x06, 0xdc, 0x38, 0x3c, 0x72, 0x96, 0x8e, 0x25,
+	0xa9, 0x6a, 0x9f, 0x11, 0x5e, 0x1a, 0x8b, 0x9e, 0x3c, 0xf4, 0xd6, 0x24, 0xf4, 0xda, 0xb1, 0xa0,
+	0x53, 0xda, 0x77, 0x0b, 0x18, 0x8f, 0x2e, 0x1e, 0x39, 0x87, 0x8b, 0x7d, 0x50, 0x4d, 0x6d, 0xa1,
+	0x6a, 0xbe, 0x5e, 0x66, 0xc9, 0x0f, 0xe1, 0xf8, 0x3c, 0x37, 0x46, 0x89, 0x66, 0x60, 0x80, 0x81,
+	0x36, 0x4a, 0xb4, 0x8c, 0xf0, 0x64, 0x44, 0x10, 0xd5, 0x72, 0x79, 0x0e, 0xc1, 0x60, 0x56, 0x29,
+	0xe3, 0x2f, 0x6e, 0xbd, 0x34, 0x20, 0xa3, 0x92, 0xd8, 0xec, 0x4c, 0xe4, 0x22, 0x2e, 0x73, 0x5f,
+	0xdc, 0x56, 0x5e, 0xe0, 0x6b, 0x2b, 0x1f, 0x6f, 0x3e, 0x12, 0xa2, 0x68, 0xfa, 0x1a, 0x69, 0xab,
+	0x90, 0x44, 0x87, 0x02, 0x59, 0xc1, 0x67, 0xd3, 0x9f, 0xbb, 0xbc, 0x07, 0xda, 0x2a, 0xc6, 0x2b,
+	0x26, 0x45, 0x52, 0xc7, 0x4b, 0xd2, 0x93, 0x6c, 0xa0, 0x3d, 0x64, 0xdb, 0xda, 0x3a, 0x13, 0xaf,
+	0x9b, 0x96, 0x6b, 0xef, 0x11, 0x2e, 0xfc, 0xa3, 0x2f, 0xc2, 0x2f, 0x84, 0x2b, 0xff, 0xd7, 0x53,
+	0x10, 0x8d, 0xd3, 0xa9, 0xbe, 0x01, 0xc7, 0x1f, 0xa7, 0x19, 0xc3, 0xff, 0x01, 0xe1, 0xd2, 0xe9,
+	0x4c, 0xfd, 0xe6, 0x24, 0x26, 0x3d, 0x62, 0x4b, 0x07, 0x7c, 0x4f, 0xf0, 0xe2, 0xa0, 0xc3, 0xa4,
+	0x8a, 0x4b, 0xe9, 0x80, 0xc5, 0x74, 0xe5, 0x8d, 0xc2, 0xee, 0xb7, 0x4b, 0x39, 0x36, 0x54, 0x89,
+	0x85, 0x0b, 0x5d, 0x21, 0xdb, 0xf1, 0x94, 0xa7, 0xd1, 0x58, 0x89, 0x22, 0x92, 0xf7, 0x20, 0x3e,
+	0xde, 0x61, 0x24, 0x52, 0x6a, 0x6f, 0x10, 0x5e, 0x1c, 0xdc, 0x88, 0xa1, 0x1f, 0x65, 0xfc, 0x2b,
+	0x18, 0x73, 0x5f, 0x3c, 0x4a, 0xea, 0x9d, 0xc8, 0x3f, 0xa6, 0xcf, 0xdf, 0x85, 0xd4, 0x70, 0x39,
+	0xfa, 0x6a, 0x9f, 0xb7, 0xc0, 0x2a, 0x8c, 0x85, 0x47, 0xf2, 0xc6, 0xf5, 0xbd, 0x7d, 0x3b, 0xf7,
+	0x75, 0xdf, 0xce, 0x1d, 0xec, 0xdb, 0xe8, 0x75, 0x68, 0xa3, 0x4f, 0xa1, 0x8d, 0x76, 0x43, 0x1b,
+	0xed, 0x85, 0x36, 0xfa, 0x1e, 0xda, 0xe8, 0x67, 0x68, 0xe7, 0x0e, 0x42, 0x1b, 0xbd, 0xfd, 0x61,
+	0xe7, 0x1e, 0x97, 0xd2, 0x76, 0xfd, 0x09, 0x00, 0x00, 0xff, 0xff, 0x73, 0x88, 0x40, 0x7f, 0x76,
+	0x09, 0x00, 0x00,
 }
