@@ -49,47 +49,59 @@ Until this package becomes more mature use Kubernetes' Go client instead: https:
 Clients are initialized with a default namespace. For in-cluster clients, this is the namespace the pod was deployed in.
 
 ```go
-pods, err := client.ListPods(ctx) // Pods in the current namespace.
+pods, err := client.ListPods(ctx, "") // Pods in the current namespace.
 ```
 
-Clients that wish to query a different namespace can do so using a context key.
+This can be overridden by explicitly passing a namespace.
 
 ```go
-ctxWithNamespace = k8s.NamespaceContext(ctx, "custom-namespace")
-pods, err := client.ListPods(ctxWithNamespace) // Pods from the "custom-namespace"
+pods, err := client.ListPods(ctx, "custom-namespace") // Pods from the "custom-namespace"
 ```
 
-Out-of-cluster clients can be constructed by creating a `Client` manually. The following is an example of creating a client which uses TLS client auth:
+Out-of-cluster clients can be constructed by either creating an `http.Client` manually or parsing a kubeconfig object. The following is an example of creating a client from a kubeconfig:
 
 ```go
-// Load client cert.
-clientCert, err := tls.LoadX509KeyPair("client.crt", "client.key")
-if err != nil {
-    // handle error
+package main
+
+import (
+    "context"
+    "fmt"
+    "io/ioutil"
+    "os"
+
+    "github.com/ericchiang/k8s"
+    "github.com/ghodss/yaml"
+)
+
+func main() {
+    client, err := loadClient()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "load client: %v\n", err)
+        os.Exit(2)
+    }
+
+    nodes, err := client.ListNodes(context.Background())
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "list nodes: %v\n", err)
+        os.Exit(2)
+    }
+
+    for _, node := range nodes {
+        fmt.Println(node.Name)
+    }
 }
 
-// Load API server's CA.
-caData, err := ioutil.ReadFile("ca.crt")
-if err != nil {
-    // handle error
-}
-rootCAs := x509.NewCertPool()
-if !rootCAs.AppendCertsFromPEM(caData) {
-    // handle error
-}
+func loadClient() (*k8s.Client, error) {
+    data, err := ioutil.ReadFile(filepath.Join(os.Getenv("HOME"), ".kube/config"))
+    if err != nil {
+        return nil, fmt.Errorf("load kubeconfig: %v", err)
+    }
 
-// Create a client with a custom TLS config.
-client := &k8s.Client{
-    Endpoint:  "https://node1.example.com:443",
-    Namespace: "kube-system",
-    Client: &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{
-                RootCAs:      rootCAs,
-                Certificates: []tls.Certificate{clientCert},
-            },
-        },
-    },
+    config := new(k8s.Config)
+    if err := yaml.Unmarshal(data, config); err != nil {
+        return nil, fmt.Errorf("unmarshal kubeconfig: %v", err)
+    }
+    return k8s.NewClient(config)
 }
 ```
 
