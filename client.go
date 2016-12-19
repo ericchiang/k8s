@@ -1,5 +1,17 @@
 /*
 Package k8s implements a Kubernetes client.
+
+	c, err := k8s.NewInClusterClient()
+	if err != nil {
+		// handle error
+	}
+	extensions := c.ExtensionsV1Beta1()
+
+	ingresses, err := extensions.ListIngresses(ctx, c.Namespace)
+	if err != nil {
+		// handle error
+	}
+
 */
 package k8s
 

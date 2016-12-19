@@ -46,6 +46,8 @@ Until this package becomes more mature use Kubernetes' Go client instead: https:
 
 ## Configuration
 
+### Namespaces
+
 Clients are initialized with a default namespace. For in-cluster clients, this is the namespace the pod was deployed in.
 
 ```go
@@ -57,6 +59,47 @@ This can be overridden by explicitly passing a namespace.
 ```go
 pods, err := client.ListPods(ctx, "custom-namespace") // Pods from the "custom-namespace"
 ```
+
+### Label selectors
+
+Label selectors can be provided to any list operation.
+
+```go
+l := new(k8s.LabelSelector)
+l.Eq("tier", "production")
+l.In("app", "database", "frontend")
+
+pods, err := client.CoreV1().ListPods(ctx, "", l.Selector())
+```
+
+### Creating resources
+
+Use the generated API types directly to create resources.
+
+```
+import (
+    "context"
+
+    "github.com/ericchiang/k8s"
+    "github.com/ericchiang/k8s/api/v1"
+)
+
+func createConfigMap(client *k8s.Client, name string, values map[string]string) error {
+    cm := &v1.ConfigMap{
+        Metadata: &v1.ObjectMeta{
+            Name:      &name,
+        },
+        Data: values,
+    }
+    // Will return the created configmap as well.
+    _, err := client.CoreV1().Create(context.TODO(), cm, client.Namespace)
+    return err
+}
+```
+
+API structs use pointers to `int`, `bool`, and `string` types to differentiate between the zero value and an unsupplied one. This package provides [convenience methods][string] for creating pointers to literals of basic types.
+
+### Creating out-of-cluster clients
 
 Out-of-cluster clients can be constructed by either creating an `http.Client` manually or parsing a [`Config`][config] object. The following is an example of creating a client from a kubeconfig:
 
@@ -73,6 +116,22 @@ import (
     "github.com/ghodss/yaml"
 )
 
+func loadClient() (*k8s.Client, error) {
+    data, err := ioutil.ReadFile(filepath.Join(os.Getenv("HOME"), ".kube/config"))
+    if err != nil {
+        return nil, fmt.Errorf("load kubeconfig: %v", err)
+    }
+
+    // Create a new config and parse it.
+    config := new(k8s.Config)
+    if err := yaml.Unmarshal(data, config); err != nil {
+        return nil, fmt.Errorf("unmarshal kubeconfig: %v", err)
+    }
+
+    // Create client from config.
+    return k8s.NewClient(config)
+}
+
 func main() {
     client, err := loadClient()
     if err != nil {
@@ -80,7 +139,7 @@ func main() {
         os.Exit(2)
     }
 
-    nodes, err := client.ListNodes(context.Background())
+    nodes, err := client.CoreV1().ListNodes(context.Background())
     if err != nil {
         fmt.Fprintf(os.Stderr, "list nodes: %v\n", err)
         os.Exit(2)
@@ -89,19 +148,6 @@ func main() {
     for _, node := range nodes {
         fmt.Println(node.Name)
     }
-}
-
-func loadClient() (*k8s.Client, error) {
-    data, err := ioutil.ReadFile(filepath.Join(os.Getenv("HOME"), ".kube/config"))
-    if err != nil {
-        return nil, fmt.Errorf("load kubeconfig: %v", err)
-    }
-
-    config := new(k8s.Config)
-    if err := yaml.Unmarshal(data, config); err != nil {
-        return nil, fmt.Errorf("unmarshal kubeconfig: %v", err)
-    }
-    return k8s.NewClient(config)
 }
 ```
 
@@ -136,3 +182,4 @@ return nil
 [unversioned-status]: https://godoc.org/github.com/ericchiang/k8s/api/unversioned#Status
 [k8s-error]: https://godoc.org/github.com/ericchiang/k8s#APIError
 [config]: https://godoc.org/github.com/ericchiang/k8s#Config
+[string]: https://godoc.org/github.com/ericchiang/k8s#String

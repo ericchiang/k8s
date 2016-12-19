@@ -6,13 +6,34 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"io"
+	"os"
 	"os/exec"
 	"testing"
 
 	"github.com/ericchiang/k8s/api/v1"
 )
 
+const skipMsg = `
+warning: this package's test run using the default context of your "kubeclt" command,
+and will create resources on your cluster (mostly configmaps).
+
+If you wish to continue set the following environment variable:
+
+	export K8S_CLIENT_TEST=1
+
+To suppress this message, set:
+
+	export K8S_CLIENT_TEST=0
+`
+
 func newTestClient(t *testing.T) *Client {
+	if os.Getenv("K8S_CLIENT_TEST") == "0" {
+		t.Skip("")
+	}
+	if os.Getenv("K8S_CLIENT_TEST") != "1" {
+		t.Skip(skipMsg)
+	}
+
 	cmd := exec.Command("kubectl", "config", "view", "-o", "json")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
