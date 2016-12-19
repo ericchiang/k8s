@@ -112,7 +112,29 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 	}
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
-	err := c.client.create(ctx, pbCodec, url, obj, resp)
+	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *{{ $.Name }}) Update{{ $r.Name }}(ctx context.Context, obj *{{ $.ImportName }}.{{ $r.Name }}) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
+	md := obj.GetMetadata()
+	if md.Name == "" {
+		return nil, fmt.Errorf("no name for given object")
+	}
+	if !{{ $r.Namespaced }} && md.Namespace != "" {
+		return nil, fmt.Errorf("resource isn't namespaced")
+	}
+
+	md.Namespace = c.client.namespaceFor(md.Namespace)
+	if {{ $r.Namespaced }} && md.Namespace == "" {
+		return nil, fmt.Errorf("no resource namespace provided")
+	}
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", md.Name)
+	resp := new({{ $.ImportName }}.{{ $r.Name }})
+	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
 		return nil, err
 	}

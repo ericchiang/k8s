@@ -304,13 +304,13 @@ func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string) 
 	return c.Endpoint + "/" + p
 }
 
-func (c *Client) create(ctx context.Context, codec *codec, url string, req, resp interface{}) error {
+func (c *Client) create(ctx context.Context, codec *codec, verb, url string, req, resp interface{}) error {
 	body, err := codec.marshal(req)
 	if err != nil {
 		return err
 	}
 
-	r, err := http.NewRequest("POST", url, bytes.NewReader(body))
+	r, err := http.NewRequest(verb, url, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}

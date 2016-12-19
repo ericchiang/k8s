@@ -49,7 +49,16 @@ func (t *ThirdPartyResources) Create(ctx context.Context, resource, namespace st
 		return err
 	}
 	url := t.c.urlFor(t.apiGroup, t.apiVersion, ns, resource, "")
-	return t.c.create(ctx, jsonCodec, url, req, resp)
+	return t.c.create(ctx, jsonCodec, "POST", url, req, resp)
+}
+
+func (t *ThirdPartyResources) Update(ctx context.Context, resource, namespace, name string, req, resp interface{}) error {
+	ns := t.c.namespaceFor(namespace)
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, ns, "not required"); err != nil {
+		return err
+	}
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, ns, resource, name)
+	return t.c.create(ctx, jsonCodec, "PUT", url, req, resp)
 }
 
 func (t *ThirdPartyResources) Get(ctx context.Context, resource, namespace, name string, resp interface{}) error {
