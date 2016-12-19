@@ -1,5 +1,5 @@
 /*
-package k8s implements a Kubernetes client.
+Package k8s implements a Kubernetes client.
 */
 package k8s
 
@@ -13,8 +13,10 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
@@ -48,6 +50,35 @@ type Client struct {
 	Namespace string
 
 	Client *http.Client
+}
+
+// Option represents optional call parameters, such as label selectors.
+type Option interface {
+	queryParam() (key, val string)
+}
+
+type resourceVersionOption string
+
+func (r resourceVersionOption) queryParam() (string, string) {
+	return "resourceVersion", string(r)
+}
+
+// ResourceVersion causes watch operations to only show changes since
+// a particular version of a resource.
+func ResourceVersion(resourceVersion string) Option {
+	return resourceVersionOption(resourceVersion)
+}
+
+type timeoutSeconds string
+
+func (t timeoutSeconds) queryParam() (string, string) {
+	return "timeoutSeconds", string(t)
+}
+
+// Timeout declares the timeout for list and watch operations. Timeout
+// is only accurate to the second.
+func Timeout(d time.Duration) Option {
+	return timeoutSeconds(strconv.FormatInt(int64(d/time.Second), 10))
 }
 
 // NewClient initializes a client from a client config.
@@ -299,7 +330,7 @@ func (c *Client) namespaceFor(namespace string) string {
 //
 //   https://github.com/kubernetes/kubernetes/blob/master/docs/devel/api-conventions.md
 
-func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string) string {
+func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string, options ...Option) string {
 	basePath := "apis/"
 	if apiGroup == "" {
 		basePath = "api/"
@@ -311,10 +342,22 @@ func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string) 
 	} else {
 		p = path.Join(basePath, apiGroup, apiVersion, resource, name)
 	}
+	endpoint := ""
 	if strings.HasSuffix(c.Endpoint, "/") {
-		return c.Endpoint + p
+		endpoint = c.Endpoint + p
+	} else {
+		endpoint = c.Endpoint + "/" + p
 	}
-	return c.Endpoint + "/" + p
+	if len(options) == 0 {
+		return endpoint
+	}
+
+	v := url.Values{}
+	for _, option := range options {
+		key, val := option.queryParam()
+		v.Set(key, val)
+	}
+	return endpoint + "?" + v.Encode()
 }
 
 func (c *Client) create(ctx context.Context, codec *codec, verb, url string, req, resp interface{}) error {

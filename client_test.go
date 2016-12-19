@@ -54,15 +54,16 @@ func TestConfigMaps(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	configMaps, err := client.ListConfigMaps(ctx, "default")
-	if err != nil {
-		t.Fatal("failed to list configmaps: %v", err)
-	}
-	_ = configMaps
+	name := newName()
+	labelVal := newName()
+
 	cm := &v1.ConfigMap{
 		Metadata: &v1.ObjectMeta{
-			Name:      String(newName()),
+			Name:      String(name),
 			Namespace: String("default"),
+			Labels: map[string]string{
+				"testLabel": labelVal,
+			},
 		},
 		Data: map[string]string{
 			"foo": "bar",
@@ -77,6 +78,29 @@ func TestConfigMaps(t *testing.T) {
 	if err != nil {
 		t.Fatalf("update config map: %v", err)
 	}
+
+	tests := []struct {
+		labelVal string
+		expNum   int
+	}{
+		{labelVal, 1},
+		{newName(), 0},
+	}
+	for _, test := range tests {
+		l := new(LabelSelector)
+		l.Eq("testLabel", test.labelVal)
+
+		configMaps, err := client.ListConfigMaps(ctx, "default", l.Selector())
+		if err != nil {
+			t.Errorf("failed to list configmaps: %v", err)
+			continue
+		}
+		got := len(configMaps.Items)
+		if got != test.expNum {
+			t.Errorf("expected selector to return %d items got %d", test.expNum, got)
+		}
+	}
+
 	if err := client.DeleteConfigMap(ctx, *cm.Metadata.Name, *cm.Metadata.Namespace); err != nil {
 		t.Fatalf("delete config map: %v", err)
 	}

@@ -187,13 +187,13 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name{{ if $r.Namesp
 
 {{- if $r.HasList }}
 
-func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
+func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
 	{{ if $r.Namespaced -}}
 	ns := c.client.namespaceFor(namespace)
 	{{ else -}}
 	ns := ""
 	{{ end }}
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "")
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "", options...)
 	resp := new({{ $.ImportName }}.{{ $r.Name }}List)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
