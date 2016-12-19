@@ -19,7 +19,7 @@
 */
 package v1
 
-import proto "github.com/gogo/protobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/ericchiang/k8s/api/resource"
@@ -27,13 +27,6 @@ import k8s_io_kubernetes_pkg_api_unversioned "github.com/ericchiang/k8s/api/unve
 import k8s_io_kubernetes_pkg_api_v1 "github.com/ericchiang/k8s/api/v1"
 import _ "github.com/ericchiang/k8s/runtime"
 import _ "github.com/ericchiang/k8s/util/intstr"
-
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
-import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 
 import io "io"
 
@@ -46,7 +39,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Job represents the configuration of a single job.
 type Job struct {
@@ -58,10 +51,12 @@ type Job struct {
 	Spec *JobSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is a structure describing current status of a job.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *JobStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *JobStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte     `json:"-"`
 }
 
 func (m *Job) Reset()                    { *m = Job{} }
+func (m *Job) String() string            { return proto.CompactTextString(m) }
 func (*Job) ProtoMessage()               {}
 func (*Job) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
@@ -89,33 +84,35 @@ func (m *Job) GetStatus() *JobStatus {
 // JobCondition describes current state of a job.
 type JobCondition struct {
 	// Type of job condition, Complete or Failed.
-	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
 	// Status of the condition, one of True, False, Unknown.
-	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
+	Status *string `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
 	// Last time the condition was checked.
 	LastProbeTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=lastProbeTime" json:"lastProbeTime,omitempty"`
 	// Last time the condition transit from one status to another.
 	LastTransitionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,4,opt,name=lastTransitionTime" json:"lastTransitionTime,omitempty"`
 	// (brief) reason for the condition's last transition.
-	Reason string `protobuf:"bytes,5,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,5,opt,name=reason" json:"reason,omitempty"`
 	// Human readable message indicating details about last transition.
-	Message string `protobuf:"bytes,6,opt,name=message" json:"message"`
+	Message          *string `protobuf:"bytes,6,opt,name=message" json:"message,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *JobCondition) Reset()                    { *m = JobCondition{} }
+func (m *JobCondition) String() string            { return proto.CompactTextString(m) }
 func (*JobCondition) ProtoMessage()               {}
 func (*JobCondition) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
 
 func (m *JobCondition) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
 
 func (m *JobCondition) GetStatus() string {
-	if m != nil {
-		return m.Status
+	if m != nil && m.Status != nil {
+		return *m.Status
 	}
 	return ""
 }
@@ -135,15 +132,15 @@ func (m *JobCondition) GetLastTransitionTime() *k8s_io_kubernetes_pkg_api_unvers
 }
 
 func (m *JobCondition) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *JobCondition) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
@@ -154,10 +151,12 @@ type JobList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of Job.
-	Items []*Job `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Job `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *JobList) Reset()                    { *m = JobList{} }
+func (m *JobList) String() string            { return proto.CompactTextString(m) }
 func (*JobList) ProtoMessage()               {}
 func (*JobList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
 
@@ -182,17 +181,17 @@ type JobSpec struct {
 	// be less than this number when ((.spec.completions - .status.successful) < .spec.parallelism),
 	// i.e. when the work left to do is less than max parallelism.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/jobs.md
-	Parallelism int32 `protobuf:"varint,1,opt,name=parallelism" json:"parallelism"`
+	Parallelism *int32 `protobuf:"varint,1,opt,name=parallelism" json:"parallelism,omitempty"`
 	// Completions specifies the desired number of successfully finished pods the
 	// job should be run with.  Setting to nil means that the success of any
 	// pod signals the success of all pods, and allows parallelism to have any positive
 	// value.  Setting to 1 means that parallelism is limited to 1 and the success of that
 	// pod signals the success of the job.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/jobs.md
-	Completions int32 `protobuf:"varint,2,opt,name=completions" json:"completions"`
+	Completions *int32 `protobuf:"varint,2,opt,name=completions" json:"completions,omitempty"`
 	// Optional duration in seconds relative to the startTime that the job may be active
 	// before the system tries to terminate it; value must be positive integer
-	ActiveDeadlineSeconds int64 `protobuf:"varint,3,opt,name=activeDeadlineSeconds" json:"activeDeadlineSeconds"`
+	ActiveDeadlineSeconds *int64 `protobuf:"varint,3,opt,name=activeDeadlineSeconds" json:"activeDeadlineSeconds,omitempty"`
 	// Selector is a label query over pods that should match the pod count.
 	// Normally, the system sets this field for you.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/labels.md#label-selectors
@@ -207,34 +206,36 @@ type JobSpec struct {
 	// `manualSelector=true` in jobs that were created with the old `extensions/v1beta1`
 	// API.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/selector-generation.md
-	ManualSelector bool `protobuf:"varint,5,opt,name=manualSelector" json:"manualSelector"`
+	ManualSelector *bool `protobuf:"varint,5,opt,name=manualSelector" json:"manualSelector,omitempty"`
 	// Template is the object that describes the pod that will be created when
 	// executing a job.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/jobs.md
-	Template *k8s_io_kubernetes_pkg_api_v1.PodTemplateSpec `protobuf:"bytes,6,opt,name=template" json:"template,omitempty"`
+	Template         *k8s_io_kubernetes_pkg_api_v1.PodTemplateSpec `protobuf:"bytes,6,opt,name=template" json:"template,omitempty"`
+	XXX_unrecognized []byte                                        `json:"-"`
 }
 
 func (m *JobSpec) Reset()                    { *m = JobSpec{} }
+func (m *JobSpec) String() string            { return proto.CompactTextString(m) }
 func (*JobSpec) ProtoMessage()               {}
 func (*JobSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
 
 func (m *JobSpec) GetParallelism() int32 {
-	if m != nil {
-		return m.Parallelism
+	if m != nil && m.Parallelism != nil {
+		return *m.Parallelism
 	}
 	return 0
 }
 
 func (m *JobSpec) GetCompletions() int32 {
-	if m != nil {
-		return m.Completions
+	if m != nil && m.Completions != nil {
+		return *m.Completions
 	}
 	return 0
 }
 
 func (m *JobSpec) GetActiveDeadlineSeconds() int64 {
-	if m != nil {
-		return m.ActiveDeadlineSeconds
+	if m != nil && m.ActiveDeadlineSeconds != nil {
+		return *m.ActiveDeadlineSeconds
 	}
 	return 0
 }
@@ -247,8 +248,8 @@ func (m *JobSpec) GetSelector() *LabelSelector {
 }
 
 func (m *JobSpec) GetManualSelector() bool {
-	if m != nil {
-		return m.ManualSelector
+	if m != nil && m.ManualSelector != nil {
+		return *m.ManualSelector
 	}
 	return false
 }
@@ -274,14 +275,16 @@ type JobStatus struct {
 	// It is represented in RFC3339 form and is in UTC.
 	CompletionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=completionTime" json:"completionTime,omitempty"`
 	// Active is the number of actively running pods.
-	Active int32 `protobuf:"varint,4,opt,name=active" json:"active"`
+	Active *int32 `protobuf:"varint,4,opt,name=active" json:"active,omitempty"`
 	// Succeeded is the number of pods which reached Phase Succeeded.
-	Succeeded int32 `protobuf:"varint,5,opt,name=succeeded" json:"succeeded"`
+	Succeeded *int32 `protobuf:"varint,5,opt,name=succeeded" json:"succeeded,omitempty"`
 	// Failed is the number of pods which reached Phase Failed.
-	Failed int32 `protobuf:"varint,6,opt,name=failed" json:"failed"`
+	Failed           *int32 `protobuf:"varint,6,opt,name=failed" json:"failed,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *JobStatus) Reset()                    { *m = JobStatus{} }
+func (m *JobStatus) String() string            { return proto.CompactTextString(m) }
 func (*JobStatus) ProtoMessage()               {}
 func (*JobStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
 
@@ -307,22 +310,22 @@ func (m *JobStatus) GetCompletionTime() *k8s_io_kubernetes_pkg_api_unversioned.T
 }
 
 func (m *JobStatus) GetActive() int32 {
-	if m != nil {
-		return m.Active
+	if m != nil && m.Active != nil {
+		return *m.Active
 	}
 	return 0
 }
 
 func (m *JobStatus) GetSucceeded() int32 {
-	if m != nil {
-		return m.Succeeded
+	if m != nil && m.Succeeded != nil {
+		return *m.Succeeded
 	}
 	return 0
 }
 
 func (m *JobStatus) GetFailed() int32 {
-	if m != nil {
-		return m.Failed
+	if m != nil && m.Failed != nil {
+		return *m.Failed
 	}
 	return 0
 }
@@ -337,9 +340,11 @@ type LabelSelector struct {
 	MatchLabels map[string]string `protobuf:"bytes,1,rep,name=matchLabels" json:"matchLabels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// matchExpressions is a list of label selector requirements. The requirements are ANDed.
 	MatchExpressions []*LabelSelectorRequirement `protobuf:"bytes,2,rep,name=matchExpressions" json:"matchExpressions,omitempty"`
+	XXX_unrecognized []byte                      `json:"-"`
 }
 
 func (m *LabelSelector) Reset()                    { *m = LabelSelector{} }
+func (m *LabelSelector) String() string            { return proto.CompactTextString(m) }
 func (*LabelSelector) ProtoMessage()               {}
 func (*LabelSelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{5} }
 
@@ -361,33 +366,35 @@ func (m *LabelSelector) GetMatchExpressions() []*LabelSelectorRequirement {
 // relates the key and values.
 type LabelSelectorRequirement struct {
 	// key is the label key that the selector applies to.
-	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
+	Key *string `protobuf:"bytes,1,opt,name=key" json:"key,omitempty"`
 	// operator represents a key's relationship to a set of values.
 	// Valid operators ard In, NotIn, Exists and DoesNotExist.
-	Operator string `protobuf:"bytes,2,opt,name=operator" json:"operator"`
+	Operator *string `protobuf:"bytes,2,opt,name=operator" json:"operator,omitempty"`
 	// values is an array of string values. If the operator is In or NotIn,
 	// the values array must be non-empty. If the operator is Exists or DoesNotExist,
 	// the values array must be empty. This array is replaced during a strategic
 	// merge patch.
-	Values []string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty"`
+	Values           []string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *LabelSelectorRequirement) Reset()      { *m = LabelSelectorRequirement{} }
-func (*LabelSelectorRequirement) ProtoMessage() {}
+func (m *LabelSelectorRequirement) Reset()         { *m = LabelSelectorRequirement{} }
+func (m *LabelSelectorRequirement) String() string { return proto.CompactTextString(m) }
+func (*LabelSelectorRequirement) ProtoMessage()    {}
 func (*LabelSelectorRequirement) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{6}
 }
 
 func (m *LabelSelectorRequirement) GetKey() string {
-	if m != nil {
-		return m.Key
+	if m != nil && m.Key != nil {
+		return *m.Key
 	}
 	return ""
 }
 
 func (m *LabelSelectorRequirement) GetOperator() string {
-	if m != nil {
-		return m.Operator
+	if m != nil && m.Operator != nil {
+		return *m.Operator
 	}
 	return ""
 }
@@ -407,461 +414,6 @@ func init() {
 	proto.RegisterType((*JobStatus)(nil), "github.com/ericchiang.k8s.apis.batch.v1.JobStatus")
 	proto.RegisterType((*LabelSelector)(nil), "github.com/ericchiang.k8s.apis.batch.v1.LabelSelector")
 	proto.RegisterType((*LabelSelectorRequirement)(nil), "github.com/ericchiang.k8s.apis.batch.v1.LabelSelectorRequirement")
-}
-func (this *Job) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Job)
-	if !ok {
-		that2, ok := that.(Job)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *JobCondition) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*JobCondition)
-	if !ok {
-		that2, ok := that.(JobCondition)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Status != that1.Status {
-		return false
-	}
-	if !this.LastProbeTime.Equal(that1.LastProbeTime) {
-		return false
-	}
-	if !this.LastTransitionTime.Equal(that1.LastTransitionTime) {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	return true
-}
-func (this *JobList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*JobList)
-	if !ok {
-		that2, ok := that.(JobList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *JobSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*JobSpec)
-	if !ok {
-		that2, ok := that.(JobSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Parallelism != that1.Parallelism {
-		return false
-	}
-	if this.Completions != that1.Completions {
-		return false
-	}
-	if this.ActiveDeadlineSeconds != that1.ActiveDeadlineSeconds {
-		return false
-	}
-	if !this.Selector.Equal(that1.Selector) {
-		return false
-	}
-	if this.ManualSelector != that1.ManualSelector {
-		return false
-	}
-	if !this.Template.Equal(that1.Template) {
-		return false
-	}
-	return true
-}
-func (this *JobStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*JobStatus)
-	if !ok {
-		that2, ok := that.(JobStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Conditions) != len(that1.Conditions) {
-		return false
-	}
-	for i := range this.Conditions {
-		if !this.Conditions[i].Equal(that1.Conditions[i]) {
-			return false
-		}
-	}
-	if !this.StartTime.Equal(that1.StartTime) {
-		return false
-	}
-	if !this.CompletionTime.Equal(that1.CompletionTime) {
-		return false
-	}
-	if this.Active != that1.Active {
-		return false
-	}
-	if this.Succeeded != that1.Succeeded {
-		return false
-	}
-	if this.Failed != that1.Failed {
-		return false
-	}
-	return true
-}
-func (this *LabelSelector) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LabelSelector)
-	if !ok {
-		that2, ok := that.(LabelSelector)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.MatchLabels) != len(that1.MatchLabels) {
-		return false
-	}
-	for i := range this.MatchLabels {
-		if this.MatchLabels[i] != that1.MatchLabels[i] {
-			return false
-		}
-	}
-	if len(this.MatchExpressions) != len(that1.MatchExpressions) {
-		return false
-	}
-	for i := range this.MatchExpressions {
-		if !this.MatchExpressions[i].Equal(that1.MatchExpressions[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LabelSelectorRequirement) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LabelSelectorRequirement)
-	if !ok {
-		that2, ok := that.(LabelSelectorRequirement)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	if this.Operator != that1.Operator {
-		return false
-	}
-	if len(this.Values) != len(that1.Values) {
-		return false
-	}
-	for i := range this.Values {
-		if this.Values[i] != that1.Values[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *Job) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Job{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *JobCondition) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.JobCondition{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	if this.LastProbeTime != nil {
-		s = append(s, "LastProbeTime: "+fmt.Sprintf("%#v", this.LastProbeTime)+",\n")
-	}
-	if this.LastTransitionTime != nil {
-		s = append(s, "LastTransitionTime: "+fmt.Sprintf("%#v", this.LastTransitionTime)+",\n")
-	}
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *JobList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.JobList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *JobSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.JobSpec{")
-	s = append(s, "Parallelism: "+fmt.Sprintf("%#v", this.Parallelism)+",\n")
-	s = append(s, "Completions: "+fmt.Sprintf("%#v", this.Completions)+",\n")
-	s = append(s, "ActiveDeadlineSeconds: "+fmt.Sprintf("%#v", this.ActiveDeadlineSeconds)+",\n")
-	if this.Selector != nil {
-		s = append(s, "Selector: "+fmt.Sprintf("%#v", this.Selector)+",\n")
-	}
-	s = append(s, "ManualSelector: "+fmt.Sprintf("%#v", this.ManualSelector)+",\n")
-	if this.Template != nil {
-		s = append(s, "Template: "+fmt.Sprintf("%#v", this.Template)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *JobStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.JobStatus{")
-	if this.Conditions != nil {
-		s = append(s, "Conditions: "+fmt.Sprintf("%#v", this.Conditions)+",\n")
-	}
-	if this.StartTime != nil {
-		s = append(s, "StartTime: "+fmt.Sprintf("%#v", this.StartTime)+",\n")
-	}
-	if this.CompletionTime != nil {
-		s = append(s, "CompletionTime: "+fmt.Sprintf("%#v", this.CompletionTime)+",\n")
-	}
-	s = append(s, "Active: "+fmt.Sprintf("%#v", this.Active)+",\n")
-	s = append(s, "Succeeded: "+fmt.Sprintf("%#v", this.Succeeded)+",\n")
-	s = append(s, "Failed: "+fmt.Sprintf("%#v", this.Failed)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LabelSelector) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.LabelSelector{")
-	keysForMatchLabels := make([]string, 0, len(this.MatchLabels))
-	for k, _ := range this.MatchLabels {
-		keysForMatchLabels = append(keysForMatchLabels, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMatchLabels)
-	mapStringForMatchLabels := "map[string]string{"
-	for _, k := range keysForMatchLabels {
-		mapStringForMatchLabels += fmt.Sprintf("%#v: %#v,", k, this.MatchLabels[k])
-	}
-	mapStringForMatchLabels += "}"
-	if this.MatchLabels != nil {
-		s = append(s, "MatchLabels: "+mapStringForMatchLabels+",\n")
-	}
-	if this.MatchExpressions != nil {
-		s = append(s, "MatchExpressions: "+fmt.Sprintf("%#v", this.MatchExpressions)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LabelSelectorRequirement) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.LabelSelectorRequirement{")
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "Operator: "+fmt.Sprintf("%#v", this.Operator)+",\n")
-	if this.Values != nil {
-		s = append(s, "Values: "+fmt.Sprintf("%#v", this.Values)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *Job) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -908,6 +460,9 @@ func (m *Job) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -926,14 +481,18 @@ func (m *JobCondition) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Status)))
-	i += copy(dAtA[i:], m.Status)
+	if m.Type != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.Status != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Status)))
+		i += copy(dAtA[i:], *m.Status)
+	}
 	if m.LastProbeTime != nil {
 		dAtA[i] = 0x1a
 		i++
@@ -954,14 +513,21 @@ func (m *JobCondition) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n5
 	}
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
+	if m.Reason != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1002,6 +568,9 @@ func (m *JobList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1020,15 +589,21 @@ func (m *JobSpec) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Parallelism))
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Completions))
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ActiveDeadlineSeconds))
+	if m.Parallelism != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Parallelism))
+	}
+	if m.Completions != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Completions))
+	}
+	if m.ActiveDeadlineSeconds != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ActiveDeadlineSeconds))
+	}
 	if m.Selector != nil {
 		dAtA[i] = 0x22
 		i++
@@ -1039,14 +614,16 @@ func (m *JobSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n7
 	}
-	dAtA[i] = 0x28
-	i++
-	if m.ManualSelector {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.ManualSelector != nil {
+		dAtA[i] = 0x28
+		i++
+		if *m.ManualSelector {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
 	if m.Template != nil {
 		dAtA[i] = 0x32
 		i++
@@ -1056,6 +633,9 @@ func (m *JobSpec) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n8
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -1107,15 +687,24 @@ func (m *JobStatus) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n10
 	}
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Active))
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Succeeded))
-	dAtA[i] = 0x30
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Failed))
+	if m.Active != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Active))
+	}
+	if m.Succeeded != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Succeeded))
+	}
+	if m.Failed != nil {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Failed))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1163,6 +752,9 @@ func (m *LabelSelector) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1181,14 +773,18 @@ func (m *LabelSelectorRequirement) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Operator)))
-	i += copy(dAtA[i:], m.Operator)
+	if m.Key != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.Operator != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Operator)))
+		i += copy(dAtA[i:], *m.Operator)
+	}
 	if len(m.Values) > 0 {
 		for _, s := range m.Values {
 			dAtA[i] = 0x1a
@@ -1203,6 +799,9 @@ func (m *LabelSelectorRequirement) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -1249,16 +848,23 @@ func (m *Job) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *JobCondition) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Status)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Status != nil {
+		l = len(*m.Status)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.LastProbeTime != nil {
 		l = m.LastProbeTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -1267,10 +873,17 @@ func (m *JobCondition) Size() (n int) {
 		l = m.LastTransitionTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1287,23 +900,37 @@ func (m *JobList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *JobSpec) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Parallelism))
-	n += 1 + sovGenerated(uint64(m.Completions))
-	n += 1 + sovGenerated(uint64(m.ActiveDeadlineSeconds))
+	if m.Parallelism != nil {
+		n += 1 + sovGenerated(uint64(*m.Parallelism))
+	}
+	if m.Completions != nil {
+		n += 1 + sovGenerated(uint64(*m.Completions))
+	}
+	if m.ActiveDeadlineSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.ActiveDeadlineSeconds))
+	}
 	if m.Selector != nil {
 		l = m.Selector.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
+	if m.ManualSelector != nil {
+		n += 2
+	}
 	if m.Template != nil {
 		l = m.Template.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1325,9 +952,18 @@ func (m *JobStatus) Size() (n int) {
 		l = m.CompletionTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.Active))
-	n += 1 + sovGenerated(uint64(m.Succeeded))
-	n += 1 + sovGenerated(uint64(m.Failed))
+	if m.Active != nil {
+		n += 1 + sovGenerated(uint64(*m.Active))
+	}
+	if m.Succeeded != nil {
+		n += 1 + sovGenerated(uint64(*m.Succeeded))
+	}
+	if m.Failed != nil {
+		n += 1 + sovGenerated(uint64(*m.Failed))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1348,21 +984,31 @@ func (m *LabelSelector) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *LabelSelectorRequirement) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Operator)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Operator != nil {
+		l = len(*m.Operator)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Values) > 0 {
 		for _, s := range m.Values {
 			l = len(s)
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1379,115 +1025,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *Job) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Job{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "JobSpec", "JobSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "JobStatus", "JobStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *JobCondition) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&JobCondition{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Status:` + fmt.Sprintf("%v", this.Status) + `,`,
-		`LastProbeTime:` + strings.Replace(fmt.Sprintf("%v", this.LastProbeTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`LastTransitionTime:` + strings.Replace(fmt.Sprintf("%v", this.LastTransitionTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *JobList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&JobList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Job", "Job", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *JobSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&JobSpec{`,
-		`Parallelism:` + fmt.Sprintf("%v", this.Parallelism) + `,`,
-		`Completions:` + fmt.Sprintf("%v", this.Completions) + `,`,
-		`ActiveDeadlineSeconds:` + fmt.Sprintf("%v", this.ActiveDeadlineSeconds) + `,`,
-		`Selector:` + strings.Replace(fmt.Sprintf("%v", this.Selector), "LabelSelector", "LabelSelector", 1) + `,`,
-		`ManualSelector:` + fmt.Sprintf("%v", this.ManualSelector) + `,`,
-		`Template:` + strings.Replace(fmt.Sprintf("%v", this.Template), "PodTemplateSpec", "github.com/ericchiang.k8s.api_v1.PodTemplateSpec", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *JobStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&JobStatus{`,
-		`Conditions:` + strings.Replace(fmt.Sprintf("%v", this.Conditions), "JobCondition", "JobCondition", 1) + `,`,
-		`StartTime:` + strings.Replace(fmt.Sprintf("%v", this.StartTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`CompletionTime:` + strings.Replace(fmt.Sprintf("%v", this.CompletionTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`Active:` + fmt.Sprintf("%v", this.Active) + `,`,
-		`Succeeded:` + fmt.Sprintf("%v", this.Succeeded) + `,`,
-		`Failed:` + fmt.Sprintf("%v", this.Failed) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LabelSelector) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForMatchLabels := make([]string, 0, len(this.MatchLabels))
-	for k, _ := range this.MatchLabels {
-		keysForMatchLabels = append(keysForMatchLabels, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMatchLabels)
-	mapStringForMatchLabels := "map[string]string{"
-	for _, k := range keysForMatchLabels {
-		mapStringForMatchLabels += fmt.Sprintf("%v: %v,", k, this.MatchLabels[k])
-	}
-	mapStringForMatchLabels += "}"
-	s := strings.Join([]string{`&LabelSelector{`,
-		`MatchLabels:` + mapStringForMatchLabels + `,`,
-		`MatchExpressions:` + strings.Replace(fmt.Sprintf("%v", this.MatchExpressions), "LabelSelectorRequirement", "LabelSelectorRequirement", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LabelSelectorRequirement) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LabelSelectorRequirement{`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`Operator:` + fmt.Sprintf("%v", this.Operator) + `,`,
-		`Values:` + fmt.Sprintf("%v", this.Values) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *Job) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1629,6 +1166,7 @@ func (m *Job) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1694,7 +1232,8 @@ func (m *JobCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1723,7 +1262,8 @@ func (m *JobCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Status = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Status = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -1818,7 +1358,8 @@ func (m *JobCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -1847,7 +1388,8 @@ func (m *JobCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1861,6 +1403,7 @@ func (m *JobCondition) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1975,6 +1518,7 @@ func (m *JobList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2017,7 +1561,7 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Parallelism", wireType)
 			}
-			m.Parallelism = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2027,16 +1571,17 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Parallelism |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Parallelism = &v
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Completions", wireType)
 			}
-			m.Completions = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2046,16 +1591,17 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Completions |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Completions = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ActiveDeadlineSeconds", wireType)
 			}
-			m.ActiveDeadlineSeconds = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2065,11 +1611,12 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ActiveDeadlineSeconds |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ActiveDeadlineSeconds = &v
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Selector", wireType)
@@ -2122,7 +1669,8 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ManualSelector = bool(v != 0)
+			b := bool(v != 0)
+			m.ManualSelector = &b
 		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Template", wireType)
@@ -2168,6 +1716,7 @@ func (m *JobSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2307,7 +1856,7 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Active", wireType)
 			}
-			m.Active = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2317,16 +1866,17 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Active |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Active = &v
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Succeeded", wireType)
 			}
-			m.Succeeded = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2336,16 +1886,17 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Succeeded |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Succeeded = &v
 		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Failed", wireType)
 			}
-			m.Failed = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2355,11 +1906,12 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Failed |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Failed = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -2372,6 +1924,7 @@ func (m *JobStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2569,6 +2122,7 @@ func (m *LabelSelector) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2634,7 +2188,8 @@ func (m *LabelSelectorRequirement) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Key = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -2663,7 +2218,8 @@ func (m *LabelSelectorRequirement) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Operator = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Operator = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -2706,6 +2262,7 @@ func (m *LabelSelectorRequirement) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2825,56 +2382,53 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 811 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x55, 0x4f, 0x6f, 0xe3, 0x44,
-	0x14, 0x8f, 0x9d, 0xa4, 0x9b, 0x4c, 0xd8, 0xd5, 0x6a, 0x24, 0x56, 0x56, 0x84, 0xcc, 0x2a, 0x48,
-	0xa8, 0x12, 0x5d, 0x9b, 0x04, 0x21, 0xad, 0x56, 0x02, 0xa1, 0xdd, 0x2d, 0x52, 0x43, 0x0b, 0xad,
-	0xd3, 0x13, 0x9c, 0xc6, 0xf6, 0x23, 0x0c, 0xb1, 0x3d, 0x66, 0x66, 0x1c, 0xd1, 0x1b, 0x1f, 0x81,
-	0x13, 0x9f, 0x81, 0x0b, 0x37, 0x3e, 0x44, 0x8f, 0xbd, 0x20, 0x71, 0xaa, 0x68, 0xb8, 0x70, 0xec,
-	0x47, 0x40, 0x33, 0x76, 0x1c, 0xe7, 0x5f, 0x95, 0xf6, 0x98, 0xdf, 0x7b, 0xbf, 0xdf, 0xbc, 0xf7,
-	0x7e, 0xef, 0x39, 0xe8, 0x93, 0xc9, 0x4b, 0xe1, 0x50, 0xe6, 0x4e, 0x32, 0x1f, 0x78, 0x02, 0x12,
-	0x84, 0x9b, 0x4e, 0xc6, 0x2e, 0x49, 0xa9, 0x70, 0x7d, 0x22, 0x83, 0x1f, 0xdc, 0x69, 0xdf, 0x1d,
-	0x43, 0x02, 0x9c, 0x48, 0x08, 0x9d, 0x94, 0x33, 0xc9, 0xf0, 0x07, 0x39, 0xc9, 0x59, 0x90, 0x9c,
-	0x74, 0x32, 0x76, 0x14, 0xc9, 0xd1, 0x24, 0x67, 0xda, 0xef, 0x0e, 0xb6, 0x2a, 0xbb, 0x1c, 0x04,
-	0xcb, 0x78, 0x00, 0xab, 0xc2, 0xdd, 0x4f, 0xb7, 0x73, 0xb2, 0x64, 0x0a, 0x5c, 0x50, 0x96, 0x40,
-	0xb8, 0x46, 0x3b, 0xd8, 0x4e, 0x5b, 0xaf, 0xbe, 0xfb, 0x62, 0x73, 0x36, 0xcf, 0x12, 0x49, 0xe3,
-	0xf5, 0x9a, 0xfa, 0x9b, 0xd3, 0x33, 0x49, 0x23, 0x97, 0x26, 0x52, 0x48, 0xbe, 0x4a, 0xe9, 0xfd,
-	0x65, 0xa0, 0xfa, 0x90, 0xf9, 0xf8, 0x2d, 0x6a, 0xc5, 0x20, 0x49, 0x48, 0x24, 0xb1, 0x8c, 0xe7,
-	0xc6, 0x7e, 0x67, 0xb0, 0xef, 0x6c, 0x1d, 0x9d, 0x33, 0xed, 0x3b, 0xdf, 0xf8, 0x3f, 0x42, 0x20,
-	0x4f, 0x40, 0x12, 0xaf, 0x64, 0xe2, 0x2f, 0x50, 0x43, 0xa4, 0x10, 0x58, 0xa6, 0x56, 0x38, 0x70,
-	0x76, 0x18, 0xbe, 0x33, 0x64, 0xfe, 0x28, 0x85, 0xc0, 0xd3, 0x4c, 0xfc, 0x25, 0xda, 0x13, 0x92,
-	0xc8, 0x4c, 0x58, 0x75, 0xad, 0xe1, 0xec, 0xac, 0xa1, 0x59, 0x5e, 0xc1, 0xee, 0xfd, 0x69, 0xa2,
-	0x77, 0x86, 0xcc, 0x7f, 0xc3, 0x92, 0x90, 0x4a, 0xca, 0x12, 0x6c, 0xa1, 0x86, 0xbc, 0x48, 0x41,
-	0x37, 0xd7, 0x7e, 0xdd, 0xb8, 0xbc, 0x7e, 0xbf, 0xe6, 0x69, 0x04, 0xbf, 0x57, 0x3e, 0x69, 0x56,
-	0x62, 0x05, 0x86, 0xcf, 0xd0, 0xe3, 0x88, 0x08, 0x79, 0xca, 0x99, 0x0f, 0xe7, 0x34, 0x86, 0xa2,
-	0xae, 0x8f, 0xee, 0x98, 0x4e, 0xc5, 0x7f, 0x47, 0x51, 0xbc, 0x65, 0x05, 0xfc, 0x1d, 0xc2, 0x0a,
-	0x38, 0xe7, 0x24, 0x11, 0xba, 0x38, 0xad, 0xdb, 0xb8, 0xbf, 0xee, 0x06, 0x19, 0xd5, 0x0d, 0x07,
-	0x22, 0x58, 0x62, 0x35, 0xab, 0xdd, 0xe4, 0x18, 0xb6, 0xd1, 0xa3, 0x18, 0x84, 0x20, 0x63, 0xb0,
-	0xf6, 0x2a, 0xe1, 0x39, 0xd8, 0xfb, 0xcd, 0x40, 0x8f, 0x86, 0xcc, 0x3f, 0xa6, 0x42, 0xe2, 0xaf,
-	0xd6, 0x56, 0xc2, 0xdd, 0xb1, 0x38, 0x45, 0x5f, 0xd9, 0x8c, 0xcf, 0x51, 0x93, 0x4a, 0x88, 0xd5,
-	0x8c, 0xeb, 0x77, 0x2f, 0xd7, 0xb2, 0xad, 0x5e, 0x4e, 0xeb, 0x5d, 0x9b, 0xba, 0x30, 0xb5, 0x29,
-	0xf8, 0x43, 0xd4, 0x49, 0x09, 0x27, 0x51, 0x04, 0x11, 0x15, 0xb1, 0xae, 0xad, 0x59, 0x34, 0x52,
-	0x0d, 0xa8, 0xbc, 0x80, 0xc5, 0x69, 0x04, 0x6a, 0x38, 0xb9, 0xbb, 0x65, 0x5e, 0x25, 0x80, 0x5f,
-	0xa1, 0x77, 0x49, 0x20, 0xe9, 0x14, 0xde, 0x02, 0x09, 0x23, 0x9a, 0xc0, 0x08, 0x02, 0x96, 0x84,
-	0xf9, 0x0a, 0xd6, 0x0b, 0xc6, 0xe6, 0x14, 0xfc, 0x35, 0x6a, 0x09, 0x88, 0x20, 0x90, 0x8c, 0x17,
-	0x0e, 0x0e, 0x76, 0x6a, 0xed, 0x98, 0xf8, 0x10, 0x8d, 0x0a, 0xa6, 0x57, 0x6a, 0xe0, 0x03, 0xf4,
-	0x24, 0x26, 0x49, 0x46, 0xca, 0x98, 0xb6, 0xb1, 0x55, 0x14, 0xb1, 0x12, 0xc3, 0x47, 0xa8, 0x25,
-	0x21, 0x4e, 0x23, 0x22, 0x73, 0x3f, 0x3b, 0x83, 0x17, 0x77, 0x5f, 0xed, 0x29, 0x0b, 0xcf, 0x0b,
-	0x82, 0x3e, 0xba, 0x92, 0xae, 0x06, 0xdc, 0x2e, 0xcf, 0x08, 0x9f, 0x21, 0x14, 0xcc, 0x4f, 0x47,
-	0x58, 0x86, 0xf6, 0xac, 0xbf, 0xab, 0x67, 0xe5, 0xd1, 0x79, 0x15, 0x11, 0x7c, 0x84, 0xda, 0x42,
-	0x12, 0x2e, 0xf5, 0xb2, 0x9b, 0xf7, 0x5f, 0xf6, 0x05, 0x1b, 0x8f, 0xd0, 0x93, 0x85, 0x7f, 0x0f,
-	0x3d, 0xca, 0x15, 0x09, 0x75, 0x38, 0xb9, 0xc5, 0xda, 0xc7, 0xf9, 0xa2, 0x14, 0x18, 0xee, 0xa1,
-	0xb6, 0xc8, 0x82, 0x00, 0x20, 0x84, 0x50, 0x5b, 0x32, 0x4f, 0x58, 0xc0, 0x4a, 0xe1, 0x7b, 0x42,
-	0x23, 0x08, 0xb5, 0x17, 0xa5, 0x42, 0x8e, 0xf5, 0xfe, 0x30, 0xd1, 0xe3, 0x25, 0xd7, 0x31, 0xa0,
-	0x4e, 0xac, 0xc6, 0xa6, 0xd1, 0xf9, 0x94, 0xdf, 0xdc, 0x7f, 0x7d, 0x9c, 0x93, 0x85, 0xca, 0x61,
-	0x22, 0xf9, 0x85, 0x57, 0xd5, 0xc5, 0x14, 0x3d, 0xd5, 0x3f, 0x0f, 0x7f, 0x4e, 0x39, 0x08, 0x51,
-	0xdc, 0x82, 0x7a, 0xeb, 0xb3, 0x07, 0xac, 0x2a, 0xfc, 0x94, 0x51, 0x0e, 0x31, 0x24, 0xd2, 0x5b,
-	0x93, 0xed, 0x0e, 0xd1, 0xd3, 0xd5, 0x5a, 0xf0, 0x33, 0x54, 0x9f, 0xc0, 0xc5, 0xd2, 0x77, 0x57,
-	0x01, 0xb8, 0x8b, 0x9a, 0x53, 0x12, 0x65, 0xb0, 0xf4, 0xd5, 0xcd, 0xa1, 0x57, 0xe6, 0x4b, 0xa3,
-	0x17, 0x21, 0x6b, 0xdb, 0xcb, 0x5b, 0x35, 0x9f, 0xa3, 0x16, 0x4b, 0xd5, 0xff, 0x1b, 0xe3, 0x4b,
-	0xb2, 0x25, 0x8a, 0x9f, 0xa1, 0x3d, 0xfd, 0x84, 0x3a, 0xee, 0xfa, 0x7e, 0xdb, 0x2b, 0x7e, 0xbd,
-	0xfe, 0xf8, 0xea, 0xc6, 0xae, 0xfd, 0x7d, 0x63, 0xd7, 0x6e, 0x6f, 0x6c, 0xe3, 0x97, 0x99, 0x6d,
-	0xfc, 0x3e, 0xb3, 0x8d, 0xcb, 0x99, 0x6d, 0x5c, 0xcd, 0x6c, 0xe3, 0x9f, 0x99, 0x6d, 0xfc, 0x37,
-	0xb3, 0x6b, 0xb7, 0x33, 0xdb, 0xf8, 0xf5, 0x5f, 0xbb, 0xf6, 0xad, 0x39, 0xed, 0xff, 0x1f, 0x00,
-	0x00, 0xff, 0xff, 0xa0, 0x8a, 0xc7, 0x86, 0x8f, 0x08, 0x00, 0x00,
+	// 766 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x55, 0xcf, 0x6b, 0xe3, 0x46,
+	0x14, 0xae, 0xe4, 0x28, 0xb1, 0xc7, 0x4d, 0x08, 0x43, 0x5a, 0x84, 0x29, 0x26, 0xb8, 0x50, 0x02,
+	0x4d, 0x24, 0xec, 0xb6, 0x10, 0x0a, 0x0d, 0xa5, 0x49, 0x0a, 0x71, 0x93, 0x36, 0x19, 0xe7, 0xd4,
+	0x5e, 0x3a, 0x92, 0x5e, 0xdd, 0xa9, 0x25, 0x8d, 0x3a, 0x33, 0x32, 0x9b, 0x7f, 0x64, 0xd9, 0xc3,
+	0x5e, 0xf6, 0x9f, 0x59, 0xf6, 0xb0, 0x87, 0xbd, 0xec, 0x7d, 0xc9, 0xfe, 0x23, 0xcb, 0x8c, 0x14,
+	0xd9, 0xf1, 0x8f, 0xe0, 0xe4, 0xa6, 0xf7, 0x66, 0xbe, 0x6f, 0xde, 0xbc, 0xef, 0x7b, 0x23, 0xf4,
+	0xdd, 0xe8, 0x50, 0x7a, 0x8c, 0xfb, 0xa3, 0x3c, 0x00, 0x91, 0x82, 0x02, 0xe9, 0x67, 0xa3, 0xa1,
+	0x4f, 0x33, 0x26, 0xfd, 0x80, 0xaa, 0xf0, 0x5f, 0x7f, 0xdc, 0xf5, 0x87, 0x90, 0x82, 0xa0, 0x0a,
+	0x22, 0x2f, 0x13, 0x5c, 0x71, 0xfc, 0x75, 0x01, 0xf2, 0x26, 0x20, 0x2f, 0x1b, 0x0d, 0x3d, 0x0d,
+	0xf2, 0x0c, 0xc8, 0x1b, 0x77, 0x5b, 0xbd, 0xa5, 0xcc, 0xbe, 0x00, 0xc9, 0x73, 0x11, 0xc2, 0x2c,
+	0x71, 0xeb, 0x87, 0xe5, 0x98, 0x3c, 0x1d, 0x83, 0x90, 0x8c, 0xa7, 0x10, 0xcd, 0xc1, 0xf6, 0x97,
+	0xc3, 0xe6, 0xab, 0x6f, 0x1d, 0x2c, 0xde, 0x2d, 0xf2, 0x54, 0xb1, 0x64, 0xbe, 0xa6, 0xee, 0xe2,
+	0xed, 0xb9, 0x62, 0xb1, 0xcf, 0x52, 0x25, 0x95, 0x98, 0x85, 0x74, 0xde, 0x5b, 0xa8, 0xd6, 0xe7,
+	0x01, 0x3e, 0x41, 0xf5, 0x04, 0x14, 0x8d, 0xa8, 0xa2, 0xae, 0xb5, 0x6b, 0xed, 0x35, 0x7b, 0x7b,
+	0xde, 0xd2, 0xd6, 0x79, 0xe3, 0xae, 0xf7, 0x47, 0xf0, 0x1f, 0x84, 0xea, 0x02, 0x14, 0x25, 0x15,
+	0x12, 0xff, 0x8c, 0xd6, 0x64, 0x06, 0xa1, 0x6b, 0x1b, 0x86, 0x7d, 0x6f, 0x85, 0xe6, 0x7b, 0x7d,
+	0x1e, 0x0c, 0x32, 0x08, 0x89, 0x41, 0xe2, 0x5f, 0xd1, 0xba, 0x54, 0x54, 0xe5, 0xd2, 0xad, 0x19,
+	0x0e, 0x6f, 0x65, 0x0e, 0x83, 0x22, 0x25, 0xba, 0xf3, 0xd2, 0x46, 0x9f, 0xf7, 0x79, 0x70, 0xcc,
+	0xd3, 0x88, 0x29, 0xc6, 0x53, 0x8c, 0xd1, 0x9a, 0xba, 0xc9, 0xc0, 0x5c, 0xae, 0x41, 0xcc, 0x37,
+	0xfe, 0xb2, 0x3a, 0xcc, 0x36, 0xd9, 0x32, 0xc2, 0x57, 0x68, 0x33, 0xa6, 0x52, 0x5d, 0x0a, 0x1e,
+	0xc0, 0x35, 0x4b, 0xa0, 0xac, 0xe5, 0xdb, 0x07, 0x3a, 0x32, 0xa5, 0xb9, 0xa7, 0x21, 0xe4, 0x3e,
+	0x03, 0xfe, 0x0b, 0x61, 0x9d, 0xb8, 0x16, 0x34, 0x95, 0xa6, 0x20, 0xc3, 0xbb, 0xf6, 0x78, 0xde,
+	0x05, 0x34, 0xfa, 0x1e, 0x02, 0xa8, 0xe4, 0xa9, 0xeb, 0x14, 0xf7, 0x28, 0x22, 0xec, 0xa2, 0x8d,
+	0x04, 0xa4, 0xa4, 0x43, 0x70, 0xd7, 0xcd, 0xc2, 0x5d, 0xd8, 0x79, 0x6e, 0xa1, 0x8d, 0x3e, 0x0f,
+	0xce, 0x99, 0x54, 0xf8, 0xb7, 0x39, 0xe9, 0xfd, 0x15, 0x0b, 0xd2, 0xf0, 0x19, 0x07, 0x1c, 0x21,
+	0x87, 0x29, 0x48, 0x74, 0x47, 0x6b, 0x0f, 0x9b, 0xe8, 0xbe, 0x7c, 0xa4, 0x80, 0x75, 0x5e, 0xdb,
+	0xa6, 0x30, 0xed, 0x08, 0xbc, 0x8b, 0x9a, 0x19, 0x15, 0x34, 0x8e, 0x21, 0x66, 0x32, 0x31, 0xb5,
+	0x39, 0x64, 0x3a, 0xa5, 0x77, 0x84, 0x3c, 0xc9, 0x62, 0xd0, 0xad, 0x28, 0x54, 0x74, 0xc8, 0x74,
+	0x0a, 0x7f, 0x8f, 0xbe, 0xa0, 0xa1, 0x62, 0x63, 0x38, 0x01, 0x1a, 0xc5, 0x2c, 0x85, 0x01, 0x84,
+	0x3c, 0x8d, 0x0a, 0x7b, 0xd5, 0xc8, 0xe2, 0x45, 0xfc, 0x3b, 0xaa, 0x4b, 0x88, 0x21, 0x54, 0x5c,
+	0x94, 0x1a, 0xf5, 0x56, 0xba, 0xc8, 0x39, 0x0d, 0x20, 0x1e, 0x94, 0x48, 0x52, 0x71, 0xe0, 0x6f,
+	0xd0, 0x56, 0x42, 0xd3, 0x9c, 0x56, 0x6b, 0x46, 0xa8, 0x3a, 0x99, 0xc9, 0xe2, 0x33, 0x54, 0x57,
+	0x90, 0x64, 0x31, 0x55, 0x85, 0x62, 0xcd, 0xde, 0xc1, 0xc3, 0x53, 0x78, 0xc9, 0xa3, 0xeb, 0x12,
+	0x60, 0x86, 0xa8, 0x82, 0x77, 0xde, 0xda, 0xa8, 0x51, 0x8d, 0x05, 0xbe, 0x42, 0x28, 0xbc, 0x1b,
+	0x05, 0xe9, 0x5a, 0x46, 0x9b, 0xee, 0xaa, 0xda, 0x54, 0x43, 0x44, 0xa6, 0x48, 0xf0, 0x19, 0x6a,
+	0x48, 0x45, 0x85, 0x32, 0x46, 0xb6, 0x1f, 0x6f, 0xe4, 0x09, 0x1a, 0x0f, 0xd0, 0xd6, 0x44, 0xb3,
+	0xa7, 0x0e, 0xdc, 0x0c, 0x85, 0x1e, 0x8a, 0x42, 0x5c, 0xa3, 0xa0, 0x43, 0xca, 0x08, 0x7f, 0x85,
+	0x1a, 0x32, 0x0f, 0x43, 0x80, 0x08, 0x22, 0x23, 0x83, 0x43, 0x26, 0x09, 0x8d, 0xfa, 0x87, 0xb2,
+	0x18, 0x22, 0xd3, 0x7f, 0x87, 0x94, 0x51, 0xe7, 0x95, 0x8d, 0x36, 0xef, 0xa9, 0x8b, 0x01, 0x35,
+	0x13, 0xdd, 0x24, 0x93, 0xbd, 0xeb, 0xe9, 0xf1, 0xe3, 0x6d, 0xe2, 0x5d, 0x4c, 0x58, 0x4e, 0x53,
+	0x25, 0x6e, 0xc8, 0x34, 0x2f, 0x66, 0x68, 0xdb, 0x84, 0xa7, 0xcf, 0x32, 0x01, 0x52, 0x96, 0x3e,
+	0xd7, 0x67, 0xfd, 0xf4, 0x04, 0x4b, 0xc2, 0xff, 0x39, 0x13, 0x90, 0x40, 0xaa, 0xc8, 0x1c, 0x6d,
+	0xeb, 0x08, 0x6d, 0xcf, 0xd6, 0x82, 0xb7, 0x51, 0x6d, 0x04, 0x37, 0xe5, 0xab, 0xa9, 0x3f, 0xf1,
+	0x0e, 0x72, 0xc6, 0x34, 0xce, 0xa1, 0x7c, 0x33, 0x8b, 0xe0, 0x47, 0xfb, 0xd0, 0xea, 0xfc, 0x8d,
+	0xdc, 0x65, 0xa7, 0x2d, 0xe0, 0x69, 0xa1, 0x3a, 0xcf, 0xf4, 0xbf, 0x88, 0x8b, 0x92, 0xaa, 0x8a,
+	0xb5, 0x0a, 0x86, 0x56, 0x8f, 0x69, 0x4d, 0x3f, 0x68, 0x45, 0xf4, 0xcb, 0xce, 0x9b, 0xdb, 0xb6,
+	0xf5, 0xee, 0xb6, 0x6d, 0x7d, 0xb8, 0x6d, 0x5b, 0x2f, 0x3e, 0xb6, 0x3f, 0xfb, 0xd3, 0x1e, 0x77,
+	0x3f, 0x05, 0x00, 0x00, 0xff, 0xff, 0x7b, 0x4a, 0x8b, 0x53, 0x19, 0x08, 0x00, 0x00,
 }

@@ -13,15 +13,9 @@
 */
 package intstr
 
-import proto "github.com/gogo/protobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
 
 import io "io"
 
@@ -34,7 +28,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // IntOrString is a type that can hold an int32 or a string.  When used in
 // JSON or YAML marshalling and unmarshalling, it produces or consumes the
@@ -45,112 +39,40 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 // +protobuf=true
 // +protobuf.options.(gogoproto.goproto_stringer)=false
 type IntOrString struct {
-	Type   int64  `protobuf:"varint,1,opt,name=type" json:"type"`
-	IntVal int32  `protobuf:"varint,2,opt,name=intVal" json:"intVal"`
-	StrVal string `protobuf:"bytes,3,opt,name=strVal" json:"strVal"`
+	Type             *int64  `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	IntVal           *int32  `protobuf:"varint,2,opt,name=intVal" json:"intVal,omitempty"`
+	StrVal           *string `protobuf:"bytes,3,opt,name=strVal" json:"strVal,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *IntOrString) Reset()                    { *m = IntOrString{} }
+func (m *IntOrString) String() string            { return proto.CompactTextString(m) }
 func (*IntOrString) ProtoMessage()               {}
 func (*IntOrString) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
 func (m *IntOrString) GetType() int64 {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return 0
 }
 
 func (m *IntOrString) GetIntVal() int32 {
-	if m != nil {
-		return m.IntVal
+	if m != nil && m.IntVal != nil {
+		return *m.IntVal
 	}
 	return 0
 }
 
 func (m *IntOrString) GetStrVal() string {
-	if m != nil {
-		return m.StrVal
+	if m != nil && m.StrVal != nil {
+		return *m.StrVal
 	}
 	return ""
 }
 
 func init() {
 	proto.RegisterType((*IntOrString)(nil), "github.com/ericchiang.k8s.util.intstr.IntOrString")
-}
-func (this *IntOrString) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*IntOrString)
-	if !ok {
-		that2, ok := that.(IntOrString)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.IntVal != that1.IntVal {
-		return false
-	}
-	if this.StrVal != that1.StrVal {
-		return false
-	}
-	return true
-}
-func (this *IntOrString) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&intstr.IntOrString{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "IntVal: "+fmt.Sprintf("%#v", this.IntVal)+",\n")
-	s = append(s, "StrVal: "+fmt.Sprintf("%#v", this.StrVal)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *IntOrString) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -167,16 +89,25 @@ func (m *IntOrString) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Type))
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.IntVal))
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.StrVal)))
-	i += copy(dAtA[i:], m.StrVal)
+	if m.Type != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Type))
+	}
+	if m.IntVal != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.IntVal))
+	}
+	if m.StrVal != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.StrVal)))
+		i += copy(dAtA[i:], *m.StrVal)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -210,10 +141,19 @@ func encodeVarintGenerated(dAtA []byte, offset int, v uint64) int {
 func (m *IntOrString) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Type))
-	n += 1 + sovGenerated(uint64(m.IntVal))
-	l = len(m.StrVal)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		n += 1 + sovGenerated(uint64(*m.Type))
+	}
+	if m.IntVal != nil {
+		n += 1 + sovGenerated(uint64(*m.IntVal))
+	}
+	if m.StrVal != nil {
+		l = len(*m.StrVal)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -229,26 +169,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *IntOrString) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&IntOrString{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`IntVal:` + fmt.Sprintf("%v", this.IntVal) + `,`,
-		`StrVal:` + fmt.Sprintf("%v", this.StrVal) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *IntOrString) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -283,7 +203,7 @@ func (m *IntOrString) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
 			}
-			m.Type = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -293,16 +213,17 @@ func (m *IntOrString) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Type |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Type = &v
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field IntVal", wireType)
 			}
-			m.IntVal = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -312,11 +233,12 @@ func (m *IntOrString) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.IntVal |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.IntVal = &v
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field StrVal", wireType)
@@ -344,7 +266,8 @@ func (m *IntOrString) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.StrVal = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.StrVal = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -358,6 +281,7 @@ func (m *IntOrString) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -477,19 +401,17 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 218 bytes of a gzipped FileDescriptorProto
+	// 180 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0x32, 0xcc, 0xb6, 0x28, 0xd6,
 	0xcb, 0xcc, 0xd7, 0xcf, 0x2e, 0x4d, 0x4a, 0x2d, 0xca, 0x4b, 0x2d, 0x49, 0x2d, 0xd6, 0x2f, 0xc8,
 	0x4e, 0xd7, 0x2f, 0x2d, 0xc9, 0xcc, 0xd1, 0xcf, 0xcc, 0x2b, 0x29, 0x2e, 0x29, 0xd2, 0x4f, 0x4f,
 	0xcd, 0x4b, 0x2d, 0x4a, 0x2c, 0x49, 0x4d, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52, 0x84,
-	0x68, 0xd1, 0x43, 0x68, 0xd1, 0x2b, 0xc8, 0x4e, 0xd7, 0x03, 0x69, 0xd1, 0x83, 0x68, 0x51, 0x4a,
-	0xe6, 0xe2, 0xf6, 0xcc, 0x2b, 0xf1, 0x2f, 0x0a, 0x2e, 0x29, 0xca, 0xcc, 0x4b, 0x17, 0x92, 0xe0,
-	0x62, 0x29, 0xa9, 0x2c, 0x48, 0x95, 0x60, 0x54, 0x60, 0xd4, 0x60, 0x76, 0x62, 0x39, 0x71, 0x4f,
-	0x9e, 0x21, 0x08, 0x2c, 0x22, 0x24, 0xc3, 0xc5, 0x96, 0x99, 0x57, 0x12, 0x96, 0x98, 0x23, 0xc1,
-	0xa4, 0xc0, 0xa8, 0xc1, 0x0a, 0x95, 0x83, 0x8a, 0x81, 0x64, 0x8b, 0x4b, 0x8a, 0x40, 0xb2, 0xcc,
-	0x0a, 0x8c, 0x1a, 0x9c, 0x30, 0x59, 0x88, 0x98, 0x93, 0xc9, 0x85, 0x87, 0x72, 0x0c, 0x37, 0x1e,
-	0xca, 0x31, 0x7c, 0x78, 0x28, 0xc7, 0xd8, 0xf0, 0x48, 0x8e, 0x71, 0xc5, 0x23, 0x39, 0xc6, 0x13,
-	0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0xf1, 0xc5, 0x23, 0x39, 0x86,
-	0x0f, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0x88, 0x62, 0x83, 0x38, 0x0d, 0x10, 0x00, 0x00,
-	0xff, 0xff, 0xdd, 0x13, 0x2a, 0x14, 0xf1, 0x00, 0x00, 0x00,
+	0x68, 0xd1, 0x43, 0x68, 0xd1, 0x2b, 0xc8, 0x4e, 0xd7, 0x03, 0x69, 0xd1, 0x83, 0x68, 0x51, 0x0a,
+	0xe4, 0xe2, 0xf6, 0xcc, 0x2b, 0xf1, 0x2f, 0x0a, 0x2e, 0x29, 0xca, 0xcc, 0x4b, 0x17, 0x12, 0xe2,
+	0x62, 0x29, 0xa9, 0x2c, 0x48, 0x95, 0x60, 0x54, 0x60, 0xd4, 0x60, 0x0e, 0x02, 0xb3, 0x85, 0xc4,
+	0xb8, 0xd8, 0x32, 0xf3, 0x4a, 0xc2, 0x12, 0x73, 0x24, 0x98, 0x14, 0x18, 0x35, 0x58, 0x83, 0xa0,
+	0x3c, 0x90, 0x78, 0x71, 0x49, 0x11, 0x48, 0x9c, 0x59, 0x81, 0x51, 0x83, 0x33, 0x08, 0xca, 0x73,
+	0x92, 0x38, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x67, 0x3c,
+	0x96, 0x63, 0x88, 0x62, 0x83, 0x58, 0x06, 0x08, 0x00, 0x00, 0xff, 0xff, 0xcd, 0x20, 0xf2, 0x02,
+	0xc3, 0x00, 0x00, 0x00,
 }

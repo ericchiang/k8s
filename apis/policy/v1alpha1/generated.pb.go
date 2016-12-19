@@ -17,7 +17,7 @@
 */
 package v1alpha1
 
-import proto "github.com/gogo/protobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/ericchiang/k8s/api/resource"
@@ -25,12 +25,6 @@ import k8s_io_kubernetes_pkg_api_unversioned "github.com/ericchiang/k8s/api/unve
 import k8s_io_kubernetes_pkg_api_v1 "github.com/ericchiang/k8s/api/v1"
 import _ "github.com/ericchiang/k8s/runtime"
 import k8s_io_kubernetes_pkg_util_intstr "github.com/ericchiang/k8s/util/intstr"
-
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
 
 import io "io"
 
@@ -43,7 +37,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Eviction evicts a pod from its node subject to certain policies and safety constraints.
 // This is a subresource of Pod.  A request to cause such an eviction is
@@ -52,10 +46,12 @@ type Eviction struct {
 	// ObjectMeta describes the pod that is being evicted.
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// DeleteOptions may be provided
-	DeleteOptions *k8s_io_kubernetes_pkg_api_v1.DeleteOptions `protobuf:"bytes,2,opt,name=deleteOptions" json:"deleteOptions,omitempty"`
+	DeleteOptions    *k8s_io_kubernetes_pkg_api_v1.DeleteOptions `protobuf:"bytes,2,opt,name=deleteOptions" json:"deleteOptions,omitempty"`
+	XXX_unrecognized []byte                                      `json:"-"`
 }
 
 func (m *Eviction) Reset()                    { *m = Eviction{} }
+func (m *Eviction) String() string            { return proto.CompactTextString(m) }
 func (*Eviction) ProtoMessage()               {}
 func (*Eviction) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
@@ -79,10 +75,12 @@ type PodDisruptionBudget struct {
 	// Specification of the desired behavior of the PodDisruptionBudget.
 	Spec *PodDisruptionBudgetSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Most recently observed status of the PodDisruptionBudget.
-	Status *PodDisruptionBudgetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *PodDisruptionBudgetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                     `json:"-"`
 }
 
 func (m *PodDisruptionBudget) Reset()                    { *m = PodDisruptionBudget{} }
+func (m *PodDisruptionBudget) String() string            { return proto.CompactTextString(m) }
 func (*PodDisruptionBudget) ProtoMessage()               {}
 func (*PodDisruptionBudget) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
 
@@ -109,11 +107,13 @@ func (m *PodDisruptionBudget) GetStatus() *PodDisruptionBudgetStatus {
 
 // PodDisruptionBudgetList is a collection of PodDisruptionBudgets.
 type PodDisruptionBudgetList struct {
-	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	Items    []*PodDisruptionBudget                          `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Metadata         *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	Items            []*PodDisruptionBudget                          `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                                          `json:"-"`
 }
 
 func (m *PodDisruptionBudgetList) Reset()                    { *m = PodDisruptionBudgetList{} }
+func (m *PodDisruptionBudgetList) String() string            { return proto.CompactTextString(m) }
 func (*PodDisruptionBudgetList) ProtoMessage()               {}
 func (*PodDisruptionBudgetList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
 
@@ -138,10 +138,12 @@ type PodDisruptionBudgetSpec struct {
 	MinAvailable *k8s_io_kubernetes_pkg_util_intstr.IntOrString `protobuf:"bytes,1,opt,name=minAvailable" json:"minAvailable,omitempty"`
 	// Label query over pods whose evictions are managed by the disruption
 	// budget.
-	Selector *k8s_io_kubernetes_pkg_api_unversioned.LabelSelector `protobuf:"bytes,2,opt,name=selector" json:"selector,omitempty"`
+	Selector         *k8s_io_kubernetes_pkg_api_unversioned.LabelSelector `protobuf:"bytes,2,opt,name=selector" json:"selector,omitempty"`
+	XXX_unrecognized []byte                                               `json:"-"`
 }
 
 func (m *PodDisruptionBudgetSpec) Reset()                    { *m = PodDisruptionBudgetSpec{} }
+func (m *PodDisruptionBudgetSpec) String() string            { return proto.CompactTextString(m) }
 func (*PodDisruptionBudgetSpec) ProtoMessage()               {}
 func (*PodDisruptionBudgetSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
 
@@ -163,45 +165,47 @@ func (m *PodDisruptionBudgetSpec) GetSelector() *k8s_io_kubernetes_pkg_api_unver
 // PodDisruptionBudget. Status may trail the actual state of a system.
 type PodDisruptionBudgetStatus struct {
 	// Whether or not a disruption is currently allowed.
-	DisruptionAllowed bool `protobuf:"varint,1,opt,name=disruptionAllowed" json:"disruptionAllowed"`
+	DisruptionAllowed *bool `protobuf:"varint,1,opt,name=disruptionAllowed" json:"disruptionAllowed,omitempty"`
 	// current number of healthy pods
-	CurrentHealthy int32 `protobuf:"varint,2,opt,name=currentHealthy" json:"currentHealthy"`
+	CurrentHealthy *int32 `protobuf:"varint,2,opt,name=currentHealthy" json:"currentHealthy,omitempty"`
 	// minimum desired number of healthy pods
-	DesiredHealthy int32 `protobuf:"varint,3,opt,name=desiredHealthy" json:"desiredHealthy"`
+	DesiredHealthy *int32 `protobuf:"varint,3,opt,name=desiredHealthy" json:"desiredHealthy,omitempty"`
 	// total number of pods counted by this disruption budget
-	ExpectedPods int32 `protobuf:"varint,4,opt,name=expectedPods" json:"expectedPods"`
+	ExpectedPods     *int32 `protobuf:"varint,4,opt,name=expectedPods" json:"expectedPods,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *PodDisruptionBudgetStatus) Reset()      { *m = PodDisruptionBudgetStatus{} }
-func (*PodDisruptionBudgetStatus) ProtoMessage() {}
+func (m *PodDisruptionBudgetStatus) Reset()         { *m = PodDisruptionBudgetStatus{} }
+func (m *PodDisruptionBudgetStatus) String() string { return proto.CompactTextString(m) }
+func (*PodDisruptionBudgetStatus) ProtoMessage()    {}
 func (*PodDisruptionBudgetStatus) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{4}
 }
 
 func (m *PodDisruptionBudgetStatus) GetDisruptionAllowed() bool {
-	if m != nil {
-		return m.DisruptionAllowed
+	if m != nil && m.DisruptionAllowed != nil {
+		return *m.DisruptionAllowed
 	}
 	return false
 }
 
 func (m *PodDisruptionBudgetStatus) GetCurrentHealthy() int32 {
-	if m != nil {
-		return m.CurrentHealthy
+	if m != nil && m.CurrentHealthy != nil {
+		return *m.CurrentHealthy
 	}
 	return 0
 }
 
 func (m *PodDisruptionBudgetStatus) GetDesiredHealthy() int32 {
-	if m != nil {
-		return m.DesiredHealthy
+	if m != nil && m.DesiredHealthy != nil {
+		return *m.DesiredHealthy
 	}
 	return 0
 }
 
 func (m *PodDisruptionBudgetStatus) GetExpectedPods() int32 {
-	if m != nil {
-		return m.ExpectedPods
+	if m != nil && m.ExpectedPods != nil {
+		return *m.ExpectedPods
 	}
 	return 0
 }
@@ -212,287 +216,6 @@ func init() {
 	proto.RegisterType((*PodDisruptionBudgetList)(nil), "github.com/ericchiang.k8s.apis.policy.v1alpha1.PodDisruptionBudgetList")
 	proto.RegisterType((*PodDisruptionBudgetSpec)(nil), "github.com/ericchiang.k8s.apis.policy.v1alpha1.PodDisruptionBudgetSpec")
 	proto.RegisterType((*PodDisruptionBudgetStatus)(nil), "github.com/ericchiang.k8s.apis.policy.v1alpha1.PodDisruptionBudgetStatus")
-}
-func (this *Eviction) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Eviction)
-	if !ok {
-		that2, ok := that.(Eviction)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.DeleteOptions.Equal(that1.DeleteOptions) {
-		return false
-	}
-	return true
-}
-func (this *PodDisruptionBudget) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodDisruptionBudget)
-	if !ok {
-		that2, ok := that.(PodDisruptionBudget)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *PodDisruptionBudgetList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodDisruptionBudgetList)
-	if !ok {
-		that2, ok := that.(PodDisruptionBudgetList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PodDisruptionBudgetSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodDisruptionBudgetSpec)
-	if !ok {
-		that2, ok := that.(PodDisruptionBudgetSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.MinAvailable.Equal(that1.MinAvailable) {
-		return false
-	}
-	if !this.Selector.Equal(that1.Selector) {
-		return false
-	}
-	return true
-}
-func (this *PodDisruptionBudgetStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodDisruptionBudgetStatus)
-	if !ok {
-		that2, ok := that.(PodDisruptionBudgetStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.DisruptionAllowed != that1.DisruptionAllowed {
-		return false
-	}
-	if this.CurrentHealthy != that1.CurrentHealthy {
-		return false
-	}
-	if this.DesiredHealthy != that1.DesiredHealthy {
-		return false
-	}
-	if this.ExpectedPods != that1.ExpectedPods {
-		return false
-	}
-	return true
-}
-func (this *Eviction) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1alpha1.Eviction{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.DeleteOptions != nil {
-		s = append(s, "DeleteOptions: "+fmt.Sprintf("%#v", this.DeleteOptions)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodDisruptionBudget) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1alpha1.PodDisruptionBudget{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodDisruptionBudgetList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1alpha1.PodDisruptionBudgetList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodDisruptionBudgetSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1alpha1.PodDisruptionBudgetSpec{")
-	if this.MinAvailable != nil {
-		s = append(s, "MinAvailable: "+fmt.Sprintf("%#v", this.MinAvailable)+",\n")
-	}
-	if this.Selector != nil {
-		s = append(s, "Selector: "+fmt.Sprintf("%#v", this.Selector)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodDisruptionBudgetStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1alpha1.PodDisruptionBudgetStatus{")
-	s = append(s, "DisruptionAllowed: "+fmt.Sprintf("%#v", this.DisruptionAllowed)+",\n")
-	s = append(s, "CurrentHealthy: "+fmt.Sprintf("%#v", this.CurrentHealthy)+",\n")
-	s = append(s, "DesiredHealthy: "+fmt.Sprintf("%#v", this.DesiredHealthy)+",\n")
-	s = append(s, "ExpectedPods: "+fmt.Sprintf("%#v", this.ExpectedPods)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *Eviction) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -528,6 +251,9 @@ func (m *Eviction) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n2
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -577,6 +303,9 @@ func (m *PodDisruptionBudget) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n5
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -617,6 +346,9 @@ func (m *PodDisruptionBudgetList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -655,6 +387,9 @@ func (m *PodDisruptionBudgetSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n8
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -673,23 +408,34 @@ func (m *PodDisruptionBudgetStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	if m.DisruptionAllowed {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.DisruptionAllowed != nil {
+		dAtA[i] = 0x8
+		i++
+		if *m.DisruptionAllowed {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.CurrentHealthy))
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.DesiredHealthy))
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ExpectedPods))
+	if m.CurrentHealthy != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.CurrentHealthy))
+	}
+	if m.DesiredHealthy != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.DesiredHealthy))
+	}
+	if m.ExpectedPods != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ExpectedPods))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -731,6 +477,9 @@ func (m *Eviction) Size() (n int) {
 		l = m.DeleteOptions.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -749,6 +498,9 @@ func (m *PodDisruptionBudget) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -765,6 +517,9 @@ func (m *PodDisruptionBudgetList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -779,16 +534,30 @@ func (m *PodDisruptionBudgetSpec) Size() (n int) {
 		l = m.Selector.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PodDisruptionBudgetStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 2
-	n += 1 + sovGenerated(uint64(m.CurrentHealthy))
-	n += 1 + sovGenerated(uint64(m.DesiredHealthy))
-	n += 1 + sovGenerated(uint64(m.ExpectedPods))
+	if m.DisruptionAllowed != nil {
+		n += 2
+	}
+	if m.CurrentHealthy != nil {
+		n += 1 + sovGenerated(uint64(*m.CurrentHealthy))
+	}
+	if m.DesiredHealthy != nil {
+		n += 1 + sovGenerated(uint64(*m.DesiredHealthy))
+	}
+	if m.ExpectedPods != nil {
+		n += 1 + sovGenerated(uint64(*m.ExpectedPods))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -804,72 +573,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *Eviction) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Eviction{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`DeleteOptions:` + strings.Replace(fmt.Sprintf("%v", this.DeleteOptions), "DeleteOptions", "github.com/ericchiang.k8s.api_v1.DeleteOptions", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodDisruptionBudget) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodDisruptionBudget{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "PodDisruptionBudgetSpec", "PodDisruptionBudgetSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "PodDisruptionBudgetStatus", "PodDisruptionBudgetStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodDisruptionBudgetList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodDisruptionBudgetList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "PodDisruptionBudget", "PodDisruptionBudget", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodDisruptionBudgetSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodDisruptionBudgetSpec{`,
-		`MinAvailable:` + strings.Replace(fmt.Sprintf("%v", this.MinAvailable), "IntOrString", "github.com/ericchiang.k8s.util_intstr.IntOrString", 1) + `,`,
-		`Selector:` + strings.Replace(fmt.Sprintf("%v", this.Selector), "LabelSelector", "github.com/ericchiang.k8s.api_unversioned.LabelSelector", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodDisruptionBudgetStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodDisruptionBudgetStatus{`,
-		`DisruptionAllowed:` + fmt.Sprintf("%v", this.DisruptionAllowed) + `,`,
-		`CurrentHealthy:` + fmt.Sprintf("%v", this.CurrentHealthy) + `,`,
-		`DesiredHealthy:` + fmt.Sprintf("%v", this.DesiredHealthy) + `,`,
-		`ExpectedPods:` + fmt.Sprintf("%v", this.ExpectedPods) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *Eviction) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -978,6 +681,7 @@ func (m *Eviction) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1127,6 +831,7 @@ func (m *PodDisruptionBudget) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1241,6 +946,7 @@ func (m *PodDisruptionBudgetList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1357,6 +1063,7 @@ func (m *PodDisruptionBudgetSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1414,12 +1121,13 @@ func (m *PodDisruptionBudgetStatus) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.DisruptionAllowed = bool(v != 0)
+			b := bool(v != 0)
+			m.DisruptionAllowed = &b
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CurrentHealthy", wireType)
 			}
-			m.CurrentHealthy = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1429,16 +1137,17 @@ func (m *PodDisruptionBudgetStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CurrentHealthy |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.CurrentHealthy = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DesiredHealthy", wireType)
 			}
-			m.DesiredHealthy = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1448,16 +1157,17 @@ func (m *PodDisruptionBudgetStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DesiredHealthy |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.DesiredHealthy = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExpectedPods", wireType)
 			}
-			m.ExpectedPods = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1467,11 +1177,12 @@ func (m *PodDisruptionBudgetStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ExpectedPods |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ExpectedPods = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -1484,6 +1195,7 @@ func (m *PodDisruptionBudgetStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1603,41 +1315,38 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 564 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x92, 0xcf, 0x8b, 0xd3, 0x40,
-	0x14, 0xc7, 0x3b, 0xfb, 0x43, 0xca, 0xec, 0x2a, 0x18, 0x0f, 0xd6, 0x3d, 0x44, 0xe9, 0xa9, 0xe8,
-	0x3a, 0xa1, 0x45, 0x45, 0xbc, 0xc8, 0xd6, 0x2e, 0x28, 0x2a, 0xad, 0x29, 0x22, 0x08, 0x1e, 0xa6,
-	0x99, 0x47, 0x77, 0x6c, 0x9a, 0x09, 0x33, 0x2f, 0xd1, 0xbd, 0xf9, 0x27, 0x08, 0xfe, 0x09, 0x5e,
-	0xfc, 0x27, 0xc4, 0xeb, 0x1e, 0xf7, 0x22, 0x78, 0x12, 0x1b, 0x2f, 0x1e, 0xf7, 0x4f, 0x90, 0xa4,
-	0x69, 0xed, 0xaf, 0x2c, 0x0b, 0xeb, 0x35, 0xef, 0xfb, 0xf9, 0xe4, 0xcd, 0x7b, 0x8f, 0x3e, 0x18,
-	0xdc, 0x37, 0x4c, 0x2a, 0x67, 0x10, 0xf5, 0x40, 0x07, 0x80, 0x60, 0x9c, 0x70, 0xd0, 0x77, 0x78,
-	0x28, 0x8d, 0x13, 0x2a, 0x5f, 0x7a, 0x87, 0x4e, 0x5c, 0xe7, 0x7e, 0x78, 0xc0, 0xeb, 0x4e, 0x1f,
-	0x02, 0xd0, 0x1c, 0x41, 0xb0, 0x50, 0x2b, 0x54, 0xd6, 0xcd, 0x31, 0xcb, 0xfe, 0xb1, 0x2c, 0x1c,
-	0xf4, 0x59, 0xca, 0xb2, 0x31, 0xcb, 0x26, 0xec, 0x4e, 0xa3, 0xf0, 0x3f, 0x8e, 0x06, 0xa3, 0x22,
-	0xed, 0xc1, 0xa2, 0x7f, 0xe7, 0x6e, 0x31, 0x13, 0x05, 0x31, 0x68, 0x23, 0x55, 0x00, 0x62, 0x09,
-	0xdb, 0x2d, 0xc6, 0xe2, 0xa5, 0x47, 0xec, 0xdc, 0x5e, 0x9d, 0xd6, 0x51, 0x80, 0x72, 0xb8, 0xdc,
-	0x53, 0x7d, 0x75, 0x3c, 0x42, 0xe9, 0x3b, 0x32, 0x40, 0x83, 0x7a, 0x11, 0xa9, 0x7e, 0x26, 0xb4,
-	0xbc, 0x1f, 0x4b, 0x0f, 0xa5, 0x0a, 0xac, 0x16, 0x2d, 0x0f, 0x01, 0xb9, 0xe0, 0xc8, 0x2b, 0xe4,
-	0x06, 0xa9, 0x6d, 0x35, 0x6a, 0xac, 0x70, 0x8c, 0x2c, 0xae, 0xb3, 0x76, 0xef, 0x2d, 0x78, 0xf8,
-	0x1c, 0x90, 0xbb, 0x53, 0xd2, 0x7a, 0x41, 0x2f, 0x0a, 0xf0, 0x01, 0xa1, 0x1d, 0xa6, 0x56, 0x53,
-	0x59, 0xcb, 0x54, 0xb7, 0x4e, 0x57, 0xb5, 0x66, 0x11, 0x77, 0xde, 0x50, 0xfd, 0xb4, 0x46, 0xaf,
-	0x74, 0x94, 0x68, 0x49, 0xa3, 0xa3, 0xec, 0x53, 0x33, 0x12, 0x7d, 0xc0, 0xff, 0xd4, 0xf0, 0x2b,
-	0xba, 0x61, 0x42, 0xf0, 0xf2, 0x3e, 0x1f, 0xb1, 0xb3, 0x5f, 0x0e, 0x5b, 0xd1, 0x54, 0x37, 0x04,
-	0xcf, 0xcd, 0x84, 0xd6, 0x1b, 0x7a, 0xc1, 0x20, 0xc7, 0xc8, 0x54, 0xd6, 0x33, 0xf5, 0xfe, 0x79,
-	0xd5, 0x99, 0xcc, 0xcd, 0xa5, 0xd5, 0xaf, 0x84, 0x5e, 0x5d, 0x91, 0x7a, 0x26, 0x0d, 0x5a, 0x4f,
-	0x97, 0x26, 0xe3, 0x9c, 0x32, 0x99, 0x99, 0x8b, 0x65, 0x29, 0xbe, 0x30, 0xa0, 0x97, 0x74, 0x53,
-	0x22, 0x0c, 0xd3, 0x4d, 0xae, 0xd7, 0xb6, 0x1a, 0x0f, 0xcf, 0xf9, 0x0c, 0x77, 0x6c, 0xab, 0x7e,
-	0x5b, 0xdd, 0x7f, 0x3a, 0x40, 0xcb, 0xa5, 0xdb, 0x43, 0x19, 0xec, 0xc5, 0x5c, 0xfa, 0xbc, 0xe7,
-	0x43, 0xfe, 0x06, 0x56, 0xf0, 0xe7, 0xf4, 0xc2, 0xd9, 0xf8, 0xc2, 0xd9, 0x93, 0x00, 0xdb, 0xba,
-	0x8b, 0x5a, 0x06, 0x7d, 0x77, 0xce, 0x61, 0x75, 0x68, 0xd9, 0x80, 0x0f, 0x1e, 0x2a, 0x9d, 0xef,
-	0xfa, 0xce, 0x59, 0x67, 0xc2, 0x7b, 0xe0, 0x77, 0x73, 0xd6, 0x9d, 0x5a, 0xaa, 0xdf, 0x09, 0xbd,
-	0x56, 0xb8, 0x27, 0xab, 0x41, 0x2f, 0x8b, 0x69, 0x65, 0xcf, 0xf7, 0xd5, 0x3b, 0x10, 0xd9, 0x43,
-	0xca, 0xcd, 0x8d, 0xa3, 0x9f, 0xd7, 0x4b, 0xee, 0x72, 0xd9, 0xda, 0xa5, 0x97, 0xbc, 0x48, 0x6b,
-	0x08, 0xf0, 0x31, 0x70, 0x1f, 0x0f, 0x0e, 0xb3, 0x4e, 0x37, 0x73, 0x60, 0xa1, 0x96, 0xa6, 0x05,
-	0x18, 0xa9, 0x41, 0x4c, 0xd2, 0xeb, 0xb3, 0xe9, 0xf9, 0x9a, 0x55, 0xa3, 0xdb, 0xf0, 0x3e, 0x04,
-	0x0f, 0x41, 0x74, 0x94, 0x30, 0x95, 0x8d, 0x99, 0xec, 0x5c, 0xa5, 0x79, 0xef, 0x78, 0x64, 0x97,
-	0x7e, 0x8c, 0xec, 0xd2, 0xc9, 0xc8, 0x26, 0x1f, 0x12, 0x9b, 0x7c, 0x49, 0x6c, 0x72, 0x94, 0xd8,
-	0xe4, 0x38, 0xb1, 0xc9, 0xaf, 0xc4, 0x26, 0x7f, 0x12, 0xbb, 0x74, 0x92, 0xd8, 0xe4, 0xe3, 0x6f,
-	0xbb, 0xf4, 0xba, 0x3c, 0x59, 0xf6, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x18, 0xde, 0xb9, 0x0a,
-	0xb1, 0x05, 0x00, 0x00,
+	// 520 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x92, 0xcd, 0x8a, 0x53, 0x31,
+	0x14, 0x80, 0xbd, 0xf3, 0x23, 0x25, 0x33, 0x0a, 0xc6, 0x85, 0xb5, 0x8b, 0x22, 0x5d, 0x48, 0xd1,
+	0x31, 0x97, 0x16, 0x05, 0x71, 0x23, 0x33, 0x76, 0x40, 0x51, 0x69, 0x4d, 0x11, 0x41, 0x70, 0x91,
+	0xde, 0x1c, 0x3a, 0xb1, 0x69, 0x12, 0x92, 0x73, 0xaf, 0xce, 0x73, 0xb8, 0x71, 0xef, 0x73, 0x88,
+	0x5b, 0x97, 0x3e, 0x82, 0xd4, 0x17, 0x91, 0x7b, 0xfb, 0xe3, 0xf4, 0xe7, 0x0e, 0x03, 0xe3, 0xf6,
+	0xe4, 0x7c, 0x5f, 0xce, 0x1f, 0x79, 0x32, 0x7a, 0x1c, 0x98, 0xb2, 0xf1, 0x28, 0x1d, 0x80, 0x37,
+	0x80, 0x10, 0x62, 0x37, 0x1a, 0xc6, 0xc2, 0xa9, 0x10, 0x3b, 0xab, 0x55, 0x72, 0x1a, 0x67, 0x2d,
+	0xa1, 0xdd, 0x89, 0x68, 0xc5, 0x43, 0x30, 0xe0, 0x05, 0x82, 0x64, 0xce, 0x5b, 0xb4, 0xf4, 0xde,
+	0x94, 0x65, 0xff, 0x58, 0xe6, 0x46, 0x43, 0x96, 0xb3, 0x6c, 0xca, 0xb2, 0x39, 0x5b, 0x6b, 0x97,
+	0xfe, 0x13, 0x7b, 0x08, 0x36, 0xf5, 0x09, 0xac, 0xfa, 0x6b, 0x8f, 0xca, 0x99, 0xd4, 0x64, 0xe0,
+	0x83, 0xb2, 0x06, 0xe4, 0x1a, 0x76, 0x50, 0x8e, 0x65, 0x6b, 0x4d, 0xd4, 0x1e, 0x6c, 0xce, 0xf6,
+	0xa9, 0x41, 0x35, 0x5e, 0xaf, 0xa9, 0xb5, 0x39, 0x3d, 0x45, 0xa5, 0x63, 0x65, 0x30, 0xa0, 0x5f,
+	0x45, 0x1a, 0xdf, 0x22, 0x52, 0x39, 0xce, 0x54, 0x82, 0xca, 0x1a, 0xda, 0x21, 0x95, 0x31, 0xa0,
+	0x90, 0x02, 0x45, 0x35, 0xba, 0x13, 0x35, 0xf7, 0xda, 0x4d, 0x56, 0x3a, 0x46, 0x96, 0xb5, 0x58,
+	0x77, 0xf0, 0x11, 0x12, 0x7c, 0x0d, 0x28, 0xf8, 0x82, 0xa4, 0x6f, 0xc8, 0x35, 0x09, 0x1a, 0x10,
+	0xba, 0x2e, 0xb7, 0x86, 0xea, 0x56, 0xa1, 0xba, 0x7f, 0xbe, 0xaa, 0x73, 0x16, 0xe1, 0xcb, 0x86,
+	0xc6, 0x97, 0x2d, 0x72, 0xb3, 0x67, 0x65, 0x47, 0x05, 0x9f, 0x16, 0xa1, 0xa3, 0x54, 0x0e, 0x01,
+	0xff, 0x53, 0xc1, 0xef, 0xc8, 0x4e, 0x70, 0x90, 0xcc, 0xea, 0x7c, 0xc6, 0x2e, 0x7e, 0x39, 0x6c,
+	0x43, 0x51, 0x7d, 0x07, 0x09, 0x2f, 0x84, 0xf4, 0x03, 0xb9, 0x1a, 0x50, 0x60, 0x1a, 0xaa, 0xdb,
+	0x85, 0xfa, 0xf8, 0xb2, 0xea, 0x42, 0xc6, 0x67, 0xd2, 0xc6, 0xf7, 0x88, 0xdc, 0xda, 0x90, 0xf5,
+	0x4a, 0x05, 0xa4, 0x2f, 0xd7, 0x26, 0x13, 0x9f, 0x33, 0x99, 0x33, 0x17, 0xcb, 0x72, 0x7c, 0x65,
+	0x40, 0x6f, 0xc9, 0xae, 0x42, 0x18, 0xe7, 0x9b, 0xdc, 0x6e, 0xee, 0xb5, 0x9f, 0x5e, 0xb2, 0x0d,
+	0x3e, 0xb5, 0x35, 0x7e, 0x6c, 0xae, 0x3f, 0x1f, 0x20, 0xe5, 0x64, 0x7f, 0xac, 0xcc, 0x61, 0x26,
+	0x94, 0x16, 0x03, 0x0d, 0xb3, 0x1e, 0x58, 0xc9, 0xcf, 0xf9, 0x85, 0xb3, 0xe9, 0x85, 0xb3, 0x17,
+	0x06, 0xbb, 0xbe, 0x8f, 0x5e, 0x99, 0x21, 0x5f, 0x72, 0xd0, 0x1e, 0xa9, 0x04, 0xd0, 0x90, 0xa0,
+	0xf5, 0xb3, 0x5d, 0x3f, 0xbc, 0xe8, 0x4c, 0xc4, 0x00, 0x74, 0x7f, 0xc6, 0xf2, 0x85, 0x25, 0xdf,
+	0xc0, 0xed, 0xd2, 0x3d, 0xd1, 0x03, 0x72, 0x43, 0x2e, 0x5e, 0x0e, 0xb5, 0xb6, 0x9f, 0x40, 0x16,
+	0x8d, 0x54, 0xf8, 0xfa, 0x03, 0xbd, 0x4b, 0xae, 0x27, 0xa9, 0xf7, 0x60, 0xf0, 0x39, 0x08, 0x8d,
+	0x27, 0xa7, 0x45, 0x8d, 0xbb, 0x7c, 0x25, 0x9a, 0xe7, 0x49, 0x08, 0xca, 0x83, 0x9c, 0xe7, 0x6d,
+	0x4f, 0xf3, 0x96, 0xa3, 0xb4, 0x41, 0xf6, 0xe1, 0xb3, 0x83, 0x04, 0x41, 0xf6, 0xac, 0x0c, 0xd5,
+	0x9d, 0x22, 0x6b, 0x29, 0x76, 0x54, 0xfb, 0x39, 0xa9, 0x47, 0xbf, 0x26, 0xf5, 0xe8, 0xf7, 0xa4,
+	0x1e, 0x7d, 0xfd, 0x53, 0xbf, 0xf2, 0xbe, 0x32, 0x5f, 0xdc, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x0a, 0xc2, 0x95, 0x04, 0x7d, 0x05, 0x00, 0x00,
 }

@@ -31,18 +31,25 @@ type CoreV1 struct {
 
 func (c *CoreV1) CreateBinding(ctx context.Context, obj *apiv1.Binding) (*apiv1.Binding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "bindings", "")
+	url := c.client.urlFor("", "v1", ns, "bindings", "")
 	resp := new(apiv1.Binding)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -53,18 +60,25 @@ func (c *CoreV1) CreateBinding(ctx context.Context, obj *apiv1.Binding) (*apiv1.
 
 func (c *CoreV1) UpdateBinding(ctx context.Context, obj *apiv1.Binding) (*apiv1.Binding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "bindings", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "bindings", *md.Name)
 	resp := new(apiv1.Binding)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -99,18 +113,25 @@ func (c *CoreV1) GetBinding(ctx context.Context, name, namespace string) (*apiv1
 
 func (c *CoreV1) CreateComponentStatus(ctx context.Context, obj *apiv1.ComponentStatus) (*apiv1.ComponentStatus, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "componentstatuses", "")
+	url := c.client.urlFor("", "v1", ns, "componentstatuses", "")
 	resp := new(apiv1.ComponentStatus)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -121,18 +142,25 @@ func (c *CoreV1) CreateComponentStatus(ctx context.Context, obj *apiv1.Component
 
 func (c *CoreV1) UpdateComponentStatus(ctx context.Context, obj *apiv1.ComponentStatus) (*apiv1.ComponentStatus, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "componentstatuses", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "componentstatuses", *md.Name)
 	resp := new(apiv1.ComponentStatus)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -178,18 +206,25 @@ func (c *CoreV1) ListComponentStatuses(ctx context.Context) (*apiv1.ComponentSta
 
 func (c *CoreV1) CreateConfigMap(ctx context.Context, obj *apiv1.ConfigMap) (*apiv1.ConfigMap, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "configmaps", "")
+	url := c.client.urlFor("", "v1", ns, "configmaps", "")
 	resp := new(apiv1.ConfigMap)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -200,18 +235,25 @@ func (c *CoreV1) CreateConfigMap(ctx context.Context, obj *apiv1.ConfigMap) (*ap
 
 func (c *CoreV1) UpdateConfigMap(ctx context.Context, obj *apiv1.ConfigMap) (*apiv1.ConfigMap, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "configmaps", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "configmaps", *md.Name)
 	resp := new(apiv1.ConfigMap)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -257,18 +299,25 @@ func (c *CoreV1) ListConfigMaps(ctx context.Context, namespace string) (*apiv1.C
 
 func (c *CoreV1) CreateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*apiv1.Endpoints, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "endpointses", "")
+	url := c.client.urlFor("", "v1", ns, "endpointses", "")
 	resp := new(apiv1.Endpoints)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -279,18 +328,25 @@ func (c *CoreV1) CreateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*ap
 
 func (c *CoreV1) UpdateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*apiv1.Endpoints, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "endpointses", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "endpointses", *md.Name)
 	resp := new(apiv1.Endpoints)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -336,18 +392,25 @@ func (c *CoreV1) ListEndpointses(ctx context.Context, namespace string) (*apiv1.
 
 func (c *CoreV1) CreateEvent(ctx context.Context, obj *apiv1.Event) (*apiv1.Event, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "events", "")
+	url := c.client.urlFor("", "v1", ns, "events", "")
 	resp := new(apiv1.Event)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -358,18 +421,25 @@ func (c *CoreV1) CreateEvent(ctx context.Context, obj *apiv1.Event) (*apiv1.Even
 
 func (c *CoreV1) UpdateEvent(ctx context.Context, obj *apiv1.Event) (*apiv1.Event, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "events", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "events", *md.Name)
 	resp := new(apiv1.Event)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -415,18 +485,25 @@ func (c *CoreV1) ListEvents(ctx context.Context, namespace string) (*apiv1.Event
 
 func (c *CoreV1) CreateLimitRange(ctx context.Context, obj *apiv1.LimitRange) (*apiv1.LimitRange, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "limitranges", "")
+	url := c.client.urlFor("", "v1", ns, "limitranges", "")
 	resp := new(apiv1.LimitRange)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -437,18 +514,25 @@ func (c *CoreV1) CreateLimitRange(ctx context.Context, obj *apiv1.LimitRange) (*
 
 func (c *CoreV1) UpdateLimitRange(ctx context.Context, obj *apiv1.LimitRange) (*apiv1.LimitRange, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "limitranges", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "limitranges", *md.Name)
 	resp := new(apiv1.LimitRange)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -494,18 +578,25 @@ func (c *CoreV1) ListLimitRanges(ctx context.Context, namespace string) (*apiv1.
 
 func (c *CoreV1) CreateNamespace(ctx context.Context, obj *apiv1.Namespace) (*apiv1.Namespace, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "namespaces", "")
+	url := c.client.urlFor("", "v1", ns, "namespaces", "")
 	resp := new(apiv1.Namespace)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -516,18 +607,25 @@ func (c *CoreV1) CreateNamespace(ctx context.Context, obj *apiv1.Namespace) (*ap
 
 func (c *CoreV1) UpdateNamespace(ctx context.Context, obj *apiv1.Namespace) (*apiv1.Namespace, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "namespaces", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "namespaces", *md.Name)
 	resp := new(apiv1.Namespace)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -573,18 +671,25 @@ func (c *CoreV1) ListNamespaces(ctx context.Context) (*apiv1.NamespaceList, erro
 
 func (c *CoreV1) CreateNode(ctx context.Context, obj *apiv1.Node) (*apiv1.Node, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "nodes", "")
+	url := c.client.urlFor("", "v1", ns, "nodes", "")
 	resp := new(apiv1.Node)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -595,18 +700,25 @@ func (c *CoreV1) CreateNode(ctx context.Context, obj *apiv1.Node) (*apiv1.Node, 
 
 func (c *CoreV1) UpdateNode(ctx context.Context, obj *apiv1.Node) (*apiv1.Node, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "nodes", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "nodes", *md.Name)
 	resp := new(apiv1.Node)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -652,18 +764,25 @@ func (c *CoreV1) ListNodes(ctx context.Context) (*apiv1.NodeList, error) {
 
 func (c *CoreV1) CreatePersistentVolume(ctx context.Context, obj *apiv1.PersistentVolume) (*apiv1.PersistentVolume, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumes", "")
+	url := c.client.urlFor("", "v1", ns, "persistentvolumes", "")
 	resp := new(apiv1.PersistentVolume)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -674,18 +793,25 @@ func (c *CoreV1) CreatePersistentVolume(ctx context.Context, obj *apiv1.Persiste
 
 func (c *CoreV1) UpdatePersistentVolume(ctx context.Context, obj *apiv1.PersistentVolume) (*apiv1.PersistentVolume, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumes", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "persistentvolumes", *md.Name)
 	resp := new(apiv1.PersistentVolume)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -731,18 +857,25 @@ func (c *CoreV1) ListPersistentVolumes(ctx context.Context) (*apiv1.PersistentVo
 
 func (c *CoreV1) CreatePersistentVolumeClaim(ctx context.Context, obj *apiv1.PersistentVolumeClaim) (*apiv1.PersistentVolumeClaim, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumeclaims", "")
+	url := c.client.urlFor("", "v1", ns, "persistentvolumeclaims", "")
 	resp := new(apiv1.PersistentVolumeClaim)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -753,18 +886,25 @@ func (c *CoreV1) CreatePersistentVolumeClaim(ctx context.Context, obj *apiv1.Per
 
 func (c *CoreV1) UpdatePersistentVolumeClaim(ctx context.Context, obj *apiv1.PersistentVolumeClaim) (*apiv1.PersistentVolumeClaim, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "persistentvolumeclaims", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "persistentvolumeclaims", *md.Name)
 	resp := new(apiv1.PersistentVolumeClaim)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -810,18 +950,25 @@ func (c *CoreV1) ListPersistentVolumeClaims(ctx context.Context, namespace strin
 
 func (c *CoreV1) CreatePod(ctx context.Context, obj *apiv1.Pod) (*apiv1.Pod, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "pods", "")
+	url := c.client.urlFor("", "v1", ns, "pods", "")
 	resp := new(apiv1.Pod)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -832,18 +979,25 @@ func (c *CoreV1) CreatePod(ctx context.Context, obj *apiv1.Pod) (*apiv1.Pod, err
 
 func (c *CoreV1) UpdatePod(ctx context.Context, obj *apiv1.Pod) (*apiv1.Pod, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "pods", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "pods", *md.Name)
 	resp := new(apiv1.Pod)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -889,18 +1043,25 @@ func (c *CoreV1) ListPods(ctx context.Context, namespace string) (*apiv1.PodList
 
 func (c *CoreV1) CreatePodStatusResult(ctx context.Context, obj *apiv1.PodStatusResult) (*apiv1.PodStatusResult, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "podstatusresults", "")
+	url := c.client.urlFor("", "v1", ns, "podstatusresults", "")
 	resp := new(apiv1.PodStatusResult)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -911,18 +1072,25 @@ func (c *CoreV1) CreatePodStatusResult(ctx context.Context, obj *apiv1.PodStatus
 
 func (c *CoreV1) UpdatePodStatusResult(ctx context.Context, obj *apiv1.PodStatusResult) (*apiv1.PodStatusResult, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "podstatusresults", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "podstatusresults", *md.Name)
 	resp := new(apiv1.PodStatusResult)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -957,18 +1125,25 @@ func (c *CoreV1) GetPodStatusResult(ctx context.Context, name, namespace string)
 
 func (c *CoreV1) CreatePodTemplate(ctx context.Context, obj *apiv1.PodTemplate) (*apiv1.PodTemplate, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplates", "")
+	url := c.client.urlFor("", "v1", ns, "podtemplates", "")
 	resp := new(apiv1.PodTemplate)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -979,18 +1154,25 @@ func (c *CoreV1) CreatePodTemplate(ctx context.Context, obj *apiv1.PodTemplate) 
 
 func (c *CoreV1) UpdatePodTemplate(ctx context.Context, obj *apiv1.PodTemplate) (*apiv1.PodTemplate, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplates", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "podtemplates", *md.Name)
 	resp := new(apiv1.PodTemplate)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1036,18 +1218,25 @@ func (c *CoreV1) ListPodTemplates(ctx context.Context, namespace string) (*apiv1
 
 func (c *CoreV1) CreatePodTemplateSpec(ctx context.Context, obj *apiv1.PodTemplateSpec) (*apiv1.PodTemplateSpec, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplatespecs", "")
+	url := c.client.urlFor("", "v1", ns, "podtemplatespecs", "")
 	resp := new(apiv1.PodTemplateSpec)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1058,18 +1247,25 @@ func (c *CoreV1) CreatePodTemplateSpec(ctx context.Context, obj *apiv1.PodTempla
 
 func (c *CoreV1) UpdatePodTemplateSpec(ctx context.Context, obj *apiv1.PodTemplateSpec) (*apiv1.PodTemplateSpec, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "podtemplatespecs", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "podtemplatespecs", *md.Name)
 	resp := new(apiv1.PodTemplateSpec)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1104,18 +1300,25 @@ func (c *CoreV1) GetPodTemplateSpec(ctx context.Context, name, namespace string)
 
 func (c *CoreV1) CreateRangeAllocation(ctx context.Context, obj *apiv1.RangeAllocation) (*apiv1.RangeAllocation, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "rangeallocations", "")
+	url := c.client.urlFor("", "v1", ns, "rangeallocations", "")
 	resp := new(apiv1.RangeAllocation)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1126,18 +1329,25 @@ func (c *CoreV1) CreateRangeAllocation(ctx context.Context, obj *apiv1.RangeAllo
 
 func (c *CoreV1) UpdateRangeAllocation(ctx context.Context, obj *apiv1.RangeAllocation) (*apiv1.RangeAllocation, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "rangeallocations", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "rangeallocations", *md.Name)
 	resp := new(apiv1.RangeAllocation)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1172,18 +1382,25 @@ func (c *CoreV1) GetRangeAllocation(ctx context.Context, name, namespace string)
 
 func (c *CoreV1) CreateReplicationController(ctx context.Context, obj *apiv1.ReplicationController) (*apiv1.ReplicationController, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "replicationcontrollers", "")
+	url := c.client.urlFor("", "v1", ns, "replicationcontrollers", "")
 	resp := new(apiv1.ReplicationController)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1194,18 +1411,25 @@ func (c *CoreV1) CreateReplicationController(ctx context.Context, obj *apiv1.Rep
 
 func (c *CoreV1) UpdateReplicationController(ctx context.Context, obj *apiv1.ReplicationController) (*apiv1.ReplicationController, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "replicationcontrollers", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "replicationcontrollers", *md.Name)
 	resp := new(apiv1.ReplicationController)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1251,18 +1475,25 @@ func (c *CoreV1) ListReplicationControllers(ctx context.Context, namespace strin
 
 func (c *CoreV1) CreateResourceQuota(ctx context.Context, obj *apiv1.ResourceQuota) (*apiv1.ResourceQuota, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "resourcequotas", "")
+	url := c.client.urlFor("", "v1", ns, "resourcequotas", "")
 	resp := new(apiv1.ResourceQuota)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1273,18 +1504,25 @@ func (c *CoreV1) CreateResourceQuota(ctx context.Context, obj *apiv1.ResourceQuo
 
 func (c *CoreV1) UpdateResourceQuota(ctx context.Context, obj *apiv1.ResourceQuota) (*apiv1.ResourceQuota, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "resourcequotas", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "resourcequotas", *md.Name)
 	resp := new(apiv1.ResourceQuota)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1330,18 +1568,25 @@ func (c *CoreV1) ListResourceQuotas(ctx context.Context, namespace string) (*api
 
 func (c *CoreV1) CreateSecret(ctx context.Context, obj *apiv1.Secret) (*apiv1.Secret, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "secrets", "")
+	url := c.client.urlFor("", "v1", ns, "secrets", "")
 	resp := new(apiv1.Secret)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1352,18 +1597,25 @@ func (c *CoreV1) CreateSecret(ctx context.Context, obj *apiv1.Secret) (*apiv1.Se
 
 func (c *CoreV1) UpdateSecret(ctx context.Context, obj *apiv1.Secret) (*apiv1.Secret, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "secrets", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "secrets", *md.Name)
 	resp := new(apiv1.Secret)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1409,18 +1661,25 @@ func (c *CoreV1) ListSecrets(ctx context.Context, namespace string) (*apiv1.Secr
 
 func (c *CoreV1) CreateService(ctx context.Context, obj *apiv1.Service) (*apiv1.Service, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "services", "")
+	url := c.client.urlFor("", "v1", ns, "services", "")
 	resp := new(apiv1.Service)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1431,18 +1690,25 @@ func (c *CoreV1) CreateService(ctx context.Context, obj *apiv1.Service) (*apiv1.
 
 func (c *CoreV1) UpdateService(ctx context.Context, obj *apiv1.Service) (*apiv1.Service, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "services", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "services", *md.Name)
 	resp := new(apiv1.Service)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1488,18 +1754,25 @@ func (c *CoreV1) ListServices(ctx context.Context, namespace string) (*apiv1.Ser
 
 func (c *CoreV1) CreateServiceAccount(ctx context.Context, obj *apiv1.ServiceAccount) (*apiv1.ServiceAccount, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "serviceaccounts", "")
+	url := c.client.urlFor("", "v1", ns, "serviceaccounts", "")
 	resp := new(apiv1.ServiceAccount)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1510,18 +1783,25 @@ func (c *CoreV1) CreateServiceAccount(ctx context.Context, obj *apiv1.ServiceAcc
 
 func (c *CoreV1) UpdateServiceAccount(ctx context.Context, obj *apiv1.ServiceAccount) (*apiv1.ServiceAccount, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", md.Namespace, "serviceaccounts", md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "serviceaccounts", *md.Name)
 	resp := new(apiv1.ServiceAccount)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1578,18 +1858,25 @@ type AppsV1Alpha1 struct {
 
 func (c *AppsV1Alpha1) CreatePetSet(ctx context.Context, obj *appsv1alpha1.PetSet) (*appsv1alpha1.PetSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("apps", "v1alpha1", md.Namespace, "petsets", "")
+	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", "")
 	resp := new(appsv1alpha1.PetSet)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1600,18 +1887,25 @@ func (c *AppsV1Alpha1) CreatePetSet(ctx context.Context, obj *appsv1alpha1.PetSe
 
 func (c *AppsV1Alpha1) UpdatePetSet(ctx context.Context, obj *appsv1alpha1.PetSet) (*appsv1alpha1.PetSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("apps", "v1alpha1", md.Namespace, "petsets", md.Name)
+	url := c.client.urlFor("apps", "v1alpha1", *md.Namespace, "petsets", *md.Name)
 	resp := new(appsv1alpha1.PetSet)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1668,18 +1962,25 @@ type AuthenticationV1Beta1 struct {
 
 func (c *AuthenticationV1Beta1) CreateTokenReview(ctx context.Context, obj *authenticationv1beta1.TokenReview) (*authenticationv1beta1.TokenReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authentication.k8s.io", "v1beta1", md.Namespace, "tokenreviews", "")
+	url := c.client.urlFor("authentication.k8s.io", "v1beta1", ns, "tokenreviews", "")
 	resp := new(authenticationv1beta1.TokenReview)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1690,18 +1991,25 @@ func (c *AuthenticationV1Beta1) CreateTokenReview(ctx context.Context, obj *auth
 
 func (c *AuthenticationV1Beta1) UpdateTokenReview(ctx context.Context, obj *authenticationv1beta1.TokenReview) (*authenticationv1beta1.TokenReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authentication.k8s.io", "v1beta1", md.Namespace, "tokenreviews", md.Name)
+	url := c.client.urlFor("authentication.k8s.io", "v1beta1", *md.Namespace, "tokenreviews", *md.Name)
 	resp := new(authenticationv1beta1.TokenReview)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1747,18 +2055,25 @@ type AuthorizationV1Beta1 struct {
 
 func (c *AuthorizationV1Beta1) CreateLocalSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.LocalSubjectAccessReview) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "localsubjectaccessreviews", "")
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", ns, "localsubjectaccessreviews", "")
 	resp := new(authorizationv1beta1.LocalSubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1769,18 +2084,25 @@ func (c *AuthorizationV1Beta1) CreateLocalSubjectAccessReview(ctx context.Contex
 
 func (c *AuthorizationV1Beta1) UpdateLocalSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.LocalSubjectAccessReview) (*authorizationv1beta1.LocalSubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "localsubjectaccessreviews", md.Name)
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", *md.Namespace, "localsubjectaccessreviews", *md.Name)
 	resp := new(authorizationv1beta1.LocalSubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1815,18 +2137,25 @@ func (c *AuthorizationV1Beta1) GetLocalSubjectAccessReview(ctx context.Context, 
 
 func (c *AuthorizationV1Beta1) CreateSelfSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SelfSubjectAccessReview) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "selfsubjectaccessreviews", "")
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", ns, "selfsubjectaccessreviews", "")
 	resp := new(authorizationv1beta1.SelfSubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1837,18 +2166,25 @@ func (c *AuthorizationV1Beta1) CreateSelfSubjectAccessReview(ctx context.Context
 
 func (c *AuthorizationV1Beta1) UpdateSelfSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SelfSubjectAccessReview) (*authorizationv1beta1.SelfSubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "selfsubjectaccessreviews", md.Name)
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", *md.Namespace, "selfsubjectaccessreviews", *md.Name)
 	resp := new(authorizationv1beta1.SelfSubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1883,18 +2219,25 @@ func (c *AuthorizationV1Beta1) GetSelfSubjectAccessReview(ctx context.Context, n
 
 func (c *AuthorizationV1Beta1) CreateSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SubjectAccessReview) (*authorizationv1beta1.SubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "subjectaccessreviews", "")
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", ns, "subjectaccessreviews", "")
 	resp := new(authorizationv1beta1.SubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1905,18 +2248,25 @@ func (c *AuthorizationV1Beta1) CreateSubjectAccessReview(ctx context.Context, ob
 
 func (c *AuthorizationV1Beta1) UpdateSubjectAccessReview(ctx context.Context, obj *authorizationv1beta1.SubjectAccessReview) (*authorizationv1beta1.SubjectAccessReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("authorization.k8s.io", "v1beta1", md.Namespace, "subjectaccessreviews", md.Name)
+	url := c.client.urlFor("authorization.k8s.io", "v1beta1", *md.Namespace, "subjectaccessreviews", *md.Name)
 	resp := new(authorizationv1beta1.SubjectAccessReview)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -1962,18 +2312,25 @@ type AutoscalingV1 struct {
 
 func (c *AutoscalingV1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *autoscalingv1.HorizontalPodAutoscaler) (*autoscalingv1.HorizontalPodAutoscaler, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "horizontalpodautoscalers", "")
+	url := c.client.urlFor("autoscaling", "v1", ns, "horizontalpodautoscalers", "")
 	resp := new(autoscalingv1.HorizontalPodAutoscaler)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -1984,18 +2341,25 @@ func (c *AutoscalingV1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *
 
 func (c *AutoscalingV1) UpdateHorizontalPodAutoscaler(ctx context.Context, obj *autoscalingv1.HorizontalPodAutoscaler) (*autoscalingv1.HorizontalPodAutoscaler, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "horizontalpodautoscalers", md.Name)
+	url := c.client.urlFor("autoscaling", "v1", *md.Namespace, "horizontalpodautoscalers", *md.Name)
 	resp := new(autoscalingv1.HorizontalPodAutoscaler)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2041,18 +2405,25 @@ func (c *AutoscalingV1) ListHorizontalPodAutoscalers(ctx context.Context, namesp
 
 func (c *AutoscalingV1) CreateScale(ctx context.Context, obj *autoscalingv1.Scale) (*autoscalingv1.Scale, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "scales", "")
+	url := c.client.urlFor("autoscaling", "v1", ns, "scales", "")
 	resp := new(autoscalingv1.Scale)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2063,18 +2434,25 @@ func (c *AutoscalingV1) CreateScale(ctx context.Context, obj *autoscalingv1.Scal
 
 func (c *AutoscalingV1) UpdateScale(ctx context.Context, obj *autoscalingv1.Scale) (*autoscalingv1.Scale, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("autoscaling", "v1", md.Namespace, "scales", md.Name)
+	url := c.client.urlFor("autoscaling", "v1", *md.Namespace, "scales", *md.Name)
 	resp := new(autoscalingv1.Scale)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2120,18 +2498,25 @@ type BatchV1 struct {
 
 func (c *BatchV1) CreateJob(ctx context.Context, obj *batchv1.Job) (*batchv1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v1", md.Namespace, "jobs", "")
+	url := c.client.urlFor("batch", "v1", ns, "jobs", "")
 	resp := new(batchv1.Job)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2142,18 +2527,25 @@ func (c *BatchV1) CreateJob(ctx context.Context, obj *batchv1.Job) (*batchv1.Job
 
 func (c *BatchV1) UpdateJob(ctx context.Context, obj *batchv1.Job) (*batchv1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v1", md.Namespace, "jobs", md.Name)
+	url := c.client.urlFor("batch", "v1", *md.Namespace, "jobs", *md.Name)
 	resp := new(batchv1.Job)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2210,18 +2602,25 @@ type BatchV2Alpha1 struct {
 
 func (c *BatchV2Alpha1) CreateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batchv2alpha1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobs", "")
+	url := c.client.urlFor("batch", "v2alpha1", ns, "jobs", "")
 	resp := new(batchv2alpha1.Job)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2232,18 +2631,25 @@ func (c *BatchV2Alpha1) CreateJob(ctx context.Context, obj *batchv2alpha1.Job) (
 
 func (c *BatchV2Alpha1) UpdateJob(ctx context.Context, obj *batchv2alpha1.Job) (*batchv2alpha1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobs", md.Name)
+	url := c.client.urlFor("batch", "v2alpha1", *md.Namespace, "jobs", *md.Name)
 	resp := new(batchv2alpha1.Job)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2289,18 +2695,25 @@ func (c *BatchV2Alpha1) ListJobs(ctx context.Context, namespace string) (*batchv
 
 func (c *BatchV2Alpha1) CreateJobTemplate(ctx context.Context, obj *batchv2alpha1.JobTemplate) (*batchv2alpha1.JobTemplate, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobtemplates", "")
+	url := c.client.urlFor("batch", "v2alpha1", ns, "jobtemplates", "")
 	resp := new(batchv2alpha1.JobTemplate)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2311,18 +2724,25 @@ func (c *BatchV2Alpha1) CreateJobTemplate(ctx context.Context, obj *batchv2alpha
 
 func (c *BatchV2Alpha1) UpdateJobTemplate(ctx context.Context, obj *batchv2alpha1.JobTemplate) (*batchv2alpha1.JobTemplate, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "jobtemplates", md.Name)
+	url := c.client.urlFor("batch", "v2alpha1", *md.Namespace, "jobtemplates", *md.Name)
 	resp := new(batchv2alpha1.JobTemplate)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2357,18 +2777,25 @@ func (c *BatchV2Alpha1) GetJobTemplate(ctx context.Context, name, namespace stri
 
 func (c *BatchV2Alpha1) CreateScheduledJob(ctx context.Context, obj *batchv2alpha1.ScheduledJob) (*batchv2alpha1.ScheduledJob, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "scheduledjobs", "")
+	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", "")
 	resp := new(batchv2alpha1.ScheduledJob)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2379,18 +2806,25 @@ func (c *BatchV2Alpha1) CreateScheduledJob(ctx context.Context, obj *batchv2alph
 
 func (c *BatchV2Alpha1) UpdateScheduledJob(ctx context.Context, obj *batchv2alpha1.ScheduledJob) (*batchv2alpha1.ScheduledJob, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("batch", "v2alpha1", md.Namespace, "scheduledjobs", md.Name)
+	url := c.client.urlFor("batch", "v2alpha1", *md.Namespace, "scheduledjobs", *md.Name)
 	resp := new(batchv2alpha1.ScheduledJob)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2447,18 +2881,25 @@ type CertificatesV1Alpha1 struct {
 
 func (c *CertificatesV1Alpha1) CreateCertificateSigningRequest(ctx context.Context, obj *certificatesv1alpha1.CertificateSigningRequest) (*certificatesv1alpha1.CertificateSigningRequest, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", md.Namespace, "certificatesigningrequests", "")
+	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", ns, "certificatesigningrequests", "")
 	resp := new(certificatesv1alpha1.CertificateSigningRequest)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2469,18 +2910,25 @@ func (c *CertificatesV1Alpha1) CreateCertificateSigningRequest(ctx context.Conte
 
 func (c *CertificatesV1Alpha1) UpdateCertificateSigningRequest(ctx context.Context, obj *certificatesv1alpha1.CertificateSigningRequest) (*certificatesv1alpha1.CertificateSigningRequest, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", md.Namespace, "certificatesigningrequests", md.Name)
+	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", *md.Namespace, "certificatesigningrequests", *md.Name)
 	resp := new(certificatesv1alpha1.CertificateSigningRequest)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2537,18 +2985,25 @@ type ExtensionsV1Beta1 struct {
 
 func (c *ExtensionsV1Beta1) CreateDaemonSet(ctx context.Context, obj *extensionsv1beta1.DaemonSet) (*extensionsv1beta1.DaemonSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "daemonsets", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "daemonsets", "")
 	resp := new(extensionsv1beta1.DaemonSet)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2559,18 +3014,25 @@ func (c *ExtensionsV1Beta1) CreateDaemonSet(ctx context.Context, obj *extensions
 
 func (c *ExtensionsV1Beta1) UpdateDaemonSet(ctx context.Context, obj *extensionsv1beta1.DaemonSet) (*extensionsv1beta1.DaemonSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "daemonsets", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "daemonsets", *md.Name)
 	resp := new(extensionsv1beta1.DaemonSet)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2616,18 +3078,25 @@ func (c *ExtensionsV1Beta1) ListDaemonSets(ctx context.Context, namespace string
 
 func (c *ExtensionsV1Beta1) CreateDeployment(ctx context.Context, obj *extensionsv1beta1.Deployment) (*extensionsv1beta1.Deployment, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "deployments", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "deployments", "")
 	resp := new(extensionsv1beta1.Deployment)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2638,18 +3107,25 @@ func (c *ExtensionsV1Beta1) CreateDeployment(ctx context.Context, obj *extension
 
 func (c *ExtensionsV1Beta1) UpdateDeployment(ctx context.Context, obj *extensionsv1beta1.Deployment) (*extensionsv1beta1.Deployment, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "deployments", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "deployments", *md.Name)
 	resp := new(extensionsv1beta1.Deployment)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2695,18 +3171,25 @@ func (c *ExtensionsV1Beta1) ListDeployments(ctx context.Context, namespace strin
 
 func (c *ExtensionsV1Beta1) CreateHorizontalPodAutoscaler(ctx context.Context, obj *extensionsv1beta1.HorizontalPodAutoscaler) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "horizontalpodautoscalers", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "horizontalpodautoscalers", "")
 	resp := new(extensionsv1beta1.HorizontalPodAutoscaler)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2717,18 +3200,25 @@ func (c *ExtensionsV1Beta1) CreateHorizontalPodAutoscaler(ctx context.Context, o
 
 func (c *ExtensionsV1Beta1) UpdateHorizontalPodAutoscaler(ctx context.Context, obj *extensionsv1beta1.HorizontalPodAutoscaler) (*extensionsv1beta1.HorizontalPodAutoscaler, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "horizontalpodautoscalers", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "horizontalpodautoscalers", *md.Name)
 	resp := new(extensionsv1beta1.HorizontalPodAutoscaler)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2774,18 +3264,25 @@ func (c *ExtensionsV1Beta1) ListHorizontalPodAutoscalers(ctx context.Context, na
 
 func (c *ExtensionsV1Beta1) CreateIngress(ctx context.Context, obj *extensionsv1beta1.Ingress) (*extensionsv1beta1.Ingress, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "ingresses", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "ingresses", "")
 	resp := new(extensionsv1beta1.Ingress)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2796,18 +3293,25 @@ func (c *ExtensionsV1Beta1) CreateIngress(ctx context.Context, obj *extensionsv1
 
 func (c *ExtensionsV1Beta1) UpdateIngress(ctx context.Context, obj *extensionsv1beta1.Ingress) (*extensionsv1beta1.Ingress, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "ingresses", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "ingresses", *md.Name)
 	resp := new(extensionsv1beta1.Ingress)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2853,18 +3357,25 @@ func (c *ExtensionsV1Beta1) ListIngresses(ctx context.Context, namespace string)
 
 func (c *ExtensionsV1Beta1) CreateJob(ctx context.Context, obj *extensionsv1beta1.Job) (*extensionsv1beta1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "jobs", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "jobs", "")
 	resp := new(extensionsv1beta1.Job)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2875,18 +3386,25 @@ func (c *ExtensionsV1Beta1) CreateJob(ctx context.Context, obj *extensionsv1beta
 
 func (c *ExtensionsV1Beta1) UpdateJob(ctx context.Context, obj *extensionsv1beta1.Job) (*extensionsv1beta1.Job, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "jobs", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "jobs", *md.Name)
 	resp := new(extensionsv1beta1.Job)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -2932,18 +3450,25 @@ func (c *ExtensionsV1Beta1) ListJobs(ctx context.Context, namespace string) (*ex
 
 func (c *ExtensionsV1Beta1) CreateNetworkPolicy(ctx context.Context, obj *extensionsv1beta1.NetworkPolicy) (*extensionsv1beta1.NetworkPolicy, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "networkpolicies", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "networkpolicies", "")
 	resp := new(extensionsv1beta1.NetworkPolicy)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -2954,18 +3479,25 @@ func (c *ExtensionsV1Beta1) CreateNetworkPolicy(ctx context.Context, obj *extens
 
 func (c *ExtensionsV1Beta1) UpdateNetworkPolicy(ctx context.Context, obj *extensionsv1beta1.NetworkPolicy) (*extensionsv1beta1.NetworkPolicy, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "networkpolicies", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "networkpolicies", *md.Name)
 	resp := new(extensionsv1beta1.NetworkPolicy)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3011,18 +3543,25 @@ func (c *ExtensionsV1Beta1) ListNetworkPolicies(ctx context.Context, namespace s
 
 func (c *ExtensionsV1Beta1) CreatePodSecurityPolicy(ctx context.Context, obj *extensionsv1beta1.PodSecurityPolicy) (*extensionsv1beta1.PodSecurityPolicy, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "podsecuritypolicies", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "podsecuritypolicies", "")
 	resp := new(extensionsv1beta1.PodSecurityPolicy)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3033,18 +3572,25 @@ func (c *ExtensionsV1Beta1) CreatePodSecurityPolicy(ctx context.Context, obj *ex
 
 func (c *ExtensionsV1Beta1) UpdatePodSecurityPolicy(ctx context.Context, obj *extensionsv1beta1.PodSecurityPolicy) (*extensionsv1beta1.PodSecurityPolicy, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "podsecuritypolicies", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "podsecuritypolicies", *md.Name)
 	resp := new(extensionsv1beta1.PodSecurityPolicy)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3090,18 +3636,25 @@ func (c *ExtensionsV1Beta1) ListPodSecurityPolicies(ctx context.Context) (*exten
 
 func (c *ExtensionsV1Beta1) CreateReplicaSet(ctx context.Context, obj *extensionsv1beta1.ReplicaSet) (*extensionsv1beta1.ReplicaSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "replicasets", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "replicasets", "")
 	resp := new(extensionsv1beta1.ReplicaSet)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3112,18 +3665,25 @@ func (c *ExtensionsV1Beta1) CreateReplicaSet(ctx context.Context, obj *extension
 
 func (c *ExtensionsV1Beta1) UpdateReplicaSet(ctx context.Context, obj *extensionsv1beta1.ReplicaSet) (*extensionsv1beta1.ReplicaSet, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "replicasets", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "replicasets", *md.Name)
 	resp := new(extensionsv1beta1.ReplicaSet)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3169,18 +3729,25 @@ func (c *ExtensionsV1Beta1) ListReplicaSets(ctx context.Context, namespace strin
 
 func (c *ExtensionsV1Beta1) CreateScale(ctx context.Context, obj *extensionsv1beta1.Scale) (*extensionsv1beta1.Scale, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "scales", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "scales", "")
 	resp := new(extensionsv1beta1.Scale)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3191,18 +3758,25 @@ func (c *ExtensionsV1Beta1) CreateScale(ctx context.Context, obj *extensionsv1be
 
 func (c *ExtensionsV1Beta1) UpdateScale(ctx context.Context, obj *extensionsv1beta1.Scale) (*extensionsv1beta1.Scale, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "scales", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "scales", *md.Name)
 	resp := new(extensionsv1beta1.Scale)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3237,18 +3811,25 @@ func (c *ExtensionsV1Beta1) GetScale(ctx context.Context, name, namespace string
 
 func (c *ExtensionsV1Beta1) CreateThirdPartyResource(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResource) (*extensionsv1beta1.ThirdPartyResource, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresources", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresources", "")
 	resp := new(extensionsv1beta1.ThirdPartyResource)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3259,18 +3840,25 @@ func (c *ExtensionsV1Beta1) CreateThirdPartyResource(ctx context.Context, obj *e
 
 func (c *ExtensionsV1Beta1) UpdateThirdPartyResource(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResource) (*extensionsv1beta1.ThirdPartyResource, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresources", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "thirdpartyresources", *md.Name)
 	resp := new(extensionsv1beta1.ThirdPartyResource)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3316,18 +3904,25 @@ func (c *ExtensionsV1Beta1) ListThirdPartyResources(ctx context.Context) (*exten
 
 func (c *ExtensionsV1Beta1) CreateThirdPartyResourceData(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResourceData) (*extensionsv1beta1.ThirdPartyResourceData, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresourcedatas", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresourcedatas", "")
 	resp := new(extensionsv1beta1.ThirdPartyResourceData)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3338,18 +3933,25 @@ func (c *ExtensionsV1Beta1) CreateThirdPartyResourceData(ctx context.Context, ob
 
 func (c *ExtensionsV1Beta1) UpdateThirdPartyResourceData(ctx context.Context, obj *extensionsv1beta1.ThirdPartyResourceData) (*extensionsv1beta1.ThirdPartyResourceData, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("extensions", "v1beta1", md.Namespace, "thirdpartyresourcedatas", md.Name)
+	url := c.client.urlFor("extensions", "v1beta1", *md.Namespace, "thirdpartyresourcedatas", *md.Name)
 	resp := new(extensionsv1beta1.ThirdPartyResourceData)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3406,18 +4008,25 @@ type ImagepolicyV1Alpha1 struct {
 
 func (c *ImagepolicyV1Alpha1) CreateImageReview(ctx context.Context, obj *imagepolicyv1alpha1.ImageReview) (*imagepolicyv1alpha1.ImageReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("imagepolicy", "v1alpha1", md.Namespace, "imagereviews", "")
+	url := c.client.urlFor("imagepolicy", "v1alpha1", ns, "imagereviews", "")
 	resp := new(imagepolicyv1alpha1.ImageReview)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3428,18 +4037,25 @@ func (c *ImagepolicyV1Alpha1) CreateImageReview(ctx context.Context, obj *imagep
 
 func (c *ImagepolicyV1Alpha1) UpdateImageReview(ctx context.Context, obj *imagepolicyv1alpha1.ImageReview) (*imagepolicyv1alpha1.ImageReview, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("imagepolicy", "v1alpha1", md.Namespace, "imagereviews", md.Name)
+	url := c.client.urlFor("imagepolicy", "v1alpha1", *md.Namespace, "imagereviews", *md.Name)
 	resp := new(imagepolicyv1alpha1.ImageReview)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3485,18 +4101,25 @@ type PolicyV1Alpha1 struct {
 
 func (c *PolicyV1Alpha1) CreateEviction(ctx context.Context, obj *policyv1alpha1.Eviction) (*policyv1alpha1.Eviction, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("policy", "v1alpha1", md.Namespace, "evictions", "")
+	url := c.client.urlFor("policy", "v1alpha1", ns, "evictions", "")
 	resp := new(policyv1alpha1.Eviction)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3507,18 +4130,25 @@ func (c *PolicyV1Alpha1) CreateEviction(ctx context.Context, obj *policyv1alpha1
 
 func (c *PolicyV1Alpha1) UpdateEviction(ctx context.Context, obj *policyv1alpha1.Eviction) (*policyv1alpha1.Eviction, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("policy", "v1alpha1", md.Namespace, "evictions", md.Name)
+	url := c.client.urlFor("policy", "v1alpha1", *md.Namespace, "evictions", *md.Name)
 	resp := new(policyv1alpha1.Eviction)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3553,18 +4183,25 @@ func (c *PolicyV1Alpha1) GetEviction(ctx context.Context, name, namespace string
 
 func (c *PolicyV1Alpha1) CreatePodDisruptionBudget(ctx context.Context, obj *policyv1alpha1.PodDisruptionBudget) (*policyv1alpha1.PodDisruptionBudget, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("policy", "v1alpha1", md.Namespace, "poddisruptionbudgets", "")
+	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", "")
 	resp := new(policyv1alpha1.PodDisruptionBudget)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3575,18 +4212,25 @@ func (c *PolicyV1Alpha1) CreatePodDisruptionBudget(ctx context.Context, obj *pol
 
 func (c *PolicyV1Alpha1) UpdatePodDisruptionBudget(ctx context.Context, obj *policyv1alpha1.PodDisruptionBudget) (*policyv1alpha1.PodDisruptionBudget, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("policy", "v1alpha1", md.Namespace, "poddisruptionbudgets", md.Name)
+	url := c.client.urlFor("policy", "v1alpha1", *md.Namespace, "poddisruptionbudgets", *md.Name)
 	resp := new(policyv1alpha1.PodDisruptionBudget)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3643,18 +4287,25 @@ type RBACV1Alpha1 struct {
 
 func (c *RBACV1Alpha1) CreateClusterRole(ctx context.Context, obj *rbacv1alpha1.ClusterRole) (*rbacv1alpha1.ClusterRole, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterroles", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterroles", "")
 	resp := new(rbacv1alpha1.ClusterRole)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3665,18 +4316,25 @@ func (c *RBACV1Alpha1) CreateClusterRole(ctx context.Context, obj *rbacv1alpha1.
 
 func (c *RBACV1Alpha1) UpdateClusterRole(ctx context.Context, obj *rbacv1alpha1.ClusterRole) (*rbacv1alpha1.ClusterRole, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterroles", md.Name)
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", *md.Namespace, "clusterroles", *md.Name)
 	resp := new(rbacv1alpha1.ClusterRole)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3722,18 +4380,25 @@ func (c *RBACV1Alpha1) ListClusterRoles(ctx context.Context) (*rbacv1alpha1.Clus
 
 func (c *RBACV1Alpha1) CreateClusterRoleBinding(ctx context.Context, obj *rbacv1alpha1.ClusterRoleBinding) (*rbacv1alpha1.ClusterRoleBinding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterrolebindings", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterrolebindings", "")
 	resp := new(rbacv1alpha1.ClusterRoleBinding)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3744,18 +4409,25 @@ func (c *RBACV1Alpha1) CreateClusterRoleBinding(ctx context.Context, obj *rbacv1
 
 func (c *RBACV1Alpha1) UpdateClusterRoleBinding(ctx context.Context, obj *rbacv1alpha1.ClusterRoleBinding) (*rbacv1alpha1.ClusterRoleBinding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "clusterrolebindings", md.Name)
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", *md.Namespace, "clusterrolebindings", *md.Name)
 	resp := new(rbacv1alpha1.ClusterRoleBinding)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3801,18 +4473,25 @@ func (c *RBACV1Alpha1) ListClusterRoleBindings(ctx context.Context) (*rbacv1alph
 
 func (c *RBACV1Alpha1) CreateRole(ctx context.Context, obj *rbacv1alpha1.Role) (*rbacv1alpha1.Role, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "roles", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "roles", "")
 	resp := new(rbacv1alpha1.Role)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3823,18 +4502,25 @@ func (c *RBACV1Alpha1) CreateRole(ctx context.Context, obj *rbacv1alpha1.Role) (
 
 func (c *RBACV1Alpha1) UpdateRole(ctx context.Context, obj *rbacv1alpha1.Role) (*rbacv1alpha1.Role, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "roles", md.Name)
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", *md.Namespace, "roles", *md.Name)
 	resp := new(rbacv1alpha1.Role)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3880,18 +4566,25 @@ func (c *RBACV1Alpha1) ListRoles(ctx context.Context, namespace string) (*rbacv1
 
 func (c *RBACV1Alpha1) CreateRoleBinding(ctx context.Context, obj *rbacv1alpha1.RoleBinding) (*rbacv1alpha1.RoleBinding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "rolebindings", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "rolebindings", "")
 	resp := new(rbacv1alpha1.RoleBinding)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3902,18 +4595,25 @@ func (c *RBACV1Alpha1) CreateRoleBinding(ctx context.Context, obj *rbacv1alpha1.
 
 func (c *RBACV1Alpha1) UpdateRoleBinding(ctx context.Context, obj *rbacv1alpha1.RoleBinding) (*rbacv1alpha1.RoleBinding, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !true && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !true && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if true && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if true {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", md.Namespace, "rolebindings", md.Name)
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", *md.Namespace, "rolebindings", *md.Name)
 	resp := new(rbacv1alpha1.RoleBinding)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -3970,18 +4670,25 @@ type StorageV1Beta1 struct {
 
 func (c *StorageV1Beta1) CreateStorageClass(ctx context.Context, obj *storagev1beta1.StorageClass) (*storagev1beta1.StorageClass, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("storage.k8s.io", "v1beta1", md.Namespace, "storageclasses", "")
+	url := c.client.urlFor("storage.k8s.io", "v1beta1", ns, "storageclasses", "")
 	resp := new(storagev1beta1.StorageClass)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -3992,18 +4699,25 @@ func (c *StorageV1Beta1) CreateStorageClass(ctx context.Context, obj *storagev1b
 
 func (c *StorageV1Beta1) UpdateStorageClass(ctx context.Context, obj *storagev1beta1.StorageClass) (*storagev1beta1.StorageClass, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !false && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !false && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if false && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if false {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("storage.k8s.io", "v1beta1", md.Namespace, "storageclasses", md.Name)
+	url := c.client.urlFor("storage.k8s.io", "v1beta1", *md.Namespace, "storageclasses", *md.Name)
 	resp := new(storagev1beta1.StorageClass)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {

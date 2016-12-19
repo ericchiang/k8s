@@ -20,7 +20,7 @@
 */
 package v1
 
-import proto "github.com/gogo/protobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/ericchiang/k8s/api/resource"
@@ -28,12 +28,6 @@ import k8s_io_kubernetes_pkg_api_unversioned "github.com/ericchiang/k8s/api/unve
 import k8s_io_kubernetes_pkg_api_v1 "github.com/ericchiang/k8s/api/v1"
 import _ "github.com/ericchiang/k8s/runtime"
 import _ "github.com/ericchiang/k8s/util/intstr"
-
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
 
 import io "io"
 
@@ -46,41 +40,43 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // CrossVersionObjectReference contains enough information to let you identify the referred resource.
 type CrossVersionObjectReference struct {
 	// Kind of the referent; More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds"
-	Kind string `protobuf:"bytes,1,opt,name=kind" json:"kind"`
+	Kind *string `protobuf:"bytes,1,opt,name=kind" json:"kind,omitempty"`
 	// Name of the referent; More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
-	Name string `protobuf:"bytes,2,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
 	// API version of the referent
-	ApiVersion string `protobuf:"bytes,3,opt,name=apiVersion" json:"apiVersion"`
+	ApiVersion       *string `protobuf:"bytes,3,opt,name=apiVersion" json:"apiVersion,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *CrossVersionObjectReference) Reset()      { *m = CrossVersionObjectReference{} }
-func (*CrossVersionObjectReference) ProtoMessage() {}
+func (m *CrossVersionObjectReference) Reset()         { *m = CrossVersionObjectReference{} }
+func (m *CrossVersionObjectReference) String() string { return proto.CompactTextString(m) }
+func (*CrossVersionObjectReference) ProtoMessage()    {}
 func (*CrossVersionObjectReference) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{0}
 }
 
 func (m *CrossVersionObjectReference) GetKind() string {
-	if m != nil {
-		return m.Kind
+	if m != nil && m.Kind != nil {
+		return *m.Kind
 	}
 	return ""
 }
 
 func (m *CrossVersionObjectReference) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *CrossVersionObjectReference) GetApiVersion() string {
-	if m != nil {
-		return m.ApiVersion
+	if m != nil && m.ApiVersion != nil {
+		return *m.ApiVersion
 	}
 	return ""
 }
@@ -92,10 +88,12 @@ type HorizontalPodAutoscaler struct {
 	// behaviour of autoscaler. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status.
 	Spec *HorizontalPodAutoscalerSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// current information about the autoscaler.
-	Status *HorizontalPodAutoscalerStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *HorizontalPodAutoscalerStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                         `json:"-"`
 }
 
 func (m *HorizontalPodAutoscaler) Reset()                    { *m = HorizontalPodAutoscaler{} }
+func (m *HorizontalPodAutoscaler) String() string            { return proto.CompactTextString(m) }
 func (*HorizontalPodAutoscaler) ProtoMessage()               {}
 func (*HorizontalPodAutoscaler) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
 
@@ -125,11 +123,13 @@ type HorizontalPodAutoscalerList struct {
 	// Standard list metadata.
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// list of horizontal pod autoscaler objects.
-	Items []*HorizontalPodAutoscaler `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*HorizontalPodAutoscaler `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                     `json:"-"`
 }
 
-func (m *HorizontalPodAutoscalerList) Reset()      { *m = HorizontalPodAutoscalerList{} }
-func (*HorizontalPodAutoscalerList) ProtoMessage() {}
+func (m *HorizontalPodAutoscalerList) Reset()         { *m = HorizontalPodAutoscalerList{} }
+func (m *HorizontalPodAutoscalerList) String() string { return proto.CompactTextString(m) }
+func (*HorizontalPodAutoscalerList) ProtoMessage()    {}
 func (*HorizontalPodAutoscalerList) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{2}
 }
@@ -154,16 +154,18 @@ type HorizontalPodAutoscalerSpec struct {
 	// and will set the desired number of pods by using its Scale subresource.
 	ScaleTargetRef *CrossVersionObjectReference `protobuf:"bytes,1,opt,name=scaleTargetRef" json:"scaleTargetRef,omitempty"`
 	// lower limit for the number of pods that can be set by the autoscaler, default 1.
-	MinReplicas int32 `protobuf:"varint,2,opt,name=minReplicas" json:"minReplicas"`
+	MinReplicas *int32 `protobuf:"varint,2,opt,name=minReplicas" json:"minReplicas,omitempty"`
 	// upper limit for the number of pods that can be set by the autoscaler; cannot be smaller than MinReplicas.
-	MaxReplicas int32 `protobuf:"varint,3,opt,name=maxReplicas" json:"maxReplicas"`
+	MaxReplicas *int32 `protobuf:"varint,3,opt,name=maxReplicas" json:"maxReplicas,omitempty"`
 	// target average CPU utilization (represented as a percentage of requested CPU) over all the pods;
 	// if not specified the default autoscaling policy will be used.
-	TargetCPUUtilizationPercentage int32 `protobuf:"varint,4,opt,name=targetCPUUtilizationPercentage" json:"targetCPUUtilizationPercentage"`
+	TargetCPUUtilizationPercentage *int32 `protobuf:"varint,4,opt,name=targetCPUUtilizationPercentage" json:"targetCPUUtilizationPercentage,omitempty"`
+	XXX_unrecognized               []byte `json:"-"`
 }
 
-func (m *HorizontalPodAutoscalerSpec) Reset()      { *m = HorizontalPodAutoscalerSpec{} }
-func (*HorizontalPodAutoscalerSpec) ProtoMessage() {}
+func (m *HorizontalPodAutoscalerSpec) Reset()         { *m = HorizontalPodAutoscalerSpec{} }
+func (m *HorizontalPodAutoscalerSpec) String() string { return proto.CompactTextString(m) }
+func (*HorizontalPodAutoscalerSpec) ProtoMessage()    {}
 func (*HorizontalPodAutoscalerSpec) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{3}
 }
@@ -176,22 +178,22 @@ func (m *HorizontalPodAutoscalerSpec) GetScaleTargetRef() *CrossVersionObjectRef
 }
 
 func (m *HorizontalPodAutoscalerSpec) GetMinReplicas() int32 {
-	if m != nil {
-		return m.MinReplicas
+	if m != nil && m.MinReplicas != nil {
+		return *m.MinReplicas
 	}
 	return 0
 }
 
 func (m *HorizontalPodAutoscalerSpec) GetMaxReplicas() int32 {
-	if m != nil {
-		return m.MaxReplicas
+	if m != nil && m.MaxReplicas != nil {
+		return *m.MaxReplicas
 	}
 	return 0
 }
 
 func (m *HorizontalPodAutoscalerSpec) GetTargetCPUUtilizationPercentage() int32 {
-	if m != nil {
-		return m.TargetCPUUtilizationPercentage
+	if m != nil && m.TargetCPUUtilizationPercentage != nil {
+		return *m.TargetCPUUtilizationPercentage
 	}
 	return 0
 }
@@ -199,28 +201,30 @@ func (m *HorizontalPodAutoscalerSpec) GetTargetCPUUtilizationPercentage() int32 
 // current status of a horizontal pod autoscaler
 type HorizontalPodAutoscalerStatus struct {
 	// most recent generation observed by this autoscaler.
-	ObservedGeneration int64 `protobuf:"varint,1,opt,name=observedGeneration" json:"observedGeneration"`
+	ObservedGeneration *int64 `protobuf:"varint,1,opt,name=observedGeneration" json:"observedGeneration,omitempty"`
 	// last time the HorizontalPodAutoscaler scaled the number of pods;
 	// used by the autoscaler to control how often the number of pods is changed.
 	LastScaleTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,2,opt,name=lastScaleTime" json:"lastScaleTime,omitempty"`
 	// current number of replicas of pods managed by this autoscaler.
-	CurrentReplicas int32 `protobuf:"varint,3,opt,name=currentReplicas" json:"currentReplicas"`
+	CurrentReplicas *int32 `protobuf:"varint,3,opt,name=currentReplicas" json:"currentReplicas,omitempty"`
 	// desired number of replicas of pods managed by this autoscaler.
-	DesiredReplicas int32 `protobuf:"varint,4,opt,name=desiredReplicas" json:"desiredReplicas"`
+	DesiredReplicas *int32 `protobuf:"varint,4,opt,name=desiredReplicas" json:"desiredReplicas,omitempty"`
 	// current average CPU utilization over all pods, represented as a percentage of requested CPU,
 	// e.g. 70 means that an average pod is using now 70% of its requested CPU.
-	CurrentCPUUtilizationPercentage int32 `protobuf:"varint,5,opt,name=currentCPUUtilizationPercentage" json:"currentCPUUtilizationPercentage"`
+	CurrentCPUUtilizationPercentage *int32 `protobuf:"varint,5,opt,name=currentCPUUtilizationPercentage" json:"currentCPUUtilizationPercentage,omitempty"`
+	XXX_unrecognized                []byte `json:"-"`
 }
 
-func (m *HorizontalPodAutoscalerStatus) Reset()      { *m = HorizontalPodAutoscalerStatus{} }
-func (*HorizontalPodAutoscalerStatus) ProtoMessage() {}
+func (m *HorizontalPodAutoscalerStatus) Reset()         { *m = HorizontalPodAutoscalerStatus{} }
+func (m *HorizontalPodAutoscalerStatus) String() string { return proto.CompactTextString(m) }
+func (*HorizontalPodAutoscalerStatus) ProtoMessage()    {}
 func (*HorizontalPodAutoscalerStatus) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{4}
 }
 
 func (m *HorizontalPodAutoscalerStatus) GetObservedGeneration() int64 {
-	if m != nil {
-		return m.ObservedGeneration
+	if m != nil && m.ObservedGeneration != nil {
+		return *m.ObservedGeneration
 	}
 	return 0
 }
@@ -233,22 +237,22 @@ func (m *HorizontalPodAutoscalerStatus) GetLastScaleTime() *k8s_io_kubernetes_pk
 }
 
 func (m *HorizontalPodAutoscalerStatus) GetCurrentReplicas() int32 {
-	if m != nil {
-		return m.CurrentReplicas
+	if m != nil && m.CurrentReplicas != nil {
+		return *m.CurrentReplicas
 	}
 	return 0
 }
 
 func (m *HorizontalPodAutoscalerStatus) GetDesiredReplicas() int32 {
-	if m != nil {
-		return m.DesiredReplicas
+	if m != nil && m.DesiredReplicas != nil {
+		return *m.DesiredReplicas
 	}
 	return 0
 }
 
 func (m *HorizontalPodAutoscalerStatus) GetCurrentCPUUtilizationPercentage() int32 {
-	if m != nil {
-		return m.CurrentCPUUtilizationPercentage
+	if m != nil && m.CurrentCPUUtilizationPercentage != nil {
+		return *m.CurrentCPUUtilizationPercentage
 	}
 	return 0
 }
@@ -260,10 +264,12 @@ type Scale struct {
 	// defines the behavior of the scale. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status.
 	Spec *ScaleSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// current status of the scale. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status. Read-only.
-	Status *ScaleStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *ScaleStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (m *Scale) Reset()                    { *m = Scale{} }
+func (m *Scale) String() string            { return proto.CompactTextString(m) }
 func (*Scale) ProtoMessage()               {}
 func (*Scale) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{5} }
 
@@ -291,16 +297,18 @@ func (m *Scale) GetStatus() *ScaleStatus {
 // ScaleSpec describes the attributes of a scale subresource.
 type ScaleSpec struct {
 	// desired number of instances for the scaled object.
-	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
+	Replicas         *int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *ScaleSpec) Reset()                    { *m = ScaleSpec{} }
+func (m *ScaleSpec) String() string            { return proto.CompactTextString(m) }
 func (*ScaleSpec) ProtoMessage()               {}
 func (*ScaleSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{6} }
 
 func (m *ScaleSpec) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
@@ -308,28 +316,30 @@ func (m *ScaleSpec) GetReplicas() int32 {
 // ScaleStatus represents the current status of a scale subresource.
 type ScaleStatus struct {
 	// actual number of observed instances of the scaled object.
-	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
+	Replicas *int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas,omitempty"`
 	// label query over pods that should match the replicas count. This is same
 	// as the label selector but in the string format to avoid introspection
 	// by clients. The string will be in the same format as the query-param syntax.
 	// More info about label selectors: http://releases.k8s.io/release-1.4/docs/user-guide/labels.md#label-selectors
-	Selector string `protobuf:"bytes,2,opt,name=selector" json:"selector"`
+	Selector         *string `protobuf:"bytes,2,opt,name=selector" json:"selector,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ScaleStatus) Reset()                    { *m = ScaleStatus{} }
+func (m *ScaleStatus) String() string            { return proto.CompactTextString(m) }
 func (*ScaleStatus) ProtoMessage()               {}
 func (*ScaleStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{7} }
 
 func (m *ScaleStatus) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
 
 func (m *ScaleStatus) GetSelector() string {
-	if m != nil {
-		return m.Selector
+	if m != nil && m.Selector != nil {
+		return *m.Selector
 	}
 	return ""
 }
@@ -343,437 +353,6 @@ func init() {
 	proto.RegisterType((*Scale)(nil), "github.com/ericchiang.k8s.apis.autoscaling.v1.Scale")
 	proto.RegisterType((*ScaleSpec)(nil), "github.com/ericchiang.k8s.apis.autoscaling.v1.ScaleSpec")
 	proto.RegisterType((*ScaleStatus)(nil), "github.com/ericchiang.k8s.apis.autoscaling.v1.ScaleStatus")
-}
-func (this *CrossVersionObjectReference) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*CrossVersionObjectReference)
-	if !ok {
-		that2, ok := that.(CrossVersionObjectReference)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Kind != that1.Kind {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.ApiVersion != that1.ApiVersion {
-		return false
-	}
-	return true
-}
-func (this *HorizontalPodAutoscaler) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*HorizontalPodAutoscaler)
-	if !ok {
-		that2, ok := that.(HorizontalPodAutoscaler)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *HorizontalPodAutoscalerList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*HorizontalPodAutoscalerList)
-	if !ok {
-		that2, ok := that.(HorizontalPodAutoscalerList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *HorizontalPodAutoscalerSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*HorizontalPodAutoscalerSpec)
-	if !ok {
-		that2, ok := that.(HorizontalPodAutoscalerSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.ScaleTargetRef.Equal(that1.ScaleTargetRef) {
-		return false
-	}
-	if this.MinReplicas != that1.MinReplicas {
-		return false
-	}
-	if this.MaxReplicas != that1.MaxReplicas {
-		return false
-	}
-	if this.TargetCPUUtilizationPercentage != that1.TargetCPUUtilizationPercentage {
-		return false
-	}
-	return true
-}
-func (this *HorizontalPodAutoscalerStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*HorizontalPodAutoscalerStatus)
-	if !ok {
-		that2, ok := that.(HorizontalPodAutoscalerStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ObservedGeneration != that1.ObservedGeneration {
-		return false
-	}
-	if !this.LastScaleTime.Equal(that1.LastScaleTime) {
-		return false
-	}
-	if this.CurrentReplicas != that1.CurrentReplicas {
-		return false
-	}
-	if this.DesiredReplicas != that1.DesiredReplicas {
-		return false
-	}
-	if this.CurrentCPUUtilizationPercentage != that1.CurrentCPUUtilizationPercentage {
-		return false
-	}
-	return true
-}
-func (this *Scale) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Scale)
-	if !ok {
-		that2, ok := that.(Scale)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *ScaleSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ScaleSpec)
-	if !ok {
-		that2, ok := that.(ScaleSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	return true
-}
-func (this *ScaleStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ScaleStatus)
-	if !ok {
-		that2, ok := that.(ScaleStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	if this.Selector != that1.Selector {
-		return false
-	}
-	return true
-}
-func (this *CrossVersionObjectReference) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.CrossVersionObjectReference{")
-	s = append(s, "Kind: "+fmt.Sprintf("%#v", this.Kind)+",\n")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "ApiVersion: "+fmt.Sprintf("%#v", this.ApiVersion)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *HorizontalPodAutoscaler) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.HorizontalPodAutoscaler{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *HorizontalPodAutoscalerList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.HorizontalPodAutoscalerList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *HorizontalPodAutoscalerSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.HorizontalPodAutoscalerSpec{")
-	if this.ScaleTargetRef != nil {
-		s = append(s, "ScaleTargetRef: "+fmt.Sprintf("%#v", this.ScaleTargetRef)+",\n")
-	}
-	s = append(s, "MinReplicas: "+fmt.Sprintf("%#v", this.MinReplicas)+",\n")
-	s = append(s, "MaxReplicas: "+fmt.Sprintf("%#v", this.MaxReplicas)+",\n")
-	s = append(s, "TargetCPUUtilizationPercentage: "+fmt.Sprintf("%#v", this.TargetCPUUtilizationPercentage)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *HorizontalPodAutoscalerStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.HorizontalPodAutoscalerStatus{")
-	s = append(s, "ObservedGeneration: "+fmt.Sprintf("%#v", this.ObservedGeneration)+",\n")
-	if this.LastScaleTime != nil {
-		s = append(s, "LastScaleTime: "+fmt.Sprintf("%#v", this.LastScaleTime)+",\n")
-	}
-	s = append(s, "CurrentReplicas: "+fmt.Sprintf("%#v", this.CurrentReplicas)+",\n")
-	s = append(s, "DesiredReplicas: "+fmt.Sprintf("%#v", this.DesiredReplicas)+",\n")
-	s = append(s, "CurrentCPUUtilizationPercentage: "+fmt.Sprintf("%#v", this.CurrentCPUUtilizationPercentage)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Scale) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Scale{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ScaleSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.ScaleSpec{")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ScaleStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ScaleStatus{")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	s = append(s, "Selector: "+fmt.Sprintf("%#v", this.Selector)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *CrossVersionObjectReference) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -790,18 +369,27 @@ func (m *CrossVersionObjectReference) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Kind)))
-	i += copy(dAtA[i:], m.Kind)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ApiVersion)))
-	i += copy(dAtA[i:], m.ApiVersion)
+	if m.Kind != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Kind)))
+		i += copy(dAtA[i:], *m.Kind)
+	}
+	if m.Name != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.ApiVersion != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ApiVersion)))
+		i += copy(dAtA[i:], *m.ApiVersion)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -850,6 +438,9 @@ func (m *HorizontalPodAutoscaler) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -890,6 +481,9 @@ func (m *HorizontalPodAutoscalerList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -918,15 +512,24 @@ func (m *HorizontalPodAutoscalerSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n5
 	}
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.MinReplicas))
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.MaxReplicas))
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.TargetCPUUtilizationPercentage))
+	if m.MinReplicas != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.MinReplicas))
+	}
+	if m.MaxReplicas != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.MaxReplicas))
+	}
+	if m.TargetCPUUtilizationPercentage != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.TargetCPUUtilizationPercentage))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -945,9 +548,11 @@ func (m *HorizontalPodAutoscalerStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ObservedGeneration))
+	if m.ObservedGeneration != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ObservedGeneration))
+	}
 	if m.LastScaleTime != nil {
 		dAtA[i] = 0x12
 		i++
@@ -958,15 +563,24 @@ func (m *HorizontalPodAutoscalerStatus) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n6
 	}
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.CurrentReplicas))
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.DesiredReplicas))
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.CurrentCPUUtilizationPercentage))
+	if m.CurrentReplicas != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.CurrentReplicas))
+	}
+	if m.DesiredReplicas != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.DesiredReplicas))
+	}
+	if m.CurrentCPUUtilizationPercentage != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.CurrentCPUUtilizationPercentage))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1015,6 +629,9 @@ func (m *Scale) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n9
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1033,9 +650,14 @@ func (m *ScaleSpec) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
+	if m.Replicas != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1054,13 +676,20 @@ func (m *ScaleStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Selector)))
-	i += copy(dAtA[i:], m.Selector)
+	if m.Replicas != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
+	if m.Selector != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Selector)))
+		i += copy(dAtA[i:], *m.Selector)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -1094,12 +723,21 @@ func encodeVarintGenerated(dAtA []byte, offset int, v uint64) int {
 func (m *CrossVersionObjectReference) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Kind)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ApiVersion)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Kind != nil {
+		l = len(*m.Kind)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ApiVersion != nil {
+		l = len(*m.ApiVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1118,6 +756,9 @@ func (m *HorizontalPodAutoscaler) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1134,6 +775,9 @@ func (m *HorizontalPodAutoscalerList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1144,23 +788,43 @@ func (m *HorizontalPodAutoscalerSpec) Size() (n int) {
 		l = m.ScaleTargetRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.MinReplicas))
-	n += 1 + sovGenerated(uint64(m.MaxReplicas))
-	n += 1 + sovGenerated(uint64(m.TargetCPUUtilizationPercentage))
+	if m.MinReplicas != nil {
+		n += 1 + sovGenerated(uint64(*m.MinReplicas))
+	}
+	if m.MaxReplicas != nil {
+		n += 1 + sovGenerated(uint64(*m.MaxReplicas))
+	}
+	if m.TargetCPUUtilizationPercentage != nil {
+		n += 1 + sovGenerated(uint64(*m.TargetCPUUtilizationPercentage))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *HorizontalPodAutoscalerStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.ObservedGeneration))
+	if m.ObservedGeneration != nil {
+		n += 1 + sovGenerated(uint64(*m.ObservedGeneration))
+	}
 	if m.LastScaleTime != nil {
 		l = m.LastScaleTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.CurrentReplicas))
-	n += 1 + sovGenerated(uint64(m.DesiredReplicas))
-	n += 1 + sovGenerated(uint64(m.CurrentCPUUtilizationPercentage))
+	if m.CurrentReplicas != nil {
+		n += 1 + sovGenerated(uint64(*m.CurrentReplicas))
+	}
+	if m.DesiredReplicas != nil {
+		n += 1 + sovGenerated(uint64(*m.DesiredReplicas))
+	}
+	if m.CurrentCPUUtilizationPercentage != nil {
+		n += 1 + sovGenerated(uint64(*m.CurrentCPUUtilizationPercentage))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1179,22 +843,37 @@ func (m *Scale) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ScaleSpec) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Replicas))
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ScaleStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Replicas))
-	l = len(m.Selector)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
+	if m.Selector != nil {
+		l = len(*m.Selector)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1210,109 +889,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *CrossVersionObjectReference) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&CrossVersionObjectReference{`,
-		`Kind:` + fmt.Sprintf("%v", this.Kind) + `,`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`ApiVersion:` + fmt.Sprintf("%v", this.ApiVersion) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *HorizontalPodAutoscaler) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&HorizontalPodAutoscaler{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "HorizontalPodAutoscalerSpec", "HorizontalPodAutoscalerSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "HorizontalPodAutoscalerStatus", "HorizontalPodAutoscalerStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *HorizontalPodAutoscalerList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&HorizontalPodAutoscalerList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "HorizontalPodAutoscaler", "HorizontalPodAutoscaler", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *HorizontalPodAutoscalerSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&HorizontalPodAutoscalerSpec{`,
-		`ScaleTargetRef:` + strings.Replace(fmt.Sprintf("%v", this.ScaleTargetRef), "CrossVersionObjectReference", "CrossVersionObjectReference", 1) + `,`,
-		`MinReplicas:` + fmt.Sprintf("%v", this.MinReplicas) + `,`,
-		`MaxReplicas:` + fmt.Sprintf("%v", this.MaxReplicas) + `,`,
-		`TargetCPUUtilizationPercentage:` + fmt.Sprintf("%v", this.TargetCPUUtilizationPercentage) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *HorizontalPodAutoscalerStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&HorizontalPodAutoscalerStatus{`,
-		`ObservedGeneration:` + fmt.Sprintf("%v", this.ObservedGeneration) + `,`,
-		`LastScaleTime:` + strings.Replace(fmt.Sprintf("%v", this.LastScaleTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`CurrentReplicas:` + fmt.Sprintf("%v", this.CurrentReplicas) + `,`,
-		`DesiredReplicas:` + fmt.Sprintf("%v", this.DesiredReplicas) + `,`,
-		`CurrentCPUUtilizationPercentage:` + fmt.Sprintf("%v", this.CurrentCPUUtilizationPercentage) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Scale) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Scale{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "ScaleSpec", "ScaleSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "ScaleStatus", "ScaleStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ScaleSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ScaleSpec{`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ScaleStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ScaleStatus{`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`Selector:` + fmt.Sprintf("%v", this.Selector) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *CrossVersionObjectReference) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1370,7 +946,8 @@ func (m *CrossVersionObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Kind = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Kind = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1399,7 +976,8 @@ func (m *CrossVersionObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -1428,7 +1006,8 @@ func (m *CrossVersionObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ApiVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ApiVersion = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1442,6 +1021,7 @@ func (m *CrossVersionObjectReference) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1591,6 +1171,7 @@ func (m *HorizontalPodAutoscaler) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1705,6 +1286,7 @@ func (m *HorizontalPodAutoscalerList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1780,7 +1362,7 @@ func (m *HorizontalPodAutoscalerSpec) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MinReplicas", wireType)
 			}
-			m.MinReplicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1790,16 +1372,17 @@ func (m *HorizontalPodAutoscalerSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MinReplicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.MinReplicas = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MaxReplicas", wireType)
 			}
-			m.MaxReplicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1809,16 +1392,17 @@ func (m *HorizontalPodAutoscalerSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MaxReplicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.MaxReplicas = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TargetCPUUtilizationPercentage", wireType)
 			}
-			m.TargetCPUUtilizationPercentage = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1828,11 +1412,12 @@ func (m *HorizontalPodAutoscalerSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TargetCPUUtilizationPercentage |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.TargetCPUUtilizationPercentage = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -1845,6 +1430,7 @@ func (m *HorizontalPodAutoscalerSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1887,7 +1473,7 @@ func (m *HorizontalPodAutoscalerStatus) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ObservedGeneration", wireType)
 			}
-			m.ObservedGeneration = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1897,11 +1483,12 @@ func (m *HorizontalPodAutoscalerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ObservedGeneration |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ObservedGeneration = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field LastScaleTime", wireType)
@@ -1939,7 +1526,7 @@ func (m *HorizontalPodAutoscalerStatus) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CurrentReplicas", wireType)
 			}
-			m.CurrentReplicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1949,16 +1536,17 @@ func (m *HorizontalPodAutoscalerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CurrentReplicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.CurrentReplicas = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DesiredReplicas", wireType)
 			}
-			m.DesiredReplicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1968,16 +1556,17 @@ func (m *HorizontalPodAutoscalerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DesiredReplicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.DesiredReplicas = &v
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CurrentCPUUtilizationPercentage", wireType)
 			}
-			m.CurrentCPUUtilizationPercentage = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1987,11 +1576,12 @@ func (m *HorizontalPodAutoscalerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CurrentCPUUtilizationPercentage |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.CurrentCPUUtilizationPercentage = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -2004,6 +1594,7 @@ func (m *HorizontalPodAutoscalerStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2153,6 +1744,7 @@ func (m *Scale) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2195,7 +1787,7 @@ func (m *ScaleSpec) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2205,11 +1797,12 @@ func (m *ScaleSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -2222,6 +1815,7 @@ func (m *ScaleSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2264,7 +1858,7 @@ func (m *ScaleStatus) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -2274,11 +1868,12 @@ func (m *ScaleStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Selector", wireType)
@@ -2306,7 +1901,8 @@ func (m *ScaleStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Selector = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Selector = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2320,6 +1916,7 @@ func (m *ScaleStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2439,48 +2036,46 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 686 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x54, 0xcd, 0x6e, 0xd3, 0x4c,
-	0x14, 0x8d, 0xf3, 0xf3, 0xa9, 0x1d, 0xeb, 0x03, 0x69, 0x36, 0x44, 0xad, 0x70, 0x2b, 0x0b, 0xa1,
-	0x22, 0xe8, 0x98, 0x44, 0x05, 0xc1, 0x92, 0x16, 0x41, 0x25, 0x4a, 0x69, 0x5d, 0x8a, 0x50, 0x57,
-	0x4c, 0xed, 0x4b, 0x34, 0xc4, 0x19, 0x5b, 0x33, 0xe3, 0x80, 0xba, 0xe2, 0x11, 0x78, 0x01, 0xf6,
-	0x48, 0xbc, 0x06, 0x8b, 0x2e, 0xbb, 0xec, 0x0a, 0x51, 0xb3, 0x80, 0x65, 0x1f, 0x01, 0x79, 0x62,
-	0x52, 0xc7, 0x89, 0xfb, 0x23, 0xba, 0xf4, 0xdc, 0x73, 0xce, 0xdc, 0x7b, 0x7c, 0xe6, 0xa2, 0x87,
-	0xdd, 0x07, 0x92, 0xb0, 0xd0, 0xe9, 0xc6, 0xbb, 0x20, 0x38, 0x28, 0x90, 0x4e, 0xd4, 0xed, 0x38,
-	0x34, 0x62, 0xd2, 0xa1, 0xb1, 0x0a, 0xa5, 0x47, 0x03, 0xc6, 0x3b, 0x4e, 0xbf, 0xe5, 0x74, 0x80,
-	0x83, 0xa0, 0x0a, 0x7c, 0x12, 0x89, 0x50, 0x85, 0xf8, 0xd6, 0x80, 0x4a, 0x4e, 0xa8, 0x24, 0xea,
-	0x76, 0x48, 0x4a, 0x25, 0x39, 0x2a, 0xe9, 0xb7, 0x66, 0xda, 0xa5, 0xb7, 0x38, 0x02, 0x64, 0x18,
-	0x0b, 0x0f, 0x8a, 0xf2, 0x33, 0xf7, 0xca, 0x39, 0x31, 0xef, 0x83, 0x90, 0x2c, 0xe4, 0xe0, 0x8f,
-	0xd1, 0xee, 0x94, 0xd3, 0xc6, 0x67, 0x98, 0x59, 0x9c, 0x8c, 0x16, 0x31, 0x57, 0xac, 0x37, 0xde,
-	0x53, 0x6b, 0x32, 0x3c, 0x56, 0x2c, 0x70, 0x18, 0x57, 0x52, 0x89, 0x22, 0xc5, 0x7e, 0x8f, 0x66,
-	0x57, 0x44, 0x28, 0xe5, 0xab, 0x41, 0xc7, 0x2f, 0x76, 0xdf, 0x81, 0xa7, 0x5c, 0x78, 0x0b, 0x02,
-	0xb8, 0x07, 0xb8, 0x89, 0xea, 0x5d, 0xc6, 0xfd, 0xa6, 0x31, 0x6f, 0x2c, 0x4c, 0x2f, 0xd7, 0xf7,
-	0xbf, 0xcf, 0x55, 0x5c, 0x7d, 0x92, 0x56, 0x38, 0xed, 0x41, 0xb3, 0x9a, 0xaf, 0xa4, 0x27, 0xf8,
-	0x06, 0x42, 0x34, 0x62, 0x99, 0x60, 0xb3, 0x96, 0xab, 0xe7, 0xce, 0xed, 0xcf, 0x55, 0x74, 0x6d,
-	0x35, 0x14, 0x6c, 0x2f, 0xe4, 0x8a, 0x06, 0x1b, 0xa1, 0xff, 0x28, 0xfb, 0x27, 0x20, 0xf0, 0x63,
-	0x34, 0xd5, 0x03, 0x45, 0x7d, 0xaa, 0xa8, 0xbe, 0xd9, 0x6c, 0x2f, 0x90, 0xd2, 0xbf, 0x49, 0xfa,
-	0x2d, 0x32, 0x68, 0xfb, 0x39, 0x28, 0xea, 0x0e, 0x99, 0x78, 0x07, 0xd5, 0x65, 0x04, 0x9e, 0xee,
-	0xd0, 0x6c, 0x3f, 0x21, 0xe7, 0xce, 0x03, 0x29, 0xe9, 0x6b, 0x2b, 0x02, 0xcf, 0xd5, 0x9a, 0xf8,
-	0x0d, 0xfa, 0x4f, 0x2a, 0xaa, 0x62, 0xa9, 0xe7, 0x33, 0xdb, 0xab, 0x97, 0xa0, 0xae, 0xf5, 0xdc,
-	0x4c, 0xd7, 0xfe, 0x66, 0xa0, 0xd9, 0x12, 0xe4, 0x1a, 0x93, 0x0a, 0x3f, 0x1b, 0xf3, 0xc8, 0x39,
-	0xc5, 0xa3, 0x5c, 0x24, 0x49, 0x4a, 0x2f, 0x58, 0xf5, 0x1a, 0x35, 0x98, 0x82, 0x9e, 0x6c, 0x56,
-	0xe7, 0x6b, 0x0b, 0x66, 0x7b, 0xf9, 0xdf, 0xa7, 0x71, 0x07, 0x82, 0xf6, 0xd7, 0x6a, 0xe9, 0x18,
-	0xa9, 0x9d, 0x98, 0xa3, 0x2b, 0xfa, 0xeb, 0x25, 0x15, 0x1d, 0x48, 0x83, 0x97, 0x0d, 0x73, 0x91,
-	0xdf, 0x75, 0x4a, 0x80, 0xdd, 0x82, 0x3a, 0xbe, 0x89, 0xcc, 0x1e, 0xe3, 0x2e, 0x44, 0x01, 0xf3,
-	0xa8, 0xd4, 0xd9, 0x68, 0x64, 0xe9, 0xcc, 0x17, 0x34, 0x8e, 0x7e, 0x18, 0xe2, 0x6a, 0x23, 0xb8,
-	0x93, 0x02, 0x5e, 0x43, 0x96, 0xd2, 0xe2, 0x2b, 0x1b, 0xdb, 0xdb, 0x8a, 0x05, 0x6c, 0x8f, 0x2a,
-	0x16, 0xf2, 0x0d, 0x10, 0x1e, 0x70, 0x45, 0x3b, 0xd0, 0xac, 0xe7, 0xa8, 0x67, 0x60, 0xed, 0xc3,
-	0x2a, 0xba, 0x7e, 0x6a, 0x3c, 0xf0, 0x12, 0xc2, 0xe1, 0xae, 0x04, 0xd1, 0x07, 0xff, 0xe9, 0xe0,
-	0x29, 0xa7, 0x8f, 0x2c, 0xf5, 0xac, 0x96, 0xdd, 0x31, 0xa1, 0x8e, 0x37, 0xd1, 0xff, 0x01, 0x95,
-	0x6a, 0x4b, 0x7b, 0xc1, 0xb2, 0x57, 0x6b, 0xb6, 0x6f, 0x9f, 0x33, 0x31, 0x29, 0xc5, 0x1d, 0x55,
-	0xc0, 0x04, 0x5d, 0xf5, 0x62, 0x21, 0x80, 0xab, 0x89, 0x26, 0x15, 0x8b, 0x29, 0xde, 0x07, 0xc9,
-	0x04, 0xf8, 0x43, 0x7c, 0xde, 0x99, 0x62, 0x11, 0xaf, 0xa3, 0xb9, 0x4c, 0xa2, 0xd4, 0xd9, 0x46,
-	0x8e, 0x7f, 0x16, 0xd8, 0xfe, 0x65, 0xa0, 0x86, 0xee, 0xfe, 0x92, 0xb6, 0xcb, 0xea, 0xc8, 0x76,
-	0x59, 0xba, 0x40, 0x5c, 0x75, 0x17, 0xb9, 0x5d, 0xb2, 0x5e, 0xd8, 0x25, 0xf7, 0x2f, 0xac, 0x35,
-	0xba, 0x39, 0x16, 0xd1, 0xf4, 0xf0, 0x0a, 0x3c, 0x8f, 0xa6, 0xc4, 0x5f, 0xbf, 0x8d, 0x9c, 0x5f,
-	0xc3, 0x53, 0x7b, 0x13, 0x99, 0x39, 0x95, 0xb3, 0x09, 0x29, 0x42, 0x42, 0x00, 0x9e, 0x0a, 0xc5,
-	0xc8, 0xf6, 0x1f, 0x9e, 0x2e, 0xdf, 0x3d, 0x38, 0xb2, 0x2a, 0x87, 0x47, 0x56, 0xe5, 0xf8, 0xc8,
-	0x32, 0x3e, 0x26, 0x96, 0xf1, 0x25, 0xb1, 0x8c, 0xfd, 0xc4, 0x32, 0x0e, 0x12, 0xcb, 0xf8, 0x91,
-	0x58, 0xc6, 0xef, 0xc4, 0xaa, 0x1c, 0x27, 0x96, 0xf1, 0xe9, 0xa7, 0x55, 0xd9, 0xa9, 0xf6, 0x5b,
-	0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x09, 0xfc, 0x44, 0x1e, 0xe8, 0x07, 0x00, 0x00,
+	// 642 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x54, 0xdf, 0x6e, 0xd3, 0x3e,
+	0x14, 0xfe, 0xa5, 0x5d, 0x7f, 0xda, 0x1c, 0x01, 0x92, 0x85, 0x44, 0xd5, 0x89, 0x32, 0xe5, 0x86,
+	0x22, 0xc0, 0x51, 0x2b, 0x40, 0x70, 0xc9, 0x06, 0xa3, 0x12, 0xff, 0x46, 0xc6, 0x10, 0xda, 0x15,
+	0x5e, 0x72, 0xa8, 0x4c, 0x53, 0x3b, 0xb2, 0x4f, 0x2a, 0xb4, 0x27, 0x81, 0x0b, 0xde, 0x85, 0x0b,
+	0x2e, 0xb8, 0xe4, 0x11, 0xd0, 0xb8, 0xe0, 0x35, 0x50, 0x9c, 0xd0, 0x65, 0xe9, 0xd2, 0x6d, 0x62,
+	0x77, 0xf6, 0xf1, 0xf7, 0x7d, 0x3e, 0xe7, 0xf3, 0xf1, 0x21, 0x0f, 0xc6, 0xf7, 0x0d, 0x13, 0xca,
+	0x1f, 0xa7, 0x7b, 0xa0, 0x25, 0x20, 0x18, 0x3f, 0x19, 0x8f, 0x7c, 0x9e, 0x08, 0xe3, 0xf3, 0x14,
+	0x95, 0x09, 0x79, 0x2c, 0xe4, 0xc8, 0x9f, 0xf6, 0xfd, 0x11, 0x48, 0xd0, 0x1c, 0x21, 0x62, 0x89,
+	0x56, 0xa8, 0xe8, 0x8d, 0x9c, 0xca, 0x0e, 0xa9, 0x2c, 0x19, 0x8f, 0x58, 0x46, 0x65, 0x25, 0x2a,
+	0x9b, 0xf6, 0x3b, 0x83, 0xda, 0x5b, 0x7c, 0x0d, 0x46, 0xa5, 0x3a, 0x84, 0xaa, 0x7c, 0xe7, 0x6e,
+	0x3d, 0x27, 0x95, 0x53, 0xd0, 0x46, 0x28, 0x09, 0xd1, 0x1c, 0xed, 0x56, 0x3d, 0x6d, 0xbe, 0x86,
+	0xce, 0xed, 0xe3, 0xd1, 0x3a, 0x95, 0x28, 0x26, 0xf3, 0x39, 0xf5, 0x8f, 0x87, 0xa7, 0x28, 0x62,
+	0x5f, 0x48, 0x34, 0xa8, 0xab, 0x14, 0x0f, 0xc8, 0xea, 0x86, 0x56, 0xc6, 0xbc, 0xc9, 0x33, 0x7e,
+	0xb9, 0xf7, 0x01, 0x42, 0x0c, 0xe0, 0x3d, 0x68, 0x90, 0x21, 0x50, 0x4a, 0x96, 0xc6, 0x42, 0x46,
+	0x6d, 0x67, 0xcd, 0xe9, 0xad, 0x04, 0x76, 0x9d, 0xc5, 0x24, 0x9f, 0x40, 0xbb, 0x91, 0xc7, 0xb2,
+	0x35, 0xed, 0x12, 0xc2, 0x13, 0x51, 0x88, 0xb4, 0x9b, 0xf6, 0xa4, 0x14, 0xf1, 0xbe, 0x34, 0xc8,
+	0x95, 0xa1, 0xd2, 0x62, 0x5f, 0x49, 0xe4, 0xf1, 0x96, 0x8a, 0x1e, 0x16, 0x2f, 0x00, 0x9a, 0x3e,
+	0x22, 0xcb, 0x13, 0x40, 0x1e, 0x71, 0xe4, 0xf6, 0x1e, 0x77, 0xd0, 0x63, 0xb5, 0x6f, 0xc7, 0xa6,
+	0x7d, 0x96, 0x27, 0xf9, 0x1c, 0x90, 0x07, 0x33, 0x26, 0xdd, 0x25, 0x4b, 0x26, 0x81, 0xd0, 0x66,
+	0xe5, 0x0e, 0x36, 0xd9, 0xa9, 0x5f, 0x9f, 0xd5, 0xe4, 0xb5, 0x9d, 0x40, 0x18, 0x58, 0x4d, 0xfa,
+	0x8e, 0xfc, 0x6f, 0x90, 0x63, 0x6a, 0x6c, 0x65, 0xee, 0x60, 0x78, 0x0e, 0xea, 0x56, 0x2f, 0x28,
+	0x74, 0xbd, 0x6f, 0x0e, 0x59, 0xad, 0x41, 0x3e, 0x13, 0x06, 0xe9, 0xd3, 0x39, 0x8f, 0xfc, 0x05,
+	0x1e, 0x95, 0x1a, 0x90, 0x65, 0xf4, 0x8a, 0x55, 0x6f, 0x49, 0x4b, 0x20, 0x4c, 0x4c, 0xbb, 0xb1,
+	0xd6, 0xec, 0xb9, 0x83, 0xf5, 0x7f, 0xaf, 0x26, 0xc8, 0x05, 0xbd, 0xcf, 0x8d, 0xda, 0x32, 0x32,
+	0x3b, 0xa9, 0x24, 0x17, 0xed, 0xee, 0x35, 0xd7, 0x23, 0xc8, 0xda, 0xac, 0x28, 0xe6, 0x2c, 0xcf,
+	0xb5, 0xa0, 0x5d, 0x83, 0x8a, 0x3a, 0x5d, 0x23, 0xee, 0x44, 0xc8, 0x00, 0x92, 0x58, 0x84, 0xdc,
+	0xd8, 0xde, 0x68, 0x05, 0xe5, 0x90, 0x45, 0xf0, 0x8f, 0x33, 0x44, 0xb3, 0x40, 0x1c, 0x86, 0xe8,
+	0x26, 0xe9, 0xa2, 0x15, 0xdc, 0xd8, 0xda, 0xd9, 0x41, 0x11, 0x8b, 0x7d, 0x8e, 0x42, 0xc9, 0x2d,
+	0xd0, 0x21, 0x48, 0xe4, 0x23, 0x68, 0x2f, 0x59, 0xd2, 0x09, 0x28, 0xef, 0x6b, 0x83, 0x5c, 0x5d,
+	0xd8, 0x0c, 0x94, 0x11, 0xaa, 0xf6, 0x0c, 0xe8, 0x29, 0x44, 0x4f, 0xf2, 0x6f, 0x9a, 0x7d, 0xa6,
+	0xcc, 0xa1, 0x66, 0x70, 0xcc, 0x09, 0x7d, 0x45, 0x2e, 0xc4, 0xdc, 0xe0, 0xb6, 0xad, 0x59, 0x14,
+	0x3f, 0xd2, 0x1d, 0xdc, 0x3c, 0x65, 0x67, 0x64, 0x94, 0xe0, 0xa8, 0x02, 0xed, 0x91, 0x4b, 0x61,
+	0xaa, 0x35, 0x48, 0xac, 0x58, 0x52, 0x0d, 0x67, 0xc8, 0x08, 0x8c, 0xd0, 0x10, 0xcd, 0x90, 0xb9,
+	0x0f, 0xd5, 0x30, 0x1d, 0x92, 0x6b, 0x05, 0xb9, 0xd6, 0xc1, 0x96, 0x65, 0x9e, 0x04, 0xf3, 0x7e,
+	0x3b, 0xa4, 0x65, 0x73, 0x3d, 0xa7, 0x99, 0x31, 0x3c, 0x32, 0x33, 0xee, 0x9c, 0xa1, 0x09, 0x6d,
+	0x16, 0xa5, 0x09, 0xf1, 0xa2, 0x32, 0x21, 0xee, 0x9d, 0x59, 0xeb, 0xe8, 0x3c, 0xb8, 0x4e, 0x56,
+	0x66, 0x57, 0xd0, 0x0e, 0x59, 0xd6, 0x7f, 0x3d, 0x76, 0xac, 0x53, 0xb3, 0xbd, 0xf7, 0x98, 0xb8,
+	0x25, 0xfe, 0x22, 0x68, 0x76, 0x66, 0x20, 0x86, 0x10, 0x95, 0x2e, 0x66, 0xf7, 0x6c, 0xbf, 0x7e,
+	0xf9, 0xfb, 0x41, 0xd7, 0xf9, 0x71, 0xd0, 0x75, 0x7e, 0x1e, 0x74, 0x9d, 0x4f, 0xbf, 0xba, 0xff,
+	0xed, 0x36, 0xa6, 0xfd, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x13, 0xe7, 0xf6, 0x51, 0x7e, 0x07,
+	0x00, 0x00,
 }

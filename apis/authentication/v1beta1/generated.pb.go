@@ -17,7 +17,7 @@
 */
 package v1beta1
 
-import proto "github.com/gogo/protobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/ericchiang/k8s/api/resource"
@@ -25,13 +25,6 @@ import _ "github.com/ericchiang/k8s/api/unversioned"
 import k8s_io_kubernetes_pkg_api_v1 "github.com/ericchiang/k8s/api/v1"
 import _ "github.com/ericchiang/k8s/runtime"
 import _ "github.com/ericchiang/k8s/util/intstr"
-
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
-import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 
 import io "io"
 
@@ -44,16 +37,18 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // ExtraValue masks the value so protobuf can generate
 // +protobuf.nullable=true
 // +protobuf.options.(gogoproto.goproto_stringer)=false
 type ExtraValue struct {
-	Items []string `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+	Items            []string `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *ExtraValue) Reset()                    { *m = ExtraValue{} }
+func (m *ExtraValue) String() string            { return proto.CompactTextString(m) }
 func (*ExtraValue) ProtoMessage()               {}
 func (*ExtraValue) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
@@ -72,10 +67,12 @@ type TokenReview struct {
 	// Spec holds information about the request being evaluated
 	Spec *TokenReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request can be authenticated.
-	Status *TokenReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *TokenReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte             `json:"-"`
 }
 
 func (m *TokenReview) Reset()                    { *m = TokenReview{} }
+func (m *TokenReview) String() string            { return proto.CompactTextString(m) }
 func (*TokenReview) ProtoMessage()               {}
 func (*TokenReview) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
 
@@ -103,16 +100,18 @@ func (m *TokenReview) GetStatus() *TokenReviewStatus {
 // TokenReviewSpec is a description of the token authentication request.
 type TokenReviewSpec struct {
 	// Token is the opaque bearer token.
-	Token string `protobuf:"bytes,1,opt,name=token" json:"token"`
+	Token            *string `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *TokenReviewSpec) Reset()                    { *m = TokenReviewSpec{} }
+func (m *TokenReviewSpec) String() string            { return proto.CompactTextString(m) }
 func (*TokenReviewSpec) ProtoMessage()               {}
 func (*TokenReviewSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
 
 func (m *TokenReviewSpec) GetToken() string {
-	if m != nil {
-		return m.Token
+	if m != nil && m.Token != nil {
+		return *m.Token
 	}
 	return ""
 }
@@ -120,20 +119,22 @@ func (m *TokenReviewSpec) GetToken() string {
 // TokenReviewStatus is the result of the token authentication request.
 type TokenReviewStatus struct {
 	// Authenticated indicates that the token was associated with a known user.
-	Authenticated bool `protobuf:"varint,1,opt,name=authenticated" json:"authenticated"`
+	Authenticated *bool `protobuf:"varint,1,opt,name=authenticated" json:"authenticated,omitempty"`
 	// User is the UserInfo associated with the provided token.
 	User *UserInfo `protobuf:"bytes,2,opt,name=user" json:"user,omitempty"`
 	// Error indicates that the token couldn't be checked
-	Error string `protobuf:"bytes,3,opt,name=error" json:"error"`
+	Error            *string `protobuf:"bytes,3,opt,name=error" json:"error,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *TokenReviewStatus) Reset()                    { *m = TokenReviewStatus{} }
+func (m *TokenReviewStatus) String() string            { return proto.CompactTextString(m) }
 func (*TokenReviewStatus) ProtoMessage()               {}
 func (*TokenReviewStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
 
 func (m *TokenReviewStatus) GetAuthenticated() bool {
-	if m != nil {
-		return m.Authenticated
+	if m != nil && m.Authenticated != nil {
+		return *m.Authenticated
 	}
 	return false
 }
@@ -146,8 +147,8 @@ func (m *TokenReviewStatus) GetUser() *UserInfo {
 }
 
 func (m *TokenReviewStatus) GetError() string {
-	if m != nil {
-		return m.Error
+	if m != nil && m.Error != nil {
+		return *m.Error
 	}
 	return ""
 }
@@ -156,31 +157,33 @@ func (m *TokenReviewStatus) GetError() string {
 // user.Info interface.
 type UserInfo struct {
 	// The name that uniquely identifies this user among all active users.
-	Username string `protobuf:"bytes,1,opt,name=username" json:"username"`
+	Username *string `protobuf:"bytes,1,opt,name=username" json:"username,omitempty"`
 	// A unique value that identifies this user across time. If this user is
 	// deleted and another user by the same name is added, they will have
 	// different UIDs.
-	Uid string `protobuf:"bytes,2,opt,name=uid" json:"uid"`
+	Uid *string `protobuf:"bytes,2,opt,name=uid" json:"uid,omitempty"`
 	// The names of groups this user is a part of.
 	Groups []string `protobuf:"bytes,3,rep,name=groups" json:"groups,omitempty"`
 	// Any additional information provided by the authenticator.
-	Extra map[string]*ExtraValue `protobuf:"bytes,4,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Extra            map[string]*ExtraValue `protobuf:"bytes,4,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized []byte                 `json:"-"`
 }
 
 func (m *UserInfo) Reset()                    { *m = UserInfo{} }
+func (m *UserInfo) String() string            { return proto.CompactTextString(m) }
 func (*UserInfo) ProtoMessage()               {}
 func (*UserInfo) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
 
 func (m *UserInfo) GetUsername() string {
-	if m != nil {
-		return m.Username
+	if m != nil && m.Username != nil {
+		return *m.Username
 	}
 	return ""
 }
 
 func (m *UserInfo) GetUid() string {
-	if m != nil {
-		return m.Uid
+	if m != nil && m.Uid != nil {
+		return *m.Uid
 	}
 	return ""
 }
@@ -205,299 +208,6 @@ func init() {
 	proto.RegisterType((*TokenReviewSpec)(nil), "github.com/ericchiang.k8s.apis.authentication.v1beta1.TokenReviewSpec")
 	proto.RegisterType((*TokenReviewStatus)(nil), "github.com/ericchiang.k8s.apis.authentication.v1beta1.TokenReviewStatus")
 	proto.RegisterType((*UserInfo)(nil), "github.com/ericchiang.k8s.apis.authentication.v1beta1.UserInfo")
-}
-func (this *ExtraValue) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ExtraValue)
-	if !ok {
-		that2, ok := that.(ExtraValue)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if this.Items[i] != that1.Items[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *TokenReview) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*TokenReview)
-	if !ok {
-		that2, ok := that.(TokenReview)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *TokenReviewSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*TokenReviewSpec)
-	if !ok {
-		that2, ok := that.(TokenReviewSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Token != that1.Token {
-		return false
-	}
-	return true
-}
-func (this *TokenReviewStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*TokenReviewStatus)
-	if !ok {
-		that2, ok := that.(TokenReviewStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Authenticated != that1.Authenticated {
-		return false
-	}
-	if !this.User.Equal(that1.User) {
-		return false
-	}
-	if this.Error != that1.Error {
-		return false
-	}
-	return true
-}
-func (this *UserInfo) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*UserInfo)
-	if !ok {
-		that2, ok := that.(UserInfo)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Username != that1.Username {
-		return false
-	}
-	if this.Uid != that1.Uid {
-		return false
-	}
-	if len(this.Groups) != len(that1.Groups) {
-		return false
-	}
-	for i := range this.Groups {
-		if this.Groups[i] != that1.Groups[i] {
-			return false
-		}
-	}
-	if len(this.Extra) != len(that1.Extra) {
-		return false
-	}
-	for i := range this.Extra {
-		if !this.Extra[i].Equal(that1.Extra[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ExtraValue) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1beta1.ExtraValue{")
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TokenReview) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1beta1.TokenReview{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TokenReviewSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1beta1.TokenReviewSpec{")
-	s = append(s, "Token: "+fmt.Sprintf("%#v", this.Token)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TokenReviewStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1beta1.TokenReviewStatus{")
-	s = append(s, "Authenticated: "+fmt.Sprintf("%#v", this.Authenticated)+",\n")
-	if this.User != nil {
-		s = append(s, "User: "+fmt.Sprintf("%#v", this.User)+",\n")
-	}
-	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *UserInfo) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1beta1.UserInfo{")
-	s = append(s, "Username: "+fmt.Sprintf("%#v", this.Username)+",\n")
-	s = append(s, "Uid: "+fmt.Sprintf("%#v", this.Uid)+",\n")
-	if this.Groups != nil {
-		s = append(s, "Groups: "+fmt.Sprintf("%#v", this.Groups)+",\n")
-	}
-	keysForExtra := make([]string, 0, len(this.Extra))
-	for k, _ := range this.Extra {
-		keysForExtra = append(keysForExtra, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForExtra)
-	mapStringForExtra := "map[string]*ExtraValue{"
-	for _, k := range keysForExtra {
-		mapStringForExtra += fmt.Sprintf("%#v: %#v,", k, this.Extra[k])
-	}
-	mapStringForExtra += "}"
-	if this.Extra != nil {
-		s = append(s, "Extra: "+mapStringForExtra+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *ExtraValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -528,6 +238,9 @@ func (m *ExtraValue) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -577,6 +290,9 @@ func (m *TokenReview) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -595,10 +311,15 @@ func (m *TokenReviewSpec) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Token)))
-	i += copy(dAtA[i:], m.Token)
+	if m.Token != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Token)))
+		i += copy(dAtA[i:], *m.Token)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -617,14 +338,16 @@ func (m *TokenReviewStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	if m.Authenticated {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Authenticated != nil {
+		dAtA[i] = 0x8
+		i++
+		if *m.Authenticated {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
 	if m.User != nil {
 		dAtA[i] = 0x12
 		i++
@@ -635,10 +358,15 @@ func (m *TokenReviewStatus) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n4
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Error)))
-	i += copy(dAtA[i:], m.Error)
+	if m.Error != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Error)))
+		i += copy(dAtA[i:], *m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -657,14 +385,18 @@ func (m *UserInfo) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Username)))
-	i += copy(dAtA[i:], m.Username)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Uid)))
-	i += copy(dAtA[i:], m.Uid)
+	if m.Username != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Username)))
+		i += copy(dAtA[i:], *m.Username)
+	}
+	if m.Uid != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Uid)))
+		i += copy(dAtA[i:], *m.Uid)
+	}
 	if len(m.Groups) > 0 {
 		for _, s := range m.Groups {
 			dAtA[i] = 0x1a
@@ -708,6 +440,9 @@ func (m *UserInfo) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -747,6 +482,9 @@ func (m *ExtraValue) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -765,37 +503,56 @@ func (m *TokenReview) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *TokenReviewSpec) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Token)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Token != nil {
+		l = len(*m.Token)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *TokenReviewStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 2
+	if m.Authenticated != nil {
+		n += 2
+	}
 	if m.User != nil {
 		l = m.User.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Error)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Error != nil {
+		l = len(*m.Error)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *UserInfo) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Username)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Uid)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Username != nil {
+		l = len(*m.Username)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Uid != nil {
+		l = len(*m.Uid)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Groups) > 0 {
 		for _, s := range m.Groups {
 			l = len(s)
@@ -815,6 +572,9 @@ func (m *UserInfo) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -830,81 +590,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *ExtraValue) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ExtraValue{`,
-		`Items:` + fmt.Sprintf("%v", this.Items) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *TokenReview) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&TokenReview{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "TokenReviewSpec", "TokenReviewSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "TokenReviewStatus", "TokenReviewStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *TokenReviewSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&TokenReviewSpec{`,
-		`Token:` + fmt.Sprintf("%v", this.Token) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *TokenReviewStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&TokenReviewStatus{`,
-		`Authenticated:` + fmt.Sprintf("%v", this.Authenticated) + `,`,
-		`User:` + strings.Replace(fmt.Sprintf("%v", this.User), "UserInfo", "UserInfo", 1) + `,`,
-		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *UserInfo) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForExtra := make([]string, 0, len(this.Extra))
-	for k, _ := range this.Extra {
-		keysForExtra = append(keysForExtra, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForExtra)
-	mapStringForExtra := "map[string]*ExtraValue{"
-	for _, k := range keysForExtra {
-		mapStringForExtra += fmt.Sprintf("%v: %v,", k, this.Extra[k])
-	}
-	mapStringForExtra += "}"
-	s := strings.Join([]string{`&UserInfo{`,
-		`Username:` + fmt.Sprintf("%v", this.Username) + `,`,
-		`Uid:` + fmt.Sprintf("%v", this.Uid) + `,`,
-		`Groups:` + fmt.Sprintf("%v", this.Groups) + `,`,
-		`Extra:` + mapStringForExtra + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *ExtraValue) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -976,6 +661,7 @@ func (m *ExtraValue) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1125,6 +811,7 @@ func (m *TokenReview) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1190,7 +877,8 @@ func (m *TokenReviewSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Token = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Token = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1204,6 +892,7 @@ func (m *TokenReviewSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1261,7 +950,8 @@ func (m *TokenReviewStatus) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Authenticated = bool(v != 0)
+			b := bool(v != 0)
+			m.Authenticated = &b
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
@@ -1322,7 +1012,8 @@ func (m *TokenReviewStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Error = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Error = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1336,6 +1027,7 @@ func (m *TokenReviewStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1401,7 +1093,8 @@ func (m *UserInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Username = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Username = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1430,7 +1123,8 @@ func (m *UserInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Uid = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Uid = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -1594,6 +1288,7 @@ func (m *UserInfo) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1713,40 +1408,37 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 546 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x93, 0xbd, 0x6e, 0x13, 0x4f,
-	0x14, 0xc5, 0x3d, 0xfe, 0xc8, 0xdf, 0x99, 0xe8, 0x2f, 0xc4, 0x08, 0x45, 0x96, 0x8b, 0xc1, 0xda,
-	0xca, 0x42, 0x64, 0x56, 0xb6, 0x14, 0x29, 0x02, 0x51, 0x60, 0x25, 0x48, 0x14, 0x28, 0xd2, 0x06,
-	0x52, 0xa0, 0x34, 0x63, 0xfb, 0x62, 0x86, 0x8d, 0x67, 0x57, 0xf3, 0xb1, 0x90, 0x02, 0x89, 0x96,
-	0x8e, 0xc7, 0xa0, 0xe0, 0x05, 0x78, 0x83, 0x94, 0x29, 0xa9, 0x10, 0x5e, 0x1a, 0xca, 0x3c, 0x02,
-	0x9a, 0xf1, 0xc6, 0x89, 0xed, 0xb8, 0x20, 0x29, 0xf7, 0xcc, 0x9c, 0xdf, 0x3d, 0xf7, 0xce, 0x5d,
-	0xfc, 0x34, 0xde, 0xd1, 0x4c, 0x24, 0x61, 0x6c, 0xfb, 0xa0, 0x24, 0x18, 0xd0, 0x61, 0x1a, 0x8f,
-	0x42, 0x9e, 0x0a, 0x1d, 0x72, 0x6b, 0xde, 0x82, 0x34, 0x62, 0xc0, 0x8d, 0x48, 0x64, 0x98, 0x75,
-	0xfa, 0x60, 0x78, 0x27, 0x1c, 0x81, 0x04, 0xc5, 0x0d, 0x0c, 0x59, 0xaa, 0x12, 0x93, 0x90, 0xce,
-	0x14, 0xc1, 0x2e, 0x11, 0x2c, 0x8d, 0x47, 0xcc, 0x21, 0xd8, 0x3c, 0x82, 0x15, 0x88, 0x66, 0x77,
-	0x65, 0xd5, 0x50, 0x81, 0x4e, 0xac, 0x1a, 0xc0, 0x62, 0x99, 0xe6, 0xf6, 0x6a, 0x8f, 0x95, 0x19,
-	0x28, 0x2d, 0x12, 0x09, 0xc3, 0x25, 0xdb, 0xc3, 0xd5, 0xb6, 0x6c, 0xa9, 0x97, 0xe6, 0xd6, 0xf5,
-	0xb7, 0x95, 0x95, 0x46, 0x8c, 0x97, 0x33, 0x75, 0xae, 0xbf, 0x6e, 0x8d, 0x38, 0x0e, 0x85, 0x34,
-	0xda, 0xa8, 0x45, 0x4b, 0x10, 0x60, 0xbc, 0xf7, 0xc1, 0x28, 0x7e, 0xc8, 0x8f, 0x2d, 0x90, 0x7b,
-	0xb8, 0x26, 0x0c, 0x8c, 0x75, 0x03, 0xb5, 0x2a, 0xed, 0xf5, 0x68, 0xfa, 0x11, 0x7c, 0x2e, 0xe3,
-	0x8d, 0x97, 0x49, 0x0c, 0x32, 0x82, 0x4c, 0xc0, 0x7b, 0xb2, 0x8b, 0xeb, 0x63, 0x30, 0x7c, 0xc8,
-	0x0d, 0x6f, 0xa0, 0x16, 0x6a, 0x6f, 0x74, 0xdb, 0x6c, 0xe5, 0xd0, 0x59, 0xd6, 0x61, 0xfb, 0xfd,
-	0x77, 0x30, 0x30, 0x2f, 0xc0, 0xf0, 0x68, 0xe6, 0x24, 0x87, 0xb8, 0xaa, 0x53, 0x18, 0x34, 0xca,
-	0x9e, 0xd0, 0x63, 0xff, 0xfc, 0x6c, 0xec, 0x4a, 0xa6, 0x83, 0x14, 0x06, 0x91, 0xe7, 0x91, 0x23,
-	0xbc, 0xa6, 0x0d, 0x37, 0x56, 0x37, 0x2a, 0x9e, 0xbc, 0x7b, 0x4b, 0xb2, 0x67, 0x45, 0x05, 0x33,
-	0xd8, 0xc2, 0x77, 0x16, 0xca, 0x92, 0x26, 0xae, 0x19, 0x27, 0xf9, 0x59, 0xac, 0xf7, 0xaa, 0xa7,
-	0x3f, 0xef, 0x97, 0xa2, 0xa9, 0x14, 0x7c, 0x43, 0xf8, 0xee, 0x12, 0x8c, 0x3c, 0xc0, 0xff, 0x5f,
-	0x29, 0x0c, 0x43, 0xef, 0xac, 0x17, 0xce, 0xf9, 0x23, 0xb2, 0x8f, 0xab, 0x56, 0x83, 0x2a, 0xc6,
-	0xf4, 0xf8, 0x06, 0xcd, 0xbc, 0xd2, 0xa0, 0x9e, 0xcb, 0x37, 0x49, 0xe4, 0x41, 0x2e, 0x2e, 0x28,
-	0x95, 0x28, 0x3f, 0x9e, 0x59, 0x5c, 0x2f, 0x05, 0xdf, 0xcb, 0xb8, 0x7e, 0x71, 0x9d, 0xb4, 0x70,
-	0xdd, 0x19, 0x24, 0x1f, 0xc3, 0x5c, 0x6b, 0x33, 0x95, 0x6c, 0xe2, 0x8a, 0x15, 0x43, 0x1f, 0xed,
-	0xe2, 0xd0, 0x09, 0x64, 0x13, 0xaf, 0x8d, 0x54, 0x62, 0x53, 0xf7, 0x04, 0x6e, 0x8f, 0x8a, 0x2f,
-	0x72, 0x84, 0x6b, 0xe0, 0x96, 0xad, 0x51, 0x6d, 0x55, 0xda, 0x1b, 0xdd, 0x67, 0xb7, 0x68, 0x86,
-	0xf9, 0xad, 0xdd, 0x93, 0x46, 0x9d, 0x44, 0x53, 0x68, 0xf3, 0x63, 0xb1, 0xca, 0x5e, 0x74, 0xd9,
-	0x62, 0x38, 0x99, 0x0b, 0xee, 0x04, 0x72, 0x80, 0x6b, 0x99, 0xdb, 0xf5, 0x62, 0xa0, 0x4f, 0x6e,
-	0x90, 0xe1, 0xf2, 0x87, 0x89, 0xa6, 0xac, 0x47, 0xe5, 0x1d, 0xd4, 0xdb, 0x3e, 0x9b, 0xd0, 0xd2,
-	0x8f, 0x09, 0x2d, 0x9d, 0x4f, 0x28, 0xfa, 0x94, 0x53, 0xf4, 0x35, 0xa7, 0xe8, 0x34, 0xa7, 0xe8,
-	0x2c, 0xa7, 0xe8, 0x57, 0x4e, 0xd1, 0x9f, 0x9c, 0x96, 0xce, 0x73, 0x8a, 0xbe, 0xfc, 0xa6, 0xa5,
-	0xd7, 0xff, 0x15, 0xb0, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0xd9, 0x1b, 0x76, 0x82, 0xf2, 0x04,
-	0x00, 0x00,
+	// 504 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x93, 0xcd, 0x6e, 0x13, 0x3f,
+	0x14, 0xc5, 0xff, 0x93, 0x8f, 0xfe, 0x13, 0x47, 0x08, 0xb0, 0x10, 0x0a, 0x59, 0x44, 0xd1, 0x08,
+	0x89, 0x2c, 0xc0, 0xa3, 0x44, 0x42, 0xaa, 0x40, 0x2c, 0xa8, 0x5a, 0x24, 0x16, 0xa8, 0x92, 0x0b,
+	0x5d, 0xa0, 0x6e, 0x9c, 0x99, 0x4b, 0x30, 0xd3, 0xd8, 0x23, 0xfb, 0x7a, 0x4a, 0x1f, 0x81, 0x37,
+	0x60, 0xc9, 0x8e, 0x57, 0x61, 0xc9, 0x23, 0xa0, 0xf0, 0x22, 0xc8, 0x9e, 0xa1, 0x1f, 0x49, 0xb3,
+	0xa0, 0xdd, 0xf9, 0x5a, 0xf7, 0xfc, 0xee, 0xf1, 0x99, 0x3b, 0xe4, 0x65, 0xbe, 0x6d, 0x99, 0xd4,
+	0x49, 0xee, 0x66, 0x60, 0x14, 0x20, 0xd8, 0xa4, 0xc8, 0xe7, 0x89, 0x28, 0xa4, 0x4d, 0x84, 0xc3,
+	0x8f, 0xa0, 0x50, 0xa6, 0x02, 0xa5, 0x56, 0x49, 0x39, 0x99, 0x01, 0x8a, 0x49, 0x32, 0x07, 0x05,
+	0x46, 0x20, 0x64, 0xac, 0x30, 0x1a, 0x35, 0x9d, 0x54, 0x08, 0x76, 0x8e, 0x60, 0x45, 0x3e, 0x67,
+	0x1e, 0xc1, 0x2e, 0x23, 0x58, 0x8d, 0x18, 0x4c, 0x37, 0x4e, 0x4d, 0x0c, 0x58, 0xed, 0x4c, 0x0a,
+	0xab, 0x63, 0x06, 0x4f, 0x37, 0x6b, 0x9c, 0x2a, 0xc1, 0x58, 0xa9, 0x15, 0x64, 0x6b, 0xb2, 0xc7,
+	0x9b, 0x65, 0xe5, 0xda, 0x5b, 0x06, 0x4f, 0xae, 0xee, 0x36, 0x4e, 0xa1, 0x5c, 0xac, 0x7b, 0x9a,
+	0x5c, 0xdd, 0xee, 0x50, 0x1e, 0x27, 0x52, 0xa1, 0x45, 0xb3, 0x2a, 0x89, 0x63, 0x42, 0xf6, 0x3e,
+	0xa3, 0x11, 0x87, 0xe2, 0xd8, 0x01, 0xbd, 0x47, 0xda, 0x12, 0x61, 0x61, 0xfb, 0xd1, 0xa8, 0x39,
+	0xee, 0xf2, 0xaa, 0x88, 0xbf, 0x34, 0x48, 0xef, 0xad, 0xce, 0x41, 0x71, 0x28, 0x25, 0x9c, 0xd0,
+	0x5d, 0xd2, 0x59, 0x00, 0x8a, 0x4c, 0xa0, 0xe8, 0x47, 0xa3, 0x68, 0xdc, 0x9b, 0x8e, 0xd9, 0xc6,
+	0xd0, 0x59, 0x39, 0x61, 0xfb, 0xb3, 0x4f, 0x90, 0xe2, 0x1b, 0x40, 0xc1, 0xcf, 0x94, 0xf4, 0x90,
+	0xb4, 0x6c, 0x01, 0x69, 0xbf, 0x11, 0x08, 0x3b, 0xec, 0x9f, 0x3f, 0x1b, 0xbb, 0xe0, 0xe9, 0xa0,
+	0x80, 0x94, 0x07, 0x1e, 0x3d, 0x22, 0x5b, 0x16, 0x05, 0x3a, 0xdb, 0x6f, 0x06, 0xf2, 0xee, 0x0d,
+	0xc9, 0x81, 0xc5, 0x6b, 0x66, 0xfc, 0x88, 0xdc, 0x5e, 0x19, 0xeb, 0x43, 0x43, 0x7f, 0x15, 0xb2,
+	0xe8, 0xf2, 0xaa, 0x88, 0xbf, 0x45, 0xe4, 0xee, 0x1a, 0x86, 0x3e, 0x24, 0xb7, 0x2e, 0x8c, 0x84,
+	0x2c, 0x68, 0x3a, 0xfc, 0xf2, 0x25, 0xdd, 0x27, 0x2d, 0x67, 0xc1, 0xd4, 0xd1, 0x3c, 0xbf, 0xc6,
+	0x03, 0xde, 0x59, 0x30, 0xaf, 0xd5, 0x07, 0xcd, 0x03, 0xc8, 0x5b, 0x04, 0x63, 0xb4, 0x09, 0x91,
+	0x74, 0x79, 0x55, 0xc4, 0xdf, 0x1b, 0xa4, 0xf3, 0xb7, 0x91, 0x0e, 0x48, 0xc7, 0xb7, 0x2a, 0xb1,
+	0x80, 0xfa, 0x21, 0x67, 0x35, 0xbd, 0x43, 0x9a, 0x4e, 0x66, 0xc1, 0x4e, 0x97, 0xfb, 0x23, 0xbd,
+	0x4f, 0xb6, 0xe6, 0x46, 0xbb, 0xc2, 0x87, 0xec, 0x37, 0xa5, 0xae, 0xe8, 0x11, 0x69, 0x83, 0x5f,
+	0xa7, 0x7e, 0x6b, 0xd4, 0x1c, 0xf7, 0xa6, 0xaf, 0x6e, 0x60, 0x9d, 0x85, 0xbd, 0xdc, 0x53, 0x68,
+	0x4e, 0x79, 0x05, 0x1d, 0x9c, 0xd4, 0xcb, 0x1a, 0x2e, 0xbd, 0xab, 0x1c, 0x4e, 0x6b, 0xb3, 0xfe,
+	0x48, 0x0f, 0x48, 0xbb, 0xf4, 0x7b, 0x5c, 0x07, 0xf7, 0xe2, 0x1a, 0xd3, 0xcf, 0x7f, 0x06, 0x5e,
+	0xb1, 0x9e, 0x35, 0xb6, 0xa3, 0x9d, 0x07, 0x3f, 0x96, 0xc3, 0xe8, 0xe7, 0x72, 0x18, 0xfd, 0x5a,
+	0x0e, 0xa3, 0xaf, 0xbf, 0x87, 0xff, 0xbd, 0xff, 0xbf, 0x16, 0xfc, 0x09, 0x00, 0x00, 0xff, 0xff,
+	0x36, 0x14, 0x9c, 0x7c, 0xb2, 0x04, 0x00, 0x00,
 }

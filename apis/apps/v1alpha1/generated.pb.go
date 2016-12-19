@@ -16,7 +16,7 @@
 */
 package v1alpha1
 
-import proto "github.com/gogo/protobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/ericchiang/k8s/api/resource"
@@ -24,12 +24,6 @@ import k8s_io_kubernetes_pkg_api_unversioned "github.com/ericchiang/k8s/api/unve
 import k8s_io_kubernetes_pkg_api_v1 "github.com/ericchiang/k8s/api/v1"
 import _ "github.com/ericchiang/k8s/runtime"
 import _ "github.com/ericchiang/k8s/util/intstr"
-
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
 
 import io "io"
 
@@ -42,7 +36,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // PetSet represents a set of pods with consistent identities.
 // Identities are defined as:
@@ -57,10 +51,12 @@ type PetSet struct {
 	Spec *PetSetSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is the current status of Pets in this PetSet. This data
 	// may be out of date by some window of time.
-	Status *PetSetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *PetSetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte        `json:"-"`
 }
 
 func (m *PetSet) Reset()                    { *m = PetSet{} }
+func (m *PetSet) String() string            { return proto.CompactTextString(m) }
 func (*PetSet) ProtoMessage()               {}
 func (*PetSet) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
@@ -87,11 +83,13 @@ func (m *PetSet) GetStatus() *PetSetStatus {
 
 // PetSetList is a collection of PetSets.
 type PetSetList struct {
-	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	Items    []*PetSet                                       `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Metadata         *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	Items            []*PetSet                                       `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                                          `json:"-"`
 }
 
 func (m *PetSetList) Reset()                    { *m = PetSetList{} }
+func (m *PetSetList) String() string            { return proto.CompactTextString(m) }
 func (*PetSetList) ProtoMessage()               {}
 func (*PetSetList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
 
@@ -116,7 +114,7 @@ type PetSetSpec struct {
 	// same Template, but individual replicas also have a consistent identity.
 	// If unspecified, defaults to 1.
 	// TODO: Consider a rename of this field.
-	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
+	Replicas *int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas,omitempty"`
 	// Selector is a label query over pods that should match the replica count.
 	// If empty, defaulted to labels on the pod template.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/labels.md#label-selectors
@@ -139,16 +137,18 @@ type PetSetSpec struct {
 	// the network identity of the set. Pets get DNS/hostnames that follow the
 	// pattern: pet-specific-string.serviceName.default.svc.cluster.local
 	// where "pet-specific-string" is managed by the PetSet controller.
-	ServiceName string `protobuf:"bytes,5,opt,name=serviceName" json:"serviceName"`
+	ServiceName      *string `protobuf:"bytes,5,opt,name=serviceName" json:"serviceName,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PetSetSpec) Reset()                    { *m = PetSetSpec{} }
+func (m *PetSetSpec) String() string            { return proto.CompactTextString(m) }
 func (*PetSetSpec) ProtoMessage()               {}
 func (*PetSetSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
 
 func (m *PetSetSpec) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
@@ -175,8 +175,8 @@ func (m *PetSetSpec) GetVolumeClaimTemplates() []*k8s_io_kubernetes_pkg_api_v1.P
 }
 
 func (m *PetSetSpec) GetServiceName() string {
-	if m != nil {
-		return m.ServiceName
+	if m != nil && m.ServiceName != nil {
+		return *m.ServiceName
 	}
 	return ""
 }
@@ -184,25 +184,27 @@ func (m *PetSetSpec) GetServiceName() string {
 // PetSetStatus represents the current state of a PetSet.
 type PetSetStatus struct {
 	// most recent generation observed by this autoscaler.
-	ObservedGeneration int64 `protobuf:"varint,1,opt,name=observedGeneration" json:"observedGeneration"`
+	ObservedGeneration *int64 `protobuf:"varint,1,opt,name=observedGeneration" json:"observedGeneration,omitempty"`
 	// Replicas is the number of actual replicas.
-	Replicas int32 `protobuf:"varint,2,opt,name=replicas" json:"replicas"`
+	Replicas         *int32 `protobuf:"varint,2,opt,name=replicas" json:"replicas,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *PetSetStatus) Reset()                    { *m = PetSetStatus{} }
+func (m *PetSetStatus) String() string            { return proto.CompactTextString(m) }
 func (*PetSetStatus) ProtoMessage()               {}
 func (*PetSetStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
 
 func (m *PetSetStatus) GetObservedGeneration() int64 {
-	if m != nil {
-		return m.ObservedGeneration
+	if m != nil && m.ObservedGeneration != nil {
+		return *m.ObservedGeneration
 	}
 	return 0
 }
 
 func (m *PetSetStatus) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
@@ -212,250 +214,6 @@ func init() {
 	proto.RegisterType((*PetSetList)(nil), "github.com/ericchiang.k8s.apis.apps.v1alpha1.PetSetList")
 	proto.RegisterType((*PetSetSpec)(nil), "github.com/ericchiang.k8s.apis.apps.v1alpha1.PetSetSpec")
 	proto.RegisterType((*PetSetStatus)(nil), "github.com/ericchiang.k8s.apis.apps.v1alpha1.PetSetStatus")
-}
-func (this *PetSet) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PetSet)
-	if !ok {
-		that2, ok := that.(PetSet)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *PetSetList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PetSetList)
-	if !ok {
-		that2, ok := that.(PetSetList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PetSetSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PetSetSpec)
-	if !ok {
-		that2, ok := that.(PetSetSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	if !this.Selector.Equal(that1.Selector) {
-		return false
-	}
-	if !this.Template.Equal(that1.Template) {
-		return false
-	}
-	if len(this.VolumeClaimTemplates) != len(that1.VolumeClaimTemplates) {
-		return false
-	}
-	for i := range this.VolumeClaimTemplates {
-		if !this.VolumeClaimTemplates[i].Equal(that1.VolumeClaimTemplates[i]) {
-			return false
-		}
-	}
-	if this.ServiceName != that1.ServiceName {
-		return false
-	}
-	return true
-}
-func (this *PetSetStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PetSetStatus)
-	if !ok {
-		that2, ok := that.(PetSetStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ObservedGeneration != that1.ObservedGeneration {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	return true
-}
-func (this *PetSet) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1alpha1.PetSet{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PetSetList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1alpha1.PetSetList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PetSetSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1alpha1.PetSetSpec{")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	if this.Selector != nil {
-		s = append(s, "Selector: "+fmt.Sprintf("%#v", this.Selector)+",\n")
-	}
-	if this.Template != nil {
-		s = append(s, "Template: "+fmt.Sprintf("%#v", this.Template)+",\n")
-	}
-	if this.VolumeClaimTemplates != nil {
-		s = append(s, "VolumeClaimTemplates: "+fmt.Sprintf("%#v", this.VolumeClaimTemplates)+",\n")
-	}
-	s = append(s, "ServiceName: "+fmt.Sprintf("%#v", this.ServiceName)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PetSetStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1alpha1.PetSetStatus{")
-	s = append(s, "ObservedGeneration: "+fmt.Sprintf("%#v", this.ObservedGeneration)+",\n")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
 }
 func (m *PetSet) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -502,6 +260,9 @@ func (m *PetSet) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -542,6 +303,9 @@ func (m *PetSetList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -560,9 +324,11 @@ func (m *PetSetSpec) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
+	if m.Replicas != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
 	if m.Selector != nil {
 		dAtA[i] = 0x12
 		i++
@@ -595,10 +361,15 @@ func (m *PetSetSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ServiceName)))
-	i += copy(dAtA[i:], m.ServiceName)
+	if m.ServiceName != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ServiceName)))
+		i += copy(dAtA[i:], *m.ServiceName)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -617,12 +388,19 @@ func (m *PetSetStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ObservedGeneration))
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
+	if m.ObservedGeneration != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ObservedGeneration))
+	}
+	if m.Replicas != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -668,6 +446,9 @@ func (m *PetSet) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -684,13 +465,18 @@ func (m *PetSetList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PetSetSpec) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Replicas))
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
 	if m.Selector != nil {
 		l = m.Selector.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -705,16 +491,28 @@ func (m *PetSetSpec) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.ServiceName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ServiceName != nil {
+		l = len(*m.ServiceName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PetSetStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.ObservedGeneration))
-	n += 1 + sovGenerated(uint64(m.Replicas))
+	if m.ObservedGeneration != nil {
+		n += 1 + sovGenerated(uint64(*m.ObservedGeneration))
+	}
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -730,62 +528,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *PetSet) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PetSet{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "github.com/ericchiang.k8s.api_v1.ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "PetSetSpec", "PetSetSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "PetSetStatus", "PetSetStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PetSetList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PetSetList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "PetSet", "PetSet", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PetSetSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PetSetSpec{`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`Selector:` + strings.Replace(fmt.Sprintf("%v", this.Selector), "LabelSelector", "github.com/ericchiang.k8s.api_unversioned.LabelSelector", 1) + `,`,
-		`Template:` + strings.Replace(fmt.Sprintf("%v", this.Template), "PodTemplateSpec", "github.com/ericchiang.k8s.api_v1.PodTemplateSpec", 1) + `,`,
-		`VolumeClaimTemplates:` + strings.Replace(fmt.Sprintf("%v", this.VolumeClaimTemplates), "PersistentVolumeClaim", "github.com/ericchiang.k8s.api_v1.PersistentVolumeClaim", 1) + `,`,
-		`ServiceName:` + fmt.Sprintf("%v", this.ServiceName) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PetSetStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PetSetStatus{`,
-		`ObservedGeneration:` + fmt.Sprintf("%v", this.ObservedGeneration) + `,`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *PetSet) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -927,6 +669,7 @@ func (m *PetSet) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1041,6 +784,7 @@ func (m *PetSetList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1083,7 +827,7 @@ func (m *PetSetSpec) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1093,11 +837,12 @@ func (m *PetSetSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Selector", wireType)
@@ -1222,7 +967,8 @@ func (m *PetSetSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ServiceName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ServiceName = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1236,6 +982,7 @@ func (m *PetSetSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1278,7 +1025,7 @@ func (m *PetSetStatus) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ObservedGeneration", wireType)
 			}
-			m.ObservedGeneration = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1288,16 +1035,17 @@ func (m *PetSetStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ObservedGeneration |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ObservedGeneration = &v
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -1307,11 +1055,12 @@ func (m *PetSetStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -1324,6 +1073,7 @@ func (m *PetSetStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1443,38 +1193,35 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 522 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x94, 0x93, 0xbd, 0x6e, 0x13, 0x41,
-	0x10, 0xc7, 0xbd, 0x4e, 0x1c, 0x99, 0x35, 0xd5, 0x8a, 0xe2, 0xe4, 0x62, 0xb1, 0x5c, 0x20, 0x17,
-	0x64, 0x0f, 0x9b, 0x10, 0xa5, 0x0e, 0x88, 0x0f, 0x01, 0xc1, 0x3a, 0x23, 0x0a, 0xba, 0xf5, 0x79,
-	0x30, 0x8b, 0xef, 0x63, 0xb5, 0x3b, 0x77, 0x35, 0x8f, 0xc0, 0x2b, 0xd0, 0xf1, 0x28, 0x29, 0x53,
-	0x52, 0x20, 0x84, 0x8f, 0x26, 0x65, 0x1e, 0x01, 0xdd, 0xf9, 0xec, 0x38, 0xfe, 0x48, 0x48, 0x7b,
-	0x33, 0xbf, 0xff, 0xfd, 0xe7, 0x3f, 0xb3, 0xf4, 0x68, 0x72, 0x64, 0x85, 0x8a, 0xdd, 0x49, 0x32,
-	0x04, 0x13, 0x01, 0x82, 0x75, 0xf5, 0x64, 0xec, 0x4a, 0xad, 0xac, 0x2b, 0xb5, 0xb6, 0x6e, 0xda,
-	0x95, 0x81, 0xfe, 0x2c, 0xbb, 0xee, 0x18, 0x22, 0x30, 0x12, 0x61, 0x24, 0xb4, 0x89, 0x31, 0x66,
-	0x9d, 0x19, 0x29, 0x2e, 0x49, 0xa1, 0x27, 0x63, 0x91, 0x93, 0x22, 0x27, 0xc5, 0x9c, 0x6c, 0xf6,
-	0xb6, 0xfe, 0xc3, 0x35, 0x60, 0xe3, 0xc4, 0xf8, 0xb0, 0xaa, 0xde, 0x7c, 0xb2, 0x9d, 0x49, 0xa2,
-	0x14, 0x8c, 0x55, 0x71, 0x04, 0xa3, 0x35, 0xec, 0xe1, 0x76, 0x2c, 0x5d, 0x1b, 0xa1, 0xb9, 0xbf,
-	0xb9, 0xdb, 0x24, 0x11, 0xaa, 0x70, 0xdd, 0x53, 0x77, 0x73, 0x7b, 0x82, 0x2a, 0x70, 0x55, 0x84,
-	0x16, 0xcd, 0x2a, 0xd2, 0x3e, 0x27, 0x74, 0xaf, 0x0f, 0x38, 0x00, 0x64, 0xcf, 0x68, 0x3d, 0x04,
-	0x94, 0x23, 0x89, 0xd2, 0x21, 0x2d, 0xd2, 0x69, 0xf4, 0x3a, 0x62, 0x6b, 0x84, 0x22, 0xed, 0x8a,
-	0x77, 0xc3, 0x2f, 0xe0, 0xe3, 0x5b, 0x40, 0xe9, 0x2d, 0x48, 0xf6, 0x92, 0xee, 0x5a, 0x0d, 0xbe,
-	0x53, 0x2d, 0x14, 0x0e, 0xc4, 0xff, 0x2e, 0x41, 0xcc, 0x5c, 0x0c, 0x34, 0xf8, 0x5e, 0xa1, 0xc0,
-	0x4e, 0xe8, 0x9e, 0x45, 0x89, 0x89, 0x75, 0x76, 0x0a, 0xad, 0xc3, 0x5b, 0x6b, 0x15, 0xb4, 0x57,
-	0xaa, 0xb4, 0xbf, 0x13, 0x4a, 0x67, 0x85, 0x37, 0xca, 0x22, 0x7b, 0xbd, 0x36, 0xae, 0x7b, 0xcd,
-	0xb8, 0x4b, 0x3b, 0x15, 0x39, 0xbe, 0x32, 0xf5, 0x73, 0x5a, 0x53, 0x08, 0xa1, 0x75, 0xaa, 0xad,
-	0x9d, 0x4e, 0xa3, 0xf7, 0xe8, 0xb6, 0x56, 0xbd, 0x19, 0xde, 0xfe, 0x55, 0x9d, 0x7b, 0xcc, 0x83,
-	0x60, 0x2d, 0x5a, 0x37, 0xa0, 0x03, 0xe5, 0x4b, 0x5b, 0x78, 0xac, 0x1d, 0xef, 0x9e, 0xfe, 0xbe,
-	0x5f, 0xf1, 0x16, 0x5f, 0x59, 0x9f, 0xd6, 0x2d, 0x04, 0xe0, 0x63, 0x6c, 0x6e, 0x8e, 0xfc, 0xea,
-	0x14, 0x72, 0x08, 0xc1, 0xa0, 0x64, 0xbd, 0x85, 0x0a, 0x7b, 0x45, 0xeb, 0x08, 0xa1, 0x0e, 0x24,
-	0x42, 0x19, 0xfc, 0xfe, 0xf5, 0x67, 0xd0, 0x8f, 0x47, 0xef, 0x4b, 0xa0, 0xd8, 0xde, 0x02, 0x67,
-	0x63, 0x7a, 0x2f, 0x8d, 0x83, 0x24, 0x84, 0xa7, 0x81, 0x54, 0xe1, 0xbc, 0xc9, 0x3a, 0xbb, 0x45,
-	0x48, 0x8f, 0x6f, 0x90, 0xcd, 0x9d, 0x5a, 0x84, 0x08, 0x3f, 0x5c, 0x6a, 0x78, 0x1b, 0x05, 0xd9,
-	0x03, 0xda, 0xb0, 0x60, 0x52, 0xe5, 0xc3, 0x89, 0x0c, 0xc1, 0xa9, 0xb5, 0x48, 0xe7, 0x4e, 0x19,
-	0xd5, 0x72, 0xa1, 0xfd, 0x89, 0xde, 0x5d, 0x3e, 0x0d, 0x76, 0x40, 0x59, 0x3c, 0xcc, 0x1b, 0x60,
-	0xf4, 0x62, 0xf6, 0x30, 0x54, 0x1c, 0x15, 0x49, 0xef, 0x94, 0xf8, 0x86, 0xfa, 0x95, 0xad, 0x54,
-	0x37, 0x6d, 0xe5, 0xf8, 0xf0, 0x6c, 0xca, 0x2b, 0x3f, 0xa7, 0xbc, 0x72, 0x31, 0xe5, 0xe4, 0x6b,
-	0xc6, 0xc9, 0x8f, 0x8c, 0x93, 0xd3, 0x8c, 0x93, 0xb3, 0x8c, 0x93, 0x3f, 0x19, 0x27, 0xe7, 0x19,
-	0xaf, 0x5c, 0x64, 0x9c, 0x7c, 0xfb, 0xcb, 0x2b, 0x1f, 0xeb, 0xf3, 0x63, 0xf8, 0x17, 0x00, 0x00,
-	0xff, 0xff, 0x5b, 0x9b, 0x22, 0xff, 0xed, 0x04, 0x00, 0x00,
+	// 479 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x94, 0x93, 0xcb, 0x8e, 0xd3, 0x30,
+	0x14, 0x86, 0x49, 0x3b, 0x1d, 0x05, 0x97, 0x95, 0xc5, 0x22, 0xca, 0xa2, 0xaa, 0xba, 0xca, 0x82,
+	0xb1, 0x69, 0xb9, 0x68, 0xd6, 0x80, 0xb8, 0x08, 0x18, 0x2a, 0x17, 0xb1, 0x98, 0x9d, 0x9b, 0x1c,
+	0x15, 0xd3, 0x24, 0xb6, 0xec, 0x93, 0x3c, 0x0b, 0x5b, 0xde, 0x86, 0xe5, 0x3c, 0x02, 0x2a, 0x1b,
+	0x1e, 0x03, 0x25, 0x69, 0x3b, 0xbd, 0xce, 0x65, 0x99, 0xf8, 0x7c, 0x7f, 0xfe, 0xf3, 0xff, 0x0e,
+	0x39, 0x9f, 0x9f, 0x3b, 0xa6, 0x34, 0x9f, 0x17, 0x53, 0xb0, 0x39, 0x20, 0x38, 0x6e, 0xe6, 0x33,
+	0x2e, 0x8d, 0x72, 0x5c, 0x1a, 0xe3, 0x78, 0x39, 0x94, 0xa9, 0xf9, 0x2e, 0x87, 0x7c, 0x06, 0x39,
+	0x58, 0x89, 0x90, 0x30, 0x63, 0x35, 0x6a, 0x1a, 0x35, 0x24, 0xbb, 0x26, 0x99, 0x99, 0xcf, 0x58,
+	0x45, 0xb2, 0x8a, 0x64, 0x2b, 0x32, 0x1c, 0x1d, 0xfd, 0x06, 0xb7, 0xe0, 0x74, 0x61, 0x63, 0xd8,
+	0x55, 0x0f, 0x5f, 0x1c, 0x67, 0x8a, 0xbc, 0x04, 0xeb, 0x94, 0xce, 0x21, 0xd9, 0xc3, 0x9e, 0x1c,
+	0xc7, 0xca, 0xbd, 0x15, 0xc2, 0xb3, 0xc3, 0xd3, 0xb6, 0xc8, 0x51, 0x65, 0xfb, 0x9e, 0x86, 0x87,
+	0xc7, 0x0b, 0x54, 0x29, 0x57, 0x39, 0x3a, 0xb4, 0xbb, 0xc8, 0xe0, 0x9f, 0x47, 0x4e, 0xc7, 0x80,
+	0x13, 0x40, 0xfa, 0x86, 0xf8, 0x19, 0xa0, 0x4c, 0x24, 0xca, 0xc0, 0xeb, 0x7b, 0x51, 0x77, 0x14,
+	0xb1, 0xa3, 0x11, 0xb2, 0x72, 0xc8, 0xbe, 0x4c, 0x7f, 0x40, 0x8c, 0x9f, 0x01, 0xa5, 0x58, 0x93,
+	0xf4, 0x3d, 0x39, 0x71, 0x06, 0xe2, 0xa0, 0x55, 0x2b, 0x3c, 0x67, 0x77, 0x2d, 0x81, 0x35, 0x2e,
+	0x26, 0x06, 0x62, 0x51, 0x2b, 0xd0, 0x0b, 0x72, 0xea, 0x50, 0x62, 0xe1, 0x82, 0x76, 0xad, 0xf5,
+	0xf2, 0xde, 0x5a, 0x35, 0x2d, 0x96, 0x2a, 0x83, 0x5f, 0x1e, 0x21, 0xcd, 0xc1, 0x27, 0xe5, 0x90,
+	0x7e, 0xdc, 0x5b, 0x97, 0xdf, 0xb0, 0xee, 0x46, 0xa7, 0xac, 0xc2, 0x77, 0xb6, 0x7e, 0x4b, 0x3a,
+	0x0a, 0x21, 0x73, 0x41, 0xab, 0xdf, 0x8e, 0xba, 0xa3, 0xa7, 0xf7, 0xb5, 0x2a, 0x1a, 0x7c, 0x70,
+	0xd5, 0x5a, 0x79, 0xac, 0x82, 0xa0, 0x21, 0xf1, 0x2d, 0x98, 0x54, 0xc5, 0xd2, 0xd5, 0x1e, 0x3b,
+	0x62, 0xfd, 0x4c, 0xc7, 0xc4, 0x77, 0x90, 0x42, 0x8c, 0xda, 0xde, 0x1e, 0xf6, 0xb6, 0x7f, 0x39,
+	0x85, 0x74, 0xb2, 0x64, 0xc5, 0x5a, 0x85, 0x7e, 0x20, 0x3e, 0x42, 0x66, 0x52, 0x89, 0xb0, 0x8c,
+	0xfc, 0xec, 0xe6, 0x0b, 0x30, 0xd6, 0xc9, 0xd7, 0x25, 0x50, 0xf7, 0xb6, 0xc6, 0xe9, 0x8c, 0x3c,
+	0x2e, 0x75, 0x5a, 0x64, 0xf0, 0x3a, 0x95, 0x2a, 0x5b, 0x0d, 0xb9, 0xe0, 0xa4, 0x8e, 0xe7, 0xd9,
+	0x2d, 0xb2, 0x95, 0x53, 0x87, 0x90, 0xe3, 0xb7, 0x6b, 0x0d, 0x71, 0x50, 0x90, 0xf6, 0x49, 0xd7,
+	0x81, 0x2d, 0x55, 0x0c, 0x17, 0x32, 0x83, 0xa0, 0xd3, 0xf7, 0xa2, 0x87, 0x62, 0xf3, 0xd5, 0xe0,
+	0x92, 0x3c, 0xda, 0xbc, 0x0e, 0x94, 0x11, 0xaa, 0xa7, 0xd5, 0x00, 0x24, 0xef, 0x9a, 0x9f, 0x41,
+	0xe9, 0xbc, 0x4e, 0xb7, 0x2d, 0x0e, 0x9c, 0x6c, 0x75, 0xd0, 0xda, 0xee, 0xe0, 0x55, 0xf8, 0x7b,
+	0xd1, 0xf3, 0xae, 0x16, 0x3d, 0xef, 0xcf, 0xa2, 0xe7, 0xfd, 0xfc, 0xdb, 0x7b, 0x70, 0xe9, 0xaf,
+	0x8a, 0xfd, 0x1f, 0x00, 0x00, 0xff, 0xff, 0x4b, 0x91, 0x03, 0xfc, 0xb9, 0x04, 0x00, 0x00,
 }

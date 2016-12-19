@@ -166,22 +166,13 @@
 */
 package v1
 
-import proto "github.com/gogo/protobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import k8s_io_kubernetes_pkg_api_resource "github.com/ericchiang/k8s/api/resource"
 import k8s_io_kubernetes_pkg_api_unversioned "github.com/ericchiang/k8s/api/unversioned"
 import k8s_io_kubernetes_pkg_runtime "github.com/ericchiang/k8s/runtime"
 import k8s_io_kubernetes_pkg_util_intstr "github.com/ericchiang/k8s/util/intstr"
-
-import bytes "bytes"
-
-import strings "strings"
-import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-import sort "sort"
-import strconv "strconv"
-import reflect "reflect"
-import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 
 import io "io"
 
@@ -194,7 +185,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Represents a Persistent Disk resource in AWS.
 //
@@ -205,54 +196,56 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 type AWSElasticBlockStoreVolumeSource struct {
 	// Unique ID of the persistent disk resource in AWS (Amazon EBS volume).
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
-	VolumeID string `protobuf:"bytes,1,opt,name=volumeID" json:"volumeID"`
+	VolumeID *string `protobuf:"bytes,1,opt,name=volumeID" json:"volumeID,omitempty"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
-	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,2,opt,name=fsType" json:"fsType,omitempty"`
 	// The partition in the volume that you want to mount.
 	// If omitted, the default is to mount by volume name.
 	// Examples: For volume /dev/sda1, you specify the partition as "1".
 	// Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty).
-	Partition int32 `protobuf:"varint,3,opt,name=partition" json:"partition"`
+	Partition *int32 `protobuf:"varint,3,opt,name=partition" json:"partition,omitempty"`
 	// Specify "true" to force and set the ReadOnly property in VolumeMounts to "true".
 	// If omitted, the default is "false".
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#awselasticblockstore
-	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,4,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *AWSElasticBlockStoreVolumeSource) Reset()      { *m = AWSElasticBlockStoreVolumeSource{} }
-func (*AWSElasticBlockStoreVolumeSource) ProtoMessage() {}
+func (m *AWSElasticBlockStoreVolumeSource) Reset()         { *m = AWSElasticBlockStoreVolumeSource{} }
+func (m *AWSElasticBlockStoreVolumeSource) String() string { return proto.CompactTextString(m) }
+func (*AWSElasticBlockStoreVolumeSource) ProtoMessage()    {}
 func (*AWSElasticBlockStoreVolumeSource) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{0}
 }
 
 func (m *AWSElasticBlockStoreVolumeSource) GetVolumeID() string {
-	if m != nil {
-		return m.VolumeID
+	if m != nil && m.VolumeID != nil {
+		return *m.VolumeID
 	}
 	return ""
 }
 
 func (m *AWSElasticBlockStoreVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
 
 func (m *AWSElasticBlockStoreVolumeSource) GetPartition() int32 {
-	if m != nil {
-		return m.Partition
+	if m != nil && m.Partition != nil {
+		return *m.Partition
 	}
 	return 0
 }
 
 func (m *AWSElasticBlockStoreVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -264,10 +257,12 @@ type Affinity struct {
 	// Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
 	PodAffinity *PodAffinity `protobuf:"bytes,2,opt,name=podAffinity" json:"podAffinity,omitempty"`
 	// Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
-	PodAntiAffinity *PodAntiAffinity `protobuf:"bytes,3,opt,name=podAntiAffinity" json:"podAntiAffinity,omitempty"`
+	PodAntiAffinity  *PodAntiAffinity `protobuf:"bytes,3,opt,name=podAntiAffinity" json:"podAntiAffinity,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *Affinity) Reset()                    { *m = Affinity{} }
+func (m *Affinity) String() string            { return proto.CompactTextString(m) }
 func (*Affinity) ProtoMessage()               {}
 func (*Affinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
 
@@ -295,25 +290,27 @@ func (m *Affinity) GetPodAntiAffinity() *PodAntiAffinity {
 // AttachedVolume describes a volume attached to a node
 type AttachedVolume struct {
 	// Name of the attached volume
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// DevicePath represents the device path where the volume should be avilable
-	DevicePath string `protobuf:"bytes,2,opt,name=devicePath" json:"devicePath"`
+	DevicePath       *string `protobuf:"bytes,2,opt,name=devicePath" json:"devicePath,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *AttachedVolume) Reset()                    { *m = AttachedVolume{} }
+func (m *AttachedVolume) String() string            { return proto.CompactTextString(m) }
 func (*AttachedVolume) ProtoMessage()               {}
 func (*AttachedVolume) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
 
 func (m *AttachedVolume) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *AttachedVolume) GetDevicePath() string {
-	if m != nil {
-		return m.DevicePath
+	if m != nil && m.DevicePath != nil {
+		return *m.DevicePath
 	}
 	return ""
 }
@@ -324,10 +321,12 @@ func (m *AttachedVolume) GetDevicePath() string {
 type AvoidPods struct {
 	// Bounded-sized list of signatures of pods that should avoid this node, sorted
 	// in timestamp order from oldest to newest. Size of the slice is unspecified.
-	PreferAvoidPods []*PreferAvoidPodsEntry `protobuf:"bytes,1,rep,name=preferAvoidPods" json:"preferAvoidPods,omitempty"`
+	PreferAvoidPods  []*PreferAvoidPodsEntry `protobuf:"bytes,1,rep,name=preferAvoidPods" json:"preferAvoidPods,omitempty"`
+	XXX_unrecognized []byte                  `json:"-"`
 }
 
 func (m *AvoidPods) Reset()                    { *m = AvoidPods{} }
+func (m *AvoidPods) String() string            { return proto.CompactTextString(m) }
 func (*AvoidPods) ProtoMessage()               {}
 func (*AvoidPods) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
 
@@ -341,55 +340,57 @@ func (m *AvoidPods) GetPreferAvoidPods() []*PreferAvoidPodsEntry {
 // AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
 type AzureDiskVolumeSource struct {
 	// The Name of the data disk in the blob storage
-	DiskName string `protobuf:"bytes,1,opt,name=diskName" json:"diskName"`
+	DiskName *string `protobuf:"bytes,1,opt,name=diskName" json:"diskName,omitempty"`
 	// The URI the data disk in the blob storage
-	DiskURI string `protobuf:"bytes,2,opt,name=diskURI" json:"diskURI"`
+	DiskURI *string `protobuf:"bytes,2,opt,name=diskURI" json:"diskURI,omitempty"`
 	// Host Caching mode: None, Read Only, Read Write.
-	CachingMode string `protobuf:"bytes,3,opt,name=cachingMode" json:"cachingMode"`
+	CachingMode *string `protobuf:"bytes,3,opt,name=cachingMode" json:"cachingMode,omitempty"`
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-	FsType string `protobuf:"bytes,4,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,4,opt,name=fsType" json:"fsType,omitempty"`
 	// Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
-	ReadOnly bool `protobuf:"varint,5,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,5,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *AzureDiskVolumeSource) Reset()                    { *m = AzureDiskVolumeSource{} }
+func (m *AzureDiskVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*AzureDiskVolumeSource) ProtoMessage()               {}
 func (*AzureDiskVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
 
 func (m *AzureDiskVolumeSource) GetDiskName() string {
-	if m != nil {
-		return m.DiskName
+	if m != nil && m.DiskName != nil {
+		return *m.DiskName
 	}
 	return ""
 }
 
 func (m *AzureDiskVolumeSource) GetDiskURI() string {
-	if m != nil {
-		return m.DiskURI
+	if m != nil && m.DiskURI != nil {
+		return *m.DiskURI
 	}
 	return ""
 }
 
 func (m *AzureDiskVolumeSource) GetCachingMode() string {
-	if m != nil {
-		return m.CachingMode
+	if m != nil && m.CachingMode != nil {
+		return *m.CachingMode
 	}
 	return ""
 }
 
 func (m *AzureDiskVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
 
 func (m *AzureDiskVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -397,35 +398,37 @@ func (m *AzureDiskVolumeSource) GetReadOnly() bool {
 // AzureFile represents an Azure File Service mount on the host and bind mount to the pod.
 type AzureFileVolumeSource struct {
 	// the name of secret that contains Azure Storage Account Name and Key
-	SecretName string `protobuf:"bytes,1,opt,name=secretName" json:"secretName"`
+	SecretName *string `protobuf:"bytes,1,opt,name=secretName" json:"secretName,omitempty"`
 	// Share Name
-	ShareName string `protobuf:"bytes,2,opt,name=shareName" json:"shareName"`
+	ShareName *string `protobuf:"bytes,2,opt,name=shareName" json:"shareName,omitempty"`
 	// Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
-	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,3,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *AzureFileVolumeSource) Reset()                    { *m = AzureFileVolumeSource{} }
+func (m *AzureFileVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*AzureFileVolumeSource) ProtoMessage()               {}
 func (*AzureFileVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{5} }
 
 func (m *AzureFileVolumeSource) GetSecretName() string {
-	if m != nil {
-		return m.SecretName
+	if m != nil && m.SecretName != nil {
+		return *m.SecretName
 	}
 	return ""
 }
 
 func (m *AzureFileVolumeSource) GetShareName() string {
-	if m != nil {
-		return m.ShareName
+	if m != nil && m.ShareName != nil {
+		return *m.ShareName
 	}
 	return ""
 }
 
 func (m *AzureFileVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -437,10 +440,12 @@ type Binding struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// The target object that you want to bind to the standard object.
-	Target *ObjectReference `protobuf:"bytes,2,opt,name=target" json:"target,omitempty"`
+	Target           *ObjectReference `protobuf:"bytes,2,opt,name=target" json:"target,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *Binding) Reset()                    { *m = Binding{} }
+func (m *Binding) String() string            { return proto.CompactTextString(m) }
 func (*Binding) ProtoMessage()               {}
 func (*Binding) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{6} }
 
@@ -463,10 +468,12 @@ type Capabilities struct {
 	// Added capabilities
 	Add []string `protobuf:"bytes,1,rep,name=add" json:"add,omitempty"`
 	// Removed capabilities
-	Drop []string `protobuf:"bytes,2,rep,name=drop" json:"drop,omitempty"`
+	Drop             []string `protobuf:"bytes,2,rep,name=drop" json:"drop,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *Capabilities) Reset()                    { *m = Capabilities{} }
+func (m *Capabilities) String() string            { return proto.CompactTextString(m) }
 func (*Capabilities) ProtoMessage()               {}
 func (*Capabilities) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{7} }
 
@@ -491,23 +498,25 @@ type CephFSVolumeSource struct {
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
 	Monitors []string `protobuf:"bytes,1,rep,name=monitors" json:"monitors,omitempty"`
 	// Optional: Used as the mounted root, rather than the full Ceph tree, default is /
-	Path string `protobuf:"bytes,2,opt,name=path" json:"path"`
+	Path *string `protobuf:"bytes,2,opt,name=path" json:"path,omitempty"`
 	// Optional: User is the rados user name, default is admin
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
-	User string `protobuf:"bytes,3,opt,name=user" json:"user"`
+	User *string `protobuf:"bytes,3,opt,name=user" json:"user,omitempty"`
 	// Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
-	SecretFile string `protobuf:"bytes,4,opt,name=secretFile" json:"secretFile"`
+	SecretFile *string `protobuf:"bytes,4,opt,name=secretFile" json:"secretFile,omitempty"`
 	// Optional: SecretRef is reference to the authentication secret for User, default is empty.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
 	SecretRef *LocalObjectReference `protobuf:"bytes,5,opt,name=secretRef" json:"secretRef,omitempty"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/cephfs/README.md#how-to-use-it
-	ReadOnly bool `protobuf:"varint,6,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,6,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *CephFSVolumeSource) Reset()                    { *m = CephFSVolumeSource{} }
+func (m *CephFSVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*CephFSVolumeSource) ProtoMessage()               {}
 func (*CephFSVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{8} }
 
@@ -519,22 +528,22 @@ func (m *CephFSVolumeSource) GetMonitors() []string {
 }
 
 func (m *CephFSVolumeSource) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
 
 func (m *CephFSVolumeSource) GetUser() string {
-	if m != nil {
-		return m.User
+	if m != nil && m.User != nil {
+		return *m.User
 	}
 	return ""
 }
 
 func (m *CephFSVolumeSource) GetSecretFile() string {
-	if m != nil {
-		return m.SecretFile
+	if m != nil && m.SecretFile != nil {
+		return *m.SecretFile
 	}
 	return ""
 }
@@ -547,8 +556,8 @@ func (m *CephFSVolumeSource) GetSecretRef() *LocalObjectReference {
 }
 
 func (m *CephFSVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -560,39 +569,41 @@ func (m *CephFSVolumeSource) GetReadOnly() bool {
 type CinderVolumeSource struct {
 	// volume id used to identify the volume in cinder
 	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
-	VolumeID string `protobuf:"bytes,1,opt,name=volumeID" json:"volumeID"`
+	VolumeID *string `protobuf:"bytes,1,opt,name=volumeID" json:"volumeID,omitempty"`
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
-	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,2,opt,name=fsType" json:"fsType,omitempty"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
 	// More info: http://releases.k8s.io/release-1.4/examples/mysql-cinder-pd/README.md
-	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,3,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *CinderVolumeSource) Reset()                    { *m = CinderVolumeSource{} }
+func (m *CinderVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*CinderVolumeSource) ProtoMessage()               {}
 func (*CinderVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{9} }
 
 func (m *CinderVolumeSource) GetVolumeID() string {
-	if m != nil {
-		return m.VolumeID
+	if m != nil && m.VolumeID != nil {
+		return *m.VolumeID
 	}
 	return ""
 }
 
 func (m *CinderVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
 
 func (m *CinderVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -601,46 +612,48 @@ func (m *CinderVolumeSource) GetReadOnly() bool {
 type ComponentCondition struct {
 	// Type of condition for a component.
 	// Valid value: "Healthy"
-	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
 	// Status of the condition for a component.
 	// Valid values for "Healthy": "True", "False", or "Unknown".
-	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
+	Status *string `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
 	// Message about the condition for a component.
 	// For example, information about a health check.
-	Message string `protobuf:"bytes,3,opt,name=message" json:"message"`
+	Message *string `protobuf:"bytes,3,opt,name=message" json:"message,omitempty"`
 	// Condition error code for a component.
 	// For example, a health check error code.
-	Error string `protobuf:"bytes,4,opt,name=error" json:"error"`
+	Error            *string `protobuf:"bytes,4,opt,name=error" json:"error,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ComponentCondition) Reset()                    { *m = ComponentCondition{} }
+func (m *ComponentCondition) String() string            { return proto.CompactTextString(m) }
 func (*ComponentCondition) ProtoMessage()               {}
 func (*ComponentCondition) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{10} }
 
 func (m *ComponentCondition) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
 
 func (m *ComponentCondition) GetStatus() string {
-	if m != nil {
-		return m.Status
+	if m != nil && m.Status != nil {
+		return *m.Status
 	}
 	return ""
 }
 
 func (m *ComponentCondition) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
 
 func (m *ComponentCondition) GetError() string {
-	if m != nil {
-		return m.Error
+	if m != nil && m.Error != nil {
+		return *m.Error
 	}
 	return ""
 }
@@ -651,10 +664,12 @@ type ComponentStatus struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of component conditions observed
-	Conditions []*ComponentCondition `protobuf:"bytes,2,rep,name=conditions" json:"conditions,omitempty"`
+	Conditions       []*ComponentCondition `protobuf:"bytes,2,rep,name=conditions" json:"conditions,omitempty"`
+	XXX_unrecognized []byte                `json:"-"`
 }
 
 func (m *ComponentStatus) Reset()                    { *m = ComponentStatus{} }
+func (m *ComponentStatus) String() string            { return proto.CompactTextString(m) }
 func (*ComponentStatus) ProtoMessage()               {}
 func (*ComponentStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{11} }
 
@@ -678,10 +693,12 @@ type ComponentStatusList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of ComponentStatus objects.
-	Items []*ComponentStatus `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*ComponentStatus `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte             `json:"-"`
 }
 
 func (m *ComponentStatusList) Reset()                    { *m = ComponentStatusList{} }
+func (m *ComponentStatusList) String() string            { return proto.CompactTextString(m) }
 func (*ComponentStatusList) ProtoMessage()               {}
 func (*ComponentStatusList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{12} }
 
@@ -706,10 +723,12 @@ type ConfigMap struct {
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Data contains the configuration data.
 	// Each key must be a valid DNS_SUBDOMAIN with an optional leading dot.
-	Data map[string]string `protobuf:"bytes,2,rep,name=data" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Data             map[string]string `protobuf:"bytes,2,rep,name=data" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
 func (m *ConfigMap) Reset()                    { *m = ConfigMap{} }
+func (m *ConfigMap) String() string            { return proto.CompactTextString(m) }
 func (*ConfigMap) ProtoMessage()               {}
 func (*ConfigMap) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{13} }
 
@@ -732,10 +751,12 @@ type ConfigMapKeySelector struct {
 	// The ConfigMap to select from.
 	LocalObjectReference *LocalObjectReference `protobuf:"bytes,1,opt,name=localObjectReference" json:"localObjectReference,omitempty"`
 	// The key to select.
-	Key string `protobuf:"bytes,2,opt,name=key" json:"key"`
+	Key              *string `protobuf:"bytes,2,opt,name=key" json:"key,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ConfigMapKeySelector) Reset()                    { *m = ConfigMapKeySelector{} }
+func (m *ConfigMapKeySelector) String() string            { return proto.CompactTextString(m) }
 func (*ConfigMapKeySelector) ProtoMessage()               {}
 func (*ConfigMapKeySelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{14} }
 
@@ -747,8 +768,8 @@ func (m *ConfigMapKeySelector) GetLocalObjectReference() *LocalObjectReference {
 }
 
 func (m *ConfigMapKeySelector) GetKey() string {
-	if m != nil {
-		return m.Key
+	if m != nil && m.Key != nil {
+		return *m.Key
 	}
 	return ""
 }
@@ -758,10 +779,12 @@ type ConfigMapList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of ConfigMaps.
-	Items []*ConfigMap `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*ConfigMap `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (m *ConfigMapList) Reset()                    { *m = ConfigMapList{} }
+func (m *ConfigMapList) String() string            { return proto.CompactTextString(m) }
 func (*ConfigMapList) ProtoMessage()               {}
 func (*ConfigMapList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{15} }
 
@@ -800,10 +823,12 @@ type ConfigMapVolumeSource struct {
 	// Directories within the path are not affected by this setting.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
-	DefaultMode int32 `protobuf:"varint,3,opt,name=defaultMode" json:"defaultMode"`
+	DefaultMode      *int32 `protobuf:"varint,3,opt,name=defaultMode" json:"defaultMode,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *ConfigMapVolumeSource) Reset()                    { *m = ConfigMapVolumeSource{} }
+func (m *ConfigMapVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*ConfigMapVolumeSource) ProtoMessage()               {}
 func (*ConfigMapVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{16} }
 
@@ -822,8 +847,8 @@ func (m *ConfigMapVolumeSource) GetItems() []*KeyToPath {
 }
 
 func (m *ConfigMapVolumeSource) GetDefaultMode() int32 {
-	if m != nil {
-		return m.DefaultMode
+	if m != nil && m.DefaultMode != nil {
+		return *m.DefaultMode
 	}
 	return 0
 }
@@ -833,10 +858,10 @@ type Container struct {
 	// Name of the container specified as a DNS_LABEL.
 	// Each container in a pod must have a unique name (DNS_LABEL).
 	// Cannot be updated.
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// Docker image name.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/images.md
-	Image string `protobuf:"bytes,2,opt,name=image" json:"image"`
+	Image *string `protobuf:"bytes,2,opt,name=image" json:"image,omitempty"`
 	// Entrypoint array. Not executed within a shell.
 	// The docker image's ENTRYPOINT is used if this is not provided.
 	// Variable references $(VAR_NAME) are expanded using the container's environment. If a variable
@@ -859,7 +884,7 @@ type Container struct {
 	// If not specified, the container runtime's default will be used, which
 	// might be configured in the container image.
 	// Cannot be updated.
-	WorkingDir string `protobuf:"bytes,5,opt,name=workingDir" json:"workingDir"`
+	WorkingDir *string `protobuf:"bytes,5,opt,name=workingDir" json:"workingDir,omitempty"`
 	// List of ports to expose from the container. Exposing a port here gives
 	// the system additional information about the network connections a
 	// container uses, but is primarily informational. Not specifying a port here
@@ -896,20 +921,20 @@ type Container struct {
 	// Message written is intended to be brief final status, such as an assertion failure message.
 	// Defaults to /dev/termination-log.
 	// Cannot be updated.
-	TerminationMessagePath string `protobuf:"bytes,13,opt,name=terminationMessagePath" json:"terminationMessagePath"`
+	TerminationMessagePath *string `protobuf:"bytes,13,opt,name=terminationMessagePath" json:"terminationMessagePath,omitempty"`
 	// Image pull policy.
 	// One of Always, Never, IfNotPresent.
 	// Defaults to Always if :latest tag is specified, or IfNotPresent otherwise.
 	// Cannot be updated.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/images.md#updating-images
-	ImagePullPolicy string `protobuf:"bytes,14,opt,name=imagePullPolicy" json:"imagePullPolicy"`
+	ImagePullPolicy *string `protobuf:"bytes,14,opt,name=imagePullPolicy" json:"imagePullPolicy,omitempty"`
 	// Security options the pod should run with.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/security_context.md
 	SecurityContext *SecurityContext `protobuf:"bytes,15,opt,name=securityContext" json:"securityContext,omitempty"`
 	// Whether this container should allocate a buffer for stdin in the container runtime. If this
 	// is not set, reads from stdin in the container will always result in EOF.
 	// Default is false.
-	Stdin bool `protobuf:"varint,16,opt,name=stdin" json:"stdin"`
+	Stdin *bool `protobuf:"varint,16,opt,name=stdin" json:"stdin,omitempty"`
 	// Whether the container runtime should close the stdin channel after it has been opened by
 	// a single attach. When stdin is true the stdin stream will remain open across multiple attach
 	// sessions. If stdinOnce is set to true, stdin is opened on container start, is empty until the
@@ -917,26 +942,28 @@ type Container struct {
 	// at which time stdin is closed and remains closed until the container is restarted. If this
 	// flag is false, a container processes that reads from stdin will never receive an EOF.
 	// Default is false
-	StdinOnce bool `protobuf:"varint,17,opt,name=stdinOnce" json:"stdinOnce"`
+	StdinOnce *bool `protobuf:"varint,17,opt,name=stdinOnce" json:"stdinOnce,omitempty"`
 	// Whether this container should allocate a TTY for itself, also requires 'stdin' to be true.
 	// Default is false.
-	Tty bool `protobuf:"varint,18,opt,name=tty" json:"tty"`
+	Tty              *bool  `protobuf:"varint,18,opt,name=tty" json:"tty,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *Container) Reset()                    { *m = Container{} }
+func (m *Container) String() string            { return proto.CompactTextString(m) }
 func (*Container) ProtoMessage()               {}
 func (*Container) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{17} }
 
 func (m *Container) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *Container) GetImage() string {
-	if m != nil {
-		return m.Image
+	if m != nil && m.Image != nil {
+		return *m.Image
 	}
 	return ""
 }
@@ -956,8 +983,8 @@ func (m *Container) GetArgs() []string {
 }
 
 func (m *Container) GetWorkingDir() string {
-	if m != nil {
-		return m.WorkingDir
+	if m != nil && m.WorkingDir != nil {
+		return *m.WorkingDir
 	}
 	return ""
 }
@@ -1012,15 +1039,15 @@ func (m *Container) GetLifecycle() *Lifecycle {
 }
 
 func (m *Container) GetTerminationMessagePath() string {
-	if m != nil {
-		return m.TerminationMessagePath
+	if m != nil && m.TerminationMessagePath != nil {
+		return *m.TerminationMessagePath
 	}
 	return ""
 }
 
 func (m *Container) GetImagePullPolicy() string {
-	if m != nil {
-		return m.ImagePullPolicy
+	if m != nil && m.ImagePullPolicy != nil {
+		return *m.ImagePullPolicy
 	}
 	return ""
 }
@@ -1033,22 +1060,22 @@ func (m *Container) GetSecurityContext() *SecurityContext {
 }
 
 func (m *Container) GetStdin() bool {
-	if m != nil {
-		return m.Stdin
+	if m != nil && m.Stdin != nil {
+		return *m.Stdin
 	}
 	return false
 }
 
 func (m *Container) GetStdinOnce() bool {
-	if m != nil {
-		return m.StdinOnce
+	if m != nil && m.StdinOnce != nil {
+		return *m.StdinOnce
 	}
 	return false
 }
 
 func (m *Container) GetTty() bool {
-	if m != nil {
-		return m.Tty
+	if m != nil && m.Tty != nil {
+		return *m.Tty
 	}
 	return false
 }
@@ -1059,10 +1086,12 @@ type ContainerImage struct {
 	// e.g. ["gcr.io/google_containers/hyperkube:v1.0.7", "dockerhub.io/google_containers/hyperkube:v1.0.7"]
 	Names []string `protobuf:"bytes,1,rep,name=names" json:"names,omitempty"`
 	// The size of the image in bytes.
-	SizeBytes int64 `protobuf:"varint,2,opt,name=sizeBytes" json:"sizeBytes"`
+	SizeBytes        *int64 `protobuf:"varint,2,opt,name=sizeBytes" json:"sizeBytes,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *ContainerImage) Reset()                    { *m = ContainerImage{} }
+func (m *ContainerImage) String() string            { return proto.CompactTextString(m) }
 func (*ContainerImage) ProtoMessage()               {}
 func (*ContainerImage) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{18} }
 
@@ -1074,8 +1103,8 @@ func (m *ContainerImage) GetNames() []string {
 }
 
 func (m *ContainerImage) GetSizeBytes() int64 {
-	if m != nil {
-		return m.SizeBytes
+	if m != nil && m.SizeBytes != nil {
+		return *m.SizeBytes
 	}
 	return 0
 }
@@ -1085,57 +1114,59 @@ type ContainerPort struct {
 	// If specified, this must be an IANA_SVC_NAME and unique within the pod. Each
 	// named port in a pod must have a unique name. Name for the port that can be
 	// referred to by services.
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// Number of port to expose on the host.
 	// If specified, this must be a valid port number, 0 < x < 65536.
 	// If HostNetwork is specified, this must match ContainerPort.
 	// Most containers do not need this.
-	HostPort int32 `protobuf:"varint,2,opt,name=hostPort" json:"hostPort"`
+	HostPort *int32 `protobuf:"varint,2,opt,name=hostPort" json:"hostPort,omitempty"`
 	// Number of port to expose on the pod's IP address.
 	// This must be a valid port number, 0 < x < 65536.
-	ContainerPort int32 `protobuf:"varint,3,opt,name=containerPort" json:"containerPort"`
+	ContainerPort *int32 `protobuf:"varint,3,opt,name=containerPort" json:"containerPort,omitempty"`
 	// Protocol for port. Must be UDP or TCP.
 	// Defaults to "TCP".
-	Protocol string `protobuf:"bytes,4,opt,name=protocol" json:"protocol"`
+	Protocol *string `protobuf:"bytes,4,opt,name=protocol" json:"protocol,omitempty"`
 	// What host IP to bind the external port to.
-	HostIP string `protobuf:"bytes,5,opt,name=hostIP" json:"hostIP"`
+	HostIP           *string `protobuf:"bytes,5,opt,name=hostIP" json:"hostIP,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ContainerPort) Reset()                    { *m = ContainerPort{} }
+func (m *ContainerPort) String() string            { return proto.CompactTextString(m) }
 func (*ContainerPort) ProtoMessage()               {}
 func (*ContainerPort) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{19} }
 
 func (m *ContainerPort) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *ContainerPort) GetHostPort() int32 {
-	if m != nil {
-		return m.HostPort
+	if m != nil && m.HostPort != nil {
+		return *m.HostPort
 	}
 	return 0
 }
 
 func (m *ContainerPort) GetContainerPort() int32 {
-	if m != nil {
-		return m.ContainerPort
+	if m != nil && m.ContainerPort != nil {
+		return *m.ContainerPort
 	}
 	return 0
 }
 
 func (m *ContainerPort) GetProtocol() string {
-	if m != nil {
-		return m.Protocol
+	if m != nil && m.Protocol != nil {
+		return *m.Protocol
 	}
 	return ""
 }
 
 func (m *ContainerPort) GetHostIP() string {
-	if m != nil {
-		return m.HostIP
+	if m != nil && m.HostIP != nil {
+		return *m.HostIP
 	}
 	return ""
 }
@@ -1149,10 +1180,12 @@ type ContainerState struct {
 	// Details about a running container
 	Running *ContainerStateRunning `protobuf:"bytes,2,opt,name=running" json:"running,omitempty"`
 	// Details about a terminated container
-	Terminated *ContainerStateTerminated `protobuf:"bytes,3,opt,name=terminated" json:"terminated,omitempty"`
+	Terminated       *ContainerStateTerminated `protobuf:"bytes,3,opt,name=terminated" json:"terminated,omitempty"`
+	XXX_unrecognized []byte                    `json:"-"`
 }
 
 func (m *ContainerState) Reset()                    { *m = ContainerState{} }
+func (m *ContainerState) String() string            { return proto.CompactTextString(m) }
 func (*ContainerState) ProtoMessage()               {}
 func (*ContainerState) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{20} }
 
@@ -1180,10 +1213,12 @@ func (m *ContainerState) GetTerminated() *ContainerStateTerminated {
 // ContainerStateRunning is a running state of a container.
 type ContainerStateRunning struct {
 	// Time at which the container was last (re-)started
-	StartedAt *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,1,opt,name=startedAt" json:"startedAt,omitempty"`
+	StartedAt        *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,1,opt,name=startedAt" json:"startedAt,omitempty"`
+	XXX_unrecognized []byte                                      `json:"-"`
 }
 
 func (m *ContainerStateRunning) Reset()                    { *m = ContainerStateRunning{} }
+func (m *ContainerStateRunning) String() string            { return proto.CompactTextString(m) }
 func (*ContainerStateRunning) ProtoMessage()               {}
 func (*ContainerStateRunning) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{21} }
 
@@ -1197,51 +1232,53 @@ func (m *ContainerStateRunning) GetStartedAt() *k8s_io_kubernetes_pkg_api_unvers
 // ContainerStateTerminated is a terminated state of a container.
 type ContainerStateTerminated struct {
 	// Exit status from the last termination of the container
-	ExitCode int32 `protobuf:"varint,1,opt,name=exitCode" json:"exitCode"`
+	ExitCode *int32 `protobuf:"varint,1,opt,name=exitCode" json:"exitCode,omitempty"`
 	// Signal from the last termination of the container
-	Signal int32 `protobuf:"varint,2,opt,name=signal" json:"signal"`
+	Signal *int32 `protobuf:"varint,2,opt,name=signal" json:"signal,omitempty"`
 	// (brief) reason from the last termination of the container
-	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,3,opt,name=reason" json:"reason,omitempty"`
 	// Message regarding the last termination of the container
-	Message string `protobuf:"bytes,4,opt,name=message" json:"message"`
+	Message *string `protobuf:"bytes,4,opt,name=message" json:"message,omitempty"`
 	// Time at which previous execution of the container started
 	StartedAt *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,5,opt,name=startedAt" json:"startedAt,omitempty"`
 	// Time at which the container last terminated
 	FinishedAt *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,6,opt,name=finishedAt" json:"finishedAt,omitempty"`
 	// Container's ID in the format 'docker://<container_id>'
-	ContainerID string `protobuf:"bytes,7,opt,name=containerID" json:"containerID"`
+	ContainerID      *string `protobuf:"bytes,7,opt,name=containerID" json:"containerID,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *ContainerStateTerminated) Reset()      { *m = ContainerStateTerminated{} }
-func (*ContainerStateTerminated) ProtoMessage() {}
+func (m *ContainerStateTerminated) Reset()         { *m = ContainerStateTerminated{} }
+func (m *ContainerStateTerminated) String() string { return proto.CompactTextString(m) }
+func (*ContainerStateTerminated) ProtoMessage()    {}
 func (*ContainerStateTerminated) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{22}
 }
 
 func (m *ContainerStateTerminated) GetExitCode() int32 {
-	if m != nil {
-		return m.ExitCode
+	if m != nil && m.ExitCode != nil {
+		return *m.ExitCode
 	}
 	return 0
 }
 
 func (m *ContainerStateTerminated) GetSignal() int32 {
-	if m != nil {
-		return m.Signal
+	if m != nil && m.Signal != nil {
+		return *m.Signal
 	}
 	return 0
 }
 
 func (m *ContainerStateTerminated) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *ContainerStateTerminated) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
@@ -1261,8 +1298,8 @@ func (m *ContainerStateTerminated) GetFinishedAt() *k8s_io_kubernetes_pkg_api_un
 }
 
 func (m *ContainerStateTerminated) GetContainerID() string {
-	if m != nil {
-		return m.ContainerID
+	if m != nil && m.ContainerID != nil {
+		return *m.ContainerID
 	}
 	return ""
 }
@@ -1270,25 +1307,27 @@ func (m *ContainerStateTerminated) GetContainerID() string {
 // ContainerStateWaiting is a waiting state of a container.
 type ContainerStateWaiting struct {
 	// (brief) reason the container is not yet running.
-	Reason string `protobuf:"bytes,1,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,1,opt,name=reason" json:"reason,omitempty"`
 	// Message regarding why the container is not yet running.
-	Message string `protobuf:"bytes,2,opt,name=message" json:"message"`
+	Message          *string `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ContainerStateWaiting) Reset()                    { *m = ContainerStateWaiting{} }
+func (m *ContainerStateWaiting) String() string            { return proto.CompactTextString(m) }
 func (*ContainerStateWaiting) ProtoMessage()               {}
 func (*ContainerStateWaiting) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{23} }
 
 func (m *ContainerStateWaiting) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *ContainerStateWaiting) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
@@ -1297,36 +1336,38 @@ func (m *ContainerStateWaiting) GetMessage() string {
 type ContainerStatus struct {
 	// This must be a DNS_LABEL. Each container in a pod must have a unique name.
 	// Cannot be updated.
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// Details about the container's current condition.
 	State *ContainerState `protobuf:"bytes,2,opt,name=state" json:"state,omitempty"`
 	// Details about the container's last termination condition.
 	LastState *ContainerState `protobuf:"bytes,3,opt,name=lastState" json:"lastState,omitempty"`
 	// Specifies whether the container has passed its readiness probe.
-	Ready bool `protobuf:"varint,4,opt,name=ready" json:"ready"`
+	Ready *bool `protobuf:"varint,4,opt,name=ready" json:"ready,omitempty"`
 	// The number of times the container has been restarted, currently based on
 	// the number of dead containers that have not yet been removed.
 	// Note that this is calculated from dead containers. But those containers are subject to
 	// garbage collection. This value will get capped at 5 by GC.
-	RestartCount int32 `protobuf:"varint,5,opt,name=restartCount" json:"restartCount"`
+	RestartCount *int32 `protobuf:"varint,5,opt,name=restartCount" json:"restartCount,omitempty"`
 	// The image the container is running.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/images.md
 	// TODO(dchen1107): Which image the container is running with?
-	Image string `protobuf:"bytes,6,opt,name=image" json:"image"`
+	Image *string `protobuf:"bytes,6,opt,name=image" json:"image,omitempty"`
 	// ImageID of the container's image.
-	ImageID string `protobuf:"bytes,7,opt,name=imageID" json:"imageID"`
+	ImageID *string `protobuf:"bytes,7,opt,name=imageID" json:"imageID,omitempty"`
 	// Container's ID in the format 'docker://<container_id>'.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/container-environment.md#container-information
-	ContainerID string `protobuf:"bytes,8,opt,name=containerID" json:"containerID"`
+	ContainerID      *string `protobuf:"bytes,8,opt,name=containerID" json:"containerID,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ContainerStatus) Reset()                    { *m = ContainerStatus{} }
+func (m *ContainerStatus) String() string            { return proto.CompactTextString(m) }
 func (*ContainerStatus) ProtoMessage()               {}
 func (*ContainerStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{24} }
 
 func (m *ContainerStatus) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
@@ -1346,36 +1387,36 @@ func (m *ContainerStatus) GetLastState() *ContainerState {
 }
 
 func (m *ContainerStatus) GetReady() bool {
-	if m != nil {
-		return m.Ready
+	if m != nil && m.Ready != nil {
+		return *m.Ready
 	}
 	return false
 }
 
 func (m *ContainerStatus) GetRestartCount() int32 {
-	if m != nil {
-		return m.RestartCount
+	if m != nil && m.RestartCount != nil {
+		return *m.RestartCount
 	}
 	return 0
 }
 
 func (m *ContainerStatus) GetImage() string {
-	if m != nil {
-		return m.Image
+	if m != nil && m.Image != nil {
+		return *m.Image
 	}
 	return ""
 }
 
 func (m *ContainerStatus) GetImageID() string {
-	if m != nil {
-		return m.ImageID
+	if m != nil && m.ImageID != nil {
+		return *m.ImageID
 	}
 	return ""
 }
 
 func (m *ContainerStatus) GetContainerID() string {
-	if m != nil {
-		return m.ContainerID
+	if m != nil && m.ContainerID != nil {
+		return *m.ContainerID
 	}
 	return ""
 }
@@ -1383,16 +1424,18 @@ func (m *ContainerStatus) GetContainerID() string {
 // DaemonEndpoint contains information about a single Daemon endpoint.
 type DaemonEndpoint struct {
 	// Port number of the given endpoint.
-	Port int32 `protobuf:"varint,1,opt,name=Port" json:"Port"`
+	Port             *int32 `protobuf:"varint,1,opt,name=Port" json:"Port,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *DaemonEndpoint) Reset()                    { *m = DaemonEndpoint{} }
+func (m *DaemonEndpoint) String() string            { return proto.CompactTextString(m) }
 func (*DaemonEndpoint) ProtoMessage()               {}
 func (*DaemonEndpoint) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{25} }
 
 func (m *DaemonEndpoint) GetPort() int32 {
-	if m != nil {
-		return m.Port
+	if m != nil && m.Port != nil {
+		return *m.Port
 	}
 	return 0
 }
@@ -1403,22 +1446,24 @@ type DeleteOptions struct {
 	// The value zero indicates delete immediately. If this value is nil, the default grace period for the
 	// specified type will be used.
 	// Defaults to a per object value if not specified. zero means delete immediately.
-	GracePeriodSeconds int64 `protobuf:"varint,1,opt,name=gracePeriodSeconds" json:"gracePeriodSeconds"`
+	GracePeriodSeconds *int64 `protobuf:"varint,1,opt,name=gracePeriodSeconds" json:"gracePeriodSeconds,omitempty"`
 	// Must be fulfilled before a deletion is carried out. If not possible, a 409 Conflict status will be
 	// returned.
 	Preconditions *Preconditions `protobuf:"bytes,2,opt,name=preconditions" json:"preconditions,omitempty"`
 	// Should the dependent objects be orphaned. If true/false, the "orphan"
 	// finalizer will be added to/removed from the object's finalizers list.
-	OrphanDependents bool `protobuf:"varint,3,opt,name=orphanDependents" json:"orphanDependents"`
+	OrphanDependents *bool  `protobuf:"varint,3,opt,name=orphanDependents" json:"orphanDependents,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *DeleteOptions) Reset()                    { *m = DeleteOptions{} }
+func (m *DeleteOptions) String() string            { return proto.CompactTextString(m) }
 func (*DeleteOptions) ProtoMessage()               {}
 func (*DeleteOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{26} }
 
 func (m *DeleteOptions) GetGracePeriodSeconds() int64 {
-	if m != nil {
-		return m.GracePeriodSeconds
+	if m != nil && m.GracePeriodSeconds != nil {
+		return *m.GracePeriodSeconds
 	}
 	return 0
 }
@@ -1431,8 +1476,8 @@ func (m *DeleteOptions) GetPreconditions() *Preconditions {
 }
 
 func (m *DeleteOptions) GetOrphanDependents() bool {
-	if m != nil {
-		return m.OrphanDependents
+	if m != nil && m.OrphanDependents != nil {
+		return *m.OrphanDependents
 	}
 	return false
 }
@@ -1440,7 +1485,7 @@ func (m *DeleteOptions) GetOrphanDependents() bool {
 // DownwardAPIVolumeFile represents information to create the file containing the pod field
 type DownwardAPIVolumeFile struct {
 	// Required: Path is  the relative path name of the file to be created. Must not be absolute or contain the '..' path. Must be utf-8 encoded. The first item of the relative path must not start with '..'
-	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
+	Path *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
 	// Required: Selects a field of the pod: only annotations, labels, name and namespace are supported.
 	FieldRef *ObjectFieldSelector `protobuf:"bytes,2,opt,name=fieldRef" json:"fieldRef,omitempty"`
 	// Selects a resource of the container: only resources limits and requests
@@ -1450,16 +1495,18 @@ type DownwardAPIVolumeFile struct {
 	// and 0777. If not specified, the volume defaultMode will be used.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
-	Mode int32 `protobuf:"varint,4,opt,name=mode" json:"mode"`
+	Mode             *int32 `protobuf:"varint,4,opt,name=mode" json:"mode,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *DownwardAPIVolumeFile) Reset()                    { *m = DownwardAPIVolumeFile{} }
+func (m *DownwardAPIVolumeFile) String() string            { return proto.CompactTextString(m) }
 func (*DownwardAPIVolumeFile) ProtoMessage()               {}
 func (*DownwardAPIVolumeFile) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{27} }
 
 func (m *DownwardAPIVolumeFile) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
@@ -1479,8 +1526,8 @@ func (m *DownwardAPIVolumeFile) GetResourceFieldRef() *ResourceFieldSelector {
 }
 
 func (m *DownwardAPIVolumeFile) GetMode() int32 {
-	if m != nil {
-		return m.Mode
+	if m != nil && m.Mode != nil {
+		return *m.Mode
 	}
 	return 0
 }
@@ -1495,11 +1542,13 @@ type DownwardAPIVolumeSource struct {
 	// Directories within the path are not affected by this setting.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
-	DefaultMode int32 `protobuf:"varint,2,opt,name=defaultMode" json:"defaultMode"`
+	DefaultMode      *int32 `protobuf:"varint,2,opt,name=defaultMode" json:"defaultMode,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *DownwardAPIVolumeSource) Reset()      { *m = DownwardAPIVolumeSource{} }
-func (*DownwardAPIVolumeSource) ProtoMessage() {}
+func (m *DownwardAPIVolumeSource) Reset()         { *m = DownwardAPIVolumeSource{} }
+func (m *DownwardAPIVolumeSource) String() string { return proto.CompactTextString(m) }
+func (*DownwardAPIVolumeSource) ProtoMessage()    {}
 func (*DownwardAPIVolumeSource) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{28}
 }
@@ -1512,8 +1561,8 @@ func (m *DownwardAPIVolumeSource) GetItems() []*DownwardAPIVolumeFile {
 }
 
 func (m *DownwardAPIVolumeSource) GetDefaultMode() int32 {
-	if m != nil {
-		return m.DefaultMode
+	if m != nil && m.DefaultMode != nil {
+		return *m.DefaultMode
 	}
 	return 0
 }
@@ -1525,16 +1574,18 @@ type EmptyDirVolumeSource struct {
 	// The default is "" which means to use the node's default medium.
 	// Must be an empty string (default) or Memory.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#emptydir
-	Medium string `protobuf:"bytes,1,opt,name=medium" json:"medium"`
+	Medium           *string `protobuf:"bytes,1,opt,name=medium" json:"medium,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *EmptyDirVolumeSource) Reset()                    { *m = EmptyDirVolumeSource{} }
+func (m *EmptyDirVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*EmptyDirVolumeSource) ProtoMessage()               {}
 func (*EmptyDirVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{29} }
 
 func (m *EmptyDirVolumeSource) GetMedium() string {
-	if m != nil {
-		return m.Medium
+	if m != nil && m.Medium != nil {
+		return *m.Medium
 	}
 	return ""
 }
@@ -1547,36 +1598,38 @@ type EndpointAddress struct {
 	// IPv6 is also accepted but not fully supported on all platforms. Also, certain
 	// kubernetes components, like kube-proxy, are not IPv6 ready.
 	// TODO: This should allow hostname or IP, See #4447.
-	Ip string `protobuf:"bytes,1,opt,name=ip" json:"ip"`
+	Ip *string `protobuf:"bytes,1,opt,name=ip" json:"ip,omitempty"`
 	// The Hostname of this endpoint
-	Hostname string `protobuf:"bytes,3,opt,name=hostname" json:"hostname"`
+	Hostname *string `protobuf:"bytes,3,opt,name=hostname" json:"hostname,omitempty"`
 	// Optional: Node hosting this endpoint. This can be used to determine endpoints local to a node.
-	NodeName string `protobuf:"bytes,4,opt,name=nodeName" json:"nodeName"`
+	NodeName *string `protobuf:"bytes,4,opt,name=nodeName" json:"nodeName,omitempty"`
 	// Reference to object providing the endpoint.
-	TargetRef *ObjectReference `protobuf:"bytes,2,opt,name=targetRef" json:"targetRef,omitempty"`
+	TargetRef        *ObjectReference `protobuf:"bytes,2,opt,name=targetRef" json:"targetRef,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *EndpointAddress) Reset()                    { *m = EndpointAddress{} }
+func (m *EndpointAddress) String() string            { return proto.CompactTextString(m) }
 func (*EndpointAddress) ProtoMessage()               {}
 func (*EndpointAddress) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{30} }
 
 func (m *EndpointAddress) GetIp() string {
-	if m != nil {
-		return m.Ip
+	if m != nil && m.Ip != nil {
+		return *m.Ip
 	}
 	return ""
 }
 
 func (m *EndpointAddress) GetHostname() string {
-	if m != nil {
-		return m.Hostname
+	if m != nil && m.Hostname != nil {
+		return *m.Hostname
 	}
 	return ""
 }
 
 func (m *EndpointAddress) GetNodeName() string {
-	if m != nil {
-		return m.NodeName
+	if m != nil && m.NodeName != nil {
+		return *m.NodeName
 	}
 	return ""
 }
@@ -1593,36 +1646,38 @@ type EndpointPort struct {
 	// The name of this port (corresponds to ServicePort.Name).
 	// Must be a DNS_LABEL.
 	// Optional only if one port is defined.
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// The port number of the endpoint.
-	Port int32 `protobuf:"varint,2,opt,name=port" json:"port"`
+	Port *int32 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
 	// The IP protocol for this port.
 	// Must be UDP or TCP.
 	// Default is TCP.
-	Protocol string `protobuf:"bytes,3,opt,name=protocol" json:"protocol"`
+	Protocol         *string `protobuf:"bytes,3,opt,name=protocol" json:"protocol,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *EndpointPort) Reset()                    { *m = EndpointPort{} }
+func (m *EndpointPort) String() string            { return proto.CompactTextString(m) }
 func (*EndpointPort) ProtoMessage()               {}
 func (*EndpointPort) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{31} }
 
 func (m *EndpointPort) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *EndpointPort) GetPort() int32 {
-	if m != nil {
-		return m.Port
+	if m != nil && m.Port != nil {
+		return *m.Port
 	}
 	return 0
 }
 
 func (m *EndpointPort) GetProtocol() string {
-	if m != nil {
-		return m.Protocol
+	if m != nil && m.Protocol != nil {
+		return *m.Protocol
 	}
 	return ""
 }
@@ -1646,10 +1701,12 @@ type EndpointSubset struct {
 	// or have recently failed a liveness check.
 	NotReadyAddresses []*EndpointAddress `protobuf:"bytes,2,rep,name=notReadyAddresses" json:"notReadyAddresses,omitempty"`
 	// Port numbers available on the related IP addresses.
-	Ports []*EndpointPort `protobuf:"bytes,3,rep,name=ports" json:"ports,omitempty"`
+	Ports            []*EndpointPort `protobuf:"bytes,3,rep,name=ports" json:"ports,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
 }
 
 func (m *EndpointSubset) Reset()                    { *m = EndpointSubset{} }
+func (m *EndpointSubset) String() string            { return proto.CompactTextString(m) }
 func (*EndpointSubset) ProtoMessage()               {}
 func (*EndpointSubset) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{32} }
 
@@ -1697,10 +1754,12 @@ type Endpoints struct {
 	// subsets for the different ports. No address will appear in both Addresses and
 	// NotReadyAddresses in the same subset.
 	// Sets of addresses and ports that comprise a service.
-	Subsets []*EndpointSubset `protobuf:"bytes,2,rep,name=subsets" json:"subsets,omitempty"`
+	Subsets          []*EndpointSubset `protobuf:"bytes,2,rep,name=subsets" json:"subsets,omitempty"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
 func (m *Endpoints) Reset()                    { *m = Endpoints{} }
+func (m *Endpoints) String() string            { return proto.CompactTextString(m) }
 func (*Endpoints) ProtoMessage()               {}
 func (*Endpoints) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{33} }
 
@@ -1724,10 +1783,12 @@ type EndpointsList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of endpoints.
-	Items []*Endpoints `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Endpoints `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (m *EndpointsList) Reset()                    { *m = EndpointsList{} }
+func (m *EndpointsList) String() string            { return proto.CompactTextString(m) }
 func (*EndpointsList) ProtoMessage()               {}
 func (*EndpointsList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{34} }
 
@@ -1748,7 +1809,7 @@ func (m *EndpointsList) GetItems() []*Endpoints {
 // EnvVar represents an environment variable present in a Container.
 type EnvVar struct {
 	// Name of the environment variable. Must be a C_IDENTIFIER.
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// Variable references $(VAR_NAME) are expanded
 	// using the previous defined environment variables in the container and
 	// any service environment variables. If a variable cannot be resolved,
@@ -1757,25 +1818,27 @@ type EnvVar struct {
 	// references will never be expanded, regardless of whether the variable
 	// exists or not.
 	// Defaults to "".
-	Value string `protobuf:"bytes,2,opt,name=value" json:"value"`
+	Value *string `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
 	// Source for the environment variable's value. Cannot be used if value is not empty.
-	ValueFrom *EnvVarSource `protobuf:"bytes,3,opt,name=valueFrom" json:"valueFrom,omitempty"`
+	ValueFrom        *EnvVarSource `protobuf:"bytes,3,opt,name=valueFrom" json:"valueFrom,omitempty"`
+	XXX_unrecognized []byte        `json:"-"`
 }
 
 func (m *EnvVar) Reset()                    { *m = EnvVar{} }
+func (m *EnvVar) String() string            { return proto.CompactTextString(m) }
 func (*EnvVar) ProtoMessage()               {}
 func (*EnvVar) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{35} }
 
 func (m *EnvVar) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *EnvVar) GetValue() string {
-	if m != nil {
-		return m.Value
+	if m != nil && m.Value != nil {
+		return *m.Value
 	}
 	return ""
 }
@@ -1798,10 +1861,12 @@ type EnvVarSource struct {
 	// Selects a key of a ConfigMap.
 	ConfigMapKeyRef *ConfigMapKeySelector `protobuf:"bytes,3,opt,name=configMapKeyRef" json:"configMapKeyRef,omitempty"`
 	// Selects a key of a secret in the pod's namespace
-	SecretKeyRef *SecretKeySelector `protobuf:"bytes,4,opt,name=secretKeyRef" json:"secretKeyRef,omitempty"`
+	SecretKeyRef     *SecretKeySelector `protobuf:"bytes,4,opt,name=secretKeyRef" json:"secretKeyRef,omitempty"`
+	XXX_unrecognized []byte             `json:"-"`
 }
 
 func (m *EnvVarSource) Reset()                    { *m = EnvVarSource{} }
+func (m *EnvVarSource) String() string            { return proto.CompactTextString(m) }
 func (*EnvVarSource) ProtoMessage()               {}
 func (*EnvVarSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{36} }
 
@@ -1844,10 +1909,10 @@ type Event struct {
 	// This should be a short, machine understandable string that gives the reason
 	// for the transition into the object's current status.
 	// TODO: provide exact specification for format.
-	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,3,opt,name=reason" json:"reason,omitempty"`
 	// A human-readable description of the status of this operation.
 	// TODO: decide on maximum length.
-	Message string `protobuf:"bytes,4,opt,name=message" json:"message"`
+	Message *string `protobuf:"bytes,4,opt,name=message" json:"message,omitempty"`
 	// The component reporting this event. Should be a short machine understandable string.
 	Source *EventSource `protobuf:"bytes,5,opt,name=source" json:"source,omitempty"`
 	// The time at which the event was first recorded. (Time of server receipt is in TypeMeta.)
@@ -1855,12 +1920,14 @@ type Event struct {
 	// The time at which the most recent occurrence of this event was recorded.
 	LastTimestamp *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,7,opt,name=lastTimestamp" json:"lastTimestamp,omitempty"`
 	// The number of times this event has occurred.
-	Count int32 `protobuf:"varint,8,opt,name=count" json:"count"`
+	Count *int32 `protobuf:"varint,8,opt,name=count" json:"count,omitempty"`
 	// Type of this event (Normal, Warning), new types could be added in the future
-	Type string `protobuf:"bytes,9,opt,name=type" json:"type"`
+	Type             *string `protobuf:"bytes,9,opt,name=type" json:"type,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *Event) Reset()                    { *m = Event{} }
+func (m *Event) String() string            { return proto.CompactTextString(m) }
 func (*Event) ProtoMessage()               {}
 func (*Event) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{37} }
 
@@ -1879,15 +1946,15 @@ func (m *Event) GetInvolvedObject() *ObjectReference {
 }
 
 func (m *Event) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *Event) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
@@ -1914,15 +1981,15 @@ func (m *Event) GetLastTimestamp() *k8s_io_kubernetes_pkg_api_unversioned.Time {
 }
 
 func (m *Event) GetCount() int32 {
-	if m != nil {
-		return m.Count
+	if m != nil && m.Count != nil {
+		return *m.Count
 	}
 	return 0
 }
 
 func (m *Event) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
@@ -1933,10 +2000,12 @@ type EventList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of events
-	Items []*Event `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Event `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *EventList) Reset()                    { *m = EventList{} }
+func (m *EventList) String() string            { return proto.CompactTextString(m) }
 func (*EventList) ProtoMessage()               {}
 func (*EventList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{38} }
 
@@ -1957,25 +2026,27 @@ func (m *EventList) GetItems() []*Event {
 // EventSource contains information for an event.
 type EventSource struct {
 	// Component from which the event is generated.
-	Component string `protobuf:"bytes,1,opt,name=component" json:"component"`
+	Component *string `protobuf:"bytes,1,opt,name=component" json:"component,omitempty"`
 	// Host name on which the event is generated.
-	Host string `protobuf:"bytes,2,opt,name=host" json:"host"`
+	Host             *string `protobuf:"bytes,2,opt,name=host" json:"host,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *EventSource) Reset()                    { *m = EventSource{} }
+func (m *EventSource) String() string            { return proto.CompactTextString(m) }
 func (*EventSource) ProtoMessage()               {}
 func (*EventSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{39} }
 
 func (m *EventSource) GetComponent() string {
-	if m != nil {
-		return m.Component
+	if m != nil && m.Component != nil {
+		return *m.Component
 	}
 	return ""
 }
 
 func (m *EventSource) GetHost() string {
-	if m != nil {
-		return m.Host
+	if m != nil && m.Host != nil {
+		return *m.Host
 	}
 	return ""
 }
@@ -1987,10 +2058,12 @@ type ExecAction struct {
 	// not run inside a shell, so traditional shell instructions ('|', etc) won't work. To use
 	// a shell, you need to explicitly call out to that shell.
 	// Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
-	Command []string `protobuf:"bytes,1,rep,name=command" json:"command,omitempty"`
+	Command          []string `protobuf:"bytes,1,rep,name=command" json:"command,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *ExecAction) Reset()                    { *m = ExecAction{} }
+func (m *ExecAction) String() string            { return proto.CompactTextString(m) }
 func (*ExecAction) ProtoMessage()               {}
 func (*ExecAction) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{40} }
 
@@ -2004,25 +2077,27 @@ func (m *ExecAction) GetCommand() []string {
 // ExportOptions is the query options to the standard REST get call.
 type ExportOptions struct {
 	// Should this value be exported.  Export strips fields that a user can not specify.
-	Export bool `protobuf:"varint,1,opt,name=export" json:"export"`
+	Export *bool `protobuf:"varint,1,opt,name=export" json:"export,omitempty"`
 	// Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'
-	Exact bool `protobuf:"varint,2,opt,name=exact" json:"exact"`
+	Exact            *bool  `protobuf:"varint,2,opt,name=exact" json:"exact,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *ExportOptions) Reset()                    { *m = ExportOptions{} }
+func (m *ExportOptions) String() string            { return proto.CompactTextString(m) }
 func (*ExportOptions) ProtoMessage()               {}
 func (*ExportOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{41} }
 
 func (m *ExportOptions) GetExport() bool {
-	if m != nil {
-		return m.Export
+	if m != nil && m.Export != nil {
+		return *m.Export
 	}
 	return false
 }
 
 func (m *ExportOptions) GetExact() bool {
-	if m != nil {
-		return m.Exact
+	if m != nil && m.Exact != nil {
+		return *m.Exact
 	}
 	return false
 }
@@ -2034,18 +2109,20 @@ type FCVolumeSource struct {
 	// Required: FC target worldwide names (WWNs)
 	TargetWWNs []string `protobuf:"bytes,1,rep,name=targetWWNs" json:"targetWWNs,omitempty"`
 	// Required: FC target lun number
-	Lun int32 `protobuf:"varint,2,opt,name=lun" json:"lun"`
+	Lun *int32 `protobuf:"varint,2,opt,name=lun" json:"lun,omitempty"`
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
-	FsType string `protobuf:"bytes,3,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,3,opt,name=fsType" json:"fsType,omitempty"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
-	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,4,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *FCVolumeSource) Reset()                    { *m = FCVolumeSource{} }
+func (m *FCVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*FCVolumeSource) ProtoMessage()               {}
 func (*FCVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{42} }
 
@@ -2057,22 +2134,22 @@ func (m *FCVolumeSource) GetTargetWWNs() []string {
 }
 
 func (m *FCVolumeSource) GetLun() int32 {
-	if m != nil {
-		return m.Lun
+	if m != nil && m.Lun != nil {
+		return *m.Lun
 	}
 	return 0
 }
 
 func (m *FCVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
 
 func (m *FCVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -2081,11 +2158,11 @@ func (m *FCVolumeSource) GetReadOnly() bool {
 // provisioned/attached using an exec based plugin. This is an alpha feature and may change in future.
 type FlexVolumeSource struct {
 	// Driver is the name of the driver to use for this volume.
-	Driver string `protobuf:"bytes,1,opt,name=driver" json:"driver"`
+	Driver *string `protobuf:"bytes,1,opt,name=driver" json:"driver,omitempty"`
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". The default filesystem depends on FlexVolume script.
-	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,2,opt,name=fsType" json:"fsType,omitempty"`
 	// Optional: SecretRef is reference to the secret object containing
 	// sensitive information to pass to the plugin scripts. This may be
 	// empty if no secret object is specified. If the secret object
@@ -2094,25 +2171,27 @@ type FlexVolumeSource struct {
 	SecretRef *LocalObjectReference `protobuf:"bytes,3,opt,name=secretRef" json:"secretRef,omitempty"`
 	// Optional: Defaults to false (read/write). ReadOnly here will force
 	// the ReadOnly setting in VolumeMounts.
-	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
+	ReadOnly *bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly,omitempty"`
 	// Optional: Extra command options if any.
-	Options map[string]string `protobuf:"bytes,5,rep,name=options" json:"options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Options          map[string]string `protobuf:"bytes,5,rep,name=options" json:"options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
 func (m *FlexVolumeSource) Reset()                    { *m = FlexVolumeSource{} }
+func (m *FlexVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*FlexVolumeSource) ProtoMessage()               {}
 func (*FlexVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{43} }
 
 func (m *FlexVolumeSource) GetDriver() string {
-	if m != nil {
-		return m.Driver
+	if m != nil && m.Driver != nil {
+		return *m.Driver
 	}
 	return ""
 }
 
 func (m *FlexVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
@@ -2125,8 +2204,8 @@ func (m *FlexVolumeSource) GetSecretRef() *LocalObjectReference {
 }
 
 func (m *FlexVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -2142,16 +2221,18 @@ func (m *FlexVolumeSource) GetOptions() map[string]string {
 // Flocker volumes do not support ownership management or SELinux relabeling.
 type FlockerVolumeSource struct {
 	// Required: the volume name. This is going to be store on metadata -> name on the payload for Flocker
-	DatasetName string `protobuf:"bytes,1,opt,name=datasetName" json:"datasetName"`
+	DatasetName      *string `protobuf:"bytes,1,opt,name=datasetName" json:"datasetName,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *FlockerVolumeSource) Reset()                    { *m = FlockerVolumeSource{} }
+func (m *FlockerVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*FlockerVolumeSource) ProtoMessage()               {}
 func (*FlockerVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{44} }
 
 func (m *FlockerVolumeSource) GetDatasetName() string {
-	if m != nil {
-		return m.DatasetName
+	if m != nil && m.DatasetName != nil {
+		return *m.DatasetName
 	}
 	return ""
 }
@@ -2165,55 +2246,57 @@ func (m *FlockerVolumeSource) GetDatasetName() string {
 type GCEPersistentDiskVolumeSource struct {
 	// Unique name of the PD resource in GCE. Used to identify the disk in GCE.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
-	PdName string `protobuf:"bytes,1,opt,name=pdName" json:"pdName"`
+	PdName *string `protobuf:"bytes,1,opt,name=pdName" json:"pdName,omitempty"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
-	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,2,opt,name=fsType" json:"fsType,omitempty"`
 	// The partition in the volume that you want to mount.
 	// If omitted, the default is to mount by volume name.
 	// Examples: For volume /dev/sda1, you specify the partition as "1".
 	// Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty).
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
-	Partition int32 `protobuf:"varint,3,opt,name=partition" json:"partition"`
+	Partition *int32 `protobuf:"varint,3,opt,name=partition" json:"partition,omitempty"`
 	// ReadOnly here will force the ReadOnly setting in VolumeMounts.
 	// Defaults to false.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#gcepersistentdisk
-	ReadOnly bool `protobuf:"varint,4,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,4,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *GCEPersistentDiskVolumeSource) Reset()      { *m = GCEPersistentDiskVolumeSource{} }
-func (*GCEPersistentDiskVolumeSource) ProtoMessage() {}
+func (m *GCEPersistentDiskVolumeSource) Reset()         { *m = GCEPersistentDiskVolumeSource{} }
+func (m *GCEPersistentDiskVolumeSource) String() string { return proto.CompactTextString(m) }
+func (*GCEPersistentDiskVolumeSource) ProtoMessage()    {}
 func (*GCEPersistentDiskVolumeSource) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{45}
 }
 
 func (m *GCEPersistentDiskVolumeSource) GetPdName() string {
-	if m != nil {
-		return m.PdName
+	if m != nil && m.PdName != nil {
+		return *m.PdName
 	}
 	return ""
 }
 
 func (m *GCEPersistentDiskVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
 
 func (m *GCEPersistentDiskVolumeSource) GetPartition() int32 {
-	if m != nil {
-		return m.Partition
+	if m != nil && m.Partition != nil {
+		return *m.Partition
 	}
 	return 0
 }
 
 func (m *GCEPersistentDiskVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -2223,37 +2306,39 @@ func (m *GCEPersistentDiskVolumeSource) GetReadOnly() bool {
 // Git repo volumes support SELinux relabeling.
 type GitRepoVolumeSource struct {
 	// Repository URL
-	Repository string `protobuf:"bytes,1,opt,name=repository" json:"repository"`
+	Repository *string `protobuf:"bytes,1,opt,name=repository" json:"repository,omitempty"`
 	// Commit hash for the specified revision.
-	Revision string `protobuf:"bytes,2,opt,name=revision" json:"revision"`
+	Revision *string `protobuf:"bytes,2,opt,name=revision" json:"revision,omitempty"`
 	// Target directory name.
 	// Must not contain or start with '..'.  If '.' is supplied, the volume directory will be the
 	// git repository.  Otherwise, if specified, the volume will contain the git repository in
 	// the subdirectory with the given name.
-	Directory string `protobuf:"bytes,3,opt,name=directory" json:"directory"`
+	Directory        *string `protobuf:"bytes,3,opt,name=directory" json:"directory,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *GitRepoVolumeSource) Reset()                    { *m = GitRepoVolumeSource{} }
+func (m *GitRepoVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*GitRepoVolumeSource) ProtoMessage()               {}
 func (*GitRepoVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{46} }
 
 func (m *GitRepoVolumeSource) GetRepository() string {
-	if m != nil {
-		return m.Repository
+	if m != nil && m.Repository != nil {
+		return *m.Repository
 	}
 	return ""
 }
 
 func (m *GitRepoVolumeSource) GetRevision() string {
-	if m != nil {
-		return m.Revision
+	if m != nil && m.Revision != nil {
+		return *m.Revision
 	}
 	return ""
 }
 
 func (m *GitRepoVolumeSource) GetDirectory() string {
-	if m != nil {
-		return m.Directory
+	if m != nil && m.Directory != nil {
+		return *m.Directory
 	}
 	return ""
 }
@@ -2263,37 +2348,39 @@ func (m *GitRepoVolumeSource) GetDirectory() string {
 type GlusterfsVolumeSource struct {
 	// EndpointsName is the endpoint name that details Glusterfs topology.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md#create-a-pod
-	Endpoints string `protobuf:"bytes,1,opt,name=endpoints" json:"endpoints"`
+	Endpoints *string `protobuf:"bytes,1,opt,name=endpoints" json:"endpoints,omitempty"`
 	// Path is the Glusterfs volume path.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md#create-a-pod
-	Path string `protobuf:"bytes,2,opt,name=path" json:"path"`
+	Path *string `protobuf:"bytes,2,opt,name=path" json:"path,omitempty"`
 	// ReadOnly here will force the Glusterfs volume to be mounted with read-only permissions.
 	// Defaults to false.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/glusterfs/README.md#create-a-pod
-	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,3,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *GlusterfsVolumeSource) Reset()                    { *m = GlusterfsVolumeSource{} }
+func (m *GlusterfsVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*GlusterfsVolumeSource) ProtoMessage()               {}
 func (*GlusterfsVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{47} }
 
 func (m *GlusterfsVolumeSource) GetEndpoints() string {
-	if m != nil {
-		return m.Endpoints
+	if m != nil && m.Endpoints != nil {
+		return *m.Endpoints
 	}
 	return ""
 }
 
 func (m *GlusterfsVolumeSource) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
 
 func (m *GlusterfsVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -2301,28 +2388,30 @@ func (m *GlusterfsVolumeSource) GetReadOnly() bool {
 // HTTPGetAction describes an action based on HTTP Get requests.
 type HTTPGetAction struct {
 	// Path to access on the HTTP server.
-	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
+	Path *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
 	// Name or number of the port to access on the container.
 	// Number must be in the range 1 to 65535.
 	// Name must be an IANA_SVC_NAME.
 	Port *k8s_io_kubernetes_pkg_util_intstr.IntOrString `protobuf:"bytes,2,opt,name=port" json:"port,omitempty"`
 	// Host name to connect to, defaults to the pod IP. You probably want to set
 	// "Host" in httpHeaders instead.
-	Host string `protobuf:"bytes,3,opt,name=host" json:"host"`
+	Host *string `protobuf:"bytes,3,opt,name=host" json:"host,omitempty"`
 	// Scheme to use for connecting to the host.
 	// Defaults to HTTP.
-	Scheme string `protobuf:"bytes,4,opt,name=scheme" json:"scheme"`
+	Scheme *string `protobuf:"bytes,4,opt,name=scheme" json:"scheme,omitempty"`
 	// Custom headers to set in the request. HTTP allows repeated headers.
-	HttpHeaders []*HTTPHeader `protobuf:"bytes,5,rep,name=httpHeaders" json:"httpHeaders,omitempty"`
+	HttpHeaders      []*HTTPHeader `protobuf:"bytes,5,rep,name=httpHeaders" json:"httpHeaders,omitempty"`
+	XXX_unrecognized []byte        `json:"-"`
 }
 
 func (m *HTTPGetAction) Reset()                    { *m = HTTPGetAction{} }
+func (m *HTTPGetAction) String() string            { return proto.CompactTextString(m) }
 func (*HTTPGetAction) ProtoMessage()               {}
 func (*HTTPGetAction) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{48} }
 
 func (m *HTTPGetAction) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
@@ -2335,15 +2424,15 @@ func (m *HTTPGetAction) GetPort() *k8s_io_kubernetes_pkg_util_intstr.IntOrString
 }
 
 func (m *HTTPGetAction) GetHost() string {
-	if m != nil {
-		return m.Host
+	if m != nil && m.Host != nil {
+		return *m.Host
 	}
 	return ""
 }
 
 func (m *HTTPGetAction) GetScheme() string {
-	if m != nil {
-		return m.Scheme
+	if m != nil && m.Scheme != nil {
+		return *m.Scheme
 	}
 	return ""
 }
@@ -2358,25 +2447,27 @@ func (m *HTTPGetAction) GetHttpHeaders() []*HTTPHeader {
 // HTTPHeader describes a custom header to be used in HTTP probes
 type HTTPHeader struct {
 	// The header field name
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// The header field value
-	Value string `protobuf:"bytes,2,opt,name=value" json:"value"`
+	Value            *string `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *HTTPHeader) Reset()                    { *m = HTTPHeader{} }
+func (m *HTTPHeader) String() string            { return proto.CompactTextString(m) }
 func (*HTTPHeader) ProtoMessage()               {}
 func (*HTTPHeader) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{49} }
 
 func (m *HTTPHeader) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *HTTPHeader) GetValue() string {
-	if m != nil {
-		return m.Value
+	if m != nil && m.Value != nil {
+		return *m.Value
 	}
 	return ""
 }
@@ -2392,10 +2483,12 @@ type Handler struct {
 	// TCPSocket specifies an action involving a TCP port.
 	// TCP hooks not yet supported
 	// TODO: implement a realistic TCP lifecycle hook
-	TcpSocket *TCPSocketAction `protobuf:"bytes,3,opt,name=tcpSocket" json:"tcpSocket,omitempty"`
+	TcpSocket        *TCPSocketAction `protobuf:"bytes,3,opt,name=tcpSocket" json:"tcpSocket,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *Handler) Reset()                    { *m = Handler{} }
+func (m *Handler) String() string            { return proto.CompactTextString(m) }
 func (*Handler) ProtoMessage()               {}
 func (*Handler) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{50} }
 
@@ -2425,16 +2518,18 @@ func (m *Handler) GetTcpSocket() *TCPSocketAction {
 type HostPathVolumeSource struct {
 	// Path of the directory on the host.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#hostpath
-	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
+	Path             *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *HostPathVolumeSource) Reset()                    { *m = HostPathVolumeSource{} }
+func (m *HostPathVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*HostPathVolumeSource) ProtoMessage()               {}
 func (*HostPathVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{51} }
 
 func (m *HostPathVolumeSource) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
@@ -2445,66 +2540,68 @@ func (m *HostPathVolumeSource) GetPath() string {
 type ISCSIVolumeSource struct {
 	// iSCSI target portal. The portal is either an IP or ip_addr:port if the port
 	// is other than default (typically TCP ports 860 and 3260).
-	TargetPortal string `protobuf:"bytes,1,opt,name=targetPortal" json:"targetPortal"`
+	TargetPortal *string `protobuf:"bytes,1,opt,name=targetPortal" json:"targetPortal,omitempty"`
 	// Target iSCSI Qualified Name.
-	Iqn string `protobuf:"bytes,2,opt,name=iqn" json:"iqn"`
+	Iqn *string `protobuf:"bytes,2,opt,name=iqn" json:"iqn,omitempty"`
 	// iSCSI target lun number.
-	Lun int32 `protobuf:"varint,3,opt,name=lun" json:"lun"`
+	Lun *int32 `protobuf:"varint,3,opt,name=lun" json:"lun,omitempty"`
 	// Optional: Defaults to 'default' (tcp). iSCSI interface name that uses an iSCSI transport.
-	IscsiInterface string `protobuf:"bytes,4,opt,name=iscsiInterface" json:"iscsiInterface"`
+	IscsiInterface *string `protobuf:"bytes,4,opt,name=iscsiInterface" json:"iscsiInterface,omitempty"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#iscsi
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
-	FsType string `protobuf:"bytes,5,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,5,opt,name=fsType" json:"fsType,omitempty"`
 	// ReadOnly here will force the ReadOnly setting in VolumeMounts.
 	// Defaults to false.
-	ReadOnly bool `protobuf:"varint,6,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,6,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *ISCSIVolumeSource) Reset()                    { *m = ISCSIVolumeSource{} }
+func (m *ISCSIVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*ISCSIVolumeSource) ProtoMessage()               {}
 func (*ISCSIVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{52} }
 
 func (m *ISCSIVolumeSource) GetTargetPortal() string {
-	if m != nil {
-		return m.TargetPortal
+	if m != nil && m.TargetPortal != nil {
+		return *m.TargetPortal
 	}
 	return ""
 }
 
 func (m *ISCSIVolumeSource) GetIqn() string {
-	if m != nil {
-		return m.Iqn
+	if m != nil && m.Iqn != nil {
+		return *m.Iqn
 	}
 	return ""
 }
 
 func (m *ISCSIVolumeSource) GetLun() int32 {
-	if m != nil {
-		return m.Lun
+	if m != nil && m.Lun != nil {
+		return *m.Lun
 	}
 	return 0
 }
 
 func (m *ISCSIVolumeSource) GetIscsiInterface() string {
-	if m != nil {
-		return m.IscsiInterface
+	if m != nil && m.IscsiInterface != nil {
+		return *m.IscsiInterface
 	}
 	return ""
 }
 
 func (m *ISCSIVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
 
 func (m *ISCSIVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -2512,40 +2609,42 @@ func (m *ISCSIVolumeSource) GetReadOnly() bool {
 // Maps a string key to a path within a volume.
 type KeyToPath struct {
 	// The key to project.
-	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
+	Key *string `protobuf:"bytes,1,opt,name=key" json:"key,omitempty"`
 	// The relative path of the file to map the key to.
 	// May not be an absolute path.
 	// May not contain the path element '..'.
 	// May not start with the string '..'.
-	Path string `protobuf:"bytes,2,opt,name=path" json:"path"`
+	Path *string `protobuf:"bytes,2,opt,name=path" json:"path,omitempty"`
 	// Optional: mode bits to use on this file, must be a value between 0
 	// and 0777. If not specified, the volume defaultMode will be used.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
-	Mode int32 `protobuf:"varint,3,opt,name=mode" json:"mode"`
+	Mode             *int32 `protobuf:"varint,3,opt,name=mode" json:"mode,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *KeyToPath) Reset()                    { *m = KeyToPath{} }
+func (m *KeyToPath) String() string            { return proto.CompactTextString(m) }
 func (*KeyToPath) ProtoMessage()               {}
 func (*KeyToPath) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{53} }
 
 func (m *KeyToPath) GetKey() string {
-	if m != nil {
-		return m.Key
+	if m != nil && m.Key != nil {
+		return *m.Key
 	}
 	return ""
 }
 
 func (m *KeyToPath) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
 
 func (m *KeyToPath) GetMode() int32 {
-	if m != nil {
-		return m.Mode
+	if m != nil && m.Mode != nil {
+		return *m.Mode
 	}
 	return 0
 }
@@ -2565,10 +2664,12 @@ type Lifecycle struct {
 	// Regardless of the outcome of the handler, the container is eventually terminated.
 	// Other management of the container blocks until the hook completes.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/container-environment.md#hook-details
-	PreStop *Handler `protobuf:"bytes,2,opt,name=preStop" json:"preStop,omitempty"`
+	PreStop          *Handler `protobuf:"bytes,2,opt,name=preStop" json:"preStop,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *Lifecycle) Reset()                    { *m = Lifecycle{} }
+func (m *Lifecycle) String() string            { return proto.CompactTextString(m) }
 func (*Lifecycle) ProtoMessage()               {}
 func (*Lifecycle) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{54} }
 
@@ -2593,10 +2694,12 @@ type LimitRange struct {
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the limits enforced.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Spec *LimitRangeSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
+	Spec             *LimitRangeSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
 }
 
 func (m *LimitRange) Reset()                    { *m = LimitRange{} }
+func (m *LimitRange) String() string            { return proto.CompactTextString(m) }
 func (*LimitRange) ProtoMessage()               {}
 func (*LimitRange) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{55} }
 
@@ -2617,7 +2720,7 @@ func (m *LimitRange) GetSpec() *LimitRangeSpec {
 // LimitRangeItem defines a min/max usage limit for any resource that matches on kind.
 type LimitRangeItem struct {
 	// Type of resource that this limit applies to.
-	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
 	// Max usage constraints on this kind by resource name.
 	Max map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=max" json:"max,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Min usage constraints on this kind by resource name.
@@ -2628,15 +2731,17 @@ type LimitRangeItem struct {
 	DefaultRequest map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,5,rep,name=defaultRequest" json:"defaultRequest,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// MaxLimitRequestRatio if specified, the named resource must have a request and limit that are both non-zero where limit divided by request is less than or equal to the enumerated value; this represents the max burst for the named resource.
 	MaxLimitRequestRatio map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,6,rep,name=maxLimitRequestRatio" json:"maxLimitRequestRatio,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized     []byte                                                  `json:"-"`
 }
 
 func (m *LimitRangeItem) Reset()                    { *m = LimitRangeItem{} }
+func (m *LimitRangeItem) String() string            { return proto.CompactTextString(m) }
 func (*LimitRangeItem) ProtoMessage()               {}
 func (*LimitRangeItem) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{56} }
 
 func (m *LimitRangeItem) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
@@ -2683,10 +2788,12 @@ type LimitRangeList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of LimitRange objects.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/admission_control_limit_range.md
-	Items []*LimitRange `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*LimitRange `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte        `json:"-"`
 }
 
 func (m *LimitRangeList) Reset()                    { *m = LimitRangeList{} }
+func (m *LimitRangeList) String() string            { return proto.CompactTextString(m) }
 func (*LimitRangeList) ProtoMessage()               {}
 func (*LimitRangeList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{57} }
 
@@ -2707,10 +2814,12 @@ func (m *LimitRangeList) GetItems() []*LimitRange {
 // LimitRangeSpec defines a min/max usage limit for resources that match on kind.
 type LimitRangeSpec struct {
 	// Limits is the list of LimitRangeItem objects that are enforced.
-	Limits []*LimitRangeItem `protobuf:"bytes,1,rep,name=limits" json:"limits,omitempty"`
+	Limits           []*LimitRangeItem `protobuf:"bytes,1,rep,name=limits" json:"limits,omitempty"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
 func (m *LimitRangeSpec) Reset()                    { *m = LimitRangeSpec{} }
+func (m *LimitRangeSpec) String() string            { return proto.CompactTextString(m) }
 func (*LimitRangeSpec) ProtoMessage()               {}
 func (*LimitRangeSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{58} }
 
@@ -2727,10 +2836,12 @@ type List struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of objects
-	Items []*k8s_io_kubernetes_pkg_runtime.RawExtension `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*k8s_io_kubernetes_pkg_runtime.RawExtension `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                                        `json:"-"`
 }
 
 func (m *List) Reset()                    { *m = List{} }
+func (m *List) String() string            { return proto.CompactTextString(m) }
 func (*List) ProtoMessage()               {}
 func (*List) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{59} }
 
@@ -2752,55 +2863,57 @@ func (m *List) GetItems() []*k8s_io_kubernetes_pkg_runtime.RawExtension {
 type ListOptions struct {
 	// A selector to restrict the list of returned objects by their labels.
 	// Defaults to everything.
-	LabelSelector string `protobuf:"bytes,1,opt,name=labelSelector" json:"labelSelector"`
+	LabelSelector *string `protobuf:"bytes,1,opt,name=labelSelector" json:"labelSelector,omitempty"`
 	// A selector to restrict the list of returned objects by their fields.
 	// Defaults to everything.
-	FieldSelector string `protobuf:"bytes,2,opt,name=fieldSelector" json:"fieldSelector"`
+	FieldSelector *string `protobuf:"bytes,2,opt,name=fieldSelector" json:"fieldSelector,omitempty"`
 	// Watch for changes to the described resources and return them as a stream of
 	// add, update, and remove notifications. Specify resourceVersion.
-	Watch bool `protobuf:"varint,3,opt,name=watch" json:"watch"`
+	Watch *bool `protobuf:"varint,3,opt,name=watch" json:"watch,omitempty"`
 	// When specified with a watch call, shows changes that occur after that particular version of a resource.
 	// Defaults to changes from the beginning of history.
-	ResourceVersion string `protobuf:"bytes,4,opt,name=resourceVersion" json:"resourceVersion"`
+	ResourceVersion *string `protobuf:"bytes,4,opt,name=resourceVersion" json:"resourceVersion,omitempty"`
 	// Timeout for the list/watch call.
-	TimeoutSeconds int64 `protobuf:"varint,5,opt,name=timeoutSeconds" json:"timeoutSeconds"`
+	TimeoutSeconds   *int64 `protobuf:"varint,5,opt,name=timeoutSeconds" json:"timeoutSeconds,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *ListOptions) Reset()                    { *m = ListOptions{} }
+func (m *ListOptions) String() string            { return proto.CompactTextString(m) }
 func (*ListOptions) ProtoMessage()               {}
 func (*ListOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{60} }
 
 func (m *ListOptions) GetLabelSelector() string {
-	if m != nil {
-		return m.LabelSelector
+	if m != nil && m.LabelSelector != nil {
+		return *m.LabelSelector
 	}
 	return ""
 }
 
 func (m *ListOptions) GetFieldSelector() string {
-	if m != nil {
-		return m.FieldSelector
+	if m != nil && m.FieldSelector != nil {
+		return *m.FieldSelector
 	}
 	return ""
 }
 
 func (m *ListOptions) GetWatch() bool {
-	if m != nil {
-		return m.Watch
+	if m != nil && m.Watch != nil {
+		return *m.Watch
 	}
 	return false
 }
 
 func (m *ListOptions) GetResourceVersion() string {
-	if m != nil {
-		return m.ResourceVersion
+	if m != nil && m.ResourceVersion != nil {
+		return *m.ResourceVersion
 	}
 	return ""
 }
 
 func (m *ListOptions) GetTimeoutSeconds() int64 {
-	if m != nil {
-		return m.TimeoutSeconds
+	if m != nil && m.TimeoutSeconds != nil {
+		return *m.TimeoutSeconds
 	}
 	return 0
 }
@@ -2810,26 +2923,28 @@ func (m *ListOptions) GetTimeoutSeconds() int64 {
 type LoadBalancerIngress struct {
 	// IP is set for load-balancer ingress points that are IP based
 	// (typically GCE or OpenStack load-balancers)
-	Ip string `protobuf:"bytes,1,opt,name=ip" json:"ip"`
+	Ip *string `protobuf:"bytes,1,opt,name=ip" json:"ip,omitempty"`
 	// Hostname is set for load-balancer ingress points that are DNS based
 	// (typically AWS load-balancers)
-	Hostname string `protobuf:"bytes,2,opt,name=hostname" json:"hostname"`
+	Hostname         *string `protobuf:"bytes,2,opt,name=hostname" json:"hostname,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *LoadBalancerIngress) Reset()                    { *m = LoadBalancerIngress{} }
+func (m *LoadBalancerIngress) String() string            { return proto.CompactTextString(m) }
 func (*LoadBalancerIngress) ProtoMessage()               {}
 func (*LoadBalancerIngress) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{61} }
 
 func (m *LoadBalancerIngress) GetIp() string {
-	if m != nil {
-		return m.Ip
+	if m != nil && m.Ip != nil {
+		return *m.Ip
 	}
 	return ""
 }
 
 func (m *LoadBalancerIngress) GetHostname() string {
-	if m != nil {
-		return m.Hostname
+	if m != nil && m.Hostname != nil {
+		return *m.Hostname
 	}
 	return ""
 }
@@ -2838,10 +2953,12 @@ func (m *LoadBalancerIngress) GetHostname() string {
 type LoadBalancerStatus struct {
 	// Ingress is a list containing ingress points for the load-balancer.
 	// Traffic intended for the service should be sent to these ingress points.
-	Ingress []*LoadBalancerIngress `protobuf:"bytes,1,rep,name=ingress" json:"ingress,omitempty"`
+	Ingress          []*LoadBalancerIngress `protobuf:"bytes,1,rep,name=ingress" json:"ingress,omitempty"`
+	XXX_unrecognized []byte                 `json:"-"`
 }
 
 func (m *LoadBalancerStatus) Reset()                    { *m = LoadBalancerStatus{} }
+func (m *LoadBalancerStatus) String() string            { return proto.CompactTextString(m) }
 func (*LoadBalancerStatus) ProtoMessage()               {}
 func (*LoadBalancerStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{62} }
 
@@ -2858,16 +2975,18 @@ type LocalObjectReference struct {
 	// Name of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
 	// TODO: Add other useful fields. apiVersion, kind, uid?
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name             *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *LocalObjectReference) Reset()                    { *m = LocalObjectReference{} }
+func (m *LocalObjectReference) String() string            { return proto.CompactTextString(m) }
 func (*LocalObjectReference) ProtoMessage()               {}
 func (*LocalObjectReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{63} }
 
 func (m *LocalObjectReference) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
@@ -2877,38 +2996,40 @@ func (m *LocalObjectReference) GetName() string {
 type NFSVolumeSource struct {
 	// Server is the hostname or IP address of the NFS server.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
-	Server string `protobuf:"bytes,1,opt,name=server" json:"server"`
+	Server *string `protobuf:"bytes,1,opt,name=server" json:"server,omitempty"`
 	// Path that is exported by the NFS server.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
-	Path string `protobuf:"bytes,2,opt,name=path" json:"path"`
+	Path *string `protobuf:"bytes,2,opt,name=path" json:"path,omitempty"`
 	// ReadOnly here will force
 	// the NFS export to be mounted with read-only permissions.
 	// Defaults to false.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#nfs
-	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,3,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *NFSVolumeSource) Reset()                    { *m = NFSVolumeSource{} }
+func (m *NFSVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*NFSVolumeSource) ProtoMessage()               {}
 func (*NFSVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{64} }
 
 func (m *NFSVolumeSource) GetServer() string {
-	if m != nil {
-		return m.Server
+	if m != nil && m.Server != nil {
+		return *m.Server
 	}
 	return ""
 }
 
 func (m *NFSVolumeSource) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
 
 func (m *NFSVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -2924,10 +3045,12 @@ type Namespace struct {
 	Spec *NamespaceSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status describes the current status of a Namespace.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *NamespaceStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *NamespaceStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *Namespace) Reset()                    { *m = Namespace{} }
+func (m *Namespace) String() string            { return proto.CompactTextString(m) }
 func (*Namespace) ProtoMessage()               {}
 func (*Namespace) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{65} }
 
@@ -2959,10 +3082,12 @@ type NamespaceList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of Namespace objects in the list.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/namespaces.md
-	Items []*Namespace `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Namespace `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (m *NamespaceList) Reset()                    { *m = NamespaceList{} }
+func (m *NamespaceList) String() string            { return proto.CompactTextString(m) }
 func (*NamespaceList) ProtoMessage()               {}
 func (*NamespaceList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{66} }
 
@@ -2984,10 +3109,12 @@ func (m *NamespaceList) GetItems() []*Namespace {
 type NamespaceSpec struct {
 	// Finalizers is an opaque list of values that must be empty to permanently remove object from storage.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/namespaces.md#finalizers
-	Finalizers []string `protobuf:"bytes,1,rep,name=finalizers" json:"finalizers,omitempty"`
+	Finalizers       []string `protobuf:"bytes,1,rep,name=finalizers" json:"finalizers,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *NamespaceSpec) Reset()                    { *m = NamespaceSpec{} }
+func (m *NamespaceSpec) String() string            { return proto.CompactTextString(m) }
 func (*NamespaceSpec) ProtoMessage()               {}
 func (*NamespaceSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{67} }
 
@@ -3002,16 +3129,18 @@ func (m *NamespaceSpec) GetFinalizers() []string {
 type NamespaceStatus struct {
 	// Phase is the current lifecycle phase of the namespace.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/namespaces.md#phases
-	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
+	Phase            *string `protobuf:"bytes,1,opt,name=phase" json:"phase,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *NamespaceStatus) Reset()                    { *m = NamespaceStatus{} }
+func (m *NamespaceStatus) String() string            { return proto.CompactTextString(m) }
 func (*NamespaceStatus) ProtoMessage()               {}
 func (*NamespaceStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{68} }
 
 func (m *NamespaceStatus) GetPhase() string {
-	if m != nil {
-		return m.Phase
+	if m != nil && m.Phase != nil {
+		return *m.Phase
 	}
 	return ""
 }
@@ -3029,10 +3158,12 @@ type Node struct {
 	// Populated by the system.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *NodeStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *NodeStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
 }
 
 func (m *Node) Reset()                    { *m = Node{} }
+func (m *Node) String() string            { return proto.CompactTextString(m) }
 func (*Node) ProtoMessage()               {}
 func (*Node) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{69} }
 
@@ -3060,25 +3191,27 @@ func (m *Node) GetStatus() *NodeStatus {
 // NodeAddress contains information for the node's address.
 type NodeAddress struct {
 	// Node address type, one of Hostname, ExternalIP or InternalIP.
-	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
 	// The node address.
-	Address string `protobuf:"bytes,2,opt,name=address" json:"address"`
+	Address          *string `protobuf:"bytes,2,opt,name=address" json:"address,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *NodeAddress) Reset()                    { *m = NodeAddress{} }
+func (m *NodeAddress) String() string            { return proto.CompactTextString(m) }
 func (*NodeAddress) ProtoMessage()               {}
 func (*NodeAddress) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{70} }
 
 func (m *NodeAddress) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
 
 func (m *NodeAddress) GetAddress() string {
-	if m != nil {
-		return m.Address
+	if m != nil && m.Address != nil {
+		return *m.Address
 	}
 	return ""
 }
@@ -3101,9 +3234,11 @@ type NodeAffinity struct {
 	// "weight" to the sum if the node matches the corresponding matchExpressions; the
 	// node(s) with the highest sum are the most preferred.
 	PreferredDuringSchedulingIgnoredDuringExecution []*PreferredSchedulingTerm `protobuf:"bytes,2,rep,name=preferredDuringSchedulingIgnoredDuringExecution" json:"preferredDuringSchedulingIgnoredDuringExecution,omitempty"`
+	XXX_unrecognized                                []byte                     `json:"-"`
 }
 
 func (m *NodeAffinity) Reset()                    { *m = NodeAffinity{} }
+func (m *NodeAffinity) String() string            { return proto.CompactTextString(m) }
 func (*NodeAffinity) ProtoMessage()               {}
 func (*NodeAffinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{71} }
 
@@ -3124,33 +3259,35 @@ func (m *NodeAffinity) GetPreferredDuringSchedulingIgnoredDuringExecution() []*P
 // NodeCondition contains condition information for a node.
 type NodeCondition struct {
 	// Type of node condition.
-	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
 	// Status of the condition, one of True, False, Unknown.
-	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
+	Status *string `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
 	// Last time we got an update on a given condition.
 	LastHeartbeatTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=lastHeartbeatTime" json:"lastHeartbeatTime,omitempty"`
 	// Last time the condition transit from one status to another.
 	LastTransitionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,4,opt,name=lastTransitionTime" json:"lastTransitionTime,omitempty"`
 	// (brief) reason for the condition's last transition.
-	Reason string `protobuf:"bytes,5,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,5,opt,name=reason" json:"reason,omitempty"`
 	// Human readable message indicating details about last transition.
-	Message string `protobuf:"bytes,6,opt,name=message" json:"message"`
+	Message          *string `protobuf:"bytes,6,opt,name=message" json:"message,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *NodeCondition) Reset()                    { *m = NodeCondition{} }
+func (m *NodeCondition) String() string            { return proto.CompactTextString(m) }
 func (*NodeCondition) ProtoMessage()               {}
 func (*NodeCondition) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{72} }
 
 func (m *NodeCondition) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
 
 func (m *NodeCondition) GetStatus() string {
-	if m != nil {
-		return m.Status
+	if m != nil && m.Status != nil {
+		return *m.Status
 	}
 	return ""
 }
@@ -3170,15 +3307,15 @@ func (m *NodeCondition) GetLastTransitionTime() *k8s_io_kubernetes_pkg_api_unver
 }
 
 func (m *NodeCondition) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *NodeCondition) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
@@ -3186,10 +3323,12 @@ func (m *NodeCondition) GetMessage() string {
 // NodeDaemonEndpoints lists ports opened by daemons running on the Node.
 type NodeDaemonEndpoints struct {
 	// Endpoint on which Kubelet is listening.
-	KubeletEndpoint *DaemonEndpoint `protobuf:"bytes,1,opt,name=kubeletEndpoint" json:"kubeletEndpoint,omitempty"`
+	KubeletEndpoint  *DaemonEndpoint `protobuf:"bytes,1,opt,name=kubeletEndpoint" json:"kubeletEndpoint,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
 }
 
 func (m *NodeDaemonEndpoints) Reset()                    { *m = NodeDaemonEndpoints{} }
+func (m *NodeDaemonEndpoints) String() string            { return proto.CompactTextString(m) }
 func (*NodeDaemonEndpoints) ProtoMessage()               {}
 func (*NodeDaemonEndpoints) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{73} }
 
@@ -3206,10 +3345,12 @@ type NodeList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of nodes
-	Items []*Node `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Node `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *NodeList) Reset()                    { *m = NodeList{} }
+func (m *NodeList) String() string            { return proto.CompactTextString(m) }
 func (*NodeList) ProtoMessage()               {}
 func (*NodeList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{74} }
 
@@ -3230,16 +3371,18 @@ func (m *NodeList) GetItems() []*Node {
 // NodeProxyOptions is the query options to a Node's proxy call.
 type NodeProxyOptions struct {
 	// Path is the URL path to use for the current proxy request to node.
-	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
+	Path             *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *NodeProxyOptions) Reset()                    { *m = NodeProxyOptions{} }
+func (m *NodeProxyOptions) String() string            { return proto.CompactTextString(m) }
 func (*NodeProxyOptions) ProtoMessage()               {}
 func (*NodeProxyOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{75} }
 
 func (m *NodeProxyOptions) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
@@ -3250,9 +3393,11 @@ func (m *NodeProxyOptions) GetPath() string {
 type NodeSelector struct {
 	// Required. A list of node selector terms. The terms are ORed.
 	NodeSelectorTerms []*NodeSelectorTerm `protobuf:"bytes,1,rep,name=nodeSelectorTerms" json:"nodeSelectorTerms,omitempty"`
+	XXX_unrecognized  []byte              `json:"-"`
 }
 
 func (m *NodeSelector) Reset()                    { *m = NodeSelector{} }
+func (m *NodeSelector) String() string            { return proto.CompactTextString(m) }
 func (*NodeSelector) ProtoMessage()               {}
 func (*NodeSelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{76} }
 
@@ -3267,34 +3412,36 @@ func (m *NodeSelector) GetNodeSelectorTerms() []*NodeSelectorTerm {
 // that relates the key and values.
 type NodeSelectorRequirement struct {
 	// The label key that the selector applies to.
-	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
+	Key *string `protobuf:"bytes,1,opt,name=key" json:"key,omitempty"`
 	// Represents a key's relationship to a set of values.
 	// Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-	Operator string `protobuf:"bytes,2,opt,name=operator" json:"operator"`
+	Operator *string `protobuf:"bytes,2,opt,name=operator" json:"operator,omitempty"`
 	// An array of string values. If the operator is In or NotIn,
 	// the values array must be non-empty. If the operator is Exists or DoesNotExist,
 	// the values array must be empty. If the operator is Gt or Lt, the values
 	// array must have a single element, which will be interpreted as an integer.
 	// This array is replaced during a strategic merge patch.
-	Values []string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty"`
+	Values           []string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *NodeSelectorRequirement) Reset()      { *m = NodeSelectorRequirement{} }
-func (*NodeSelectorRequirement) ProtoMessage() {}
+func (m *NodeSelectorRequirement) Reset()         { *m = NodeSelectorRequirement{} }
+func (m *NodeSelectorRequirement) String() string { return proto.CompactTextString(m) }
+func (*NodeSelectorRequirement) ProtoMessage()    {}
 func (*NodeSelectorRequirement) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{77}
 }
 
 func (m *NodeSelectorRequirement) GetKey() string {
-	if m != nil {
-		return m.Key
+	if m != nil && m.Key != nil {
+		return *m.Key
 	}
 	return ""
 }
 
 func (m *NodeSelectorRequirement) GetOperator() string {
-	if m != nil {
-		return m.Operator
+	if m != nil && m.Operator != nil {
+		return *m.Operator
 	}
 	return ""
 }
@@ -3310,9 +3457,11 @@ func (m *NodeSelectorRequirement) GetValues() []string {
 type NodeSelectorTerm struct {
 	// Required. A list of node selector requirements. The requirements are ANDed.
 	MatchExpressions []*NodeSelectorRequirement `protobuf:"bytes,1,rep,name=matchExpressions" json:"matchExpressions,omitempty"`
+	XXX_unrecognized []byte                     `json:"-"`
 }
 
 func (m *NodeSelectorTerm) Reset()                    { *m = NodeSelectorTerm{} }
+func (m *NodeSelectorTerm) String() string            { return proto.CompactTextString(m) }
 func (*NodeSelectorTerm) ProtoMessage()               {}
 func (*NodeSelectorTerm) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{78} }
 
@@ -3326,45 +3475,47 @@ func (m *NodeSelectorTerm) GetMatchExpressions() []*NodeSelectorRequirement {
 // NodeSpec describes the attributes that a node is created with.
 type NodeSpec struct {
 	// PodCIDR represents the pod IP range assigned to the node.
-	PodCIDR string `protobuf:"bytes,1,opt,name=podCIDR" json:"podCIDR"`
+	PodCIDR *string `protobuf:"bytes,1,opt,name=podCIDR" json:"podCIDR,omitempty"`
 	// External ID of the node assigned by some machine database (e.g. a cloud provider).
 	// Deprecated.
-	ExternalID string `protobuf:"bytes,2,opt,name=externalID" json:"externalID"`
+	ExternalID *string `protobuf:"bytes,2,opt,name=externalID" json:"externalID,omitempty"`
 	// ID of the node assigned by the cloud provider in the format: <ProviderName>://<ProviderSpecificNodeID>
-	ProviderID string `protobuf:"bytes,3,opt,name=providerID" json:"providerID"`
+	ProviderID *string `protobuf:"bytes,3,opt,name=providerID" json:"providerID,omitempty"`
 	// Unschedulable controls node schedulability of new pods. By default, node is schedulable.
 	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#manual-node-administration"`
-	Unschedulable bool `protobuf:"varint,4,opt,name=unschedulable" json:"unschedulable"`
+	Unschedulable    *bool  `protobuf:"varint,4,opt,name=unschedulable" json:"unschedulable,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *NodeSpec) Reset()                    { *m = NodeSpec{} }
+func (m *NodeSpec) String() string            { return proto.CompactTextString(m) }
 func (*NodeSpec) ProtoMessage()               {}
 func (*NodeSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{79} }
 
 func (m *NodeSpec) GetPodCIDR() string {
-	if m != nil {
-		return m.PodCIDR
+	if m != nil && m.PodCIDR != nil {
+		return *m.PodCIDR
 	}
 	return ""
 }
 
 func (m *NodeSpec) GetExternalID() string {
-	if m != nil {
-		return m.ExternalID
+	if m != nil && m.ExternalID != nil {
+		return *m.ExternalID
 	}
 	return ""
 }
 
 func (m *NodeSpec) GetProviderID() string {
-	if m != nil {
-		return m.ProviderID
+	if m != nil && m.ProviderID != nil {
+		return *m.ProviderID
 	}
 	return ""
 }
 
 func (m *NodeSpec) GetUnschedulable() bool {
-	if m != nil {
-		return m.Unschedulable
+	if m != nil && m.Unschedulable != nil {
+		return *m.Unschedulable
 	}
 	return false
 }
@@ -3380,7 +3531,7 @@ type NodeStatus struct {
 	// NodePhase is the recently observed lifecycle phase of the node.
 	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#node-phase
 	// The field is never populated, and now is deprecated.
-	Phase string `protobuf:"bytes,3,opt,name=phase" json:"phase"`
+	Phase *string `protobuf:"bytes,3,opt,name=phase" json:"phase,omitempty"`
 	// Conditions is an array of current observed node conditions.
 	// More info: http://releases.k8s.io/release-1.4/docs/admin/node.md#node-condition
 	Conditions []*NodeCondition `protobuf:"bytes,4,rep,name=conditions" json:"conditions,omitempty"`
@@ -3398,10 +3549,12 @@ type NodeStatus struct {
 	// List of attachable volumes in use (mounted) by the node.
 	VolumesInUse []string `protobuf:"bytes,9,rep,name=volumesInUse" json:"volumesInUse,omitempty"`
 	// List of volumes that are attached to the node.
-	VolumesAttached []*AttachedVolume `protobuf:"bytes,10,rep,name=volumesAttached" json:"volumesAttached,omitempty"`
+	VolumesAttached  []*AttachedVolume `protobuf:"bytes,10,rep,name=volumesAttached" json:"volumesAttached,omitempty"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
 func (m *NodeStatus) Reset()                    { *m = NodeStatus{} }
+func (m *NodeStatus) String() string            { return proto.CompactTextString(m) }
 func (*NodeStatus) ProtoMessage()               {}
 func (*NodeStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{80} }
 
@@ -3420,8 +3573,8 @@ func (m *NodeStatus) GetAllocatable() map[string]*k8s_io_kubernetes_pkg_api_reso
 }
 
 func (m *NodeStatus) GetPhase() string {
-	if m != nil {
-		return m.Phase
+	if m != nil && m.Phase != nil {
+		return *m.Phase
 	}
 	return ""
 }
@@ -3478,97 +3631,99 @@ func (m *NodeStatus) GetVolumesAttached() []*AttachedVolume {
 // NodeSystemInfo is a set of ids/uuids to uniquely identify the node.
 type NodeSystemInfo struct {
 	// Machine ID reported by the node.
-	MachineID string `protobuf:"bytes,1,opt,name=machineID" json:"machineID"`
+	MachineID *string `protobuf:"bytes,1,opt,name=machineID" json:"machineID,omitempty"`
 	// System UUID reported by the node.
-	SystemUUID string `protobuf:"bytes,2,opt,name=systemUUID" json:"systemUUID"`
+	SystemUUID *string `protobuf:"bytes,2,opt,name=systemUUID" json:"systemUUID,omitempty"`
 	// Boot ID reported by the node.
-	BootID string `protobuf:"bytes,3,opt,name=bootID" json:"bootID"`
+	BootID *string `protobuf:"bytes,3,opt,name=bootID" json:"bootID,omitempty"`
 	// Kernel Version reported by the node from 'uname -r' (e.g. 3.16.0-0.bpo.4-amd64).
-	KernelVersion string `protobuf:"bytes,4,opt,name=kernelVersion" json:"kernelVersion"`
+	KernelVersion *string `protobuf:"bytes,4,opt,name=kernelVersion" json:"kernelVersion,omitempty"`
 	// OS Image reported by the node from /etc/os-release (e.g. Debian GNU/Linux 7 (wheezy)).
-	OsImage string `protobuf:"bytes,5,opt,name=osImage" json:"osImage"`
+	OsImage *string `protobuf:"bytes,5,opt,name=osImage" json:"osImage,omitempty"`
 	// ContainerRuntime Version reported by the node through runtime remote API (e.g. docker://1.5.0).
-	ContainerRuntimeVersion string `protobuf:"bytes,6,opt,name=containerRuntimeVersion" json:"containerRuntimeVersion"`
+	ContainerRuntimeVersion *string `protobuf:"bytes,6,opt,name=containerRuntimeVersion" json:"containerRuntimeVersion,omitempty"`
 	// Kubelet Version reported by the node.
-	KubeletVersion string `protobuf:"bytes,7,opt,name=kubeletVersion" json:"kubeletVersion"`
+	KubeletVersion *string `protobuf:"bytes,7,opt,name=kubeletVersion" json:"kubeletVersion,omitempty"`
 	// KubeProxy Version reported by the node.
-	KubeProxyVersion string `protobuf:"bytes,8,opt,name=kubeProxyVersion" json:"kubeProxyVersion"`
+	KubeProxyVersion *string `protobuf:"bytes,8,opt,name=kubeProxyVersion" json:"kubeProxyVersion,omitempty"`
 	// The Operating System reported by the node
-	OperatingSystem string `protobuf:"bytes,9,opt,name=operatingSystem" json:"operatingSystem"`
+	OperatingSystem *string `protobuf:"bytes,9,opt,name=operatingSystem" json:"operatingSystem,omitempty"`
 	// The Architecture reported by the node
-	Architecture string `protobuf:"bytes,10,opt,name=architecture" json:"architecture"`
+	Architecture     *string `protobuf:"bytes,10,opt,name=architecture" json:"architecture,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *NodeSystemInfo) Reset()                    { *m = NodeSystemInfo{} }
+func (m *NodeSystemInfo) String() string            { return proto.CompactTextString(m) }
 func (*NodeSystemInfo) ProtoMessage()               {}
 func (*NodeSystemInfo) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{81} }
 
 func (m *NodeSystemInfo) GetMachineID() string {
-	if m != nil {
-		return m.MachineID
+	if m != nil && m.MachineID != nil {
+		return *m.MachineID
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetSystemUUID() string {
-	if m != nil {
-		return m.SystemUUID
+	if m != nil && m.SystemUUID != nil {
+		return *m.SystemUUID
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetBootID() string {
-	if m != nil {
-		return m.BootID
+	if m != nil && m.BootID != nil {
+		return *m.BootID
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetKernelVersion() string {
-	if m != nil {
-		return m.KernelVersion
+	if m != nil && m.KernelVersion != nil {
+		return *m.KernelVersion
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetOsImage() string {
-	if m != nil {
-		return m.OsImage
+	if m != nil && m.OsImage != nil {
+		return *m.OsImage
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetContainerRuntimeVersion() string {
-	if m != nil {
-		return m.ContainerRuntimeVersion
+	if m != nil && m.ContainerRuntimeVersion != nil {
+		return *m.ContainerRuntimeVersion
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetKubeletVersion() string {
-	if m != nil {
-		return m.KubeletVersion
+	if m != nil && m.KubeletVersion != nil {
+		return *m.KubeletVersion
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetKubeProxyVersion() string {
-	if m != nil {
-		return m.KubeProxyVersion
+	if m != nil && m.KubeProxyVersion != nil {
+		return *m.KubeProxyVersion
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetOperatingSystem() string {
-	if m != nil {
-		return m.OperatingSystem
+	if m != nil && m.OperatingSystem != nil {
+		return *m.OperatingSystem
 	}
 	return ""
 }
 
 func (m *NodeSystemInfo) GetArchitecture() string {
-	if m != nil {
-		return m.Architecture
+	if m != nil && m.Architecture != nil {
+		return *m.Architecture
 	}
 	return ""
 }
@@ -3576,25 +3731,27 @@ func (m *NodeSystemInfo) GetArchitecture() string {
 // ObjectFieldSelector selects an APIVersioned field of an object.
 type ObjectFieldSelector struct {
 	// Version of the schema the FieldPath is written in terms of, defaults to "v1".
-	ApiVersion string `protobuf:"bytes,1,opt,name=apiVersion" json:"apiVersion"`
+	ApiVersion *string `protobuf:"bytes,1,opt,name=apiVersion" json:"apiVersion,omitempty"`
 	// Path of the field to select in the specified API version.
-	FieldPath string `protobuf:"bytes,2,opt,name=fieldPath" json:"fieldPath"`
+	FieldPath        *string `protobuf:"bytes,2,opt,name=fieldPath" json:"fieldPath,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ObjectFieldSelector) Reset()                    { *m = ObjectFieldSelector{} }
+func (m *ObjectFieldSelector) String() string            { return proto.CompactTextString(m) }
 func (*ObjectFieldSelector) ProtoMessage()               {}
 func (*ObjectFieldSelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{82} }
 
 func (m *ObjectFieldSelector) GetApiVersion() string {
-	if m != nil {
-		return m.ApiVersion
+	if m != nil && m.ApiVersion != nil {
+		return *m.ApiVersion
 	}
 	return ""
 }
 
 func (m *ObjectFieldSelector) GetFieldPath() string {
-	if m != nil {
-		return m.FieldPath
+	if m != nil && m.FieldPath != nil {
+		return *m.FieldPath
 	}
 	return ""
 }
@@ -3608,7 +3765,7 @@ type ObjectMeta struct {
 	// definition.
 	// Cannot be updated.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// GenerateName is an optional prefix, used by the server, to generate a unique
 	// name ONLY IF the Name field has not been provided.
 	// If this field is used, the name returned to the client will be different
@@ -3624,7 +3781,7 @@ type ObjectMeta struct {
 	//
 	// Applied only if Name is not specified.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#idempotency
-	GenerateName string `protobuf:"bytes,2,opt,name=generateName" json:"generateName"`
+	GenerateName *string `protobuf:"bytes,2,opt,name=generateName" json:"generateName,omitempty"`
 	// Namespace defines the space within each name must be unique. An empty namespace is
 	// equivalent to the "default" namespace, but "default" is the canonical representation.
 	// Not all objects are required to be scoped to a namespace - the value of this field for
@@ -3633,11 +3790,11 @@ type ObjectMeta struct {
 	// Must be a DNS_LABEL.
 	// Cannot be updated.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/namespaces.md
-	Namespace string `protobuf:"bytes,3,opt,name=namespace" json:"namespace"`
+	Namespace *string `protobuf:"bytes,3,opt,name=namespace" json:"namespace,omitempty"`
 	// SelfLink is a URL representing this object.
 	// Populated by the system.
 	// Read-only.
-	SelfLink string `protobuf:"bytes,4,opt,name=selfLink" json:"selfLink"`
+	SelfLink *string `protobuf:"bytes,4,opt,name=selfLink" json:"selfLink,omitempty"`
 	// UID is the unique in time and space value for this object. It is typically generated by
 	// the server on successful creation of a resource and is not allowed to change on PUT
 	// operations.
@@ -3645,7 +3802,7 @@ type ObjectMeta struct {
 	// Populated by the system.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#uids
-	Uid string `protobuf:"bytes,5,opt,name=uid" json:"uid"`
+	Uid *string `protobuf:"bytes,5,opt,name=uid" json:"uid,omitempty"`
 	// An opaque value that represents the internal version of this object that can
 	// be used by clients to determine when objects have changed. May be used for optimistic
 	// concurrency, change detection, and the watch operation on a resource or set of resources.
@@ -3656,10 +3813,10 @@ type ObjectMeta struct {
 	// Read-only.
 	// Value must be treated as opaque by clients and .
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#concurrency-control-and-consistency
-	ResourceVersion string `protobuf:"bytes,6,opt,name=resourceVersion" json:"resourceVersion"`
+	ResourceVersion *string `protobuf:"bytes,6,opt,name=resourceVersion" json:"resourceVersion,omitempty"`
 	// A sequence number representing a specific generation of the desired state.
 	// Populated by the system. Read-only.
-	Generation int64 `protobuf:"varint,7,opt,name=generation" json:"generation"`
+	Generation *int64 `protobuf:"varint,7,opt,name=generation" json:"generation,omitempty"`
 	// CreationTimestamp is a timestamp representing the server time when this object was
 	// created. It is not guaranteed to be set in happens-before order across separate operations.
 	// Clients may not set this value. It is represented in RFC3339 form and is in UTC.
@@ -3688,7 +3845,7 @@ type ObjectMeta struct {
 	// it will be removed from the system. Only set when deletionTimestamp is also set.
 	// May only be shortened.
 	// Read-only.
-	DeletionGracePeriodSeconds int64 `protobuf:"varint,10,opt,name=deletionGracePeriodSeconds" json:"deletionGracePeriodSeconds"`
+	DeletionGracePeriodSeconds *int64 `protobuf:"varint,10,opt,name=deletionGracePeriodSeconds" json:"deletionGracePeriodSeconds,omitempty"`
 	// Map of string keys and values that can be used to organize and categorize
 	// (scope and select) objects. May match selectors of replication controllers
 	// and services.
@@ -3712,58 +3869,60 @@ type ObjectMeta struct {
 	// The name of the cluster which the object belongs to.
 	// This is used to distinguish resources with same name and namespace in different clusters.
 	// This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
-	ClusterName string `protobuf:"bytes,15,opt,name=clusterName" json:"clusterName"`
+	ClusterName      *string `protobuf:"bytes,15,opt,name=clusterName" json:"clusterName,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ObjectMeta) Reset()                    { *m = ObjectMeta{} }
+func (m *ObjectMeta) String() string            { return proto.CompactTextString(m) }
 func (*ObjectMeta) ProtoMessage()               {}
 func (*ObjectMeta) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{83} }
 
 func (m *ObjectMeta) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *ObjectMeta) GetGenerateName() string {
-	if m != nil {
-		return m.GenerateName
+	if m != nil && m.GenerateName != nil {
+		return *m.GenerateName
 	}
 	return ""
 }
 
 func (m *ObjectMeta) GetNamespace() string {
-	if m != nil {
-		return m.Namespace
+	if m != nil && m.Namespace != nil {
+		return *m.Namespace
 	}
 	return ""
 }
 
 func (m *ObjectMeta) GetSelfLink() string {
-	if m != nil {
-		return m.SelfLink
+	if m != nil && m.SelfLink != nil {
+		return *m.SelfLink
 	}
 	return ""
 }
 
 func (m *ObjectMeta) GetUid() string {
-	if m != nil {
-		return m.Uid
+	if m != nil && m.Uid != nil {
+		return *m.Uid
 	}
 	return ""
 }
 
 func (m *ObjectMeta) GetResourceVersion() string {
-	if m != nil {
-		return m.ResourceVersion
+	if m != nil && m.ResourceVersion != nil {
+		return *m.ResourceVersion
 	}
 	return ""
 }
 
 func (m *ObjectMeta) GetGeneration() int64 {
-	if m != nil {
-		return m.Generation
+	if m != nil && m.Generation != nil {
+		return *m.Generation
 	}
 	return 0
 }
@@ -3783,8 +3942,8 @@ func (m *ObjectMeta) GetDeletionTimestamp() *k8s_io_kubernetes_pkg_api_unversion
 }
 
 func (m *ObjectMeta) GetDeletionGracePeriodSeconds() int64 {
-	if m != nil {
-		return m.DeletionGracePeriodSeconds
+	if m != nil && m.DeletionGracePeriodSeconds != nil {
+		return *m.DeletionGracePeriodSeconds
 	}
 	return 0
 }
@@ -3818,8 +3977,8 @@ func (m *ObjectMeta) GetFinalizers() []string {
 }
 
 func (m *ObjectMeta) GetClusterName() string {
-	if m != nil {
-		return m.ClusterName
+	if m != nil && m.ClusterName != nil {
+		return *m.ClusterName
 	}
 	return ""
 }
@@ -3828,21 +3987,21 @@ func (m *ObjectMeta) GetClusterName() string {
 type ObjectReference struct {
 	// Kind of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
-	Kind string `protobuf:"bytes,1,opt,name=kind" json:"kind"`
+	Kind *string `protobuf:"bytes,1,opt,name=kind" json:"kind,omitempty"`
 	// Namespace of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/namespaces.md
-	Namespace string `protobuf:"bytes,2,opt,name=namespace" json:"namespace"`
+	Namespace *string `protobuf:"bytes,2,opt,name=namespace" json:"namespace,omitempty"`
 	// Name of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
-	Name string `protobuf:"bytes,3,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
 	// UID of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#uids
-	Uid string `protobuf:"bytes,4,opt,name=uid" json:"uid"`
+	Uid *string `protobuf:"bytes,4,opt,name=uid" json:"uid,omitempty"`
 	// API version of the referent.
-	ApiVersion string `protobuf:"bytes,5,opt,name=apiVersion" json:"apiVersion"`
+	ApiVersion *string `protobuf:"bytes,5,opt,name=apiVersion" json:"apiVersion,omitempty"`
 	// Specific resourceVersion to which this reference is made, if any.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#concurrency-control-and-consistency
-	ResourceVersion string `protobuf:"bytes,6,opt,name=resourceVersion" json:"resourceVersion"`
+	ResourceVersion *string `protobuf:"bytes,6,opt,name=resourceVersion" json:"resourceVersion,omitempty"`
 	// If referring to a piece of an object instead of an entire object, this string
 	// should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].
 	// For example, if the object reference is to a container within a pod, this would take on a value like:
@@ -3851,58 +4010,60 @@ type ObjectReference struct {
 	// index 2 in this pod). This syntax is chosen only to have some well-defined way of
 	// referencing a part of an object.
 	// TODO: this design is not final and this field is subject to change in the future.
-	FieldPath string `protobuf:"bytes,7,opt,name=fieldPath" json:"fieldPath"`
+	FieldPath        *string `protobuf:"bytes,7,opt,name=fieldPath" json:"fieldPath,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ObjectReference) Reset()                    { *m = ObjectReference{} }
+func (m *ObjectReference) String() string            { return proto.CompactTextString(m) }
 func (*ObjectReference) ProtoMessage()               {}
 func (*ObjectReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{84} }
 
 func (m *ObjectReference) GetKind() string {
-	if m != nil {
-		return m.Kind
+	if m != nil && m.Kind != nil {
+		return *m.Kind
 	}
 	return ""
 }
 
 func (m *ObjectReference) GetNamespace() string {
-	if m != nil {
-		return m.Namespace
+	if m != nil && m.Namespace != nil {
+		return *m.Namespace
 	}
 	return ""
 }
 
 func (m *ObjectReference) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *ObjectReference) GetUid() string {
-	if m != nil {
-		return m.Uid
+	if m != nil && m.Uid != nil {
+		return *m.Uid
 	}
 	return ""
 }
 
 func (m *ObjectReference) GetApiVersion() string {
-	if m != nil {
-		return m.ApiVersion
+	if m != nil && m.ApiVersion != nil {
+		return *m.ApiVersion
 	}
 	return ""
 }
 
 func (m *ObjectReference) GetResourceVersion() string {
-	if m != nil {
-		return m.ResourceVersion
+	if m != nil && m.ResourceVersion != nil {
+		return *m.ResourceVersion
 	}
 	return ""
 }
 
 func (m *ObjectReference) GetFieldPath() string {
-	if m != nil {
-		return m.FieldPath
+	if m != nil && m.FieldPath != nil {
+		return *m.FieldPath
 	}
 	return ""
 }
@@ -3912,55 +4073,57 @@ func (m *ObjectReference) GetFieldPath() string {
 // is no namespace field.
 type OwnerReference struct {
 	// API version of the referent.
-	ApiVersion string `protobuf:"bytes,5,opt,name=apiVersion" json:"apiVersion"`
+	ApiVersion *string `protobuf:"bytes,5,opt,name=apiVersion" json:"apiVersion,omitempty"`
 	// Kind of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
-	Kind string `protobuf:"bytes,1,opt,name=kind" json:"kind"`
+	Kind *string `protobuf:"bytes,1,opt,name=kind" json:"kind,omitempty"`
 	// Name of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
-	Name string `protobuf:"bytes,3,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
 	// UID of the referent.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#uids
-	Uid string `protobuf:"bytes,4,opt,name=uid" json:"uid"`
+	Uid *string `protobuf:"bytes,4,opt,name=uid" json:"uid,omitempty"`
 	// If true, this reference points to the managing controller.
-	Controller bool `protobuf:"varint,6,opt,name=controller" json:"controller"`
+	Controller       *bool  `protobuf:"varint,6,opt,name=controller" json:"controller,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *OwnerReference) Reset()                    { *m = OwnerReference{} }
+func (m *OwnerReference) String() string            { return proto.CompactTextString(m) }
 func (*OwnerReference) ProtoMessage()               {}
 func (*OwnerReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{85} }
 
 func (m *OwnerReference) GetApiVersion() string {
-	if m != nil {
-		return m.ApiVersion
+	if m != nil && m.ApiVersion != nil {
+		return *m.ApiVersion
 	}
 	return ""
 }
 
 func (m *OwnerReference) GetKind() string {
-	if m != nil {
-		return m.Kind
+	if m != nil && m.Kind != nil {
+		return *m.Kind
 	}
 	return ""
 }
 
 func (m *OwnerReference) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *OwnerReference) GetUid() string {
-	if m != nil {
-		return m.Uid
+	if m != nil && m.Uid != nil {
+		return *m.Uid
 	}
 	return ""
 }
 
 func (m *OwnerReference) GetController() bool {
-	if m != nil {
-		return m.Controller
+	if m != nil && m.Controller != nil {
+		return *m.Controller
 	}
 	return false
 }
@@ -3980,10 +4143,12 @@ type PersistentVolume struct {
 	// Populated by the system.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistent-volumes
-	Status *PersistentVolumeStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *PersistentVolumeStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                  `json:"-"`
 }
 
 func (m *PersistentVolume) Reset()                    { *m = PersistentVolume{} }
+func (m *PersistentVolume) String() string            { return proto.CompactTextString(m) }
 func (*PersistentVolume) ProtoMessage()               {}
 func (*PersistentVolume) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{86} }
 
@@ -4019,10 +4184,12 @@ type PersistentVolumeClaim struct {
 	// Status represents the current information/status of a persistent volume claim.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
-	Status *PersistentVolumeClaimStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *PersistentVolumeClaimStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                       `json:"-"`
 }
 
 func (m *PersistentVolumeClaim) Reset()                    { *m = PersistentVolumeClaim{} }
+func (m *PersistentVolumeClaim) String() string            { return proto.CompactTextString(m) }
 func (*PersistentVolumeClaim) ProtoMessage()               {}
 func (*PersistentVolumeClaim) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{87} }
 
@@ -4054,11 +4221,13 @@ type PersistentVolumeClaimList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// A list of persistent volume claims.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
-	Items []*PersistentVolumeClaim `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*PersistentVolumeClaim `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                   `json:"-"`
 }
 
-func (m *PersistentVolumeClaimList) Reset()      { *m = PersistentVolumeClaimList{} }
-func (*PersistentVolumeClaimList) ProtoMessage() {}
+func (m *PersistentVolumeClaimList) Reset()         { *m = PersistentVolumeClaimList{} }
+func (m *PersistentVolumeClaimList) String() string { return proto.CompactTextString(m) }
+func (*PersistentVolumeClaimList) ProtoMessage()    {}
 func (*PersistentVolumeClaimList) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{88}
 }
@@ -4089,11 +4258,13 @@ type PersistentVolumeClaimSpec struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#resources
 	Resources *ResourceRequirements `protobuf:"bytes,2,opt,name=resources" json:"resources,omitempty"`
 	// VolumeName is the binding reference to the PersistentVolume backing this claim.
-	VolumeName string `protobuf:"bytes,3,opt,name=volumeName" json:"volumeName"`
+	VolumeName       *string `protobuf:"bytes,3,opt,name=volumeName" json:"volumeName,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *PersistentVolumeClaimSpec) Reset()      { *m = PersistentVolumeClaimSpec{} }
-func (*PersistentVolumeClaimSpec) ProtoMessage() {}
+func (m *PersistentVolumeClaimSpec) Reset()         { *m = PersistentVolumeClaimSpec{} }
+func (m *PersistentVolumeClaimSpec) String() string { return proto.CompactTextString(m) }
+func (*PersistentVolumeClaimSpec) ProtoMessage()    {}
 func (*PersistentVolumeClaimSpec) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{89}
 }
@@ -4120,8 +4291,8 @@ func (m *PersistentVolumeClaimSpec) GetResources() *ResourceRequirements {
 }
 
 func (m *PersistentVolumeClaimSpec) GetVolumeName() string {
-	if m != nil {
-		return m.VolumeName
+	if m != nil && m.VolumeName != nil {
+		return *m.VolumeName
 	}
 	return ""
 }
@@ -4129,23 +4300,25 @@ func (m *PersistentVolumeClaimSpec) GetVolumeName() string {
 // PersistentVolumeClaimStatus is the current status of a persistent volume claim.
 type PersistentVolumeClaimStatus struct {
 	// Phase represents the current phase of PersistentVolumeClaim.
-	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
+	Phase *string `protobuf:"bytes,1,opt,name=phase" json:"phase,omitempty"`
 	// AccessModes contains the actual access modes the volume backing the PVC has.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#access-modes-1
 	AccessModes []string `protobuf:"bytes,2,rep,name=accessModes" json:"accessModes,omitempty"`
 	// Represents the actual resources of the underlying volume.
-	Capacity map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,3,rep,name=capacity" json:"capacity,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Capacity         map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,3,rep,name=capacity" json:"capacity,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized []byte                                                  `json:"-"`
 }
 
-func (m *PersistentVolumeClaimStatus) Reset()      { *m = PersistentVolumeClaimStatus{} }
-func (*PersistentVolumeClaimStatus) ProtoMessage() {}
+func (m *PersistentVolumeClaimStatus) Reset()         { *m = PersistentVolumeClaimStatus{} }
+func (m *PersistentVolumeClaimStatus) String() string { return proto.CompactTextString(m) }
+func (*PersistentVolumeClaimStatus) ProtoMessage()    {}
 func (*PersistentVolumeClaimStatus) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{90}
 }
 
 func (m *PersistentVolumeClaimStatus) GetPhase() string {
-	if m != nil {
-		return m.Phase
+	if m != nil && m.Phase != nil {
+		return *m.Phase
 	}
 	return ""
 }
@@ -4171,28 +4344,30 @@ func (m *PersistentVolumeClaimStatus) GetCapacity() map[string]*k8s_io_kubernete
 type PersistentVolumeClaimVolumeSource struct {
 	// ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#persistentvolumeclaims
-	ClaimName string `protobuf:"bytes,1,opt,name=claimName" json:"claimName"`
+	ClaimName *string `protobuf:"bytes,1,opt,name=claimName" json:"claimName,omitempty"`
 	// Will force the ReadOnly setting in VolumeMounts.
 	// Default false.
-	ReadOnly bool `protobuf:"varint,2,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,2,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *PersistentVolumeClaimVolumeSource) Reset()      { *m = PersistentVolumeClaimVolumeSource{} }
-func (*PersistentVolumeClaimVolumeSource) ProtoMessage() {}
+func (m *PersistentVolumeClaimVolumeSource) Reset()         { *m = PersistentVolumeClaimVolumeSource{} }
+func (m *PersistentVolumeClaimVolumeSource) String() string { return proto.CompactTextString(m) }
+func (*PersistentVolumeClaimVolumeSource) ProtoMessage()    {}
 func (*PersistentVolumeClaimVolumeSource) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{91}
 }
 
 func (m *PersistentVolumeClaimVolumeSource) GetClaimName() string {
-	if m != nil {
-		return m.ClaimName
+	if m != nil && m.ClaimName != nil {
+		return *m.ClaimName
 	}
 	return ""
 }
 
 func (m *PersistentVolumeClaimVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -4204,10 +4379,12 @@ type PersistentVolumeList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of persistent volumes.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md
-	Items []*PersistentVolume `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*PersistentVolume `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte              `json:"-"`
 }
 
 func (m *PersistentVolumeList) Reset()                    { *m = PersistentVolumeList{} }
+func (m *PersistentVolumeList) String() string            { return proto.CompactTextString(m) }
 func (*PersistentVolumeList) ProtoMessage()               {}
 func (*PersistentVolumeList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{92} }
 
@@ -4275,10 +4452,12 @@ type PersistentVolumeSource struct {
 	// Quobyte represents a Quobyte mount on the host that shares a pod's lifetime
 	Quobyte *QuobyteVolumeSource `protobuf:"bytes,15,opt,name=quobyte" json:"quobyte,omitempty"`
 	// AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
-	AzureDisk *AzureDiskVolumeSource `protobuf:"bytes,16,opt,name=azureDisk" json:"azureDisk,omitempty"`
+	AzureDisk        *AzureDiskVolumeSource `protobuf:"bytes,16,opt,name=azureDisk" json:"azureDisk,omitempty"`
+	XXX_unrecognized []byte                 `json:"-"`
 }
 
 func (m *PersistentVolumeSource) Reset()                    { *m = PersistentVolumeSource{} }
+func (m *PersistentVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*PersistentVolumeSource) ProtoMessage()               {}
 func (*PersistentVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{93} }
 
@@ -4413,10 +4592,12 @@ type PersistentVolumeSpec struct {
 	// Valid options are Retain (default) and Recycle.
 	// Recycling must be supported by the volume plugin underlying this persistent volume.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#recycling-policy
-	PersistentVolumeReclaimPolicy string `protobuf:"bytes,5,opt,name=persistentVolumeReclaimPolicy" json:"persistentVolumeReclaimPolicy"`
+	PersistentVolumeReclaimPolicy *string `protobuf:"bytes,5,opt,name=persistentVolumeReclaimPolicy" json:"persistentVolumeReclaimPolicy,omitempty"`
+	XXX_unrecognized              []byte  `json:"-"`
 }
 
 func (m *PersistentVolumeSpec) Reset()                    { *m = PersistentVolumeSpec{} }
+func (m *PersistentVolumeSpec) String() string            { return proto.CompactTextString(m) }
 func (*PersistentVolumeSpec) ProtoMessage()               {}
 func (*PersistentVolumeSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{94} }
 
@@ -4449,8 +4630,8 @@ func (m *PersistentVolumeSpec) GetClaimRef() *ObjectReference {
 }
 
 func (m *PersistentVolumeSpec) GetPersistentVolumeReclaimPolicy() string {
-	if m != nil {
-		return m.PersistentVolumeReclaimPolicy
+	if m != nil && m.PersistentVolumeReclaimPolicy != nil {
+		return *m.PersistentVolumeReclaimPolicy
 	}
 	return ""
 }
@@ -4459,35 +4640,37 @@ func (m *PersistentVolumeSpec) GetPersistentVolumeReclaimPolicy() string {
 type PersistentVolumeStatus struct {
 	// Phase indicates if a volume is available, bound to a claim, or released by a claim.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/persistent-volumes.md#phase
-	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
+	Phase *string `protobuf:"bytes,1,opt,name=phase" json:"phase,omitempty"`
 	// A human-readable message indicating details about why the volume is in this state.
-	Message string `protobuf:"bytes,2,opt,name=message" json:"message"`
+	Message *string `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
 	// Reason is a brief CamelCase string that describes any failure and is meant
 	// for machine parsing and tidy display in the CLI.
-	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
+	Reason           *string `protobuf:"bytes,3,opt,name=reason" json:"reason,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PersistentVolumeStatus) Reset()                    { *m = PersistentVolumeStatus{} }
+func (m *PersistentVolumeStatus) String() string            { return proto.CompactTextString(m) }
 func (*PersistentVolumeStatus) ProtoMessage()               {}
 func (*PersistentVolumeStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{95} }
 
 func (m *PersistentVolumeStatus) GetPhase() string {
-	if m != nil {
-		return m.Phase
+	if m != nil && m.Phase != nil {
+		return *m.Phase
 	}
 	return ""
 }
 
 func (m *PersistentVolumeStatus) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
 
 func (m *PersistentVolumeStatus) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
@@ -4506,10 +4689,12 @@ type Pod struct {
 	// Populated by the system.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *PodStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *PodStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte     `json:"-"`
 }
 
 func (m *Pod) Reset()                    { *m = Pod{} }
+func (m *Pod) String() string            { return proto.CompactTextString(m) }
 func (*Pod) ProtoMessage()               {}
 func (*Pod) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{96} }
 
@@ -4563,9 +4748,11 @@ type PodAffinity struct {
 	// "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the
 	// node(s) with the highest sum are the most preferred.
 	PreferredDuringSchedulingIgnoredDuringExecution []*WeightedPodAffinityTerm `protobuf:"bytes,2,rep,name=preferredDuringSchedulingIgnoredDuringExecution" json:"preferredDuringSchedulingIgnoredDuringExecution,omitempty"`
+	XXX_unrecognized                                []byte                     `json:"-"`
 }
 
 func (m *PodAffinity) Reset()                    { *m = PodAffinity{} }
+func (m *PodAffinity) String() string            { return proto.CompactTextString(m) }
 func (*PodAffinity) ProtoMessage()               {}
 func (*PodAffinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{97} }
 
@@ -4604,10 +4791,12 @@ type PodAffinityTerm struct {
 	// For PreferredDuringScheduling pod anti-affinity, empty topologyKey is interpreted as "all topologies"
 	// ("all topologies" here means all the topologyKeys indicated by scheduler command-line argument --failure-domains);
 	// for affinity and for RequiredDuringScheduling pod anti-affinity, empty topologyKey is not allowed.
-	TopologyKey string `protobuf:"bytes,3,opt,name=topologyKey" json:"topologyKey"`
+	TopologyKey      *string `protobuf:"bytes,3,opt,name=topologyKey" json:"topologyKey,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PodAffinityTerm) Reset()                    { *m = PodAffinityTerm{} }
+func (m *PodAffinityTerm) String() string            { return proto.CompactTextString(m) }
 func (*PodAffinityTerm) ProtoMessage()               {}
 func (*PodAffinityTerm) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{98} }
 
@@ -4626,8 +4815,8 @@ func (m *PodAffinityTerm) GetNamespaces() []string {
 }
 
 func (m *PodAffinityTerm) GetTopologyKey() string {
-	if m != nil {
-		return m.TopologyKey
+	if m != nil && m.TopologyKey != nil {
+		return *m.TopologyKey
 	}
 	return ""
 }
@@ -4661,9 +4850,11 @@ type PodAntiAffinity struct {
 	// "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the
 	// node(s) with the highest sum are the most preferred.
 	PreferredDuringSchedulingIgnoredDuringExecution []*WeightedPodAffinityTerm `protobuf:"bytes,2,rep,name=preferredDuringSchedulingIgnoredDuringExecution" json:"preferredDuringSchedulingIgnoredDuringExecution,omitempty"`
+	XXX_unrecognized                                []byte                     `json:"-"`
 }
 
 func (m *PodAntiAffinity) Reset()                    { *m = PodAntiAffinity{} }
+func (m *PodAntiAffinity) String() string            { return proto.CompactTextString(m) }
 func (*PodAntiAffinity) ProtoMessage()               {}
 func (*PodAntiAffinity) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{99} }
 
@@ -4688,58 +4879,60 @@ func (m *PodAntiAffinity) GetPreferredDuringSchedulingIgnoredDuringExecution() [
 type PodAttachOptions struct {
 	// Stdin if true, redirects the standard input stream of the pod for this call.
 	// Defaults to false.
-	Stdin bool `protobuf:"varint,1,opt,name=stdin" json:"stdin"`
+	Stdin *bool `protobuf:"varint,1,opt,name=stdin" json:"stdin,omitempty"`
 	// Stdout if true indicates that stdout is to be redirected for the attach call.
 	// Defaults to true.
-	Stdout bool `protobuf:"varint,2,opt,name=stdout" json:"stdout"`
+	Stdout *bool `protobuf:"varint,2,opt,name=stdout" json:"stdout,omitempty"`
 	// Stderr if true indicates that stderr is to be redirected for the attach call.
 	// Defaults to true.
-	Stderr bool `protobuf:"varint,3,opt,name=stderr" json:"stderr"`
+	Stderr *bool `protobuf:"varint,3,opt,name=stderr" json:"stderr,omitempty"`
 	// TTY if true indicates that a tty will be allocated for the attach call.
 	// This is passed through the container runtime so the tty
 	// is allocated on the worker node by the container runtime.
 	// Defaults to false.
-	Tty bool `protobuf:"varint,4,opt,name=tty" json:"tty"`
+	Tty *bool `protobuf:"varint,4,opt,name=tty" json:"tty,omitempty"`
 	// The container in which to execute the command.
 	// Defaults to only container if there is only one container in the pod.
-	Container string `protobuf:"bytes,5,opt,name=container" json:"container"`
+	Container        *string `protobuf:"bytes,5,opt,name=container" json:"container,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PodAttachOptions) Reset()                    { *m = PodAttachOptions{} }
+func (m *PodAttachOptions) String() string            { return proto.CompactTextString(m) }
 func (*PodAttachOptions) ProtoMessage()               {}
 func (*PodAttachOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{100} }
 
 func (m *PodAttachOptions) GetStdin() bool {
-	if m != nil {
-		return m.Stdin
+	if m != nil && m.Stdin != nil {
+		return *m.Stdin
 	}
 	return false
 }
 
 func (m *PodAttachOptions) GetStdout() bool {
-	if m != nil {
-		return m.Stdout
+	if m != nil && m.Stdout != nil {
+		return *m.Stdout
 	}
 	return false
 }
 
 func (m *PodAttachOptions) GetStderr() bool {
-	if m != nil {
-		return m.Stderr
+	if m != nil && m.Stderr != nil {
+		return *m.Stderr
 	}
 	return false
 }
 
 func (m *PodAttachOptions) GetTty() bool {
-	if m != nil {
-		return m.Tty
+	if m != nil && m.Tty != nil {
+		return *m.Tty
 	}
 	return false
 }
 
 func (m *PodAttachOptions) GetContainer() string {
-	if m != nil {
-		return m.Container
+	if m != nil && m.Container != nil {
+		return *m.Container
 	}
 	return ""
 }
@@ -4749,35 +4942,37 @@ type PodCondition struct {
 	// Type is the type of the condition.
 	// Currently only Ready.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-conditions
-	Type string `protobuf:"bytes,1,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
 	// Status is the status of the condition.
 	// Can be True, False, Unknown.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-conditions
-	Status string `protobuf:"bytes,2,opt,name=status" json:"status"`
+	Status *string `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
 	// Last time we probed the condition.
 	LastProbeTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,3,opt,name=lastProbeTime" json:"lastProbeTime,omitempty"`
 	// Last time the condition transitioned from one status to another.
 	LastTransitionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,4,opt,name=lastTransitionTime" json:"lastTransitionTime,omitempty"`
 	// Unique, one-word, CamelCase reason for the condition's last transition.
-	Reason string `protobuf:"bytes,5,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,5,opt,name=reason" json:"reason,omitempty"`
 	// Human-readable message indicating details about last transition.
-	Message string `protobuf:"bytes,6,opt,name=message" json:"message"`
+	Message          *string `protobuf:"bytes,6,opt,name=message" json:"message,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PodCondition) Reset()                    { *m = PodCondition{} }
+func (m *PodCondition) String() string            { return proto.CompactTextString(m) }
 func (*PodCondition) ProtoMessage()               {}
 func (*PodCondition) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{101} }
 
 func (m *PodCondition) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
 
 func (m *PodCondition) GetStatus() string {
-	if m != nil {
-		return m.Status
+	if m != nil && m.Status != nil {
+		return *m.Status
 	}
 	return ""
 }
@@ -4797,15 +4992,15 @@ func (m *PodCondition) GetLastTransitionTime() *k8s_io_kubernetes_pkg_api_unvers
 }
 
 func (m *PodCondition) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *PodCondition) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
@@ -4817,58 +5012,60 @@ func (m *PodCondition) GetMessage() string {
 type PodExecOptions struct {
 	// Redirect the standard input stream of the pod for this call.
 	// Defaults to false.
-	Stdin bool `protobuf:"varint,1,opt,name=stdin" json:"stdin"`
+	Stdin *bool `protobuf:"varint,1,opt,name=stdin" json:"stdin,omitempty"`
 	// Redirect the standard output stream of the pod for this call.
 	// Defaults to true.
-	Stdout bool `protobuf:"varint,2,opt,name=stdout" json:"stdout"`
+	Stdout *bool `protobuf:"varint,2,opt,name=stdout" json:"stdout,omitempty"`
 	// Redirect the standard error stream of the pod for this call.
 	// Defaults to true.
-	Stderr bool `protobuf:"varint,3,opt,name=stderr" json:"stderr"`
+	Stderr *bool `protobuf:"varint,3,opt,name=stderr" json:"stderr,omitempty"`
 	// TTY if true indicates that a tty will be allocated for the exec call.
 	// Defaults to false.
-	Tty bool `protobuf:"varint,4,opt,name=tty" json:"tty"`
+	Tty *bool `protobuf:"varint,4,opt,name=tty" json:"tty,omitempty"`
 	// Container in which to execute the command.
 	// Defaults to only container if there is only one container in the pod.
-	Container string `protobuf:"bytes,5,opt,name=container" json:"container"`
+	Container *string `protobuf:"bytes,5,opt,name=container" json:"container,omitempty"`
 	// Command is the remote command to execute. argv array. Not executed within a shell.
-	Command []string `protobuf:"bytes,6,rep,name=command" json:"command,omitempty"`
+	Command          []string `protobuf:"bytes,6,rep,name=command" json:"command,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *PodExecOptions) Reset()                    { *m = PodExecOptions{} }
+func (m *PodExecOptions) String() string            { return proto.CompactTextString(m) }
 func (*PodExecOptions) ProtoMessage()               {}
 func (*PodExecOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{102} }
 
 func (m *PodExecOptions) GetStdin() bool {
-	if m != nil {
-		return m.Stdin
+	if m != nil && m.Stdin != nil {
+		return *m.Stdin
 	}
 	return false
 }
 
 func (m *PodExecOptions) GetStdout() bool {
-	if m != nil {
-		return m.Stdout
+	if m != nil && m.Stdout != nil {
+		return *m.Stdout
 	}
 	return false
 }
 
 func (m *PodExecOptions) GetStderr() bool {
-	if m != nil {
-		return m.Stderr
+	if m != nil && m.Stderr != nil {
+		return *m.Stderr
 	}
 	return false
 }
 
 func (m *PodExecOptions) GetTty() bool {
-	if m != nil {
-		return m.Tty
+	if m != nil && m.Tty != nil {
+		return *m.Tty
 	}
 	return false
 }
 
 func (m *PodExecOptions) GetContainer() string {
-	if m != nil {
-		return m.Container
+	if m != nil && m.Container != nil {
+		return *m.Container
 	}
 	return ""
 }
@@ -4887,10 +5084,12 @@ type PodList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of pods.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pods.md
-	Items []*Pod `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Pod `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *PodList) Reset()                    { *m = PodList{} }
+func (m *PodList) String() string            { return proto.CompactTextString(m) }
 func (*PodList) ProtoMessage()               {}
 func (*PodList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{103} }
 
@@ -4911,16 +5110,16 @@ func (m *PodList) GetItems() []*Pod {
 // PodLogOptions is the query options for a Pod's logs REST call.
 type PodLogOptions struct {
 	// The container for which to stream logs. Defaults to only container if there is one container in the pod.
-	Container string `protobuf:"bytes,1,opt,name=container" json:"container"`
+	Container *string `protobuf:"bytes,1,opt,name=container" json:"container,omitempty"`
 	// Follow the log stream of the pod. Defaults to false.
-	Follow bool `protobuf:"varint,2,opt,name=follow" json:"follow"`
+	Follow *bool `protobuf:"varint,2,opt,name=follow" json:"follow,omitempty"`
 	// Return previous terminated container logs. Defaults to false.
-	Previous bool `protobuf:"varint,3,opt,name=previous" json:"previous"`
+	Previous *bool `protobuf:"varint,3,opt,name=previous" json:"previous,omitempty"`
 	// A relative time in seconds before the current time from which to show logs. If this value
 	// precedes the time a pod was started, only logs since the pod start will be returned.
 	// If this value is in the future, no logs will be returned.
 	// Only one of sinceSeconds or sinceTime may be specified.
-	SinceSeconds int64 `protobuf:"varint,4,opt,name=sinceSeconds" json:"sinceSeconds"`
+	SinceSeconds *int64 `protobuf:"varint,4,opt,name=sinceSeconds" json:"sinceSeconds,omitempty"`
 	// An RFC3339 timestamp from which to show logs. If this value
 	// precedes the time a pod was started, only logs since the pod start will be returned.
 	// If this value is in the future, no logs will be returned.
@@ -4928,44 +5127,46 @@ type PodLogOptions struct {
 	SinceTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,5,opt,name=sinceTime" json:"sinceTime,omitempty"`
 	// If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every line
 	// of log output. Defaults to false.
-	Timestamps bool `protobuf:"varint,6,opt,name=timestamps" json:"timestamps"`
+	Timestamps *bool `protobuf:"varint,6,opt,name=timestamps" json:"timestamps,omitempty"`
 	// If set, the number of lines from the end of the logs to show. If not specified,
 	// logs are shown from the creation of the container or sinceSeconds or sinceTime
-	TailLines int64 `protobuf:"varint,7,opt,name=tailLines" json:"tailLines"`
+	TailLines *int64 `protobuf:"varint,7,opt,name=tailLines" json:"tailLines,omitempty"`
 	// If set, the number of bytes to read from the server before terminating the
 	// log output. This may not display a complete final line of logging, and may return
 	// slightly more or slightly less than the specified limit.
-	LimitBytes int64 `protobuf:"varint,8,opt,name=limitBytes" json:"limitBytes"`
+	LimitBytes       *int64 `protobuf:"varint,8,opt,name=limitBytes" json:"limitBytes,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *PodLogOptions) Reset()                    { *m = PodLogOptions{} }
+func (m *PodLogOptions) String() string            { return proto.CompactTextString(m) }
 func (*PodLogOptions) ProtoMessage()               {}
 func (*PodLogOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{104} }
 
 func (m *PodLogOptions) GetContainer() string {
-	if m != nil {
-		return m.Container
+	if m != nil && m.Container != nil {
+		return *m.Container
 	}
 	return ""
 }
 
 func (m *PodLogOptions) GetFollow() bool {
-	if m != nil {
-		return m.Follow
+	if m != nil && m.Follow != nil {
+		return *m.Follow
 	}
 	return false
 }
 
 func (m *PodLogOptions) GetPrevious() bool {
-	if m != nil {
-		return m.Previous
+	if m != nil && m.Previous != nil {
+		return *m.Previous
 	}
 	return false
 }
 
 func (m *PodLogOptions) GetSinceSeconds() int64 {
-	if m != nil {
-		return m.SinceSeconds
+	if m != nil && m.SinceSeconds != nil {
+		return *m.SinceSeconds
 	}
 	return 0
 }
@@ -4978,22 +5179,22 @@ func (m *PodLogOptions) GetSinceTime() *k8s_io_kubernetes_pkg_api_unversioned.Ti
 }
 
 func (m *PodLogOptions) GetTimestamps() bool {
-	if m != nil {
-		return m.Timestamps
+	if m != nil && m.Timestamps != nil {
+		return *m.Timestamps
 	}
 	return false
 }
 
 func (m *PodLogOptions) GetTailLines() int64 {
-	if m != nil {
-		return m.TailLines
+	if m != nil && m.TailLines != nil {
+		return *m.TailLines
 	}
 	return 0
 }
 
 func (m *PodLogOptions) GetLimitBytes() int64 {
-	if m != nil {
-		return m.LimitBytes
+	if m != nil && m.LimitBytes != nil {
+		return *m.LimitBytes
 	}
 	return 0
 }
@@ -5001,16 +5202,18 @@ func (m *PodLogOptions) GetLimitBytes() int64 {
 // PodProxyOptions is the query options to a Pod's proxy call.
 type PodProxyOptions struct {
 	// Path is the URL path to use for the current proxy request to pod.
-	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
+	Path             *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PodProxyOptions) Reset()                    { *m = PodProxyOptions{} }
+func (m *PodProxyOptions) String() string            { return proto.CompactTextString(m) }
 func (*PodProxyOptions) ProtoMessage()               {}
 func (*PodProxyOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{105} }
 
 func (m *PodProxyOptions) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
@@ -5030,14 +5233,14 @@ type PodSecurityContext struct {
 	// May also be set in SecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence
 	// for that container.
-	RunAsUser int64 `protobuf:"varint,2,opt,name=runAsUser" json:"runAsUser"`
+	RunAsUser *int64 `protobuf:"varint,2,opt,name=runAsUser" json:"runAsUser,omitempty"`
 	// Indicates that the container must run as a non-root user.
 	// If true, the Kubelet will validate the image at runtime to ensure that it
 	// does not run as UID 0 (root) and fail to start the container if it does.
 	// If unset or false, no such validation will be performed.
 	// May also be set in SecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence.
-	RunAsNonRoot bool `protobuf:"varint,3,opt,name=runAsNonRoot" json:"runAsNonRoot"`
+	RunAsNonRoot *bool `protobuf:"varint,3,opt,name=runAsNonRoot" json:"runAsNonRoot,omitempty"`
 	// A list of groups applied to the first process run in each container, in addition
 	// to the container's primary GID.  If unspecified, no groups will be added to
 	// any container.
@@ -5051,10 +5254,12 @@ type PodSecurityContext struct {
 	// 3. The permission bits are OR'd with rw-rw----
 	//
 	// If unset, the Kubelet will not modify the ownership and permissions of any volume.
-	FsGroup int64 `protobuf:"varint,5,opt,name=fsGroup" json:"fsGroup"`
+	FsGroup          *int64 `protobuf:"varint,5,opt,name=fsGroup" json:"fsGroup,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *PodSecurityContext) Reset()                    { *m = PodSecurityContext{} }
+func (m *PodSecurityContext) String() string            { return proto.CompactTextString(m) }
 func (*PodSecurityContext) ProtoMessage()               {}
 func (*PodSecurityContext) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{106} }
 
@@ -5066,15 +5271,15 @@ func (m *PodSecurityContext) GetSeLinuxOptions() *SELinuxOptions {
 }
 
 func (m *PodSecurityContext) GetRunAsUser() int64 {
-	if m != nil {
-		return m.RunAsUser
+	if m != nil && m.RunAsUser != nil {
+		return *m.RunAsUser
 	}
 	return 0
 }
 
 func (m *PodSecurityContext) GetRunAsNonRoot() bool {
-	if m != nil {
-		return m.RunAsNonRoot
+	if m != nil && m.RunAsNonRoot != nil {
+		return *m.RunAsNonRoot
 	}
 	return false
 }
@@ -5087,8 +5292,8 @@ func (m *PodSecurityContext) GetSupplementalGroups() []int64 {
 }
 
 func (m *PodSecurityContext) GetFsGroup() int64 {
-	if m != nil {
-		return m.FsGroup
+	if m != nil && m.FsGroup != nil {
+		return *m.FsGroup
 	}
 	return 0
 }
@@ -5097,10 +5302,12 @@ func (m *PodSecurityContext) GetFsGroup() int64 {
 // Exactly one field should be set.
 type PodSignature struct {
 	// Reference to controller whose pods should avoid this node.
-	PodController *OwnerReference `protobuf:"bytes,1,opt,name=podController" json:"podController,omitempty"`
+	PodController    *OwnerReference `protobuf:"bytes,1,opt,name=podController" json:"podController,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
 }
 
 func (m *PodSignature) Reset()                    { *m = PodSignature{} }
+func (m *PodSignature) String() string            { return proto.CompactTextString(m) }
 func (*PodSignature) ProtoMessage()               {}
 func (*PodSignature) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{107} }
 
@@ -5126,7 +5333,7 @@ type PodSpec struct {
 	// One of Always, OnFailure, Never.
 	// Default to Always.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#restartpolicy
-	RestartPolicy string `protobuf:"bytes,3,opt,name=restartPolicy" json:"restartPolicy"`
+	RestartPolicy *string `protobuf:"bytes,3,opt,name=restartPolicy" json:"restartPolicy,omitempty"`
 	// Optional duration in seconds the pod needs to terminate gracefully. May be decreased in delete request.
 	// Value must be non-negative integer. The value zero indicates delete immediately.
 	// If this value is nil, the default grace period will be used instead.
@@ -5134,43 +5341,43 @@ type PodSpec struct {
 	// a termination signal and the time when the processes are forcibly halted with a kill signal.
 	// Set this value longer than the expected cleanup time for your process.
 	// Defaults to 30 seconds.
-	TerminationGracePeriodSeconds int64 `protobuf:"varint,4,opt,name=terminationGracePeriodSeconds" json:"terminationGracePeriodSeconds"`
+	TerminationGracePeriodSeconds *int64 `protobuf:"varint,4,opt,name=terminationGracePeriodSeconds" json:"terminationGracePeriodSeconds,omitempty"`
 	// Optional duration in seconds the pod may be active on the node relative to
 	// StartTime before the system will actively try to mark it failed and kill associated containers.
 	// Value must be a positive integer.
-	ActiveDeadlineSeconds int64 `protobuf:"varint,5,opt,name=activeDeadlineSeconds" json:"activeDeadlineSeconds"`
+	ActiveDeadlineSeconds *int64 `protobuf:"varint,5,opt,name=activeDeadlineSeconds" json:"activeDeadlineSeconds,omitempty"`
 	// Set DNS policy for containers within the pod.
 	// One of 'ClusterFirst' or 'Default'.
 	// Defaults to "ClusterFirst".
-	DnsPolicy string `protobuf:"bytes,6,opt,name=dnsPolicy" json:"dnsPolicy"`
+	DnsPolicy *string `protobuf:"bytes,6,opt,name=dnsPolicy" json:"dnsPolicy,omitempty"`
 	// NodeSelector is a selector which must be true for the pod to fit on a node.
 	// Selector which must match a node's labels for the pod to be scheduled on that node.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/node-selection/README.md
 	NodeSelector map[string]string `protobuf:"bytes,7,rep,name=nodeSelector" json:"nodeSelector,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// ServiceAccountName is the name of the ServiceAccount to use to run this pod.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/service_accounts.md
-	ServiceAccountName string `protobuf:"bytes,8,opt,name=serviceAccountName" json:"serviceAccountName"`
+	ServiceAccountName *string `protobuf:"bytes,8,opt,name=serviceAccountName" json:"serviceAccountName,omitempty"`
 	// DeprecatedServiceAccount is a depreciated alias for ServiceAccountName.
 	// Deprecated: Use serviceAccountName instead.
 	// +k8s:conversion-gen=false
-	ServiceAccount string `protobuf:"bytes,9,opt,name=serviceAccount" json:"serviceAccount"`
+	ServiceAccount *string `protobuf:"bytes,9,opt,name=serviceAccount" json:"serviceAccount,omitempty"`
 	// NodeName is a request to schedule this pod onto a specific node. If it is non-empty,
 	// the scheduler simply schedules this pod onto that node, assuming that it fits resource
 	// requirements.
-	NodeName string `protobuf:"bytes,10,opt,name=nodeName" json:"nodeName"`
+	NodeName *string `protobuf:"bytes,10,opt,name=nodeName" json:"nodeName,omitempty"`
 	// Host networking requested for this pod. Use the host's network namespace.
 	// If this option is set, the ports that will be used must be specified.
 	// Default to false.
 	// +k8s:conversion-gen=false
-	HostNetwork bool `protobuf:"varint,11,opt,name=hostNetwork" json:"hostNetwork"`
+	HostNetwork *bool `protobuf:"varint,11,opt,name=hostNetwork" json:"hostNetwork,omitempty"`
 	// Use the host's pid namespace.
 	// Optional: Default to false.
 	// +k8s:conversion-gen=false
-	HostPID bool `protobuf:"varint,12,opt,name=hostPID" json:"hostPID"`
+	HostPID *bool `protobuf:"varint,12,opt,name=hostPID" json:"hostPID,omitempty"`
 	// Use the host's ipc namespace.
 	// Optional: Default to false.
 	// +k8s:conversion-gen=false
-	HostIPC bool `protobuf:"varint,13,opt,name=hostIPC" json:"hostIPC"`
+	HostIPC *bool `protobuf:"varint,13,opt,name=hostIPC" json:"hostIPC,omitempty"`
 	// SecurityContext holds pod-level security attributes and common container settings.
 	// Optional: Defaults to empty.  See type description for default values of each field.
 	SecurityContext *PodSecurityContext `protobuf:"bytes,14,opt,name=securityContext" json:"securityContext,omitempty"`
@@ -5181,13 +5388,15 @@ type PodSpec struct {
 	ImagePullSecrets []*LocalObjectReference `protobuf:"bytes,15,rep,name=imagePullSecrets" json:"imagePullSecrets,omitempty"`
 	// Specifies the hostname of the Pod
 	// If not specified, the pod's hostname will be set to a system-defined value.
-	Hostname string `protobuf:"bytes,16,opt,name=hostname" json:"hostname"`
+	Hostname *string `protobuf:"bytes,16,opt,name=hostname" json:"hostname,omitempty"`
 	// If specified, the fully qualified Pod hostname will be "<hostname>.<subdomain>.<pod namespace>.svc.<cluster domain>".
 	// If not specified, the pod will not have a domainname at all.
-	Subdomain string `protobuf:"bytes,17,opt,name=subdomain" json:"subdomain"`
+	Subdomain        *string `protobuf:"bytes,17,opt,name=subdomain" json:"subdomain,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PodSpec) Reset()                    { *m = PodSpec{} }
+func (m *PodSpec) String() string            { return proto.CompactTextString(m) }
 func (*PodSpec) ProtoMessage()               {}
 func (*PodSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{108} }
 
@@ -5206,29 +5415,29 @@ func (m *PodSpec) GetContainers() []*Container {
 }
 
 func (m *PodSpec) GetRestartPolicy() string {
-	if m != nil {
-		return m.RestartPolicy
+	if m != nil && m.RestartPolicy != nil {
+		return *m.RestartPolicy
 	}
 	return ""
 }
 
 func (m *PodSpec) GetTerminationGracePeriodSeconds() int64 {
-	if m != nil {
-		return m.TerminationGracePeriodSeconds
+	if m != nil && m.TerminationGracePeriodSeconds != nil {
+		return *m.TerminationGracePeriodSeconds
 	}
 	return 0
 }
 
 func (m *PodSpec) GetActiveDeadlineSeconds() int64 {
-	if m != nil {
-		return m.ActiveDeadlineSeconds
+	if m != nil && m.ActiveDeadlineSeconds != nil {
+		return *m.ActiveDeadlineSeconds
 	}
 	return 0
 }
 
 func (m *PodSpec) GetDnsPolicy() string {
-	if m != nil {
-		return m.DnsPolicy
+	if m != nil && m.DnsPolicy != nil {
+		return *m.DnsPolicy
 	}
 	return ""
 }
@@ -5241,43 +5450,43 @@ func (m *PodSpec) GetNodeSelector() map[string]string {
 }
 
 func (m *PodSpec) GetServiceAccountName() string {
-	if m != nil {
-		return m.ServiceAccountName
+	if m != nil && m.ServiceAccountName != nil {
+		return *m.ServiceAccountName
 	}
 	return ""
 }
 
 func (m *PodSpec) GetServiceAccount() string {
-	if m != nil {
-		return m.ServiceAccount
+	if m != nil && m.ServiceAccount != nil {
+		return *m.ServiceAccount
 	}
 	return ""
 }
 
 func (m *PodSpec) GetNodeName() string {
-	if m != nil {
-		return m.NodeName
+	if m != nil && m.NodeName != nil {
+		return *m.NodeName
 	}
 	return ""
 }
 
 func (m *PodSpec) GetHostNetwork() bool {
-	if m != nil {
-		return m.HostNetwork
+	if m != nil && m.HostNetwork != nil {
+		return *m.HostNetwork
 	}
 	return false
 }
 
 func (m *PodSpec) GetHostPID() bool {
-	if m != nil {
-		return m.HostPID
+	if m != nil && m.HostPID != nil {
+		return *m.HostPID
 	}
 	return false
 }
 
 func (m *PodSpec) GetHostIPC() bool {
-	if m != nil {
-		return m.HostIPC
+	if m != nil && m.HostIPC != nil {
+		return *m.HostIPC
 	}
 	return false
 }
@@ -5297,15 +5506,15 @@ func (m *PodSpec) GetImagePullSecrets() []*LocalObjectReference {
 }
 
 func (m *PodSpec) GetHostname() string {
-	if m != nil {
-		return m.Hostname
+	if m != nil && m.Hostname != nil {
+		return *m.Hostname
 	}
 	return ""
 }
 
 func (m *PodSpec) GetSubdomain() string {
-	if m != nil {
-		return m.Subdomain
+	if m != nil && m.Subdomain != nil {
+		return *m.Subdomain
 	}
 	return ""
 }
@@ -5315,20 +5524,20 @@ func (m *PodSpec) GetSubdomain() string {
 type PodStatus struct {
 	// Current condition of the pod.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-phase
-	Phase string `protobuf:"bytes,1,opt,name=phase" json:"phase"`
+	Phase *string `protobuf:"bytes,1,opt,name=phase" json:"phase,omitempty"`
 	// Current service state of pod.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#pod-conditions
 	Conditions []*PodCondition `protobuf:"bytes,2,rep,name=conditions" json:"conditions,omitempty"`
 	// A human readable message indicating details about why the pod is in this condition.
-	Message string `protobuf:"bytes,3,opt,name=message" json:"message"`
+	Message *string `protobuf:"bytes,3,opt,name=message" json:"message,omitempty"`
 	// A brief CamelCase message indicating details about why the pod is in this state.
 	// e.g. 'OutOfDisk'
-	Reason string `protobuf:"bytes,4,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,4,opt,name=reason" json:"reason,omitempty"`
 	// IP address of the host to which the pod is assigned. Empty if not yet scheduled.
-	HostIP string `protobuf:"bytes,5,opt,name=hostIP" json:"hostIP"`
+	HostIP *string `protobuf:"bytes,5,opt,name=hostIP" json:"hostIP,omitempty"`
 	// IP address allocated to the pod. Routable at least within the cluster.
 	// Empty if not yet allocated.
-	PodIP string `protobuf:"bytes,6,opt,name=podIP" json:"podIP"`
+	PodIP *string `protobuf:"bytes,6,opt,name=podIP" json:"podIP,omitempty"`
 	// RFC 3339 date and time at which the object was acknowledged by the Kubelet.
 	// This is before the Kubelet pulled the container image(s) for the pod.
 	StartTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,7,opt,name=startTime" json:"startTime,omitempty"`
@@ -5336,15 +5545,17 @@ type PodStatus struct {
 	// of `docker inspect`.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-statuses
 	ContainerStatuses []*ContainerStatus `protobuf:"bytes,8,rep,name=containerStatuses" json:"containerStatuses,omitempty"`
+	XXX_unrecognized  []byte             `json:"-"`
 }
 
 func (m *PodStatus) Reset()                    { *m = PodStatus{} }
+func (m *PodStatus) String() string            { return proto.CompactTextString(m) }
 func (*PodStatus) ProtoMessage()               {}
 func (*PodStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{109} }
 
 func (m *PodStatus) GetPhase() string {
-	if m != nil {
-		return m.Phase
+	if m != nil && m.Phase != nil {
+		return *m.Phase
 	}
 	return ""
 }
@@ -5357,29 +5568,29 @@ func (m *PodStatus) GetConditions() []*PodCondition {
 }
 
 func (m *PodStatus) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
 
 func (m *PodStatus) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *PodStatus) GetHostIP() string {
-	if m != nil {
-		return m.HostIP
+	if m != nil && m.HostIP != nil {
+		return *m.HostIP
 	}
 	return ""
 }
 
 func (m *PodStatus) GetPodIP() string {
-	if m != nil {
-		return m.PodIP
+	if m != nil && m.PodIP != nil {
+		return *m.PodIP
 	}
 	return ""
 }
@@ -5408,10 +5619,12 @@ type PodStatusResult struct {
 	// Populated by the system.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *PodStatus `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
+	Status           *PodStatus `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte     `json:"-"`
 }
 
 func (m *PodStatusResult) Reset()                    { *m = PodStatusResult{} }
+func (m *PodStatusResult) String() string            { return proto.CompactTextString(m) }
 func (*PodStatusResult) ProtoMessage()               {}
 func (*PodStatusResult) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{110} }
 
@@ -5436,10 +5649,12 @@ type PodTemplate struct {
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Template defines the pods that will be created from this pod template.
 	// http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Template *PodTemplateSpec `protobuf:"bytes,2,opt,name=template" json:"template,omitempty"`
+	Template         *PodTemplateSpec `protobuf:"bytes,2,opt,name=template" json:"template,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *PodTemplate) Reset()                    { *m = PodTemplate{} }
+func (m *PodTemplate) String() string            { return proto.CompactTextString(m) }
 func (*PodTemplate) ProtoMessage()               {}
 func (*PodTemplate) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{111} }
 
@@ -5463,10 +5678,12 @@ type PodTemplateList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of pod templates
-	Items []*PodTemplate `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*PodTemplate `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte         `json:"-"`
 }
 
 func (m *PodTemplateList) Reset()                    { *m = PodTemplateList{} }
+func (m *PodTemplateList) String() string            { return proto.CompactTextString(m) }
 func (*PodTemplateList) ProtoMessage()               {}
 func (*PodTemplateList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{112} }
 
@@ -5491,10 +5708,12 @@ type PodTemplateSpec struct {
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Specification of the desired behavior of the pod.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Spec *PodSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
+	Spec             *PodSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *PodTemplateSpec) Reset()                    { *m = PodTemplateSpec{} }
+func (m *PodTemplateSpec) String() string            { return proto.CompactTextString(m) }
 func (*PodTemplateSpec) ProtoMessage()               {}
 func (*PodTemplateSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{113} }
 
@@ -5515,16 +5734,18 @@ func (m *PodTemplateSpec) GetSpec() *PodSpec {
 // Preconditions must be fulfilled before an operation (update, delete, etc.) is carried out.
 type Preconditions struct {
 	// Specifies the target UID.
-	Uid string `protobuf:"bytes,1,opt,name=uid" json:"uid"`
+	Uid              *string `protobuf:"bytes,1,opt,name=uid" json:"uid,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *Preconditions) Reset()                    { *m = Preconditions{} }
+func (m *Preconditions) String() string            { return proto.CompactTextString(m) }
 func (*Preconditions) ProtoMessage()               {}
 func (*Preconditions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{114} }
 
 func (m *Preconditions) GetUid() string {
-	if m != nil {
-		return m.Uid
+	if m != nil && m.Uid != nil {
+		return *m.Uid
 	}
 	return ""
 }
@@ -5536,12 +5757,14 @@ type PreferAvoidPodsEntry struct {
 	// Time at which this entry was added to the list.
 	EvictionTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,2,opt,name=evictionTime" json:"evictionTime,omitempty"`
 	// (brief) reason why this entry was added to the list.
-	Reason string `protobuf:"bytes,3,opt,name=reason" json:"reason"`
+	Reason *string `protobuf:"bytes,3,opt,name=reason" json:"reason,omitempty"`
 	// Human readable message indicating why this entry was added to the list.
-	Message string `protobuf:"bytes,4,opt,name=message" json:"message"`
+	Message          *string `protobuf:"bytes,4,opt,name=message" json:"message,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *PreferAvoidPodsEntry) Reset()                    { *m = PreferAvoidPodsEntry{} }
+func (m *PreferAvoidPodsEntry) String() string            { return proto.CompactTextString(m) }
 func (*PreferAvoidPodsEntry) ProtoMessage()               {}
 func (*PreferAvoidPodsEntry) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{115} }
 
@@ -5560,15 +5783,15 @@ func (m *PreferAvoidPodsEntry) GetEvictionTime() *k8s_io_kubernetes_pkg_api_unve
 }
 
 func (m *PreferAvoidPodsEntry) GetReason() string {
-	if m != nil {
-		return m.Reason
+	if m != nil && m.Reason != nil {
+		return *m.Reason
 	}
 	return ""
 }
 
 func (m *PreferAvoidPodsEntry) GetMessage() string {
-	if m != nil {
-		return m.Message
+	if m != nil && m.Message != nil {
+		return *m.Message
 	}
 	return ""
 }
@@ -5577,20 +5800,22 @@ func (m *PreferAvoidPodsEntry) GetMessage() string {
 // (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
 type PreferredSchedulingTerm struct {
 	// Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
-	Weight int32 `protobuf:"varint,1,opt,name=weight" json:"weight"`
+	Weight *int32 `protobuf:"varint,1,opt,name=weight" json:"weight,omitempty"`
 	// A node selector term, associated with the corresponding weight.
-	Preference *NodeSelectorTerm `protobuf:"bytes,2,opt,name=preference" json:"preference,omitempty"`
+	Preference       *NodeSelectorTerm `protobuf:"bytes,2,opt,name=preference" json:"preference,omitempty"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
-func (m *PreferredSchedulingTerm) Reset()      { *m = PreferredSchedulingTerm{} }
-func (*PreferredSchedulingTerm) ProtoMessage() {}
+func (m *PreferredSchedulingTerm) Reset()         { *m = PreferredSchedulingTerm{} }
+func (m *PreferredSchedulingTerm) String() string { return proto.CompactTextString(m) }
+func (*PreferredSchedulingTerm) ProtoMessage()    {}
 func (*PreferredSchedulingTerm) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{116}
 }
 
 func (m *PreferredSchedulingTerm) GetWeight() int32 {
-	if m != nil {
-		return m.Weight
+	if m != nil && m.Weight != nil {
+		return *m.Weight
 	}
 	return 0
 }
@@ -5609,23 +5834,25 @@ type Probe struct {
 	Handler *Handler `protobuf:"bytes,1,opt,name=handler" json:"handler,omitempty"`
 	// Number of seconds after the container has started before liveness probes are initiated.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-probes
-	InitialDelaySeconds int32 `protobuf:"varint,2,opt,name=initialDelaySeconds" json:"initialDelaySeconds"`
+	InitialDelaySeconds *int32 `protobuf:"varint,2,opt,name=initialDelaySeconds" json:"initialDelaySeconds,omitempty"`
 	// Number of seconds after which the probe times out.
 	// Defaults to 1 second. Minimum value is 1.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/pod-states.md#container-probes
-	TimeoutSeconds int32 `protobuf:"varint,3,opt,name=timeoutSeconds" json:"timeoutSeconds"`
+	TimeoutSeconds *int32 `protobuf:"varint,3,opt,name=timeoutSeconds" json:"timeoutSeconds,omitempty"`
 	// How often (in seconds) to perform the probe.
 	// Default to 10 seconds. Minimum value is 1.
-	PeriodSeconds int32 `protobuf:"varint,4,opt,name=periodSeconds" json:"periodSeconds"`
+	PeriodSeconds *int32 `protobuf:"varint,4,opt,name=periodSeconds" json:"periodSeconds,omitempty"`
 	// Minimum consecutive successes for the probe to be considered successful after having failed.
 	// Defaults to 1. Must be 1 for liveness. Minimum value is 1.
-	SuccessThreshold int32 `protobuf:"varint,5,opt,name=successThreshold" json:"successThreshold"`
+	SuccessThreshold *int32 `protobuf:"varint,5,opt,name=successThreshold" json:"successThreshold,omitempty"`
 	// Minimum consecutive failures for the probe to be considered failed after having succeeded.
 	// Defaults to 3. Minimum value is 1.
-	FailureThreshold int32 `protobuf:"varint,6,opt,name=failureThreshold" json:"failureThreshold"`
+	FailureThreshold *int32 `protobuf:"varint,6,opt,name=failureThreshold" json:"failureThreshold,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *Probe) Reset()                    { *m = Probe{} }
+func (m *Probe) String() string            { return proto.CompactTextString(m) }
 func (*Probe) ProtoMessage()               {}
 func (*Probe) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{117} }
 
@@ -5637,36 +5864,36 @@ func (m *Probe) GetHandler() *Handler {
 }
 
 func (m *Probe) GetInitialDelaySeconds() int32 {
-	if m != nil {
-		return m.InitialDelaySeconds
+	if m != nil && m.InitialDelaySeconds != nil {
+		return *m.InitialDelaySeconds
 	}
 	return 0
 }
 
 func (m *Probe) GetTimeoutSeconds() int32 {
-	if m != nil {
-		return m.TimeoutSeconds
+	if m != nil && m.TimeoutSeconds != nil {
+		return *m.TimeoutSeconds
 	}
 	return 0
 }
 
 func (m *Probe) GetPeriodSeconds() int32 {
-	if m != nil {
-		return m.PeriodSeconds
+	if m != nil && m.PeriodSeconds != nil {
+		return *m.PeriodSeconds
 	}
 	return 0
 }
 
 func (m *Probe) GetSuccessThreshold() int32 {
-	if m != nil {
-		return m.SuccessThreshold
+	if m != nil && m.SuccessThreshold != nil {
+		return *m.SuccessThreshold
 	}
 	return 0
 }
 
 func (m *Probe) GetFailureThreshold() int32 {
-	if m != nil {
-		return m.FailureThreshold
+	if m != nil && m.FailureThreshold != nil {
+		return *m.FailureThreshold
 	}
 	return 0
 }
@@ -5677,55 +5904,57 @@ type QuobyteVolumeSource struct {
 	// Registry represents a single or multiple Quobyte Registry services
 	// specified as a string as host:port pair (multiple entries are separated with commas)
 	// which acts as the central registry for volumes
-	Registry string `protobuf:"bytes,1,opt,name=registry" json:"registry"`
+	Registry *string `protobuf:"bytes,1,opt,name=registry" json:"registry,omitempty"`
 	// Volume is a string that references an already created Quobyte volume by name.
-	Volume string `protobuf:"bytes,2,opt,name=volume" json:"volume"`
+	Volume *string `protobuf:"bytes,2,opt,name=volume" json:"volume,omitempty"`
 	// ReadOnly here will force the Quobyte volume to be mounted with read-only permissions.
 	// Defaults to false.
-	ReadOnly bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly"`
+	ReadOnly *bool `protobuf:"varint,3,opt,name=readOnly" json:"readOnly,omitempty"`
 	// User to map volume access to
 	// Defaults to serivceaccount user
-	User string `protobuf:"bytes,4,opt,name=user" json:"user"`
+	User *string `protobuf:"bytes,4,opt,name=user" json:"user,omitempty"`
 	// Group to map volume access to
 	// Default is no group
-	Group string `protobuf:"bytes,5,opt,name=group" json:"group"`
+	Group            *string `protobuf:"bytes,5,opt,name=group" json:"group,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *QuobyteVolumeSource) Reset()                    { *m = QuobyteVolumeSource{} }
+func (m *QuobyteVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*QuobyteVolumeSource) ProtoMessage()               {}
 func (*QuobyteVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{118} }
 
 func (m *QuobyteVolumeSource) GetRegistry() string {
-	if m != nil {
-		return m.Registry
+	if m != nil && m.Registry != nil {
+		return *m.Registry
 	}
 	return ""
 }
 
 func (m *QuobyteVolumeSource) GetVolume() string {
-	if m != nil {
-		return m.Volume
+	if m != nil && m.Volume != nil {
+		return *m.Volume
 	}
 	return ""
 }
 
 func (m *QuobyteVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
 
 func (m *QuobyteVolumeSource) GetUser() string {
-	if m != nil {
-		return m.User
+	if m != nil && m.User != nil {
+		return *m.User
 	}
 	return ""
 }
 
 func (m *QuobyteVolumeSource) GetGroup() string {
-	if m != nil {
-		return m.Group
+	if m != nil && m.Group != nil {
+		return *m.Group
 	}
 	return ""
 }
@@ -5738,25 +5967,25 @@ type RBDVolumeSource struct {
 	Monitors []string `protobuf:"bytes,1,rep,name=monitors" json:"monitors,omitempty"`
 	// The rados image name.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
-	Image string `protobuf:"bytes,2,opt,name=image" json:"image"`
+	Image *string `protobuf:"bytes,2,opt,name=image" json:"image,omitempty"`
 	// Filesystem type of the volume that you want to mount.
 	// Tip: Ensure that the filesystem type is supported by the host operating system.
 	// Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#rbd
 	// TODO: how do we prevent errors in the filesystem from compromising the machine
-	FsType string `protobuf:"bytes,3,opt,name=fsType" json:"fsType"`
+	FsType *string `protobuf:"bytes,3,opt,name=fsType" json:"fsType,omitempty"`
 	// The rados pool name.
 	// Default is rbd.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it.
-	Pool string `protobuf:"bytes,4,opt,name=pool" json:"pool"`
+	Pool *string `protobuf:"bytes,4,opt,name=pool" json:"pool,omitempty"`
 	// The rados user name.
 	// Default is admin.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
-	User string `protobuf:"bytes,5,opt,name=user" json:"user"`
+	User *string `protobuf:"bytes,5,opt,name=user" json:"user,omitempty"`
 	// Keyring is the path to key ring for RBDUser.
 	// Default is /etc/ceph/keyring.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
-	Keyring string `protobuf:"bytes,6,opt,name=keyring" json:"keyring"`
+	Keyring *string `protobuf:"bytes,6,opt,name=keyring" json:"keyring,omitempty"`
 	// SecretRef is name of the authentication secret for RBDUser. If provided
 	// overrides keyring.
 	// Default is nil.
@@ -5765,10 +5994,12 @@ type RBDVolumeSource struct {
 	// ReadOnly here will force the ReadOnly setting in VolumeMounts.
 	// Defaults to false.
 	// More info: http://releases.k8s.io/release-1.4/examples/volumes/rbd/README.md#how-to-use-it
-	ReadOnly bool `protobuf:"varint,8,opt,name=readOnly" json:"readOnly"`
+	ReadOnly         *bool  `protobuf:"varint,8,opt,name=readOnly" json:"readOnly,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *RBDVolumeSource) Reset()                    { *m = RBDVolumeSource{} }
+func (m *RBDVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*RBDVolumeSource) ProtoMessage()               {}
 func (*RBDVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{119} }
 
@@ -5780,36 +6011,36 @@ func (m *RBDVolumeSource) GetMonitors() []string {
 }
 
 func (m *RBDVolumeSource) GetImage() string {
-	if m != nil {
-		return m.Image
+	if m != nil && m.Image != nil {
+		return *m.Image
 	}
 	return ""
 }
 
 func (m *RBDVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
 
 func (m *RBDVolumeSource) GetPool() string {
-	if m != nil {
-		return m.Pool
+	if m != nil && m.Pool != nil {
+		return *m.Pool
 	}
 	return ""
 }
 
 func (m *RBDVolumeSource) GetUser() string {
-	if m != nil {
-		return m.User
+	if m != nil && m.User != nil {
+		return *m.User
 	}
 	return ""
 }
 
 func (m *RBDVolumeSource) GetKeyring() string {
-	if m != nil {
-		return m.Keyring
+	if m != nil && m.Keyring != nil {
+		return *m.Keyring
 	}
 	return ""
 }
@@ -5822,8 +6053,8 @@ func (m *RBDVolumeSource) GetSecretRef() *LocalObjectReference {
 }
 
 func (m *RBDVolumeSource) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
@@ -5834,12 +6065,14 @@ type RangeAllocation struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
 	Metadata *ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Range is string that identifies the range represented by 'data'.
-	Range string `protobuf:"bytes,2,opt,name=range" json:"range"`
+	Range *string `protobuf:"bytes,2,opt,name=range" json:"range,omitempty"`
 	// Data is a bit array containing all allocated addresses in the previous segment.
-	Data []byte `protobuf:"bytes,3,opt,name=data" json:"data"`
+	Data             []byte `protobuf:"bytes,3,opt,name=data" json:"data,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *RangeAllocation) Reset()                    { *m = RangeAllocation{} }
+func (m *RangeAllocation) String() string            { return proto.CompactTextString(m) }
 func (*RangeAllocation) ProtoMessage()               {}
 func (*RangeAllocation) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{120} }
 
@@ -5851,8 +6084,8 @@ func (m *RangeAllocation) GetMetadata() *ObjectMeta {
 }
 
 func (m *RangeAllocation) GetRange() string {
-	if m != nil {
-		return m.Range
+	if m != nil && m.Range != nil {
+		return *m.Range
 	}
 	return ""
 }
@@ -5878,10 +6111,12 @@ type ReplicationController struct {
 	// Populated by the system.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *ReplicationControllerStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *ReplicationControllerStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte                       `json:"-"`
 }
 
 func (m *ReplicationController) Reset()                    { *m = ReplicationController{} }
+func (m *ReplicationController) String() string            { return proto.CompactTextString(m) }
 func (*ReplicationController) ProtoMessage()               {}
 func (*ReplicationController) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{121} }
 
@@ -5913,11 +6148,13 @@ type ReplicationControllerList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of replication controllers.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md
-	Items []*ReplicationController `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*ReplicationController `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                   `json:"-"`
 }
 
-func (m *ReplicationControllerList) Reset()      { *m = ReplicationControllerList{} }
-func (*ReplicationControllerList) ProtoMessage() {}
+func (m *ReplicationControllerList) Reset()         { *m = ReplicationControllerList{} }
+func (m *ReplicationControllerList) String() string { return proto.CompactTextString(m) }
+func (*ReplicationControllerList) ProtoMessage()    {}
 func (*ReplicationControllerList) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{122}
 }
@@ -5942,7 +6179,7 @@ type ReplicationControllerSpec struct {
 	// This is a pointer to distinguish between explicit zero and unspecified.
 	// Defaults to 1.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md#what-is-a-replication-controller
-	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
+	Replicas *int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas,omitempty"`
 	// Selector is a label query over pods that should match the Replicas count.
 	// If Selector is empty, it is defaulted to the labels present on the Pod template.
 	// Label keys and values that must match in order to be controlled by this replication
@@ -5952,18 +6189,20 @@ type ReplicationControllerSpec struct {
 	// Template is the object that describes the pod that will be created if
 	// insufficient replicas are detected. This takes precedence over a TemplateRef.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md#pod-template
-	Template *PodTemplateSpec `protobuf:"bytes,3,opt,name=template" json:"template,omitempty"`
+	Template         *PodTemplateSpec `protobuf:"bytes,3,opt,name=template" json:"template,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
-func (m *ReplicationControllerSpec) Reset()      { *m = ReplicationControllerSpec{} }
-func (*ReplicationControllerSpec) ProtoMessage() {}
+func (m *ReplicationControllerSpec) Reset()         { *m = ReplicationControllerSpec{} }
+func (m *ReplicationControllerSpec) String() string { return proto.CompactTextString(m) }
+func (*ReplicationControllerSpec) ProtoMessage()    {}
 func (*ReplicationControllerSpec) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{123}
 }
 
 func (m *ReplicationControllerSpec) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
@@ -5987,45 +6226,47 @@ func (m *ReplicationControllerSpec) GetTemplate() *PodTemplateSpec {
 type ReplicationControllerStatus struct {
 	// Replicas is the most recently oberved number of replicas.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/replication-controller.md#what-is-a-replication-controller
-	Replicas int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas"`
+	Replicas *int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas,omitempty"`
 	// The number of pods that have labels matching the labels of the pod template of the replication controller.
-	FullyLabeledReplicas int32 `protobuf:"varint,2,opt,name=fullyLabeledReplicas" json:"fullyLabeledReplicas"`
+	FullyLabeledReplicas *int32 `protobuf:"varint,2,opt,name=fullyLabeledReplicas" json:"fullyLabeledReplicas,omitempty"`
 	// The number of ready replicas for this replication controller.
-	ReadyReplicas int32 `protobuf:"varint,4,opt,name=readyReplicas" json:"readyReplicas"`
+	ReadyReplicas *int32 `protobuf:"varint,4,opt,name=readyReplicas" json:"readyReplicas,omitempty"`
 	// ObservedGeneration reflects the generation of the most recently observed replication controller.
-	ObservedGeneration int64 `protobuf:"varint,3,opt,name=observedGeneration" json:"observedGeneration"`
+	ObservedGeneration *int64 `protobuf:"varint,3,opt,name=observedGeneration" json:"observedGeneration,omitempty"`
+	XXX_unrecognized   []byte `json:"-"`
 }
 
-func (m *ReplicationControllerStatus) Reset()      { *m = ReplicationControllerStatus{} }
-func (*ReplicationControllerStatus) ProtoMessage() {}
+func (m *ReplicationControllerStatus) Reset()         { *m = ReplicationControllerStatus{} }
+func (m *ReplicationControllerStatus) String() string { return proto.CompactTextString(m) }
+func (*ReplicationControllerStatus) ProtoMessage()    {}
 func (*ReplicationControllerStatus) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{124}
 }
 
 func (m *ReplicationControllerStatus) GetReplicas() int32 {
-	if m != nil {
-		return m.Replicas
+	if m != nil && m.Replicas != nil {
+		return *m.Replicas
 	}
 	return 0
 }
 
 func (m *ReplicationControllerStatus) GetFullyLabeledReplicas() int32 {
-	if m != nil {
-		return m.FullyLabeledReplicas
+	if m != nil && m.FullyLabeledReplicas != nil {
+		return *m.FullyLabeledReplicas
 	}
 	return 0
 }
 
 func (m *ReplicationControllerStatus) GetReadyReplicas() int32 {
-	if m != nil {
-		return m.ReadyReplicas
+	if m != nil && m.ReadyReplicas != nil {
+		return *m.ReadyReplicas
 	}
 	return 0
 }
 
 func (m *ReplicationControllerStatus) GetObservedGeneration() int64 {
-	if m != nil {
-		return m.ObservedGeneration
+	if m != nil && m.ObservedGeneration != nil {
+		return *m.ObservedGeneration
 	}
 	return 0
 }
@@ -6033,27 +6274,29 @@ func (m *ReplicationControllerStatus) GetObservedGeneration() int64 {
 // ResourceFieldSelector represents container resources (cpu, memory) and their output format
 type ResourceFieldSelector struct {
 	// Container name: required for volumes, optional for env vars
-	ContainerName string `protobuf:"bytes,1,opt,name=containerName" json:"containerName"`
+	ContainerName *string `protobuf:"bytes,1,opt,name=containerName" json:"containerName,omitempty"`
 	// Required: resource to select
-	Resource string `protobuf:"bytes,2,opt,name=resource" json:"resource"`
+	Resource *string `protobuf:"bytes,2,opt,name=resource" json:"resource,omitempty"`
 	// Specifies the output format of the exposed resources, defaults to "1"
-	Divisor *k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,3,opt,name=divisor" json:"divisor,omitempty"`
+	Divisor          *k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,3,opt,name=divisor" json:"divisor,omitempty"`
+	XXX_unrecognized []byte                                       `json:"-"`
 }
 
 func (m *ResourceFieldSelector) Reset()                    { *m = ResourceFieldSelector{} }
+func (m *ResourceFieldSelector) String() string            { return proto.CompactTextString(m) }
 func (*ResourceFieldSelector) ProtoMessage()               {}
 func (*ResourceFieldSelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{125} }
 
 func (m *ResourceFieldSelector) GetContainerName() string {
-	if m != nil {
-		return m.ContainerName
+	if m != nil && m.ContainerName != nil {
+		return *m.ContainerName
 	}
 	return ""
 }
 
 func (m *ResourceFieldSelector) GetResource() string {
-	if m != nil {
-		return m.Resource
+	if m != nil && m.Resource != nil {
+		return *m.Resource
 	}
 	return ""
 }
@@ -6075,10 +6318,12 @@ type ResourceQuota struct {
 	Spec *ResourceQuotaSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status defines the actual enforced quota and its current usage.
 	// http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *ResourceQuotaStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *ResourceQuotaStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte               `json:"-"`
 }
 
 func (m *ResourceQuota) Reset()                    { *m = ResourceQuota{} }
+func (m *ResourceQuota) String() string            { return proto.CompactTextString(m) }
 func (*ResourceQuota) ProtoMessage()               {}
 func (*ResourceQuota) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{126} }
 
@@ -6110,10 +6355,12 @@ type ResourceQuotaList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of ResourceQuota objects.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
-	Items []*ResourceQuota `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*ResourceQuota `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *ResourceQuotaList) Reset()                    { *m = ResourceQuotaList{} }
+func (m *ResourceQuotaList) String() string            { return proto.CompactTextString(m) }
 func (*ResourceQuotaList) ProtoMessage()               {}
 func (*ResourceQuotaList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{127} }
 
@@ -6138,10 +6385,12 @@ type ResourceQuotaSpec struct {
 	Hard map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,1,rep,name=hard" json:"hard,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// A collection of filters that must match each object tracked by a quota.
 	// If not specified, the quota matches all objects.
-	Scopes []string `protobuf:"bytes,2,rep,name=scopes" json:"scopes,omitempty"`
+	Scopes           []string `protobuf:"bytes,2,rep,name=scopes" json:"scopes,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *ResourceQuotaSpec) Reset()                    { *m = ResourceQuotaSpec{} }
+func (m *ResourceQuotaSpec) String() string            { return proto.CompactTextString(m) }
 func (*ResourceQuotaSpec) ProtoMessage()               {}
 func (*ResourceQuotaSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{128} }
 
@@ -6165,10 +6414,12 @@ type ResourceQuotaStatus struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/design/admission_control_resource_quota.md#admissioncontrol-plugin-resourcequota
 	Hard map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,1,rep,name=hard" json:"hard,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Used is the current observed total usage of the resource in the namespace.
-	Used map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=used" json:"used,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Used             map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=used" json:"used,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized []byte                                                  `json:"-"`
 }
 
 func (m *ResourceQuotaStatus) Reset()                    { *m = ResourceQuotaStatus{} }
+func (m *ResourceQuotaStatus) String() string            { return proto.CompactTextString(m) }
 func (*ResourceQuotaStatus) ProtoMessage()               {}
 func (*ResourceQuotaStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{129} }
 
@@ -6195,10 +6446,12 @@ type ResourceRequirements struct {
 	// If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
 	// otherwise to an implementation-defined value.
 	// More info: http://kubernetes.io/docs/user-guide/compute-resources/
-	Requests map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=requests" json:"requests,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Requests         map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity `protobuf:"bytes,2,rep,name=requests" json:"requests,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_unrecognized []byte                                                  `json:"-"`
 }
 
 func (m *ResourceRequirements) Reset()                    { *m = ResourceRequirements{} }
+func (m *ResourceRequirements) String() string            { return proto.CompactTextString(m) }
 func (*ResourceRequirements) ProtoMessage()               {}
 func (*ResourceRequirements) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{130} }
 
@@ -6219,43 +6472,45 @@ func (m *ResourceRequirements) GetRequests() map[string]*k8s_io_kubernetes_pkg_a
 // SELinuxOptions are the labels to be applied to the container
 type SELinuxOptions struct {
 	// User is a SELinux user label that applies to the container.
-	User string `protobuf:"bytes,1,opt,name=user" json:"user"`
+	User *string `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
 	// Role is a SELinux role label that applies to the container.
-	Role string `protobuf:"bytes,2,opt,name=role" json:"role"`
+	Role *string `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
 	// Type is a SELinux type label that applies to the container.
-	Type string `protobuf:"bytes,3,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,3,opt,name=type" json:"type,omitempty"`
 	// Level is SELinux level label that applies to the container.
-	Level string `protobuf:"bytes,4,opt,name=level" json:"level"`
+	Level            *string `protobuf:"bytes,4,opt,name=level" json:"level,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *SELinuxOptions) Reset()                    { *m = SELinuxOptions{} }
+func (m *SELinuxOptions) String() string            { return proto.CompactTextString(m) }
 func (*SELinuxOptions) ProtoMessage()               {}
 func (*SELinuxOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{131} }
 
 func (m *SELinuxOptions) GetUser() string {
-	if m != nil {
-		return m.User
+	if m != nil && m.User != nil {
+		return *m.User
 	}
 	return ""
 }
 
 func (m *SELinuxOptions) GetRole() string {
-	if m != nil {
-		return m.Role
+	if m != nil && m.Role != nil {
+		return *m.Role
 	}
 	return ""
 }
 
 func (m *SELinuxOptions) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
 
 func (m *SELinuxOptions) GetLevel() string {
-	if m != nil {
-		return m.Level
+	if m != nil && m.Level != nil {
+		return *m.Level
 	}
 	return ""
 }
@@ -6279,10 +6534,12 @@ type Secret struct {
 	// +k8s:conversion-gen=false
 	StringData map[string]string `protobuf:"bytes,4,rep,name=stringData" json:"stringData,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Used to facilitate programmatic handling of secret data.
-	Type string `protobuf:"bytes,3,opt,name=type" json:"type"`
+	Type             *string `protobuf:"bytes,3,opt,name=type" json:"type,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *Secret) Reset()                    { *m = Secret{} }
+func (m *Secret) String() string            { return proto.CompactTextString(m) }
 func (*Secret) ProtoMessage()               {}
 func (*Secret) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{132} }
 
@@ -6308,8 +6565,8 @@ func (m *Secret) GetStringData() map[string]string {
 }
 
 func (m *Secret) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
@@ -6319,10 +6576,12 @@ type SecretKeySelector struct {
 	// The name of the secret in the pod's namespace to select from.
 	LocalObjectReference *LocalObjectReference `protobuf:"bytes,1,opt,name=localObjectReference" json:"localObjectReference,omitempty"`
 	// The key of the secret to select from.  Must be a valid secret key.
-	Key string `protobuf:"bytes,2,opt,name=key" json:"key"`
+	Key              *string `protobuf:"bytes,2,opt,name=key" json:"key,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *SecretKeySelector) Reset()                    { *m = SecretKeySelector{} }
+func (m *SecretKeySelector) String() string            { return proto.CompactTextString(m) }
 func (*SecretKeySelector) ProtoMessage()               {}
 func (*SecretKeySelector) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{133} }
 
@@ -6334,8 +6593,8 @@ func (m *SecretKeySelector) GetLocalObjectReference() *LocalObjectReference {
 }
 
 func (m *SecretKeySelector) GetKey() string {
-	if m != nil {
-		return m.Key
+	if m != nil && m.Key != nil {
+		return *m.Key
 	}
 	return ""
 }
@@ -6347,10 +6606,12 @@ type SecretList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of secret objects.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/secrets.md
-	Items []*Secret `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Secret `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
 }
 
 func (m *SecretList) Reset()                    { *m = SecretList{} }
+func (m *SecretList) String() string            { return proto.CompactTextString(m) }
 func (*SecretList) ProtoMessage()               {}
 func (*SecretList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{134} }
 
@@ -6376,7 +6637,7 @@ func (m *SecretList) GetItems() []*Secret {
 type SecretVolumeSource struct {
 	// Name of the secret in the pod's namespace to use.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/volumes.md#secrets
-	SecretName string `protobuf:"bytes,1,opt,name=secretName" json:"secretName"`
+	SecretName *string `protobuf:"bytes,1,opt,name=secretName" json:"secretName,omitempty"`
 	// If unspecified, each key-value pair in the Data field of the referenced
 	// Secret will be projected into the volume as a file whose name is the
 	// key and content is the value. If specified, the listed keys will be
@@ -6390,16 +6651,18 @@ type SecretVolumeSource struct {
 	// Directories within the path are not affected by this setting.
 	// This might be in conflict with other options that affect the file
 	// mode, like fsGroup, and the result can be other mode bits set.
-	DefaultMode int32 `protobuf:"varint,3,opt,name=defaultMode" json:"defaultMode"`
+	DefaultMode      *int32 `protobuf:"varint,3,opt,name=defaultMode" json:"defaultMode,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *SecretVolumeSource) Reset()                    { *m = SecretVolumeSource{} }
+func (m *SecretVolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*SecretVolumeSource) ProtoMessage()               {}
 func (*SecretVolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{135} }
 
 func (m *SecretVolumeSource) GetSecretName() string {
-	if m != nil {
-		return m.SecretName
+	if m != nil && m.SecretName != nil {
+		return *m.SecretName
 	}
 	return ""
 }
@@ -6412,8 +6675,8 @@ func (m *SecretVolumeSource) GetItems() []*KeyToPath {
 }
 
 func (m *SecretVolumeSource) GetDefaultMode() int32 {
-	if m != nil {
-		return m.DefaultMode
+	if m != nil && m.DefaultMode != nil {
+		return *m.DefaultMode
 	}
 	return 0
 }
@@ -6428,7 +6691,7 @@ type SecurityContext struct {
 	// Run container in privileged mode.
 	// Processes in privileged containers are essentially equivalent to root on the host.
 	// Defaults to false.
-	Privileged bool `protobuf:"varint,2,opt,name=privileged" json:"privileged"`
+	Privileged *bool `protobuf:"varint,2,opt,name=privileged" json:"privileged,omitempty"`
 	// The SELinux context to be applied to the container.
 	// If unspecified, the container runtime will allocate a random SELinux context for each
 	// container.  May also be set in PodSecurityContext.  If set in both SecurityContext and
@@ -6438,20 +6701,22 @@ type SecurityContext struct {
 	// Defaults to user specified in image metadata if unspecified.
 	// May also be set in PodSecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence.
-	RunAsUser int64 `protobuf:"varint,4,opt,name=runAsUser" json:"runAsUser"`
+	RunAsUser *int64 `protobuf:"varint,4,opt,name=runAsUser" json:"runAsUser,omitempty"`
 	// Indicates that the container must run as a non-root user.
 	// If true, the Kubelet will validate the image at runtime to ensure that it
 	// does not run as UID 0 (root) and fail to start the container if it does.
 	// If unset or false, no such validation will be performed.
 	// May also be set in PodSecurityContext.  If set in both SecurityContext and
 	// PodSecurityContext, the value specified in SecurityContext takes precedence.
-	RunAsNonRoot bool `protobuf:"varint,5,opt,name=runAsNonRoot" json:"runAsNonRoot"`
+	RunAsNonRoot *bool `protobuf:"varint,5,opt,name=runAsNonRoot" json:"runAsNonRoot,omitempty"`
 	// Whether this container has a read-only root filesystem.
 	// Default is false.
-	ReadOnlyRootFilesystem bool `protobuf:"varint,6,opt,name=readOnlyRootFilesystem" json:"readOnlyRootFilesystem"`
+	ReadOnlyRootFilesystem *bool  `protobuf:"varint,6,opt,name=readOnlyRootFilesystem" json:"readOnlyRootFilesystem,omitempty"`
+	XXX_unrecognized       []byte `json:"-"`
 }
 
 func (m *SecurityContext) Reset()                    { *m = SecurityContext{} }
+func (m *SecurityContext) String() string            { return proto.CompactTextString(m) }
 func (*SecurityContext) ProtoMessage()               {}
 func (*SecurityContext) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{136} }
 
@@ -6463,8 +6728,8 @@ func (m *SecurityContext) GetCapabilities() *Capabilities {
 }
 
 func (m *SecurityContext) GetPrivileged() bool {
-	if m != nil {
-		return m.Privileged
+	if m != nil && m.Privileged != nil {
+		return *m.Privileged
 	}
 	return false
 }
@@ -6477,22 +6742,22 @@ func (m *SecurityContext) GetSeLinuxOptions() *SELinuxOptions {
 }
 
 func (m *SecurityContext) GetRunAsUser() int64 {
-	if m != nil {
-		return m.RunAsUser
+	if m != nil && m.RunAsUser != nil {
+		return *m.RunAsUser
 	}
 	return 0
 }
 
 func (m *SecurityContext) GetRunAsNonRoot() bool {
-	if m != nil {
-		return m.RunAsNonRoot
+	if m != nil && m.RunAsNonRoot != nil {
+		return *m.RunAsNonRoot
 	}
 	return false
 }
 
 func (m *SecurityContext) GetReadOnlyRootFilesystem() bool {
-	if m != nil {
-		return m.ReadOnlyRootFilesystem
+	if m != nil && m.ReadOnlyRootFilesystem != nil {
+		return *m.ReadOnlyRootFilesystem
 	}
 	return false
 }
@@ -6500,10 +6765,12 @@ func (m *SecurityContext) GetReadOnlyRootFilesystem() bool {
 // SerializedReference is a reference to serialized object.
 type SerializedReference struct {
 	// The reference to an object in the system.
-	Reference *ObjectReference `protobuf:"bytes,1,opt,name=reference" json:"reference,omitempty"`
+	Reference        *ObjectReference `protobuf:"bytes,1,opt,name=reference" json:"reference,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *SerializedReference) Reset()                    { *m = SerializedReference{} }
+func (m *SerializedReference) String() string            { return proto.CompactTextString(m) }
 func (*SerializedReference) ProtoMessage()               {}
 func (*SerializedReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{137} }
 
@@ -6528,10 +6795,12 @@ type Service struct {
 	// Populated by the system.
 	// Read-only.
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status
-	Status *ServiceStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	Status           *ServiceStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
+	XXX_unrecognized []byte         `json:"-"`
 }
 
 func (m *Service) Reset()                    { *m = Service{} }
+func (m *Service) String() string            { return proto.CompactTextString(m) }
 func (*Service) ProtoMessage()               {}
 func (*Service) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{138} }
 
@@ -6572,9 +6841,11 @@ type ServiceAccount struct {
 	// can be mounted in the pod, but ImagePullSecrets are only accessed by the kubelet.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/secrets.md#manually-specifying-an-imagepullsecret
 	ImagePullSecrets []*LocalObjectReference `protobuf:"bytes,3,rep,name=imagePullSecrets" json:"imagePullSecrets,omitempty"`
+	XXX_unrecognized []byte                  `json:"-"`
 }
 
 func (m *ServiceAccount) Reset()                    { *m = ServiceAccount{} }
+func (m *ServiceAccount) String() string            { return proto.CompactTextString(m) }
 func (*ServiceAccount) ProtoMessage()               {}
 func (*ServiceAccount) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{139} }
 
@@ -6606,10 +6877,12 @@ type ServiceAccountList struct {
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of ServiceAccounts.
 	// More info: http://releases.k8s.io/release-1.4/docs/design/service_accounts.md#service-accounts
-	Items []*ServiceAccount `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*ServiceAccount `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
 func (m *ServiceAccountList) Reset()                    { *m = ServiceAccountList{} }
+func (m *ServiceAccountList) String() string            { return proto.CompactTextString(m) }
 func (*ServiceAccountList) ProtoMessage()               {}
 func (*ServiceAccountList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{140} }
 
@@ -6633,10 +6906,12 @@ type ServiceList struct {
 	// More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of services
-	Items []*Service `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	Items            []*Service `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte     `json:"-"`
 }
 
 func (m *ServiceList) Reset()                    { *m = ServiceList{} }
+func (m *ServiceList) String() string            { return proto.CompactTextString(m) }
 func (*ServiceList) ProtoMessage()               {}
 func (*ServiceList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{141} }
 
@@ -6660,12 +6935,12 @@ type ServicePort struct {
 	// All ports within a ServiceSpec must have unique names. This maps to
 	// the 'Name' field in EndpointPort objects.
 	// Optional if only one ServicePort is defined on this service.
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// The IP protocol for this port. Supports "TCP" and "UDP".
 	// Default is TCP.
-	Protocol string `protobuf:"bytes,2,opt,name=protocol" json:"protocol"`
+	Protocol *string `protobuf:"bytes,2,opt,name=protocol" json:"protocol,omitempty"`
 	// The port that will be exposed by this service.
-	Port int32 `protobuf:"varint,3,opt,name=port" json:"port"`
+	Port *int32 `protobuf:"varint,3,opt,name=port" json:"port,omitempty"`
 	// Number or name of the port to access on the pods targeted by the service.
 	// Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.
 	// If this is a string, it will be looked up as a named port in the
@@ -6680,30 +6955,32 @@ type ServicePort struct {
 	// if unused or else creation of the service will fail.
 	// Default is to auto-allocate a port if the ServiceType of this Service requires one.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#type--nodeport
-	NodePort int32 `protobuf:"varint,5,opt,name=nodePort" json:"nodePort"`
+	NodePort         *int32 `protobuf:"varint,5,opt,name=nodePort" json:"nodePort,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *ServicePort) Reset()                    { *m = ServicePort{} }
+func (m *ServicePort) String() string            { return proto.CompactTextString(m) }
 func (*ServicePort) ProtoMessage()               {}
 func (*ServicePort) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{142} }
 
 func (m *ServicePort) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *ServicePort) GetProtocol() string {
-	if m != nil {
-		return m.Protocol
+	if m != nil && m.Protocol != nil {
+		return *m.Protocol
 	}
 	return ""
 }
 
 func (m *ServicePort) GetPort() int32 {
-	if m != nil {
-		return m.Port
+	if m != nil && m.Port != nil {
+		return *m.Port
 	}
 	return 0
 }
@@ -6716,8 +6993,8 @@ func (m *ServicePort) GetTargetPort() *k8s_io_kubernetes_pkg_util_intstr.IntOrSt
 }
 
 func (m *ServicePort) GetNodePort() int32 {
-	if m != nil {
-		return m.NodePort
+	if m != nil && m.NodePort != nil {
+		return *m.NodePort
 	}
 	return 0
 }
@@ -6729,16 +7006,18 @@ type ServiceProxyOptions struct {
 	// For example, the whole request URL is
 	// http://localhost/api/v1/namespaces/kube-system/services/elasticsearch-logging/_search?q=user:kimchy.
 	// Path is _search?q=user:kimchy.
-	Path string `protobuf:"bytes,1,opt,name=path" json:"path"`
+	Path             *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ServiceProxyOptions) Reset()                    { *m = ServiceProxyOptions{} }
+func (m *ServiceProxyOptions) String() string            { return proto.CompactTextString(m) }
 func (*ServiceProxyOptions) ProtoMessage()               {}
 func (*ServiceProxyOptions) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{143} }
 
 func (m *ServiceProxyOptions) GetPath() string {
-	if m != nil {
-		return m.Path
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
@@ -6764,7 +7043,7 @@ type ServiceSpec struct {
 	// Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if
 	// type is ExternalName.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#virtual-ips-and-service-proxies
-	ClusterIP string `protobuf:"bytes,3,opt,name=clusterIP" json:"clusterIP"`
+	ClusterIP *string `protobuf:"bytes,3,opt,name=clusterIP" json:"clusterIP,omitempty"`
 	// type determines how the Service is exposed. Defaults to ClusterIP. Valid
 	// options are ExternalName, ClusterIP, NodePort, and LoadBalancer.
 	// "ExternalName" maps to the specified externalName.
@@ -6779,7 +7058,7 @@ type ServiceSpec struct {
 	// external load-balancer (if supported in the current cloud) which routes
 	// to the clusterIP.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#overview
-	Type string `protobuf:"bytes,4,opt,name=type" json:"type"`
+	Type *string `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
 	// externalIPs is a list of IP addresses for which nodes in the cluster
 	// will also accept traffic for this service.  These IPs are not managed by
 	// Kubernetes.  The user is responsible for ensuring that traffic arrives
@@ -6800,13 +7079,13 @@ type ServiceSpec struct {
 	// Must be ClientIP or None.
 	// Defaults to None.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/services.md#virtual-ips-and-service-proxies
-	SessionAffinity string `protobuf:"bytes,7,opt,name=sessionAffinity" json:"sessionAffinity"`
+	SessionAffinity *string `protobuf:"bytes,7,opt,name=sessionAffinity" json:"sessionAffinity,omitempty"`
 	// Only applies to Service Type: LoadBalancer
 	// LoadBalancer will get created with the IP specified in this field.
 	// This feature depends on whether the underlying cloud-provider supports specifying
 	// the loadBalancerIP when a load balancer is created.
 	// This field will be ignored if the cloud-provider does not support the feature.
-	LoadBalancerIP string `protobuf:"bytes,8,opt,name=loadBalancerIP" json:"loadBalancerIP"`
+	LoadBalancerIP *string `protobuf:"bytes,8,opt,name=loadBalancerIP" json:"loadBalancerIP,omitempty"`
 	// If specified and supported by the platform, this will restrict traffic through the cloud-provider
 	// load-balancer will be restricted to the specified client IPs. This field will be ignored if the
 	// cloud-provider does not support the feature."
@@ -6815,10 +7094,12 @@ type ServiceSpec struct {
 	// externalName is the external reference that kubedns or equivalent will
 	// return as a CNAME record for this service. No proxying will be involved.
 	// Must be a valid DNS name and requires Type to be ExternalName.
-	ExternalName string `protobuf:"bytes,10,opt,name=externalName" json:"externalName"`
+	ExternalName     *string `protobuf:"bytes,10,opt,name=externalName" json:"externalName,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ServiceSpec) Reset()                    { *m = ServiceSpec{} }
+func (m *ServiceSpec) String() string            { return proto.CompactTextString(m) }
 func (*ServiceSpec) ProtoMessage()               {}
 func (*ServiceSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{144} }
 
@@ -6837,15 +7118,15 @@ func (m *ServiceSpec) GetSelector() map[string]string {
 }
 
 func (m *ServiceSpec) GetClusterIP() string {
-	if m != nil {
-		return m.ClusterIP
+	if m != nil && m.ClusterIP != nil {
+		return *m.ClusterIP
 	}
 	return ""
 }
 
 func (m *ServiceSpec) GetType() string {
-	if m != nil {
-		return m.Type
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return ""
 }
@@ -6865,15 +7146,15 @@ func (m *ServiceSpec) GetDeprecatedPublicIPs() []string {
 }
 
 func (m *ServiceSpec) GetSessionAffinity() string {
-	if m != nil {
-		return m.SessionAffinity
+	if m != nil && m.SessionAffinity != nil {
+		return *m.SessionAffinity
 	}
 	return ""
 }
 
 func (m *ServiceSpec) GetLoadBalancerIP() string {
-	if m != nil {
-		return m.LoadBalancerIP
+	if m != nil && m.LoadBalancerIP != nil {
+		return *m.LoadBalancerIP
 	}
 	return ""
 }
@@ -6886,8 +7167,8 @@ func (m *ServiceSpec) GetLoadBalancerSourceRanges() []string {
 }
 
 func (m *ServiceSpec) GetExternalName() string {
-	if m != nil {
-		return m.ExternalName
+	if m != nil && m.ExternalName != nil {
+		return *m.ExternalName
 	}
 	return ""
 }
@@ -6896,10 +7177,12 @@ func (m *ServiceSpec) GetExternalName() string {
 type ServiceStatus struct {
 	// LoadBalancer contains the current status of the load-balancer,
 	// if one is present.
-	LoadBalancer *LoadBalancerStatus `protobuf:"bytes,1,opt,name=loadBalancer" json:"loadBalancer,omitempty"`
+	LoadBalancer     *LoadBalancerStatus `protobuf:"bytes,1,opt,name=loadBalancer" json:"loadBalancer,omitempty"`
+	XXX_unrecognized []byte              `json:"-"`
 }
 
 func (m *ServiceStatus) Reset()                    { *m = ServiceStatus{} }
+func (m *ServiceStatus) String() string            { return proto.CompactTextString(m) }
 func (*ServiceStatus) ProtoMessage()               {}
 func (*ServiceStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{145} }
 
@@ -6915,10 +7198,12 @@ type TCPSocketAction struct {
 	// Number or name of the port to access on the container.
 	// Number must be in the range 1 to 65535.
 	// Name must be an IANA_SVC_NAME.
-	Port *k8s_io_kubernetes_pkg_util_intstr.IntOrString `protobuf:"bytes,1,opt,name=port" json:"port,omitempty"`
+	Port             *k8s_io_kubernetes_pkg_util_intstr.IntOrString `protobuf:"bytes,1,opt,name=port" json:"port,omitempty"`
+	XXX_unrecognized []byte                                         `json:"-"`
 }
 
 func (m *TCPSocketAction) Reset()                    { *m = TCPSocketAction{} }
+func (m *TCPSocketAction) String() string            { return proto.CompactTextString(m) }
 func (*TCPSocketAction) ProtoMessage()               {}
 func (*TCPSocketAction) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{146} }
 
@@ -6933,36 +7218,38 @@ func (m *TCPSocketAction) GetPort() *k8s_io_kubernetes_pkg_util_intstr.IntOrStri
 // any pod that that does not tolerate the Taint.
 type Taint struct {
 	// Required. The taint key to be applied to a node.
-	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
+	Key *string `protobuf:"bytes,1,opt,name=key" json:"key,omitempty"`
 	// Required. The taint value corresponding to the taint key.
-	Value string `protobuf:"bytes,2,opt,name=value" json:"value"`
+	Value *string `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
 	// Required. The effect of the taint on pods
 	// that do not tolerate the taint.
 	// Valid effects are NoSchedule and PreferNoSchedule.
-	Effect string `protobuf:"bytes,3,opt,name=effect" json:"effect"`
+	Effect           *string `protobuf:"bytes,3,opt,name=effect" json:"effect,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *Taint) Reset()                    { *m = Taint{} }
+func (m *Taint) String() string            { return proto.CompactTextString(m) }
 func (*Taint) ProtoMessage()               {}
 func (*Taint) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{147} }
 
 func (m *Taint) GetKey() string {
-	if m != nil {
-		return m.Key
+	if m != nil && m.Key != nil {
+		return *m.Key
 	}
 	return ""
 }
 
 func (m *Taint) GetValue() string {
-	if m != nil {
-		return m.Value
+	if m != nil && m.Value != nil {
+		return *m.Value
 	}
 	return ""
 }
 
 func (m *Taint) GetEffect() string {
-	if m != nil {
-		return m.Effect
+	if m != nil && m.Effect != nil {
+		return *m.Effect
 	}
 	return ""
 }
@@ -6971,48 +7258,50 @@ func (m *Taint) GetEffect() string {
 // the triple <key,value,effect> using the matching operator <operator>.
 type Toleration struct {
 	// Required. Key is the taint key that the toleration applies to.
-	Key string `protobuf:"bytes,1,opt,name=key" json:"key"`
+	Key *string `protobuf:"bytes,1,opt,name=key" json:"key,omitempty"`
 	// operator represents a key's relationship to the value.
 	// Valid operators are Exists and Equal. Defaults to Equal.
 	// Exists is equivalent to wildcard for value, so that a pod can
 	// tolerate all taints of a particular category.
-	Operator string `protobuf:"bytes,2,opt,name=operator" json:"operator"`
+	Operator *string `protobuf:"bytes,2,opt,name=operator" json:"operator,omitempty"`
 	// Value is the taint value the toleration matches to.
 	// If the operator is Exists, the value should be empty, otherwise just a regular string.
-	Value string `protobuf:"bytes,3,opt,name=value" json:"value"`
+	Value *string `protobuf:"bytes,3,opt,name=value" json:"value,omitempty"`
 	// Effect indicates the taint effect to match. Empty means match all taint effects.
 	// When specified, allowed values are NoSchedule and PreferNoSchedule.
-	Effect string `protobuf:"bytes,4,opt,name=effect" json:"effect"`
+	Effect           *string `protobuf:"bytes,4,opt,name=effect" json:"effect,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *Toleration) Reset()                    { *m = Toleration{} }
+func (m *Toleration) String() string            { return proto.CompactTextString(m) }
 func (*Toleration) ProtoMessage()               {}
 func (*Toleration) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{148} }
 
 func (m *Toleration) GetKey() string {
-	if m != nil {
-		return m.Key
+	if m != nil && m.Key != nil {
+		return *m.Key
 	}
 	return ""
 }
 
 func (m *Toleration) GetOperator() string {
-	if m != nil {
-		return m.Operator
+	if m != nil && m.Operator != nil {
+		return *m.Operator
 	}
 	return ""
 }
 
 func (m *Toleration) GetValue() string {
-	if m != nil {
-		return m.Value
+	if m != nil && m.Value != nil {
+		return *m.Value
 	}
 	return ""
 }
 
 func (m *Toleration) GetEffect() string {
-	if m != nil {
-		return m.Effect
+	if m != nil && m.Effect != nil {
+		return *m.Effect
 	}
 	return ""
 }
@@ -7022,20 +7311,22 @@ type Volume struct {
 	// Volume's name.
 	// Must be a DNS_LABEL and unique within the pod.
 	// More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// VolumeSource represents the location and type of the mounted volume.
 	// If not specified, the Volume is implied to be an EmptyDir.
 	// This implied behavior is deprecated and will be removed in a future version.
-	VolumeSource *VolumeSource `protobuf:"bytes,2,opt,name=volumeSource" json:"volumeSource,omitempty"`
+	VolumeSource     *VolumeSource `protobuf:"bytes,2,opt,name=volumeSource" json:"volumeSource,omitempty"`
+	XXX_unrecognized []byte        `json:"-"`
 }
 
 func (m *Volume) Reset()                    { *m = Volume{} }
+func (m *Volume) String() string            { return proto.CompactTextString(m) }
 func (*Volume) ProtoMessage()               {}
 func (*Volume) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{149} }
 
 func (m *Volume) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
@@ -7050,46 +7341,48 @@ func (m *Volume) GetVolumeSource() *VolumeSource {
 // VolumeMount describes a mounting of a Volume within a container.
 type VolumeMount struct {
 	// This must match the Name of a Volume.
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	// Mounted read-only if true, read-write otherwise (false or unspecified).
 	// Defaults to false.
-	ReadOnly bool `protobuf:"varint,2,opt,name=readOnly" json:"readOnly"`
+	ReadOnly *bool `protobuf:"varint,2,opt,name=readOnly" json:"readOnly,omitempty"`
 	// Path within the container at which the volume should be mounted.  Must
 	// not contain ':'.
-	MountPath string `protobuf:"bytes,3,opt,name=mountPath" json:"mountPath"`
+	MountPath *string `protobuf:"bytes,3,opt,name=mountPath" json:"mountPath,omitempty"`
 	// Path within the volume from which the container's volume should be mounted.
 	// Defaults to "" (volume's root).
-	SubPath string `protobuf:"bytes,4,opt,name=subPath" json:"subPath"`
+	SubPath          *string `protobuf:"bytes,4,opt,name=subPath" json:"subPath,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *VolumeMount) Reset()                    { *m = VolumeMount{} }
+func (m *VolumeMount) String() string            { return proto.CompactTextString(m) }
 func (*VolumeMount) ProtoMessage()               {}
 func (*VolumeMount) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{150} }
 
 func (m *VolumeMount) GetName() string {
-	if m != nil {
-		return m.Name
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
 func (m *VolumeMount) GetReadOnly() bool {
-	if m != nil {
-		return m.ReadOnly
+	if m != nil && m.ReadOnly != nil {
+		return *m.ReadOnly
 	}
 	return false
 }
 
 func (m *VolumeMount) GetMountPath() string {
-	if m != nil {
-		return m.MountPath
+	if m != nil && m.MountPath != nil {
+		return *m.MountPath
 	}
 	return ""
 }
 
 func (m *VolumeMount) GetSubPath() string {
-	if m != nil {
-		return m.SubPath
+	if m != nil && m.SubPath != nil {
+		return *m.SubPath
 	}
 	return ""
 }
@@ -7163,10 +7456,12 @@ type VolumeSource struct {
 	// Quobyte represents a Quobyte mount on the host that shares a pod's lifetime
 	Quobyte *QuobyteVolumeSource `protobuf:"bytes,21,opt,name=quobyte" json:"quobyte,omitempty"`
 	// AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
-	AzureDisk *AzureDiskVolumeSource `protobuf:"bytes,22,opt,name=azureDisk" json:"azureDisk,omitempty"`
+	AzureDisk        *AzureDiskVolumeSource `protobuf:"bytes,22,opt,name=azureDisk" json:"azureDisk,omitempty"`
+	XXX_unrecognized []byte                 `json:"-"`
 }
 
 func (m *VolumeSource) Reset()                    { *m = VolumeSource{} }
+func (m *VolumeSource) String() string            { return proto.CompactTextString(m) }
 func (*VolumeSource) ProtoMessage()               {}
 func (*VolumeSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{151} }
 
@@ -7327,29 +7622,31 @@ func (m *VolumeSource) GetAzureDisk() *AzureDiskVolumeSource {
 // Represents a vSphere volume resource.
 type VsphereVirtualDiskVolumeSource struct {
 	// Path that identifies vSphere volume vmdk
-	VolumePath string `protobuf:"bytes,1,opt,name=volumePath" json:"volumePath"`
+	VolumePath *string `protobuf:"bytes,1,opt,name=volumePath" json:"volumePath,omitempty"`
 	// Filesystem type to mount.
 	// Must be a filesystem type supported by the host operating system.
 	// Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
-	FsType string `protobuf:"bytes,2,opt,name=fsType" json:"fsType"`
+	FsType           *string `protobuf:"bytes,2,opt,name=fsType" json:"fsType,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *VsphereVirtualDiskVolumeSource) Reset()      { *m = VsphereVirtualDiskVolumeSource{} }
-func (*VsphereVirtualDiskVolumeSource) ProtoMessage() {}
+func (m *VsphereVirtualDiskVolumeSource) Reset()         { *m = VsphereVirtualDiskVolumeSource{} }
+func (m *VsphereVirtualDiskVolumeSource) String() string { return proto.CompactTextString(m) }
+func (*VsphereVirtualDiskVolumeSource) ProtoMessage()    {}
 func (*VsphereVirtualDiskVolumeSource) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{152}
 }
 
 func (m *VsphereVirtualDiskVolumeSource) GetVolumePath() string {
-	if m != nil {
-		return m.VolumePath
+	if m != nil && m.VolumePath != nil {
+		return *m.VolumePath
 	}
 	return ""
 }
 
 func (m *VsphereVirtualDiskVolumeSource) GetFsType() string {
-	if m != nil {
-		return m.FsType
+	if m != nil && m.FsType != nil {
+		return *m.FsType
 	}
 	return ""
 }
@@ -7358,20 +7655,22 @@ func (m *VsphereVirtualDiskVolumeSource) GetFsType() string {
 type WeightedPodAffinityTerm struct {
 	// weight associated with matching the corresponding podAffinityTerm,
 	// in the range 1-100.
-	Weight int32 `protobuf:"varint,1,opt,name=weight" json:"weight"`
+	Weight *int32 `protobuf:"varint,1,opt,name=weight" json:"weight,omitempty"`
 	// Required. A pod affinity term, associated with the corresponding weight.
-	PodAffinityTerm *PodAffinityTerm `protobuf:"bytes,2,opt,name=podAffinityTerm" json:"podAffinityTerm,omitempty"`
+	PodAffinityTerm  *PodAffinityTerm `protobuf:"bytes,2,opt,name=podAffinityTerm" json:"podAffinityTerm,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
-func (m *WeightedPodAffinityTerm) Reset()      { *m = WeightedPodAffinityTerm{} }
-func (*WeightedPodAffinityTerm) ProtoMessage() {}
+func (m *WeightedPodAffinityTerm) Reset()         { *m = WeightedPodAffinityTerm{} }
+func (m *WeightedPodAffinityTerm) String() string { return proto.CompactTextString(m) }
+func (*WeightedPodAffinityTerm) ProtoMessage()    {}
 func (*WeightedPodAffinityTerm) Descriptor() ([]byte, []int) {
 	return fileDescriptorGenerated, []int{153}
 }
 
 func (m *WeightedPodAffinityTerm) GetWeight() int32 {
-	if m != nil {
-		return m.Weight
+	if m != nil && m.Weight != nil {
+		return *m.Weight
 	}
 	return 0
 }
@@ -7539,9054 +7838,6 @@ func init() {
 	proto.RegisterType((*VsphereVirtualDiskVolumeSource)(nil), "github.com/ericchiang.k8s.api.v1.VsphereVirtualDiskVolumeSource")
 	proto.RegisterType((*WeightedPodAffinityTerm)(nil), "github.com/ericchiang.k8s.api.v1.WeightedPodAffinityTerm")
 }
-func (this *AWSElasticBlockStoreVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*AWSElasticBlockStoreVolumeSource)
-	if !ok {
-		that2, ok := that.(AWSElasticBlockStoreVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.VolumeID != that1.VolumeID {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if this.Partition != that1.Partition {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *Affinity) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Affinity)
-	if !ok {
-		that2, ok := that.(Affinity)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.NodeAffinity.Equal(that1.NodeAffinity) {
-		return false
-	}
-	if !this.PodAffinity.Equal(that1.PodAffinity) {
-		return false
-	}
-	if !this.PodAntiAffinity.Equal(that1.PodAntiAffinity) {
-		return false
-	}
-	return true
-}
-func (this *AttachedVolume) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*AttachedVolume)
-	if !ok {
-		that2, ok := that.(AttachedVolume)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.DevicePath != that1.DevicePath {
-		return false
-	}
-	return true
-}
-func (this *AvoidPods) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*AvoidPods)
-	if !ok {
-		that2, ok := that.(AvoidPods)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.PreferAvoidPods) != len(that1.PreferAvoidPods) {
-		return false
-	}
-	for i := range this.PreferAvoidPods {
-		if !this.PreferAvoidPods[i].Equal(that1.PreferAvoidPods[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *AzureDiskVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*AzureDiskVolumeSource)
-	if !ok {
-		that2, ok := that.(AzureDiskVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.DiskName != that1.DiskName {
-		return false
-	}
-	if this.DiskURI != that1.DiskURI {
-		return false
-	}
-	if this.CachingMode != that1.CachingMode {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *AzureFileVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*AzureFileVolumeSource)
-	if !ok {
-		that2, ok := that.(AzureFileVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.SecretName != that1.SecretName {
-		return false
-	}
-	if this.ShareName != that1.ShareName {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *Binding) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Binding)
-	if !ok {
-		that2, ok := that.(Binding)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Target.Equal(that1.Target) {
-		return false
-	}
-	return true
-}
-func (this *Capabilities) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Capabilities)
-	if !ok {
-		that2, ok := that.(Capabilities)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Add) != len(that1.Add) {
-		return false
-	}
-	for i := range this.Add {
-		if this.Add[i] != that1.Add[i] {
-			return false
-		}
-	}
-	if len(this.Drop) != len(that1.Drop) {
-		return false
-	}
-	for i := range this.Drop {
-		if this.Drop[i] != that1.Drop[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *CephFSVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*CephFSVolumeSource)
-	if !ok {
-		that2, ok := that.(CephFSVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Monitors) != len(that1.Monitors) {
-		return false
-	}
-	for i := range this.Monitors {
-		if this.Monitors[i] != that1.Monitors[i] {
-			return false
-		}
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if this.User != that1.User {
-		return false
-	}
-	if this.SecretFile != that1.SecretFile {
-		return false
-	}
-	if !this.SecretRef.Equal(that1.SecretRef) {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *CinderVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*CinderVolumeSource)
-	if !ok {
-		that2, ok := that.(CinderVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.VolumeID != that1.VolumeID {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *ComponentCondition) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ComponentCondition)
-	if !ok {
-		that2, ok := that.(ComponentCondition)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Status != that1.Status {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	if this.Error != that1.Error {
-		return false
-	}
-	return true
-}
-func (this *ComponentStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ComponentStatus)
-	if !ok {
-		that2, ok := that.(ComponentStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Conditions) != len(that1.Conditions) {
-		return false
-	}
-	for i := range this.Conditions {
-		if !this.Conditions[i].Equal(that1.Conditions[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ComponentStatusList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ComponentStatusList)
-	if !ok {
-		that2, ok := that.(ComponentStatusList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ConfigMap) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ConfigMap)
-	if !ok {
-		that2, ok := that.(ConfigMap)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Data) != len(that1.Data) {
-		return false
-	}
-	for i := range this.Data {
-		if this.Data[i] != that1.Data[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *ConfigMapKeySelector) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ConfigMapKeySelector)
-	if !ok {
-		that2, ok := that.(ConfigMapKeySelector)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.LocalObjectReference.Equal(that1.LocalObjectReference) {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	return true
-}
-func (this *ConfigMapList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ConfigMapList)
-	if !ok {
-		that2, ok := that.(ConfigMapList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ConfigMapVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ConfigMapVolumeSource)
-	if !ok {
-		that2, ok := that.(ConfigMapVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.LocalObjectReference.Equal(that1.LocalObjectReference) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	if this.DefaultMode != that1.DefaultMode {
-		return false
-	}
-	return true
-}
-func (this *Container) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Container)
-	if !ok {
-		that2, ok := that.(Container)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Image != that1.Image {
-		return false
-	}
-	if len(this.Command) != len(that1.Command) {
-		return false
-	}
-	for i := range this.Command {
-		if this.Command[i] != that1.Command[i] {
-			return false
-		}
-	}
-	if len(this.Args) != len(that1.Args) {
-		return false
-	}
-	for i := range this.Args {
-		if this.Args[i] != that1.Args[i] {
-			return false
-		}
-	}
-	if this.WorkingDir != that1.WorkingDir {
-		return false
-	}
-	if len(this.Ports) != len(that1.Ports) {
-		return false
-	}
-	for i := range this.Ports {
-		if !this.Ports[i].Equal(that1.Ports[i]) {
-			return false
-		}
-	}
-	if len(this.Env) != len(that1.Env) {
-		return false
-	}
-	for i := range this.Env {
-		if !this.Env[i].Equal(that1.Env[i]) {
-			return false
-		}
-	}
-	if !this.Resources.Equal(that1.Resources) {
-		return false
-	}
-	if len(this.VolumeMounts) != len(that1.VolumeMounts) {
-		return false
-	}
-	for i := range this.VolumeMounts {
-		if !this.VolumeMounts[i].Equal(that1.VolumeMounts[i]) {
-			return false
-		}
-	}
-	if !this.LivenessProbe.Equal(that1.LivenessProbe) {
-		return false
-	}
-	if !this.ReadinessProbe.Equal(that1.ReadinessProbe) {
-		return false
-	}
-	if !this.Lifecycle.Equal(that1.Lifecycle) {
-		return false
-	}
-	if this.TerminationMessagePath != that1.TerminationMessagePath {
-		return false
-	}
-	if this.ImagePullPolicy != that1.ImagePullPolicy {
-		return false
-	}
-	if !this.SecurityContext.Equal(that1.SecurityContext) {
-		return false
-	}
-	if this.Stdin != that1.Stdin {
-		return false
-	}
-	if this.StdinOnce != that1.StdinOnce {
-		return false
-	}
-	if this.Tty != that1.Tty {
-		return false
-	}
-	return true
-}
-func (this *ContainerImage) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ContainerImage)
-	if !ok {
-		that2, ok := that.(ContainerImage)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Names) != len(that1.Names) {
-		return false
-	}
-	for i := range this.Names {
-		if this.Names[i] != that1.Names[i] {
-			return false
-		}
-	}
-	if this.SizeBytes != that1.SizeBytes {
-		return false
-	}
-	return true
-}
-func (this *ContainerPort) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ContainerPort)
-	if !ok {
-		that2, ok := that.(ContainerPort)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.HostPort != that1.HostPort {
-		return false
-	}
-	if this.ContainerPort != that1.ContainerPort {
-		return false
-	}
-	if this.Protocol != that1.Protocol {
-		return false
-	}
-	if this.HostIP != that1.HostIP {
-		return false
-	}
-	return true
-}
-func (this *ContainerState) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ContainerState)
-	if !ok {
-		that2, ok := that.(ContainerState)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Waiting.Equal(that1.Waiting) {
-		return false
-	}
-	if !this.Running.Equal(that1.Running) {
-		return false
-	}
-	if !this.Terminated.Equal(that1.Terminated) {
-		return false
-	}
-	return true
-}
-func (this *ContainerStateRunning) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ContainerStateRunning)
-	if !ok {
-		that2, ok := that.(ContainerStateRunning)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.StartedAt.Equal(that1.StartedAt) {
-		return false
-	}
-	return true
-}
-func (this *ContainerStateTerminated) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ContainerStateTerminated)
-	if !ok {
-		that2, ok := that.(ContainerStateTerminated)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ExitCode != that1.ExitCode {
-		return false
-	}
-	if this.Signal != that1.Signal {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	if !this.StartedAt.Equal(that1.StartedAt) {
-		return false
-	}
-	if !this.FinishedAt.Equal(that1.FinishedAt) {
-		return false
-	}
-	if this.ContainerID != that1.ContainerID {
-		return false
-	}
-	return true
-}
-func (this *ContainerStateWaiting) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ContainerStateWaiting)
-	if !ok {
-		that2, ok := that.(ContainerStateWaiting)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	return true
-}
-func (this *ContainerStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ContainerStatus)
-	if !ok {
-		that2, ok := that.(ContainerStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if !this.State.Equal(that1.State) {
-		return false
-	}
-	if !this.LastState.Equal(that1.LastState) {
-		return false
-	}
-	if this.Ready != that1.Ready {
-		return false
-	}
-	if this.RestartCount != that1.RestartCount {
-		return false
-	}
-	if this.Image != that1.Image {
-		return false
-	}
-	if this.ImageID != that1.ImageID {
-		return false
-	}
-	if this.ContainerID != that1.ContainerID {
-		return false
-	}
-	return true
-}
-func (this *DaemonEndpoint) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*DaemonEndpoint)
-	if !ok {
-		that2, ok := that.(DaemonEndpoint)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Port != that1.Port {
-		return false
-	}
-	return true
-}
-func (this *DeleteOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*DeleteOptions)
-	if !ok {
-		that2, ok := that.(DeleteOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.GracePeriodSeconds != that1.GracePeriodSeconds {
-		return false
-	}
-	if !this.Preconditions.Equal(that1.Preconditions) {
-		return false
-	}
-	if this.OrphanDependents != that1.OrphanDependents {
-		return false
-	}
-	return true
-}
-func (this *DownwardAPIVolumeFile) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*DownwardAPIVolumeFile)
-	if !ok {
-		that2, ok := that.(DownwardAPIVolumeFile)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if !this.FieldRef.Equal(that1.FieldRef) {
-		return false
-	}
-	if !this.ResourceFieldRef.Equal(that1.ResourceFieldRef) {
-		return false
-	}
-	if this.Mode != that1.Mode {
-		return false
-	}
-	return true
-}
-func (this *DownwardAPIVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*DownwardAPIVolumeSource)
-	if !ok {
-		that2, ok := that.(DownwardAPIVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	if this.DefaultMode != that1.DefaultMode {
-		return false
-	}
-	return true
-}
-func (this *EmptyDirVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EmptyDirVolumeSource)
-	if !ok {
-		that2, ok := that.(EmptyDirVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Medium != that1.Medium {
-		return false
-	}
-	return true
-}
-func (this *EndpointAddress) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EndpointAddress)
-	if !ok {
-		that2, ok := that.(EndpointAddress)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Ip != that1.Ip {
-		return false
-	}
-	if this.Hostname != that1.Hostname {
-		return false
-	}
-	if this.NodeName != that1.NodeName {
-		return false
-	}
-	if !this.TargetRef.Equal(that1.TargetRef) {
-		return false
-	}
-	return true
-}
-func (this *EndpointPort) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EndpointPort)
-	if !ok {
-		that2, ok := that.(EndpointPort)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Port != that1.Port {
-		return false
-	}
-	if this.Protocol != that1.Protocol {
-		return false
-	}
-	return true
-}
-func (this *EndpointSubset) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EndpointSubset)
-	if !ok {
-		that2, ok := that.(EndpointSubset)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Addresses) != len(that1.Addresses) {
-		return false
-	}
-	for i := range this.Addresses {
-		if !this.Addresses[i].Equal(that1.Addresses[i]) {
-			return false
-		}
-	}
-	if len(this.NotReadyAddresses) != len(that1.NotReadyAddresses) {
-		return false
-	}
-	for i := range this.NotReadyAddresses {
-		if !this.NotReadyAddresses[i].Equal(that1.NotReadyAddresses[i]) {
-			return false
-		}
-	}
-	if len(this.Ports) != len(that1.Ports) {
-		return false
-	}
-	for i := range this.Ports {
-		if !this.Ports[i].Equal(that1.Ports[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *Endpoints) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Endpoints)
-	if !ok {
-		that2, ok := that.(Endpoints)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Subsets) != len(that1.Subsets) {
-		return false
-	}
-	for i := range this.Subsets {
-		if !this.Subsets[i].Equal(that1.Subsets[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *EndpointsList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EndpointsList)
-	if !ok {
-		that2, ok := that.(EndpointsList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *EnvVar) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EnvVar)
-	if !ok {
-		that2, ok := that.(EnvVar)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Value != that1.Value {
-		return false
-	}
-	if !this.ValueFrom.Equal(that1.ValueFrom) {
-		return false
-	}
-	return true
-}
-func (this *EnvVarSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EnvVarSource)
-	if !ok {
-		that2, ok := that.(EnvVarSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.FieldRef.Equal(that1.FieldRef) {
-		return false
-	}
-	if !this.ResourceFieldRef.Equal(that1.ResourceFieldRef) {
-		return false
-	}
-	if !this.ConfigMapKeyRef.Equal(that1.ConfigMapKeyRef) {
-		return false
-	}
-	if !this.SecretKeyRef.Equal(that1.SecretKeyRef) {
-		return false
-	}
-	return true
-}
-func (this *Event) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Event)
-	if !ok {
-		that2, ok := that.(Event)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.InvolvedObject.Equal(that1.InvolvedObject) {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	if !this.Source.Equal(that1.Source) {
-		return false
-	}
-	if !this.FirstTimestamp.Equal(that1.FirstTimestamp) {
-		return false
-	}
-	if !this.LastTimestamp.Equal(that1.LastTimestamp) {
-		return false
-	}
-	if this.Count != that1.Count {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	return true
-}
-func (this *EventList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EventList)
-	if !ok {
-		that2, ok := that.(EventList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *EventSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*EventSource)
-	if !ok {
-		that2, ok := that.(EventSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Component != that1.Component {
-		return false
-	}
-	if this.Host != that1.Host {
-		return false
-	}
-	return true
-}
-func (this *ExecAction) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ExecAction)
-	if !ok {
-		that2, ok := that.(ExecAction)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Command) != len(that1.Command) {
-		return false
-	}
-	for i := range this.Command {
-		if this.Command[i] != that1.Command[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *ExportOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ExportOptions)
-	if !ok {
-		that2, ok := that.(ExportOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Export != that1.Export {
-		return false
-	}
-	if this.Exact != that1.Exact {
-		return false
-	}
-	return true
-}
-func (this *FCVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*FCVolumeSource)
-	if !ok {
-		that2, ok := that.(FCVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.TargetWWNs) != len(that1.TargetWWNs) {
-		return false
-	}
-	for i := range this.TargetWWNs {
-		if this.TargetWWNs[i] != that1.TargetWWNs[i] {
-			return false
-		}
-	}
-	if this.Lun != that1.Lun {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *FlexVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*FlexVolumeSource)
-	if !ok {
-		that2, ok := that.(FlexVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Driver != that1.Driver {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if !this.SecretRef.Equal(that1.SecretRef) {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	if len(this.Options) != len(that1.Options) {
-		return false
-	}
-	for i := range this.Options {
-		if this.Options[i] != that1.Options[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *FlockerVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*FlockerVolumeSource)
-	if !ok {
-		that2, ok := that.(FlockerVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.DatasetName != that1.DatasetName {
-		return false
-	}
-	return true
-}
-func (this *GCEPersistentDiskVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*GCEPersistentDiskVolumeSource)
-	if !ok {
-		that2, ok := that.(GCEPersistentDiskVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.PdName != that1.PdName {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if this.Partition != that1.Partition {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *GitRepoVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*GitRepoVolumeSource)
-	if !ok {
-		that2, ok := that.(GitRepoVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Repository != that1.Repository {
-		return false
-	}
-	if this.Revision != that1.Revision {
-		return false
-	}
-	if this.Directory != that1.Directory {
-		return false
-	}
-	return true
-}
-func (this *GlusterfsVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*GlusterfsVolumeSource)
-	if !ok {
-		that2, ok := that.(GlusterfsVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Endpoints != that1.Endpoints {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *HTTPGetAction) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*HTTPGetAction)
-	if !ok {
-		that2, ok := that.(HTTPGetAction)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if !this.Port.Equal(that1.Port) {
-		return false
-	}
-	if this.Host != that1.Host {
-		return false
-	}
-	if this.Scheme != that1.Scheme {
-		return false
-	}
-	if len(this.HttpHeaders) != len(that1.HttpHeaders) {
-		return false
-	}
-	for i := range this.HttpHeaders {
-		if !this.HttpHeaders[i].Equal(that1.HttpHeaders[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *HTTPHeader) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*HTTPHeader)
-	if !ok {
-		that2, ok := that.(HTTPHeader)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Value != that1.Value {
-		return false
-	}
-	return true
-}
-func (this *Handler) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Handler)
-	if !ok {
-		that2, ok := that.(Handler)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Exec.Equal(that1.Exec) {
-		return false
-	}
-	if !this.HttpGet.Equal(that1.HttpGet) {
-		return false
-	}
-	if !this.TcpSocket.Equal(that1.TcpSocket) {
-		return false
-	}
-	return true
-}
-func (this *HostPathVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*HostPathVolumeSource)
-	if !ok {
-		that2, ok := that.(HostPathVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	return true
-}
-func (this *ISCSIVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ISCSIVolumeSource)
-	if !ok {
-		that2, ok := that.(ISCSIVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.TargetPortal != that1.TargetPortal {
-		return false
-	}
-	if this.Iqn != that1.Iqn {
-		return false
-	}
-	if this.Lun != that1.Lun {
-		return false
-	}
-	if this.IscsiInterface != that1.IscsiInterface {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *KeyToPath) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*KeyToPath)
-	if !ok {
-		that2, ok := that.(KeyToPath)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if this.Mode != that1.Mode {
-		return false
-	}
-	return true
-}
-func (this *Lifecycle) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Lifecycle)
-	if !ok {
-		that2, ok := that.(Lifecycle)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.PostStart.Equal(that1.PostStart) {
-		return false
-	}
-	if !this.PreStop.Equal(that1.PreStop) {
-		return false
-	}
-	return true
-}
-func (this *LimitRange) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LimitRange)
-	if !ok {
-		that2, ok := that.(LimitRange)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	return true
-}
-func (this *LimitRangeItem) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LimitRangeItem)
-	if !ok {
-		that2, ok := that.(LimitRangeItem)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if len(this.Max) != len(that1.Max) {
-		return false
-	}
-	for i := range this.Max {
-		if !this.Max[i].Equal(that1.Max[i]) {
-			return false
-		}
-	}
-	if len(this.Min) != len(that1.Min) {
-		return false
-	}
-	for i := range this.Min {
-		if !this.Min[i].Equal(that1.Min[i]) {
-			return false
-		}
-	}
-	if len(this.Default) != len(that1.Default) {
-		return false
-	}
-	for i := range this.Default {
-		if !this.Default[i].Equal(that1.Default[i]) {
-			return false
-		}
-	}
-	if len(this.DefaultRequest) != len(that1.DefaultRequest) {
-		return false
-	}
-	for i := range this.DefaultRequest {
-		if !this.DefaultRequest[i].Equal(that1.DefaultRequest[i]) {
-			return false
-		}
-	}
-	if len(this.MaxLimitRequestRatio) != len(that1.MaxLimitRequestRatio) {
-		return false
-	}
-	for i := range this.MaxLimitRequestRatio {
-		if !this.MaxLimitRequestRatio[i].Equal(that1.MaxLimitRequestRatio[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LimitRangeList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LimitRangeList)
-	if !ok {
-		that2, ok := that.(LimitRangeList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LimitRangeSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LimitRangeSpec)
-	if !ok {
-		that2, ok := that.(LimitRangeSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Limits) != len(that1.Limits) {
-		return false
-	}
-	for i := range this.Limits {
-		if !this.Limits[i].Equal(that1.Limits[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *List) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*List)
-	if !ok {
-		that2, ok := that.(List)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ListOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ListOptions)
-	if !ok {
-		that2, ok := that.(ListOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.LabelSelector != that1.LabelSelector {
-		return false
-	}
-	if this.FieldSelector != that1.FieldSelector {
-		return false
-	}
-	if this.Watch != that1.Watch {
-		return false
-	}
-	if this.ResourceVersion != that1.ResourceVersion {
-		return false
-	}
-	if this.TimeoutSeconds != that1.TimeoutSeconds {
-		return false
-	}
-	return true
-}
-func (this *LoadBalancerIngress) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LoadBalancerIngress)
-	if !ok {
-		that2, ok := that.(LoadBalancerIngress)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Ip != that1.Ip {
-		return false
-	}
-	if this.Hostname != that1.Hostname {
-		return false
-	}
-	return true
-}
-func (this *LoadBalancerStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LoadBalancerStatus)
-	if !ok {
-		that2, ok := that.(LoadBalancerStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Ingress) != len(that1.Ingress) {
-		return false
-	}
-	for i := range this.Ingress {
-		if !this.Ingress[i].Equal(that1.Ingress[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LocalObjectReference) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*LocalObjectReference)
-	if !ok {
-		that2, ok := that.(LocalObjectReference)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	return true
-}
-func (this *NFSVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NFSVolumeSource)
-	if !ok {
-		that2, ok := that.(NFSVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Server != that1.Server {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *Namespace) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Namespace)
-	if !ok {
-		that2, ok := that.(Namespace)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *NamespaceList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NamespaceList)
-	if !ok {
-		that2, ok := that.(NamespaceList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *NamespaceSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NamespaceSpec)
-	if !ok {
-		that2, ok := that.(NamespaceSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Finalizers) != len(that1.Finalizers) {
-		return false
-	}
-	for i := range this.Finalizers {
-		if this.Finalizers[i] != that1.Finalizers[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *NamespaceStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NamespaceStatus)
-	if !ok {
-		that2, ok := that.(NamespaceStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Phase != that1.Phase {
-		return false
-	}
-	return true
-}
-func (this *Node) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Node)
-	if !ok {
-		that2, ok := that.(Node)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *NodeAddress) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeAddress)
-	if !ok {
-		that2, ok := that.(NodeAddress)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Address != that1.Address {
-		return false
-	}
-	return true
-}
-func (this *NodeAffinity) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeAffinity)
-	if !ok {
-		that2, ok := that.(NodeAffinity)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.RequiredDuringSchedulingIgnoredDuringExecution.Equal(that1.RequiredDuringSchedulingIgnoredDuringExecution) {
-		return false
-	}
-	if len(this.PreferredDuringSchedulingIgnoredDuringExecution) != len(that1.PreferredDuringSchedulingIgnoredDuringExecution) {
-		return false
-	}
-	for i := range this.PreferredDuringSchedulingIgnoredDuringExecution {
-		if !this.PreferredDuringSchedulingIgnoredDuringExecution[i].Equal(that1.PreferredDuringSchedulingIgnoredDuringExecution[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *NodeCondition) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeCondition)
-	if !ok {
-		that2, ok := that.(NodeCondition)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Status != that1.Status {
-		return false
-	}
-	if !this.LastHeartbeatTime.Equal(that1.LastHeartbeatTime) {
-		return false
-	}
-	if !this.LastTransitionTime.Equal(that1.LastTransitionTime) {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	return true
-}
-func (this *NodeDaemonEndpoints) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeDaemonEndpoints)
-	if !ok {
-		that2, ok := that.(NodeDaemonEndpoints)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.KubeletEndpoint.Equal(that1.KubeletEndpoint) {
-		return false
-	}
-	return true
-}
-func (this *NodeList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeList)
-	if !ok {
-		that2, ok := that.(NodeList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *NodeProxyOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeProxyOptions)
-	if !ok {
-		that2, ok := that.(NodeProxyOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	return true
-}
-func (this *NodeSelector) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeSelector)
-	if !ok {
-		that2, ok := that.(NodeSelector)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.NodeSelectorTerms) != len(that1.NodeSelectorTerms) {
-		return false
-	}
-	for i := range this.NodeSelectorTerms {
-		if !this.NodeSelectorTerms[i].Equal(that1.NodeSelectorTerms[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *NodeSelectorRequirement) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeSelectorRequirement)
-	if !ok {
-		that2, ok := that.(NodeSelectorRequirement)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	if this.Operator != that1.Operator {
-		return false
-	}
-	if len(this.Values) != len(that1.Values) {
-		return false
-	}
-	for i := range this.Values {
-		if this.Values[i] != that1.Values[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *NodeSelectorTerm) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeSelectorTerm)
-	if !ok {
-		that2, ok := that.(NodeSelectorTerm)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.MatchExpressions) != len(that1.MatchExpressions) {
-		return false
-	}
-	for i := range this.MatchExpressions {
-		if !this.MatchExpressions[i].Equal(that1.MatchExpressions[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *NodeSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeSpec)
-	if !ok {
-		that2, ok := that.(NodeSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.PodCIDR != that1.PodCIDR {
-		return false
-	}
-	if this.ExternalID != that1.ExternalID {
-		return false
-	}
-	if this.ProviderID != that1.ProviderID {
-		return false
-	}
-	if this.Unschedulable != that1.Unschedulable {
-		return false
-	}
-	return true
-}
-func (this *NodeStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeStatus)
-	if !ok {
-		that2, ok := that.(NodeStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Capacity) != len(that1.Capacity) {
-		return false
-	}
-	for i := range this.Capacity {
-		if !this.Capacity[i].Equal(that1.Capacity[i]) {
-			return false
-		}
-	}
-	if len(this.Allocatable) != len(that1.Allocatable) {
-		return false
-	}
-	for i := range this.Allocatable {
-		if !this.Allocatable[i].Equal(that1.Allocatable[i]) {
-			return false
-		}
-	}
-	if this.Phase != that1.Phase {
-		return false
-	}
-	if len(this.Conditions) != len(that1.Conditions) {
-		return false
-	}
-	for i := range this.Conditions {
-		if !this.Conditions[i].Equal(that1.Conditions[i]) {
-			return false
-		}
-	}
-	if len(this.Addresses) != len(that1.Addresses) {
-		return false
-	}
-	for i := range this.Addresses {
-		if !this.Addresses[i].Equal(that1.Addresses[i]) {
-			return false
-		}
-	}
-	if !this.DaemonEndpoints.Equal(that1.DaemonEndpoints) {
-		return false
-	}
-	if !this.NodeInfo.Equal(that1.NodeInfo) {
-		return false
-	}
-	if len(this.Images) != len(that1.Images) {
-		return false
-	}
-	for i := range this.Images {
-		if !this.Images[i].Equal(that1.Images[i]) {
-			return false
-		}
-	}
-	if len(this.VolumesInUse) != len(that1.VolumesInUse) {
-		return false
-	}
-	for i := range this.VolumesInUse {
-		if this.VolumesInUse[i] != that1.VolumesInUse[i] {
-			return false
-		}
-	}
-	if len(this.VolumesAttached) != len(that1.VolumesAttached) {
-		return false
-	}
-	for i := range this.VolumesAttached {
-		if !this.VolumesAttached[i].Equal(that1.VolumesAttached[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *NodeSystemInfo) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*NodeSystemInfo)
-	if !ok {
-		that2, ok := that.(NodeSystemInfo)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.MachineID != that1.MachineID {
-		return false
-	}
-	if this.SystemUUID != that1.SystemUUID {
-		return false
-	}
-	if this.BootID != that1.BootID {
-		return false
-	}
-	if this.KernelVersion != that1.KernelVersion {
-		return false
-	}
-	if this.OsImage != that1.OsImage {
-		return false
-	}
-	if this.ContainerRuntimeVersion != that1.ContainerRuntimeVersion {
-		return false
-	}
-	if this.KubeletVersion != that1.KubeletVersion {
-		return false
-	}
-	if this.KubeProxyVersion != that1.KubeProxyVersion {
-		return false
-	}
-	if this.OperatingSystem != that1.OperatingSystem {
-		return false
-	}
-	if this.Architecture != that1.Architecture {
-		return false
-	}
-	return true
-}
-func (this *ObjectFieldSelector) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ObjectFieldSelector)
-	if !ok {
-		that2, ok := that.(ObjectFieldSelector)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ApiVersion != that1.ApiVersion {
-		return false
-	}
-	if this.FieldPath != that1.FieldPath {
-		return false
-	}
-	return true
-}
-func (this *ObjectMeta) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ObjectMeta)
-	if !ok {
-		that2, ok := that.(ObjectMeta)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.GenerateName != that1.GenerateName {
-		return false
-	}
-	if this.Namespace != that1.Namespace {
-		return false
-	}
-	if this.SelfLink != that1.SelfLink {
-		return false
-	}
-	if this.Uid != that1.Uid {
-		return false
-	}
-	if this.ResourceVersion != that1.ResourceVersion {
-		return false
-	}
-	if this.Generation != that1.Generation {
-		return false
-	}
-	if !this.CreationTimestamp.Equal(that1.CreationTimestamp) {
-		return false
-	}
-	if !this.DeletionTimestamp.Equal(that1.DeletionTimestamp) {
-		return false
-	}
-	if this.DeletionGracePeriodSeconds != that1.DeletionGracePeriodSeconds {
-		return false
-	}
-	if len(this.Labels) != len(that1.Labels) {
-		return false
-	}
-	for i := range this.Labels {
-		if this.Labels[i] != that1.Labels[i] {
-			return false
-		}
-	}
-	if len(this.Annotations) != len(that1.Annotations) {
-		return false
-	}
-	for i := range this.Annotations {
-		if this.Annotations[i] != that1.Annotations[i] {
-			return false
-		}
-	}
-	if len(this.OwnerReferences) != len(that1.OwnerReferences) {
-		return false
-	}
-	for i := range this.OwnerReferences {
-		if !this.OwnerReferences[i].Equal(that1.OwnerReferences[i]) {
-			return false
-		}
-	}
-	if len(this.Finalizers) != len(that1.Finalizers) {
-		return false
-	}
-	for i := range this.Finalizers {
-		if this.Finalizers[i] != that1.Finalizers[i] {
-			return false
-		}
-	}
-	if this.ClusterName != that1.ClusterName {
-		return false
-	}
-	return true
-}
-func (this *ObjectReference) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ObjectReference)
-	if !ok {
-		that2, ok := that.(ObjectReference)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Kind != that1.Kind {
-		return false
-	}
-	if this.Namespace != that1.Namespace {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Uid != that1.Uid {
-		return false
-	}
-	if this.ApiVersion != that1.ApiVersion {
-		return false
-	}
-	if this.ResourceVersion != that1.ResourceVersion {
-		return false
-	}
-	if this.FieldPath != that1.FieldPath {
-		return false
-	}
-	return true
-}
-func (this *OwnerReference) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*OwnerReference)
-	if !ok {
-		that2, ok := that.(OwnerReference)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ApiVersion != that1.ApiVersion {
-		return false
-	}
-	if this.Kind != that1.Kind {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Uid != that1.Uid {
-		return false
-	}
-	if this.Controller != that1.Controller {
-		return false
-	}
-	return true
-}
-func (this *PersistentVolume) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolume)
-	if !ok {
-		that2, ok := that.(PersistentVolume)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *PersistentVolumeClaim) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeClaim)
-	if !ok {
-		that2, ok := that.(PersistentVolumeClaim)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *PersistentVolumeClaimList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeClaimList)
-	if !ok {
-		that2, ok := that.(PersistentVolumeClaimList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PersistentVolumeClaimSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeClaimSpec)
-	if !ok {
-		that2, ok := that.(PersistentVolumeClaimSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.AccessModes) != len(that1.AccessModes) {
-		return false
-	}
-	for i := range this.AccessModes {
-		if this.AccessModes[i] != that1.AccessModes[i] {
-			return false
-		}
-	}
-	if !this.Selector.Equal(that1.Selector) {
-		return false
-	}
-	if !this.Resources.Equal(that1.Resources) {
-		return false
-	}
-	if this.VolumeName != that1.VolumeName {
-		return false
-	}
-	return true
-}
-func (this *PersistentVolumeClaimStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeClaimStatus)
-	if !ok {
-		that2, ok := that.(PersistentVolumeClaimStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Phase != that1.Phase {
-		return false
-	}
-	if len(this.AccessModes) != len(that1.AccessModes) {
-		return false
-	}
-	for i := range this.AccessModes {
-		if this.AccessModes[i] != that1.AccessModes[i] {
-			return false
-		}
-	}
-	if len(this.Capacity) != len(that1.Capacity) {
-		return false
-	}
-	for i := range this.Capacity {
-		if !this.Capacity[i].Equal(that1.Capacity[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PersistentVolumeClaimVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeClaimVolumeSource)
-	if !ok {
-		that2, ok := that.(PersistentVolumeClaimVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ClaimName != that1.ClaimName {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *PersistentVolumeList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeList)
-	if !ok {
-		that2, ok := that.(PersistentVolumeList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PersistentVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeSource)
-	if !ok {
-		that2, ok := that.(PersistentVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.GcePersistentDisk.Equal(that1.GcePersistentDisk) {
-		return false
-	}
-	if !this.AwsElasticBlockStore.Equal(that1.AwsElasticBlockStore) {
-		return false
-	}
-	if !this.HostPath.Equal(that1.HostPath) {
-		return false
-	}
-	if !this.Glusterfs.Equal(that1.Glusterfs) {
-		return false
-	}
-	if !this.Nfs.Equal(that1.Nfs) {
-		return false
-	}
-	if !this.Rbd.Equal(that1.Rbd) {
-		return false
-	}
-	if !this.Iscsi.Equal(that1.Iscsi) {
-		return false
-	}
-	if !this.Cinder.Equal(that1.Cinder) {
-		return false
-	}
-	if !this.Cephfs.Equal(that1.Cephfs) {
-		return false
-	}
-	if !this.Fc.Equal(that1.Fc) {
-		return false
-	}
-	if !this.Flocker.Equal(that1.Flocker) {
-		return false
-	}
-	if !this.FlexVolume.Equal(that1.FlexVolume) {
-		return false
-	}
-	if !this.AzureFile.Equal(that1.AzureFile) {
-		return false
-	}
-	if !this.VsphereVolume.Equal(that1.VsphereVolume) {
-		return false
-	}
-	if !this.Quobyte.Equal(that1.Quobyte) {
-		return false
-	}
-	if !this.AzureDisk.Equal(that1.AzureDisk) {
-		return false
-	}
-	return true
-}
-func (this *PersistentVolumeSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeSpec)
-	if !ok {
-		that2, ok := that.(PersistentVolumeSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Capacity) != len(that1.Capacity) {
-		return false
-	}
-	for i := range this.Capacity {
-		if !this.Capacity[i].Equal(that1.Capacity[i]) {
-			return false
-		}
-	}
-	if !this.PersistentVolumeSource.Equal(that1.PersistentVolumeSource) {
-		return false
-	}
-	if len(this.AccessModes) != len(that1.AccessModes) {
-		return false
-	}
-	for i := range this.AccessModes {
-		if this.AccessModes[i] != that1.AccessModes[i] {
-			return false
-		}
-	}
-	if !this.ClaimRef.Equal(that1.ClaimRef) {
-		return false
-	}
-	if this.PersistentVolumeReclaimPolicy != that1.PersistentVolumeReclaimPolicy {
-		return false
-	}
-	return true
-}
-func (this *PersistentVolumeStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PersistentVolumeStatus)
-	if !ok {
-		that2, ok := that.(PersistentVolumeStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Phase != that1.Phase {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	return true
-}
-func (this *Pod) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Pod)
-	if !ok {
-		that2, ok := that.(Pod)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *PodAffinity) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodAffinity)
-	if !ok {
-		that2, ok := that.(PodAffinity)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.RequiredDuringSchedulingIgnoredDuringExecution) != len(that1.RequiredDuringSchedulingIgnoredDuringExecution) {
-		return false
-	}
-	for i := range this.RequiredDuringSchedulingIgnoredDuringExecution {
-		if !this.RequiredDuringSchedulingIgnoredDuringExecution[i].Equal(that1.RequiredDuringSchedulingIgnoredDuringExecution[i]) {
-			return false
-		}
-	}
-	if len(this.PreferredDuringSchedulingIgnoredDuringExecution) != len(that1.PreferredDuringSchedulingIgnoredDuringExecution) {
-		return false
-	}
-	for i := range this.PreferredDuringSchedulingIgnoredDuringExecution {
-		if !this.PreferredDuringSchedulingIgnoredDuringExecution[i].Equal(that1.PreferredDuringSchedulingIgnoredDuringExecution[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PodAffinityTerm) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodAffinityTerm)
-	if !ok {
-		that2, ok := that.(PodAffinityTerm)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.LabelSelector.Equal(that1.LabelSelector) {
-		return false
-	}
-	if len(this.Namespaces) != len(that1.Namespaces) {
-		return false
-	}
-	for i := range this.Namespaces {
-		if this.Namespaces[i] != that1.Namespaces[i] {
-			return false
-		}
-	}
-	if this.TopologyKey != that1.TopologyKey {
-		return false
-	}
-	return true
-}
-func (this *PodAntiAffinity) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodAntiAffinity)
-	if !ok {
-		that2, ok := that.(PodAntiAffinity)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.RequiredDuringSchedulingIgnoredDuringExecution) != len(that1.RequiredDuringSchedulingIgnoredDuringExecution) {
-		return false
-	}
-	for i := range this.RequiredDuringSchedulingIgnoredDuringExecution {
-		if !this.RequiredDuringSchedulingIgnoredDuringExecution[i].Equal(that1.RequiredDuringSchedulingIgnoredDuringExecution[i]) {
-			return false
-		}
-	}
-	if len(this.PreferredDuringSchedulingIgnoredDuringExecution) != len(that1.PreferredDuringSchedulingIgnoredDuringExecution) {
-		return false
-	}
-	for i := range this.PreferredDuringSchedulingIgnoredDuringExecution {
-		if !this.PreferredDuringSchedulingIgnoredDuringExecution[i].Equal(that1.PreferredDuringSchedulingIgnoredDuringExecution[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PodAttachOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodAttachOptions)
-	if !ok {
-		that2, ok := that.(PodAttachOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Stdin != that1.Stdin {
-		return false
-	}
-	if this.Stdout != that1.Stdout {
-		return false
-	}
-	if this.Stderr != that1.Stderr {
-		return false
-	}
-	if this.Tty != that1.Tty {
-		return false
-	}
-	if this.Container != that1.Container {
-		return false
-	}
-	return true
-}
-func (this *PodCondition) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodCondition)
-	if !ok {
-		that2, ok := that.(PodCondition)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Status != that1.Status {
-		return false
-	}
-	if !this.LastProbeTime.Equal(that1.LastProbeTime) {
-		return false
-	}
-	if !this.LastTransitionTime.Equal(that1.LastTransitionTime) {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	return true
-}
-func (this *PodExecOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodExecOptions)
-	if !ok {
-		that2, ok := that.(PodExecOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Stdin != that1.Stdin {
-		return false
-	}
-	if this.Stdout != that1.Stdout {
-		return false
-	}
-	if this.Stderr != that1.Stderr {
-		return false
-	}
-	if this.Tty != that1.Tty {
-		return false
-	}
-	if this.Container != that1.Container {
-		return false
-	}
-	if len(this.Command) != len(that1.Command) {
-		return false
-	}
-	for i := range this.Command {
-		if this.Command[i] != that1.Command[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *PodList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodList)
-	if !ok {
-		that2, ok := that.(PodList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PodLogOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodLogOptions)
-	if !ok {
-		that2, ok := that.(PodLogOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Container != that1.Container {
-		return false
-	}
-	if this.Follow != that1.Follow {
-		return false
-	}
-	if this.Previous != that1.Previous {
-		return false
-	}
-	if this.SinceSeconds != that1.SinceSeconds {
-		return false
-	}
-	if !this.SinceTime.Equal(that1.SinceTime) {
-		return false
-	}
-	if this.Timestamps != that1.Timestamps {
-		return false
-	}
-	if this.TailLines != that1.TailLines {
-		return false
-	}
-	if this.LimitBytes != that1.LimitBytes {
-		return false
-	}
-	return true
-}
-func (this *PodProxyOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodProxyOptions)
-	if !ok {
-		that2, ok := that.(PodProxyOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	return true
-}
-func (this *PodSecurityContext) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodSecurityContext)
-	if !ok {
-		that2, ok := that.(PodSecurityContext)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.SeLinuxOptions.Equal(that1.SeLinuxOptions) {
-		return false
-	}
-	if this.RunAsUser != that1.RunAsUser {
-		return false
-	}
-	if this.RunAsNonRoot != that1.RunAsNonRoot {
-		return false
-	}
-	if len(this.SupplementalGroups) != len(that1.SupplementalGroups) {
-		return false
-	}
-	for i := range this.SupplementalGroups {
-		if this.SupplementalGroups[i] != that1.SupplementalGroups[i] {
-			return false
-		}
-	}
-	if this.FsGroup != that1.FsGroup {
-		return false
-	}
-	return true
-}
-func (this *PodSignature) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodSignature)
-	if !ok {
-		that2, ok := that.(PodSignature)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.PodController.Equal(that1.PodController) {
-		return false
-	}
-	return true
-}
-func (this *PodSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodSpec)
-	if !ok {
-		that2, ok := that.(PodSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Volumes) != len(that1.Volumes) {
-		return false
-	}
-	for i := range this.Volumes {
-		if !this.Volumes[i].Equal(that1.Volumes[i]) {
-			return false
-		}
-	}
-	if len(this.Containers) != len(that1.Containers) {
-		return false
-	}
-	for i := range this.Containers {
-		if !this.Containers[i].Equal(that1.Containers[i]) {
-			return false
-		}
-	}
-	if this.RestartPolicy != that1.RestartPolicy {
-		return false
-	}
-	if this.TerminationGracePeriodSeconds != that1.TerminationGracePeriodSeconds {
-		return false
-	}
-	if this.ActiveDeadlineSeconds != that1.ActiveDeadlineSeconds {
-		return false
-	}
-	if this.DnsPolicy != that1.DnsPolicy {
-		return false
-	}
-	if len(this.NodeSelector) != len(that1.NodeSelector) {
-		return false
-	}
-	for i := range this.NodeSelector {
-		if this.NodeSelector[i] != that1.NodeSelector[i] {
-			return false
-		}
-	}
-	if this.ServiceAccountName != that1.ServiceAccountName {
-		return false
-	}
-	if this.ServiceAccount != that1.ServiceAccount {
-		return false
-	}
-	if this.NodeName != that1.NodeName {
-		return false
-	}
-	if this.HostNetwork != that1.HostNetwork {
-		return false
-	}
-	if this.HostPID != that1.HostPID {
-		return false
-	}
-	if this.HostIPC != that1.HostIPC {
-		return false
-	}
-	if !this.SecurityContext.Equal(that1.SecurityContext) {
-		return false
-	}
-	if len(this.ImagePullSecrets) != len(that1.ImagePullSecrets) {
-		return false
-	}
-	for i := range this.ImagePullSecrets {
-		if !this.ImagePullSecrets[i].Equal(that1.ImagePullSecrets[i]) {
-			return false
-		}
-	}
-	if this.Hostname != that1.Hostname {
-		return false
-	}
-	if this.Subdomain != that1.Subdomain {
-		return false
-	}
-	return true
-}
-func (this *PodStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodStatus)
-	if !ok {
-		that2, ok := that.(PodStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Phase != that1.Phase {
-		return false
-	}
-	if len(this.Conditions) != len(that1.Conditions) {
-		return false
-	}
-	for i := range this.Conditions {
-		if !this.Conditions[i].Equal(that1.Conditions[i]) {
-			return false
-		}
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.HostIP != that1.HostIP {
-		return false
-	}
-	if this.PodIP != that1.PodIP {
-		return false
-	}
-	if !this.StartTime.Equal(that1.StartTime) {
-		return false
-	}
-	if len(this.ContainerStatuses) != len(that1.ContainerStatuses) {
-		return false
-	}
-	for i := range this.ContainerStatuses {
-		if !this.ContainerStatuses[i].Equal(that1.ContainerStatuses[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PodStatusResult) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodStatusResult)
-	if !ok {
-		that2, ok := that.(PodStatusResult)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *PodTemplate) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodTemplate)
-	if !ok {
-		that2, ok := that.(PodTemplate)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Template.Equal(that1.Template) {
-		return false
-	}
-	return true
-}
-func (this *PodTemplateList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodTemplateList)
-	if !ok {
-		that2, ok := that.(PodTemplateList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PodTemplateSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PodTemplateSpec)
-	if !ok {
-		that2, ok := that.(PodTemplateSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	return true
-}
-func (this *Preconditions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Preconditions)
-	if !ok {
-		that2, ok := that.(Preconditions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Uid != that1.Uid {
-		return false
-	}
-	return true
-}
-func (this *PreferAvoidPodsEntry) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PreferAvoidPodsEntry)
-	if !ok {
-		that2, ok := that.(PreferAvoidPodsEntry)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.PodSignature.Equal(that1.PodSignature) {
-		return false
-	}
-	if !this.EvictionTime.Equal(that1.EvictionTime) {
-		return false
-	}
-	if this.Reason != that1.Reason {
-		return false
-	}
-	if this.Message != that1.Message {
-		return false
-	}
-	return true
-}
-func (this *PreferredSchedulingTerm) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*PreferredSchedulingTerm)
-	if !ok {
-		that2, ok := that.(PreferredSchedulingTerm)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Weight != that1.Weight {
-		return false
-	}
-	if !this.Preference.Equal(that1.Preference) {
-		return false
-	}
-	return true
-}
-func (this *Probe) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Probe)
-	if !ok {
-		that2, ok := that.(Probe)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Handler.Equal(that1.Handler) {
-		return false
-	}
-	if this.InitialDelaySeconds != that1.InitialDelaySeconds {
-		return false
-	}
-	if this.TimeoutSeconds != that1.TimeoutSeconds {
-		return false
-	}
-	if this.PeriodSeconds != that1.PeriodSeconds {
-		return false
-	}
-	if this.SuccessThreshold != that1.SuccessThreshold {
-		return false
-	}
-	if this.FailureThreshold != that1.FailureThreshold {
-		return false
-	}
-	return true
-}
-func (this *QuobyteVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*QuobyteVolumeSource)
-	if !ok {
-		that2, ok := that.(QuobyteVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Registry != that1.Registry {
-		return false
-	}
-	if this.Volume != that1.Volume {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	if this.User != that1.User {
-		return false
-	}
-	if this.Group != that1.Group {
-		return false
-	}
-	return true
-}
-func (this *RBDVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*RBDVolumeSource)
-	if !ok {
-		that2, ok := that.(RBDVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Monitors) != len(that1.Monitors) {
-		return false
-	}
-	for i := range this.Monitors {
-		if this.Monitors[i] != that1.Monitors[i] {
-			return false
-		}
-	}
-	if this.Image != that1.Image {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	if this.Pool != that1.Pool {
-		return false
-	}
-	if this.User != that1.User {
-		return false
-	}
-	if this.Keyring != that1.Keyring {
-		return false
-	}
-	if !this.SecretRef.Equal(that1.SecretRef) {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	return true
-}
-func (this *RangeAllocation) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*RangeAllocation)
-	if !ok {
-		that2, ok := that.(RangeAllocation)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if this.Range != that1.Range {
-		return false
-	}
-	if !bytes.Equal(this.Data, that1.Data) {
-		return false
-	}
-	return true
-}
-func (this *ReplicationController) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ReplicationController)
-	if !ok {
-		that2, ok := that.(ReplicationController)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *ReplicationControllerList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ReplicationControllerList)
-	if !ok {
-		that2, ok := that.(ReplicationControllerList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ReplicationControllerSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ReplicationControllerSpec)
-	if !ok {
-		that2, ok := that.(ReplicationControllerSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	if len(this.Selector) != len(that1.Selector) {
-		return false
-	}
-	for i := range this.Selector {
-		if this.Selector[i] != that1.Selector[i] {
-			return false
-		}
-	}
-	if !this.Template.Equal(that1.Template) {
-		return false
-	}
-	return true
-}
-func (this *ReplicationControllerStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ReplicationControllerStatus)
-	if !ok {
-		that2, ok := that.(ReplicationControllerStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Replicas != that1.Replicas {
-		return false
-	}
-	if this.FullyLabeledReplicas != that1.FullyLabeledReplicas {
-		return false
-	}
-	if this.ReadyReplicas != that1.ReadyReplicas {
-		return false
-	}
-	if this.ObservedGeneration != that1.ObservedGeneration {
-		return false
-	}
-	return true
-}
-func (this *ResourceFieldSelector) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ResourceFieldSelector)
-	if !ok {
-		that2, ok := that.(ResourceFieldSelector)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.ContainerName != that1.ContainerName {
-		return false
-	}
-	if this.Resource != that1.Resource {
-		return false
-	}
-	if !this.Divisor.Equal(that1.Divisor) {
-		return false
-	}
-	return true
-}
-func (this *ResourceQuota) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ResourceQuota)
-	if !ok {
-		that2, ok := that.(ResourceQuota)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *ResourceQuotaList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ResourceQuotaList)
-	if !ok {
-		that2, ok := that.(ResourceQuotaList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ResourceQuotaSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ResourceQuotaSpec)
-	if !ok {
-		that2, ok := that.(ResourceQuotaSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Hard) != len(that1.Hard) {
-		return false
-	}
-	for i := range this.Hard {
-		if !this.Hard[i].Equal(that1.Hard[i]) {
-			return false
-		}
-	}
-	if len(this.Scopes) != len(that1.Scopes) {
-		return false
-	}
-	for i := range this.Scopes {
-		if this.Scopes[i] != that1.Scopes[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *ResourceQuotaStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ResourceQuotaStatus)
-	if !ok {
-		that2, ok := that.(ResourceQuotaStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Hard) != len(that1.Hard) {
-		return false
-	}
-	for i := range this.Hard {
-		if !this.Hard[i].Equal(that1.Hard[i]) {
-			return false
-		}
-	}
-	if len(this.Used) != len(that1.Used) {
-		return false
-	}
-	for i := range this.Used {
-		if !this.Used[i].Equal(that1.Used[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ResourceRequirements) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ResourceRequirements)
-	if !ok {
-		that2, ok := that.(ResourceRequirements)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Limits) != len(that1.Limits) {
-		return false
-	}
-	for i := range this.Limits {
-		if !this.Limits[i].Equal(that1.Limits[i]) {
-			return false
-		}
-	}
-	if len(this.Requests) != len(that1.Requests) {
-		return false
-	}
-	for i := range this.Requests {
-		if !this.Requests[i].Equal(that1.Requests[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *SELinuxOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SELinuxOptions)
-	if !ok {
-		that2, ok := that.(SELinuxOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.User != that1.User {
-		return false
-	}
-	if this.Role != that1.Role {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Level != that1.Level {
-		return false
-	}
-	return true
-}
-func (this *Secret) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Secret)
-	if !ok {
-		that2, ok := that.(Secret)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Data) != len(that1.Data) {
-		return false
-	}
-	for i := range this.Data {
-		if !bytes.Equal(this.Data[i], that1.Data[i]) {
-			return false
-		}
-	}
-	if len(this.StringData) != len(that1.StringData) {
-		return false
-	}
-	for i := range this.StringData {
-		if this.StringData[i] != that1.StringData[i] {
-			return false
-		}
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	return true
-}
-func (this *SecretKeySelector) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SecretKeySelector)
-	if !ok {
-		that2, ok := that.(SecretKeySelector)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.LocalObjectReference.Equal(that1.LocalObjectReference) {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	return true
-}
-func (this *SecretList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SecretList)
-	if !ok {
-		that2, ok := that.(SecretList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *SecretVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SecretVolumeSource)
-	if !ok {
-		that2, ok := that.(SecretVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.SecretName != that1.SecretName {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	if this.DefaultMode != that1.DefaultMode {
-		return false
-	}
-	return true
-}
-func (this *SecurityContext) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SecurityContext)
-	if !ok {
-		that2, ok := that.(SecurityContext)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Capabilities.Equal(that1.Capabilities) {
-		return false
-	}
-	if this.Privileged != that1.Privileged {
-		return false
-	}
-	if !this.SeLinuxOptions.Equal(that1.SeLinuxOptions) {
-		return false
-	}
-	if this.RunAsUser != that1.RunAsUser {
-		return false
-	}
-	if this.RunAsNonRoot != that1.RunAsNonRoot {
-		return false
-	}
-	if this.ReadOnlyRootFilesystem != that1.ReadOnlyRootFilesystem {
-		return false
-	}
-	return true
-}
-func (this *SerializedReference) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*SerializedReference)
-	if !ok {
-		that2, ok := that.(SerializedReference)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Reference.Equal(that1.Reference) {
-		return false
-	}
-	return true
-}
-func (this *Service) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Service)
-	if !ok {
-		that2, ok := that.(Service)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if !this.Spec.Equal(that1.Spec) {
-		return false
-	}
-	if !this.Status.Equal(that1.Status) {
-		return false
-	}
-	return true
-}
-func (this *ServiceAccount) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ServiceAccount)
-	if !ok {
-		that2, ok := that.(ServiceAccount)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Secrets) != len(that1.Secrets) {
-		return false
-	}
-	for i := range this.Secrets {
-		if !this.Secrets[i].Equal(that1.Secrets[i]) {
-			return false
-		}
-	}
-	if len(this.ImagePullSecrets) != len(that1.ImagePullSecrets) {
-		return false
-	}
-	for i := range this.ImagePullSecrets {
-		if !this.ImagePullSecrets[i].Equal(that1.ImagePullSecrets[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ServiceAccountList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ServiceAccountList)
-	if !ok {
-		that2, ok := that.(ServiceAccountList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ServiceList) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ServiceList)
-	if !ok {
-		that2, ok := that.(ServiceList)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Metadata.Equal(that1.Metadata) {
-		return false
-	}
-	if len(this.Items) != len(that1.Items) {
-		return false
-	}
-	for i := range this.Items {
-		if !this.Items[i].Equal(that1.Items[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ServicePort) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ServicePort)
-	if !ok {
-		that2, ok := that.(ServicePort)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Protocol != that1.Protocol {
-		return false
-	}
-	if this.Port != that1.Port {
-		return false
-	}
-	if !this.TargetPort.Equal(that1.TargetPort) {
-		return false
-	}
-	if this.NodePort != that1.NodePort {
-		return false
-	}
-	return true
-}
-func (this *ServiceProxyOptions) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ServiceProxyOptions)
-	if !ok {
-		that2, ok := that.(ServiceProxyOptions)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	return true
-}
-func (this *ServiceSpec) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ServiceSpec)
-	if !ok {
-		that2, ok := that.(ServiceSpec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Ports) != len(that1.Ports) {
-		return false
-	}
-	for i := range this.Ports {
-		if !this.Ports[i].Equal(that1.Ports[i]) {
-			return false
-		}
-	}
-	if len(this.Selector) != len(that1.Selector) {
-		return false
-	}
-	for i := range this.Selector {
-		if this.Selector[i] != that1.Selector[i] {
-			return false
-		}
-	}
-	if this.ClusterIP != that1.ClusterIP {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if len(this.ExternalIPs) != len(that1.ExternalIPs) {
-		return false
-	}
-	for i := range this.ExternalIPs {
-		if this.ExternalIPs[i] != that1.ExternalIPs[i] {
-			return false
-		}
-	}
-	if len(this.DeprecatedPublicIPs) != len(that1.DeprecatedPublicIPs) {
-		return false
-	}
-	for i := range this.DeprecatedPublicIPs {
-		if this.DeprecatedPublicIPs[i] != that1.DeprecatedPublicIPs[i] {
-			return false
-		}
-	}
-	if this.SessionAffinity != that1.SessionAffinity {
-		return false
-	}
-	if this.LoadBalancerIP != that1.LoadBalancerIP {
-		return false
-	}
-	if len(this.LoadBalancerSourceRanges) != len(that1.LoadBalancerSourceRanges) {
-		return false
-	}
-	for i := range this.LoadBalancerSourceRanges {
-		if this.LoadBalancerSourceRanges[i] != that1.LoadBalancerSourceRanges[i] {
-			return false
-		}
-	}
-	if this.ExternalName != that1.ExternalName {
-		return false
-	}
-	return true
-}
-func (this *ServiceStatus) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*ServiceStatus)
-	if !ok {
-		that2, ok := that.(ServiceStatus)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.LoadBalancer.Equal(that1.LoadBalancer) {
-		return false
-	}
-	return true
-}
-func (this *TCPSocketAction) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*TCPSocketAction)
-	if !ok {
-		that2, ok := that.(TCPSocketAction)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.Port.Equal(that1.Port) {
-		return false
-	}
-	return true
-}
-func (this *Taint) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Taint)
-	if !ok {
-		that2, ok := that.(Taint)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	if this.Value != that1.Value {
-		return false
-	}
-	if this.Effect != that1.Effect {
-		return false
-	}
-	return true
-}
-func (this *Toleration) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Toleration)
-	if !ok {
-		that2, ok := that.(Toleration)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	if this.Operator != that1.Operator {
-		return false
-	}
-	if this.Value != that1.Value {
-		return false
-	}
-	if this.Effect != that1.Effect {
-		return false
-	}
-	return true
-}
-func (this *Volume) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Volume)
-	if !ok {
-		that2, ok := that.(Volume)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if !this.VolumeSource.Equal(that1.VolumeSource) {
-		return false
-	}
-	return true
-}
-func (this *VolumeMount) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*VolumeMount)
-	if !ok {
-		that2, ok := that.(VolumeMount)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.ReadOnly != that1.ReadOnly {
-		return false
-	}
-	if this.MountPath != that1.MountPath {
-		return false
-	}
-	if this.SubPath != that1.SubPath {
-		return false
-	}
-	return true
-}
-func (this *VolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*VolumeSource)
-	if !ok {
-		that2, ok := that.(VolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if !this.HostPath.Equal(that1.HostPath) {
-		return false
-	}
-	if !this.EmptyDir.Equal(that1.EmptyDir) {
-		return false
-	}
-	if !this.GcePersistentDisk.Equal(that1.GcePersistentDisk) {
-		return false
-	}
-	if !this.AwsElasticBlockStore.Equal(that1.AwsElasticBlockStore) {
-		return false
-	}
-	if !this.GitRepo.Equal(that1.GitRepo) {
-		return false
-	}
-	if !this.Secret.Equal(that1.Secret) {
-		return false
-	}
-	if !this.Nfs.Equal(that1.Nfs) {
-		return false
-	}
-	if !this.Iscsi.Equal(that1.Iscsi) {
-		return false
-	}
-	if !this.Glusterfs.Equal(that1.Glusterfs) {
-		return false
-	}
-	if !this.PersistentVolumeClaim.Equal(that1.PersistentVolumeClaim) {
-		return false
-	}
-	if !this.Rbd.Equal(that1.Rbd) {
-		return false
-	}
-	if !this.FlexVolume.Equal(that1.FlexVolume) {
-		return false
-	}
-	if !this.Cinder.Equal(that1.Cinder) {
-		return false
-	}
-	if !this.Cephfs.Equal(that1.Cephfs) {
-		return false
-	}
-	if !this.Flocker.Equal(that1.Flocker) {
-		return false
-	}
-	if !this.DownwardAPI.Equal(that1.DownwardAPI) {
-		return false
-	}
-	if !this.Fc.Equal(that1.Fc) {
-		return false
-	}
-	if !this.AzureFile.Equal(that1.AzureFile) {
-		return false
-	}
-	if !this.ConfigMap.Equal(that1.ConfigMap) {
-		return false
-	}
-	if !this.VsphereVolume.Equal(that1.VsphereVolume) {
-		return false
-	}
-	if !this.Quobyte.Equal(that1.Quobyte) {
-		return false
-	}
-	if !this.AzureDisk.Equal(that1.AzureDisk) {
-		return false
-	}
-	return true
-}
-func (this *VsphereVirtualDiskVolumeSource) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*VsphereVirtualDiskVolumeSource)
-	if !ok {
-		that2, ok := that.(VsphereVirtualDiskVolumeSource)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.VolumePath != that1.VolumePath {
-		return false
-	}
-	if this.FsType != that1.FsType {
-		return false
-	}
-	return true
-}
-func (this *WeightedPodAffinityTerm) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*WeightedPodAffinityTerm)
-	if !ok {
-		that2, ok := that.(WeightedPodAffinityTerm)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Weight != that1.Weight {
-		return false
-	}
-	if !this.PodAffinityTerm.Equal(that1.PodAffinityTerm) {
-		return false
-	}
-	return true
-}
-func (this *AWSElasticBlockStoreVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.AWSElasticBlockStoreVolumeSource{")
-	s = append(s, "VolumeID: "+fmt.Sprintf("%#v", this.VolumeID)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "Partition: "+fmt.Sprintf("%#v", this.Partition)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Affinity) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Affinity{")
-	if this.NodeAffinity != nil {
-		s = append(s, "NodeAffinity: "+fmt.Sprintf("%#v", this.NodeAffinity)+",\n")
-	}
-	if this.PodAffinity != nil {
-		s = append(s, "PodAffinity: "+fmt.Sprintf("%#v", this.PodAffinity)+",\n")
-	}
-	if this.PodAntiAffinity != nil {
-		s = append(s, "PodAntiAffinity: "+fmt.Sprintf("%#v", this.PodAntiAffinity)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *AttachedVolume) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.AttachedVolume{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "DevicePath: "+fmt.Sprintf("%#v", this.DevicePath)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *AvoidPods) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.AvoidPods{")
-	if this.PreferAvoidPods != nil {
-		s = append(s, "PreferAvoidPods: "+fmt.Sprintf("%#v", this.PreferAvoidPods)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *AzureDiskVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.AzureDiskVolumeSource{")
-	s = append(s, "DiskName: "+fmt.Sprintf("%#v", this.DiskName)+",\n")
-	s = append(s, "DiskURI: "+fmt.Sprintf("%#v", this.DiskURI)+",\n")
-	s = append(s, "CachingMode: "+fmt.Sprintf("%#v", this.CachingMode)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *AzureFileVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.AzureFileVolumeSource{")
-	s = append(s, "SecretName: "+fmt.Sprintf("%#v", this.SecretName)+",\n")
-	s = append(s, "ShareName: "+fmt.Sprintf("%#v", this.ShareName)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Binding) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.Binding{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Target != nil {
-		s = append(s, "Target: "+fmt.Sprintf("%#v", this.Target)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Capabilities) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.Capabilities{")
-	if this.Add != nil {
-		s = append(s, "Add: "+fmt.Sprintf("%#v", this.Add)+",\n")
-	}
-	if this.Drop != nil {
-		s = append(s, "Drop: "+fmt.Sprintf("%#v", this.Drop)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *CephFSVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.CephFSVolumeSource{")
-	if this.Monitors != nil {
-		s = append(s, "Monitors: "+fmt.Sprintf("%#v", this.Monitors)+",\n")
-	}
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "User: "+fmt.Sprintf("%#v", this.User)+",\n")
-	s = append(s, "SecretFile: "+fmt.Sprintf("%#v", this.SecretFile)+",\n")
-	if this.SecretRef != nil {
-		s = append(s, "SecretRef: "+fmt.Sprintf("%#v", this.SecretRef)+",\n")
-	}
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *CinderVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.CinderVolumeSource{")
-	s = append(s, "VolumeID: "+fmt.Sprintf("%#v", this.VolumeID)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ComponentCondition) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.ComponentCondition{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ComponentStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ComponentStatus{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Conditions != nil {
-		s = append(s, "Conditions: "+fmt.Sprintf("%#v", this.Conditions)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ComponentStatusList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ComponentStatusList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ConfigMap) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ConfigMap{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	keysForData := make([]string, 0, len(this.Data))
-	for k, _ := range this.Data {
-		keysForData = append(keysForData, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForData)
-	mapStringForData := "map[string]string{"
-	for _, k := range keysForData {
-		mapStringForData += fmt.Sprintf("%#v: %#v,", k, this.Data[k])
-	}
-	mapStringForData += "}"
-	if this.Data != nil {
-		s = append(s, "Data: "+mapStringForData+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ConfigMapKeySelector) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ConfigMapKeySelector{")
-	if this.LocalObjectReference != nil {
-		s = append(s, "LocalObjectReference: "+fmt.Sprintf("%#v", this.LocalObjectReference)+",\n")
-	}
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ConfigMapList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ConfigMapList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ConfigMapVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.ConfigMapVolumeSource{")
-	if this.LocalObjectReference != nil {
-		s = append(s, "LocalObjectReference: "+fmt.Sprintf("%#v", this.LocalObjectReference)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "DefaultMode: "+fmt.Sprintf("%#v", this.DefaultMode)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Container) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 22)
-	s = append(s, "&v1.Container{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "Image: "+fmt.Sprintf("%#v", this.Image)+",\n")
-	if this.Command != nil {
-		s = append(s, "Command: "+fmt.Sprintf("%#v", this.Command)+",\n")
-	}
-	if this.Args != nil {
-		s = append(s, "Args: "+fmt.Sprintf("%#v", this.Args)+",\n")
-	}
-	s = append(s, "WorkingDir: "+fmt.Sprintf("%#v", this.WorkingDir)+",\n")
-	if this.Ports != nil {
-		s = append(s, "Ports: "+fmt.Sprintf("%#v", this.Ports)+",\n")
-	}
-	if this.Env != nil {
-		s = append(s, "Env: "+fmt.Sprintf("%#v", this.Env)+",\n")
-	}
-	if this.Resources != nil {
-		s = append(s, "Resources: "+fmt.Sprintf("%#v", this.Resources)+",\n")
-	}
-	if this.VolumeMounts != nil {
-		s = append(s, "VolumeMounts: "+fmt.Sprintf("%#v", this.VolumeMounts)+",\n")
-	}
-	if this.LivenessProbe != nil {
-		s = append(s, "LivenessProbe: "+fmt.Sprintf("%#v", this.LivenessProbe)+",\n")
-	}
-	if this.ReadinessProbe != nil {
-		s = append(s, "ReadinessProbe: "+fmt.Sprintf("%#v", this.ReadinessProbe)+",\n")
-	}
-	if this.Lifecycle != nil {
-		s = append(s, "Lifecycle: "+fmt.Sprintf("%#v", this.Lifecycle)+",\n")
-	}
-	s = append(s, "TerminationMessagePath: "+fmt.Sprintf("%#v", this.TerminationMessagePath)+",\n")
-	s = append(s, "ImagePullPolicy: "+fmt.Sprintf("%#v", this.ImagePullPolicy)+",\n")
-	if this.SecurityContext != nil {
-		s = append(s, "SecurityContext: "+fmt.Sprintf("%#v", this.SecurityContext)+",\n")
-	}
-	s = append(s, "Stdin: "+fmt.Sprintf("%#v", this.Stdin)+",\n")
-	s = append(s, "StdinOnce: "+fmt.Sprintf("%#v", this.StdinOnce)+",\n")
-	s = append(s, "Tty: "+fmt.Sprintf("%#v", this.Tty)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ContainerImage) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ContainerImage{")
-	if this.Names != nil {
-		s = append(s, "Names: "+fmt.Sprintf("%#v", this.Names)+",\n")
-	}
-	s = append(s, "SizeBytes: "+fmt.Sprintf("%#v", this.SizeBytes)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ContainerPort) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.ContainerPort{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "HostPort: "+fmt.Sprintf("%#v", this.HostPort)+",\n")
-	s = append(s, "ContainerPort: "+fmt.Sprintf("%#v", this.ContainerPort)+",\n")
-	s = append(s, "Protocol: "+fmt.Sprintf("%#v", this.Protocol)+",\n")
-	s = append(s, "HostIP: "+fmt.Sprintf("%#v", this.HostIP)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ContainerState) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.ContainerState{")
-	if this.Waiting != nil {
-		s = append(s, "Waiting: "+fmt.Sprintf("%#v", this.Waiting)+",\n")
-	}
-	if this.Running != nil {
-		s = append(s, "Running: "+fmt.Sprintf("%#v", this.Running)+",\n")
-	}
-	if this.Terminated != nil {
-		s = append(s, "Terminated: "+fmt.Sprintf("%#v", this.Terminated)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ContainerStateRunning) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.ContainerStateRunning{")
-	if this.StartedAt != nil {
-		s = append(s, "StartedAt: "+fmt.Sprintf("%#v", this.StartedAt)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ContainerStateTerminated) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 11)
-	s = append(s, "&v1.ContainerStateTerminated{")
-	s = append(s, "ExitCode: "+fmt.Sprintf("%#v", this.ExitCode)+",\n")
-	s = append(s, "Signal: "+fmt.Sprintf("%#v", this.Signal)+",\n")
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	if this.StartedAt != nil {
-		s = append(s, "StartedAt: "+fmt.Sprintf("%#v", this.StartedAt)+",\n")
-	}
-	if this.FinishedAt != nil {
-		s = append(s, "FinishedAt: "+fmt.Sprintf("%#v", this.FinishedAt)+",\n")
-	}
-	s = append(s, "ContainerID: "+fmt.Sprintf("%#v", this.ContainerID)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ContainerStateWaiting) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ContainerStateWaiting{")
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ContainerStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 12)
-	s = append(s, "&v1.ContainerStatus{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	if this.State != nil {
-		s = append(s, "State: "+fmt.Sprintf("%#v", this.State)+",\n")
-	}
-	if this.LastState != nil {
-		s = append(s, "LastState: "+fmt.Sprintf("%#v", this.LastState)+",\n")
-	}
-	s = append(s, "Ready: "+fmt.Sprintf("%#v", this.Ready)+",\n")
-	s = append(s, "RestartCount: "+fmt.Sprintf("%#v", this.RestartCount)+",\n")
-	s = append(s, "Image: "+fmt.Sprintf("%#v", this.Image)+",\n")
-	s = append(s, "ImageID: "+fmt.Sprintf("%#v", this.ImageID)+",\n")
-	s = append(s, "ContainerID: "+fmt.Sprintf("%#v", this.ContainerID)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *DaemonEndpoint) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.DaemonEndpoint{")
-	s = append(s, "Port: "+fmt.Sprintf("%#v", this.Port)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *DeleteOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.DeleteOptions{")
-	s = append(s, "GracePeriodSeconds: "+fmt.Sprintf("%#v", this.GracePeriodSeconds)+",\n")
-	if this.Preconditions != nil {
-		s = append(s, "Preconditions: "+fmt.Sprintf("%#v", this.Preconditions)+",\n")
-	}
-	s = append(s, "OrphanDependents: "+fmt.Sprintf("%#v", this.OrphanDependents)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *DownwardAPIVolumeFile) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.DownwardAPIVolumeFile{")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	if this.FieldRef != nil {
-		s = append(s, "FieldRef: "+fmt.Sprintf("%#v", this.FieldRef)+",\n")
-	}
-	if this.ResourceFieldRef != nil {
-		s = append(s, "ResourceFieldRef: "+fmt.Sprintf("%#v", this.ResourceFieldRef)+",\n")
-	}
-	s = append(s, "Mode: "+fmt.Sprintf("%#v", this.Mode)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *DownwardAPIVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.DownwardAPIVolumeSource{")
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "DefaultMode: "+fmt.Sprintf("%#v", this.DefaultMode)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EmptyDirVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.EmptyDirVolumeSource{")
-	s = append(s, "Medium: "+fmt.Sprintf("%#v", this.Medium)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EndpointAddress) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.EndpointAddress{")
-	s = append(s, "Ip: "+fmt.Sprintf("%#v", this.Ip)+",\n")
-	s = append(s, "Hostname: "+fmt.Sprintf("%#v", this.Hostname)+",\n")
-	s = append(s, "NodeName: "+fmt.Sprintf("%#v", this.NodeName)+",\n")
-	if this.TargetRef != nil {
-		s = append(s, "TargetRef: "+fmt.Sprintf("%#v", this.TargetRef)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EndpointPort) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.EndpointPort{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "Port: "+fmt.Sprintf("%#v", this.Port)+",\n")
-	s = append(s, "Protocol: "+fmt.Sprintf("%#v", this.Protocol)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EndpointSubset) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.EndpointSubset{")
-	if this.Addresses != nil {
-		s = append(s, "Addresses: "+fmt.Sprintf("%#v", this.Addresses)+",\n")
-	}
-	if this.NotReadyAddresses != nil {
-		s = append(s, "NotReadyAddresses: "+fmt.Sprintf("%#v", this.NotReadyAddresses)+",\n")
-	}
-	if this.Ports != nil {
-		s = append(s, "Ports: "+fmt.Sprintf("%#v", this.Ports)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Endpoints) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.Endpoints{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Subsets != nil {
-		s = append(s, "Subsets: "+fmt.Sprintf("%#v", this.Subsets)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EndpointsList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.EndpointsList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EnvVar) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.EnvVar{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
-	if this.ValueFrom != nil {
-		s = append(s, "ValueFrom: "+fmt.Sprintf("%#v", this.ValueFrom)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EnvVarSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.EnvVarSource{")
-	if this.FieldRef != nil {
-		s = append(s, "FieldRef: "+fmt.Sprintf("%#v", this.FieldRef)+",\n")
-	}
-	if this.ResourceFieldRef != nil {
-		s = append(s, "ResourceFieldRef: "+fmt.Sprintf("%#v", this.ResourceFieldRef)+",\n")
-	}
-	if this.ConfigMapKeyRef != nil {
-		s = append(s, "ConfigMapKeyRef: "+fmt.Sprintf("%#v", this.ConfigMapKeyRef)+",\n")
-	}
-	if this.SecretKeyRef != nil {
-		s = append(s, "SecretKeyRef: "+fmt.Sprintf("%#v", this.SecretKeyRef)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Event) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 13)
-	s = append(s, "&v1.Event{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.InvolvedObject != nil {
-		s = append(s, "InvolvedObject: "+fmt.Sprintf("%#v", this.InvolvedObject)+",\n")
-	}
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	if this.Source != nil {
-		s = append(s, "Source: "+fmt.Sprintf("%#v", this.Source)+",\n")
-	}
-	if this.FirstTimestamp != nil {
-		s = append(s, "FirstTimestamp: "+fmt.Sprintf("%#v", this.FirstTimestamp)+",\n")
-	}
-	if this.LastTimestamp != nil {
-		s = append(s, "LastTimestamp: "+fmt.Sprintf("%#v", this.LastTimestamp)+",\n")
-	}
-	s = append(s, "Count: "+fmt.Sprintf("%#v", this.Count)+",\n")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EventList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.EventList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *EventSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.EventSource{")
-	s = append(s, "Component: "+fmt.Sprintf("%#v", this.Component)+",\n")
-	s = append(s, "Host: "+fmt.Sprintf("%#v", this.Host)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ExecAction) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.ExecAction{")
-	if this.Command != nil {
-		s = append(s, "Command: "+fmt.Sprintf("%#v", this.Command)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ExportOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ExportOptions{")
-	s = append(s, "Export: "+fmt.Sprintf("%#v", this.Export)+",\n")
-	s = append(s, "Exact: "+fmt.Sprintf("%#v", this.Exact)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *FCVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.FCVolumeSource{")
-	if this.TargetWWNs != nil {
-		s = append(s, "TargetWWNs: "+fmt.Sprintf("%#v", this.TargetWWNs)+",\n")
-	}
-	s = append(s, "Lun: "+fmt.Sprintf("%#v", this.Lun)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *FlexVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.FlexVolumeSource{")
-	s = append(s, "Driver: "+fmt.Sprintf("%#v", this.Driver)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	if this.SecretRef != nil {
-		s = append(s, "SecretRef: "+fmt.Sprintf("%#v", this.SecretRef)+",\n")
-	}
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	keysForOptions := make([]string, 0, len(this.Options))
-	for k, _ := range this.Options {
-		keysForOptions = append(keysForOptions, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForOptions)
-	mapStringForOptions := "map[string]string{"
-	for _, k := range keysForOptions {
-		mapStringForOptions += fmt.Sprintf("%#v: %#v,", k, this.Options[k])
-	}
-	mapStringForOptions += "}"
-	if this.Options != nil {
-		s = append(s, "Options: "+mapStringForOptions+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *FlockerVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.FlockerVolumeSource{")
-	s = append(s, "DatasetName: "+fmt.Sprintf("%#v", this.DatasetName)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *GCEPersistentDiskVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.GCEPersistentDiskVolumeSource{")
-	s = append(s, "PdName: "+fmt.Sprintf("%#v", this.PdName)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "Partition: "+fmt.Sprintf("%#v", this.Partition)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *GitRepoVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.GitRepoVolumeSource{")
-	s = append(s, "Repository: "+fmt.Sprintf("%#v", this.Repository)+",\n")
-	s = append(s, "Revision: "+fmt.Sprintf("%#v", this.Revision)+",\n")
-	s = append(s, "Directory: "+fmt.Sprintf("%#v", this.Directory)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *GlusterfsVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.GlusterfsVolumeSource{")
-	s = append(s, "Endpoints: "+fmt.Sprintf("%#v", this.Endpoints)+",\n")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *HTTPGetAction) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.HTTPGetAction{")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	if this.Port != nil {
-		s = append(s, "Port: "+fmt.Sprintf("%#v", this.Port)+",\n")
-	}
-	s = append(s, "Host: "+fmt.Sprintf("%#v", this.Host)+",\n")
-	s = append(s, "Scheme: "+fmt.Sprintf("%#v", this.Scheme)+",\n")
-	if this.HttpHeaders != nil {
-		s = append(s, "HttpHeaders: "+fmt.Sprintf("%#v", this.HttpHeaders)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *HTTPHeader) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.HTTPHeader{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Handler) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Handler{")
-	if this.Exec != nil {
-		s = append(s, "Exec: "+fmt.Sprintf("%#v", this.Exec)+",\n")
-	}
-	if this.HttpGet != nil {
-		s = append(s, "HttpGet: "+fmt.Sprintf("%#v", this.HttpGet)+",\n")
-	}
-	if this.TcpSocket != nil {
-		s = append(s, "TcpSocket: "+fmt.Sprintf("%#v", this.TcpSocket)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *HostPathVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.HostPathVolumeSource{")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ISCSIVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.ISCSIVolumeSource{")
-	s = append(s, "TargetPortal: "+fmt.Sprintf("%#v", this.TargetPortal)+",\n")
-	s = append(s, "Iqn: "+fmt.Sprintf("%#v", this.Iqn)+",\n")
-	s = append(s, "Lun: "+fmt.Sprintf("%#v", this.Lun)+",\n")
-	s = append(s, "IscsiInterface: "+fmt.Sprintf("%#v", this.IscsiInterface)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *KeyToPath) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.KeyToPath{")
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "Mode: "+fmt.Sprintf("%#v", this.Mode)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Lifecycle) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.Lifecycle{")
-	if this.PostStart != nil {
-		s = append(s, "PostStart: "+fmt.Sprintf("%#v", this.PostStart)+",\n")
-	}
-	if this.PreStop != nil {
-		s = append(s, "PreStop: "+fmt.Sprintf("%#v", this.PreStop)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LimitRange) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.LimitRange{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LimitRangeItem) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.LimitRangeItem{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	keysForMax := make([]string, 0, len(this.Max))
-	for k, _ := range this.Max {
-		keysForMax = append(keysForMax, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMax)
-	mapStringForMax := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForMax {
-		mapStringForMax += fmt.Sprintf("%#v: %#v,", k, this.Max[k])
-	}
-	mapStringForMax += "}"
-	if this.Max != nil {
-		s = append(s, "Max: "+mapStringForMax+",\n")
-	}
-	keysForMin := make([]string, 0, len(this.Min))
-	for k, _ := range this.Min {
-		keysForMin = append(keysForMin, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMin)
-	mapStringForMin := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForMin {
-		mapStringForMin += fmt.Sprintf("%#v: %#v,", k, this.Min[k])
-	}
-	mapStringForMin += "}"
-	if this.Min != nil {
-		s = append(s, "Min: "+mapStringForMin+",\n")
-	}
-	keysForDefault := make([]string, 0, len(this.Default))
-	for k, _ := range this.Default {
-		keysForDefault = append(keysForDefault, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForDefault)
-	mapStringForDefault := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForDefault {
-		mapStringForDefault += fmt.Sprintf("%#v: %#v,", k, this.Default[k])
-	}
-	mapStringForDefault += "}"
-	if this.Default != nil {
-		s = append(s, "Default: "+mapStringForDefault+",\n")
-	}
-	keysForDefaultRequest := make([]string, 0, len(this.DefaultRequest))
-	for k, _ := range this.DefaultRequest {
-		keysForDefaultRequest = append(keysForDefaultRequest, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForDefaultRequest)
-	mapStringForDefaultRequest := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForDefaultRequest {
-		mapStringForDefaultRequest += fmt.Sprintf("%#v: %#v,", k, this.DefaultRequest[k])
-	}
-	mapStringForDefaultRequest += "}"
-	if this.DefaultRequest != nil {
-		s = append(s, "DefaultRequest: "+mapStringForDefaultRequest+",\n")
-	}
-	keysForMaxLimitRequestRatio := make([]string, 0, len(this.MaxLimitRequestRatio))
-	for k, _ := range this.MaxLimitRequestRatio {
-		keysForMaxLimitRequestRatio = append(keysForMaxLimitRequestRatio, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMaxLimitRequestRatio)
-	mapStringForMaxLimitRequestRatio := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForMaxLimitRequestRatio {
-		mapStringForMaxLimitRequestRatio += fmt.Sprintf("%#v: %#v,", k, this.MaxLimitRequestRatio[k])
-	}
-	mapStringForMaxLimitRequestRatio += "}"
-	if this.MaxLimitRequestRatio != nil {
-		s = append(s, "MaxLimitRequestRatio: "+mapStringForMaxLimitRequestRatio+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LimitRangeList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.LimitRangeList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LimitRangeSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.LimitRangeSpec{")
-	if this.Limits != nil {
-		s = append(s, "Limits: "+fmt.Sprintf("%#v", this.Limits)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *List) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.List{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ListOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.ListOptions{")
-	s = append(s, "LabelSelector: "+fmt.Sprintf("%#v", this.LabelSelector)+",\n")
-	s = append(s, "FieldSelector: "+fmt.Sprintf("%#v", this.FieldSelector)+",\n")
-	s = append(s, "Watch: "+fmt.Sprintf("%#v", this.Watch)+",\n")
-	s = append(s, "ResourceVersion: "+fmt.Sprintf("%#v", this.ResourceVersion)+",\n")
-	s = append(s, "TimeoutSeconds: "+fmt.Sprintf("%#v", this.TimeoutSeconds)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LoadBalancerIngress) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.LoadBalancerIngress{")
-	s = append(s, "Ip: "+fmt.Sprintf("%#v", this.Ip)+",\n")
-	s = append(s, "Hostname: "+fmt.Sprintf("%#v", this.Hostname)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LoadBalancerStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.LoadBalancerStatus{")
-	if this.Ingress != nil {
-		s = append(s, "Ingress: "+fmt.Sprintf("%#v", this.Ingress)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LocalObjectReference) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.LocalObjectReference{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NFSVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.NFSVolumeSource{")
-	s = append(s, "Server: "+fmt.Sprintf("%#v", this.Server)+",\n")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Namespace) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Namespace{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NamespaceList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.NamespaceList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NamespaceSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.NamespaceSpec{")
-	if this.Finalizers != nil {
-		s = append(s, "Finalizers: "+fmt.Sprintf("%#v", this.Finalizers)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NamespaceStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.NamespaceStatus{")
-	s = append(s, "Phase: "+fmt.Sprintf("%#v", this.Phase)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Node) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Node{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeAddress) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.NodeAddress{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "Address: "+fmt.Sprintf("%#v", this.Address)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeAffinity) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.NodeAffinity{")
-	if this.RequiredDuringSchedulingIgnoredDuringExecution != nil {
-		s = append(s, "RequiredDuringSchedulingIgnoredDuringExecution: "+fmt.Sprintf("%#v", this.RequiredDuringSchedulingIgnoredDuringExecution)+",\n")
-	}
-	if this.PreferredDuringSchedulingIgnoredDuringExecution != nil {
-		s = append(s, "PreferredDuringSchedulingIgnoredDuringExecution: "+fmt.Sprintf("%#v", this.PreferredDuringSchedulingIgnoredDuringExecution)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeCondition) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.NodeCondition{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	if this.LastHeartbeatTime != nil {
-		s = append(s, "LastHeartbeatTime: "+fmt.Sprintf("%#v", this.LastHeartbeatTime)+",\n")
-	}
-	if this.LastTransitionTime != nil {
-		s = append(s, "LastTransitionTime: "+fmt.Sprintf("%#v", this.LastTransitionTime)+",\n")
-	}
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeDaemonEndpoints) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.NodeDaemonEndpoints{")
-	if this.KubeletEndpoint != nil {
-		s = append(s, "KubeletEndpoint: "+fmt.Sprintf("%#v", this.KubeletEndpoint)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.NodeList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeProxyOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.NodeProxyOptions{")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeSelector) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.NodeSelector{")
-	if this.NodeSelectorTerms != nil {
-		s = append(s, "NodeSelectorTerms: "+fmt.Sprintf("%#v", this.NodeSelectorTerms)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeSelectorRequirement) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.NodeSelectorRequirement{")
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "Operator: "+fmt.Sprintf("%#v", this.Operator)+",\n")
-	if this.Values != nil {
-		s = append(s, "Values: "+fmt.Sprintf("%#v", this.Values)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeSelectorTerm) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.NodeSelectorTerm{")
-	if this.MatchExpressions != nil {
-		s = append(s, "MatchExpressions: "+fmt.Sprintf("%#v", this.MatchExpressions)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.NodeSpec{")
-	s = append(s, "PodCIDR: "+fmt.Sprintf("%#v", this.PodCIDR)+",\n")
-	s = append(s, "ExternalID: "+fmt.Sprintf("%#v", this.ExternalID)+",\n")
-	s = append(s, "ProviderID: "+fmt.Sprintf("%#v", this.ProviderID)+",\n")
-	s = append(s, "Unschedulable: "+fmt.Sprintf("%#v", this.Unschedulable)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 14)
-	s = append(s, "&v1.NodeStatus{")
-	keysForCapacity := make([]string, 0, len(this.Capacity))
-	for k, _ := range this.Capacity {
-		keysForCapacity = append(keysForCapacity, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForCapacity)
-	mapStringForCapacity := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForCapacity {
-		mapStringForCapacity += fmt.Sprintf("%#v: %#v,", k, this.Capacity[k])
-	}
-	mapStringForCapacity += "}"
-	if this.Capacity != nil {
-		s = append(s, "Capacity: "+mapStringForCapacity+",\n")
-	}
-	keysForAllocatable := make([]string, 0, len(this.Allocatable))
-	for k, _ := range this.Allocatable {
-		keysForAllocatable = append(keysForAllocatable, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForAllocatable)
-	mapStringForAllocatable := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForAllocatable {
-		mapStringForAllocatable += fmt.Sprintf("%#v: %#v,", k, this.Allocatable[k])
-	}
-	mapStringForAllocatable += "}"
-	if this.Allocatable != nil {
-		s = append(s, "Allocatable: "+mapStringForAllocatable+",\n")
-	}
-	s = append(s, "Phase: "+fmt.Sprintf("%#v", this.Phase)+",\n")
-	if this.Conditions != nil {
-		s = append(s, "Conditions: "+fmt.Sprintf("%#v", this.Conditions)+",\n")
-	}
-	if this.Addresses != nil {
-		s = append(s, "Addresses: "+fmt.Sprintf("%#v", this.Addresses)+",\n")
-	}
-	if this.DaemonEndpoints != nil {
-		s = append(s, "DaemonEndpoints: "+fmt.Sprintf("%#v", this.DaemonEndpoints)+",\n")
-	}
-	if this.NodeInfo != nil {
-		s = append(s, "NodeInfo: "+fmt.Sprintf("%#v", this.NodeInfo)+",\n")
-	}
-	if this.Images != nil {
-		s = append(s, "Images: "+fmt.Sprintf("%#v", this.Images)+",\n")
-	}
-	if this.VolumesInUse != nil {
-		s = append(s, "VolumesInUse: "+fmt.Sprintf("%#v", this.VolumesInUse)+",\n")
-	}
-	if this.VolumesAttached != nil {
-		s = append(s, "VolumesAttached: "+fmt.Sprintf("%#v", this.VolumesAttached)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *NodeSystemInfo) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 14)
-	s = append(s, "&v1.NodeSystemInfo{")
-	s = append(s, "MachineID: "+fmt.Sprintf("%#v", this.MachineID)+",\n")
-	s = append(s, "SystemUUID: "+fmt.Sprintf("%#v", this.SystemUUID)+",\n")
-	s = append(s, "BootID: "+fmt.Sprintf("%#v", this.BootID)+",\n")
-	s = append(s, "KernelVersion: "+fmt.Sprintf("%#v", this.KernelVersion)+",\n")
-	s = append(s, "OsImage: "+fmt.Sprintf("%#v", this.OsImage)+",\n")
-	s = append(s, "ContainerRuntimeVersion: "+fmt.Sprintf("%#v", this.ContainerRuntimeVersion)+",\n")
-	s = append(s, "KubeletVersion: "+fmt.Sprintf("%#v", this.KubeletVersion)+",\n")
-	s = append(s, "KubeProxyVersion: "+fmt.Sprintf("%#v", this.KubeProxyVersion)+",\n")
-	s = append(s, "OperatingSystem: "+fmt.Sprintf("%#v", this.OperatingSystem)+",\n")
-	s = append(s, "Architecture: "+fmt.Sprintf("%#v", this.Architecture)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ObjectFieldSelector) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ObjectFieldSelector{")
-	s = append(s, "ApiVersion: "+fmt.Sprintf("%#v", this.ApiVersion)+",\n")
-	s = append(s, "FieldPath: "+fmt.Sprintf("%#v", this.FieldPath)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ObjectMeta) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 19)
-	s = append(s, "&v1.ObjectMeta{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "GenerateName: "+fmt.Sprintf("%#v", this.GenerateName)+",\n")
-	s = append(s, "Namespace: "+fmt.Sprintf("%#v", this.Namespace)+",\n")
-	s = append(s, "SelfLink: "+fmt.Sprintf("%#v", this.SelfLink)+",\n")
-	s = append(s, "Uid: "+fmt.Sprintf("%#v", this.Uid)+",\n")
-	s = append(s, "ResourceVersion: "+fmt.Sprintf("%#v", this.ResourceVersion)+",\n")
-	s = append(s, "Generation: "+fmt.Sprintf("%#v", this.Generation)+",\n")
-	if this.CreationTimestamp != nil {
-		s = append(s, "CreationTimestamp: "+fmt.Sprintf("%#v", this.CreationTimestamp)+",\n")
-	}
-	if this.DeletionTimestamp != nil {
-		s = append(s, "DeletionTimestamp: "+fmt.Sprintf("%#v", this.DeletionTimestamp)+",\n")
-	}
-	s = append(s, "DeletionGracePeriodSeconds: "+fmt.Sprintf("%#v", this.DeletionGracePeriodSeconds)+",\n")
-	keysForLabels := make([]string, 0, len(this.Labels))
-	for k, _ := range this.Labels {
-		keysForLabels = append(keysForLabels, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForLabels)
-	mapStringForLabels := "map[string]string{"
-	for _, k := range keysForLabels {
-		mapStringForLabels += fmt.Sprintf("%#v: %#v,", k, this.Labels[k])
-	}
-	mapStringForLabels += "}"
-	if this.Labels != nil {
-		s = append(s, "Labels: "+mapStringForLabels+",\n")
-	}
-	keysForAnnotations := make([]string, 0, len(this.Annotations))
-	for k, _ := range this.Annotations {
-		keysForAnnotations = append(keysForAnnotations, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForAnnotations)
-	mapStringForAnnotations := "map[string]string{"
-	for _, k := range keysForAnnotations {
-		mapStringForAnnotations += fmt.Sprintf("%#v: %#v,", k, this.Annotations[k])
-	}
-	mapStringForAnnotations += "}"
-	if this.Annotations != nil {
-		s = append(s, "Annotations: "+mapStringForAnnotations+",\n")
-	}
-	if this.OwnerReferences != nil {
-		s = append(s, "OwnerReferences: "+fmt.Sprintf("%#v", this.OwnerReferences)+",\n")
-	}
-	if this.Finalizers != nil {
-		s = append(s, "Finalizers: "+fmt.Sprintf("%#v", this.Finalizers)+",\n")
-	}
-	s = append(s, "ClusterName: "+fmt.Sprintf("%#v", this.ClusterName)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ObjectReference) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 11)
-	s = append(s, "&v1.ObjectReference{")
-	s = append(s, "Kind: "+fmt.Sprintf("%#v", this.Kind)+",\n")
-	s = append(s, "Namespace: "+fmt.Sprintf("%#v", this.Namespace)+",\n")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "Uid: "+fmt.Sprintf("%#v", this.Uid)+",\n")
-	s = append(s, "ApiVersion: "+fmt.Sprintf("%#v", this.ApiVersion)+",\n")
-	s = append(s, "ResourceVersion: "+fmt.Sprintf("%#v", this.ResourceVersion)+",\n")
-	s = append(s, "FieldPath: "+fmt.Sprintf("%#v", this.FieldPath)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *OwnerReference) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.OwnerReference{")
-	s = append(s, "ApiVersion: "+fmt.Sprintf("%#v", this.ApiVersion)+",\n")
-	s = append(s, "Kind: "+fmt.Sprintf("%#v", this.Kind)+",\n")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "Uid: "+fmt.Sprintf("%#v", this.Uid)+",\n")
-	s = append(s, "Controller: "+fmt.Sprintf("%#v", this.Controller)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolume) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.PersistentVolume{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeClaim) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.PersistentVolumeClaim{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeClaimList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PersistentVolumeClaimList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeClaimSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.PersistentVolumeClaimSpec{")
-	if this.AccessModes != nil {
-		s = append(s, "AccessModes: "+fmt.Sprintf("%#v", this.AccessModes)+",\n")
-	}
-	if this.Selector != nil {
-		s = append(s, "Selector: "+fmt.Sprintf("%#v", this.Selector)+",\n")
-	}
-	if this.Resources != nil {
-		s = append(s, "Resources: "+fmt.Sprintf("%#v", this.Resources)+",\n")
-	}
-	s = append(s, "VolumeName: "+fmt.Sprintf("%#v", this.VolumeName)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeClaimStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.PersistentVolumeClaimStatus{")
-	s = append(s, "Phase: "+fmt.Sprintf("%#v", this.Phase)+",\n")
-	if this.AccessModes != nil {
-		s = append(s, "AccessModes: "+fmt.Sprintf("%#v", this.AccessModes)+",\n")
-	}
-	keysForCapacity := make([]string, 0, len(this.Capacity))
-	for k, _ := range this.Capacity {
-		keysForCapacity = append(keysForCapacity, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForCapacity)
-	mapStringForCapacity := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForCapacity {
-		mapStringForCapacity += fmt.Sprintf("%#v: %#v,", k, this.Capacity[k])
-	}
-	mapStringForCapacity += "}"
-	if this.Capacity != nil {
-		s = append(s, "Capacity: "+mapStringForCapacity+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeClaimVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PersistentVolumeClaimVolumeSource{")
-	s = append(s, "ClaimName: "+fmt.Sprintf("%#v", this.ClaimName)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PersistentVolumeList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 20)
-	s = append(s, "&v1.PersistentVolumeSource{")
-	if this.GcePersistentDisk != nil {
-		s = append(s, "GcePersistentDisk: "+fmt.Sprintf("%#v", this.GcePersistentDisk)+",\n")
-	}
-	if this.AwsElasticBlockStore != nil {
-		s = append(s, "AwsElasticBlockStore: "+fmt.Sprintf("%#v", this.AwsElasticBlockStore)+",\n")
-	}
-	if this.HostPath != nil {
-		s = append(s, "HostPath: "+fmt.Sprintf("%#v", this.HostPath)+",\n")
-	}
-	if this.Glusterfs != nil {
-		s = append(s, "Glusterfs: "+fmt.Sprintf("%#v", this.Glusterfs)+",\n")
-	}
-	if this.Nfs != nil {
-		s = append(s, "Nfs: "+fmt.Sprintf("%#v", this.Nfs)+",\n")
-	}
-	if this.Rbd != nil {
-		s = append(s, "Rbd: "+fmt.Sprintf("%#v", this.Rbd)+",\n")
-	}
-	if this.Iscsi != nil {
-		s = append(s, "Iscsi: "+fmt.Sprintf("%#v", this.Iscsi)+",\n")
-	}
-	if this.Cinder != nil {
-		s = append(s, "Cinder: "+fmt.Sprintf("%#v", this.Cinder)+",\n")
-	}
-	if this.Cephfs != nil {
-		s = append(s, "Cephfs: "+fmt.Sprintf("%#v", this.Cephfs)+",\n")
-	}
-	if this.Fc != nil {
-		s = append(s, "Fc: "+fmt.Sprintf("%#v", this.Fc)+",\n")
-	}
-	if this.Flocker != nil {
-		s = append(s, "Flocker: "+fmt.Sprintf("%#v", this.Flocker)+",\n")
-	}
-	if this.FlexVolume != nil {
-		s = append(s, "FlexVolume: "+fmt.Sprintf("%#v", this.FlexVolume)+",\n")
-	}
-	if this.AzureFile != nil {
-		s = append(s, "AzureFile: "+fmt.Sprintf("%#v", this.AzureFile)+",\n")
-	}
-	if this.VsphereVolume != nil {
-		s = append(s, "VsphereVolume: "+fmt.Sprintf("%#v", this.VsphereVolume)+",\n")
-	}
-	if this.Quobyte != nil {
-		s = append(s, "Quobyte: "+fmt.Sprintf("%#v", this.Quobyte)+",\n")
-	}
-	if this.AzureDisk != nil {
-		s = append(s, "AzureDisk: "+fmt.Sprintf("%#v", this.AzureDisk)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.PersistentVolumeSpec{")
-	keysForCapacity := make([]string, 0, len(this.Capacity))
-	for k, _ := range this.Capacity {
-		keysForCapacity = append(keysForCapacity, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForCapacity)
-	mapStringForCapacity := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForCapacity {
-		mapStringForCapacity += fmt.Sprintf("%#v: %#v,", k, this.Capacity[k])
-	}
-	mapStringForCapacity += "}"
-	if this.Capacity != nil {
-		s = append(s, "Capacity: "+mapStringForCapacity+",\n")
-	}
-	if this.PersistentVolumeSource != nil {
-		s = append(s, "PersistentVolumeSource: "+fmt.Sprintf("%#v", this.PersistentVolumeSource)+",\n")
-	}
-	if this.AccessModes != nil {
-		s = append(s, "AccessModes: "+fmt.Sprintf("%#v", this.AccessModes)+",\n")
-	}
-	if this.ClaimRef != nil {
-		s = append(s, "ClaimRef: "+fmt.Sprintf("%#v", this.ClaimRef)+",\n")
-	}
-	s = append(s, "PersistentVolumeReclaimPolicy: "+fmt.Sprintf("%#v", this.PersistentVolumeReclaimPolicy)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PersistentVolumeStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.PersistentVolumeStatus{")
-	s = append(s, "Phase: "+fmt.Sprintf("%#v", this.Phase)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Pod) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Pod{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodAffinity) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PodAffinity{")
-	if this.RequiredDuringSchedulingIgnoredDuringExecution != nil {
-		s = append(s, "RequiredDuringSchedulingIgnoredDuringExecution: "+fmt.Sprintf("%#v", this.RequiredDuringSchedulingIgnoredDuringExecution)+",\n")
-	}
-	if this.PreferredDuringSchedulingIgnoredDuringExecution != nil {
-		s = append(s, "PreferredDuringSchedulingIgnoredDuringExecution: "+fmt.Sprintf("%#v", this.PreferredDuringSchedulingIgnoredDuringExecution)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodAffinityTerm) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.PodAffinityTerm{")
-	if this.LabelSelector != nil {
-		s = append(s, "LabelSelector: "+fmt.Sprintf("%#v", this.LabelSelector)+",\n")
-	}
-	if this.Namespaces != nil {
-		s = append(s, "Namespaces: "+fmt.Sprintf("%#v", this.Namespaces)+",\n")
-	}
-	s = append(s, "TopologyKey: "+fmt.Sprintf("%#v", this.TopologyKey)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodAntiAffinity) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PodAntiAffinity{")
-	if this.RequiredDuringSchedulingIgnoredDuringExecution != nil {
-		s = append(s, "RequiredDuringSchedulingIgnoredDuringExecution: "+fmt.Sprintf("%#v", this.RequiredDuringSchedulingIgnoredDuringExecution)+",\n")
-	}
-	if this.PreferredDuringSchedulingIgnoredDuringExecution != nil {
-		s = append(s, "PreferredDuringSchedulingIgnoredDuringExecution: "+fmt.Sprintf("%#v", this.PreferredDuringSchedulingIgnoredDuringExecution)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodAttachOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.PodAttachOptions{")
-	s = append(s, "Stdin: "+fmt.Sprintf("%#v", this.Stdin)+",\n")
-	s = append(s, "Stdout: "+fmt.Sprintf("%#v", this.Stdout)+",\n")
-	s = append(s, "Stderr: "+fmt.Sprintf("%#v", this.Stderr)+",\n")
-	s = append(s, "Tty: "+fmt.Sprintf("%#v", this.Tty)+",\n")
-	s = append(s, "Container: "+fmt.Sprintf("%#v", this.Container)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodCondition) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.PodCondition{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	if this.LastProbeTime != nil {
-		s = append(s, "LastProbeTime: "+fmt.Sprintf("%#v", this.LastProbeTime)+",\n")
-	}
-	if this.LastTransitionTime != nil {
-		s = append(s, "LastTransitionTime: "+fmt.Sprintf("%#v", this.LastTransitionTime)+",\n")
-	}
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodExecOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.PodExecOptions{")
-	s = append(s, "Stdin: "+fmt.Sprintf("%#v", this.Stdin)+",\n")
-	s = append(s, "Stdout: "+fmt.Sprintf("%#v", this.Stdout)+",\n")
-	s = append(s, "Stderr: "+fmt.Sprintf("%#v", this.Stderr)+",\n")
-	s = append(s, "Tty: "+fmt.Sprintf("%#v", this.Tty)+",\n")
-	s = append(s, "Container: "+fmt.Sprintf("%#v", this.Container)+",\n")
-	if this.Command != nil {
-		s = append(s, "Command: "+fmt.Sprintf("%#v", this.Command)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PodList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodLogOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 12)
-	s = append(s, "&v1.PodLogOptions{")
-	s = append(s, "Container: "+fmt.Sprintf("%#v", this.Container)+",\n")
-	s = append(s, "Follow: "+fmt.Sprintf("%#v", this.Follow)+",\n")
-	s = append(s, "Previous: "+fmt.Sprintf("%#v", this.Previous)+",\n")
-	s = append(s, "SinceSeconds: "+fmt.Sprintf("%#v", this.SinceSeconds)+",\n")
-	if this.SinceTime != nil {
-		s = append(s, "SinceTime: "+fmt.Sprintf("%#v", this.SinceTime)+",\n")
-	}
-	s = append(s, "Timestamps: "+fmt.Sprintf("%#v", this.Timestamps)+",\n")
-	s = append(s, "TailLines: "+fmt.Sprintf("%#v", this.TailLines)+",\n")
-	s = append(s, "LimitBytes: "+fmt.Sprintf("%#v", this.LimitBytes)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodProxyOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.PodProxyOptions{")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodSecurityContext) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.PodSecurityContext{")
-	if this.SeLinuxOptions != nil {
-		s = append(s, "SeLinuxOptions: "+fmt.Sprintf("%#v", this.SeLinuxOptions)+",\n")
-	}
-	s = append(s, "RunAsUser: "+fmt.Sprintf("%#v", this.RunAsUser)+",\n")
-	s = append(s, "RunAsNonRoot: "+fmt.Sprintf("%#v", this.RunAsNonRoot)+",\n")
-	if this.SupplementalGroups != nil {
-		s = append(s, "SupplementalGroups: "+fmt.Sprintf("%#v", this.SupplementalGroups)+",\n")
-	}
-	s = append(s, "FsGroup: "+fmt.Sprintf("%#v", this.FsGroup)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodSignature) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.PodSignature{")
-	if this.PodController != nil {
-		s = append(s, "PodController: "+fmt.Sprintf("%#v", this.PodController)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 21)
-	s = append(s, "&v1.PodSpec{")
-	if this.Volumes != nil {
-		s = append(s, "Volumes: "+fmt.Sprintf("%#v", this.Volumes)+",\n")
-	}
-	if this.Containers != nil {
-		s = append(s, "Containers: "+fmt.Sprintf("%#v", this.Containers)+",\n")
-	}
-	s = append(s, "RestartPolicy: "+fmt.Sprintf("%#v", this.RestartPolicy)+",\n")
-	s = append(s, "TerminationGracePeriodSeconds: "+fmt.Sprintf("%#v", this.TerminationGracePeriodSeconds)+",\n")
-	s = append(s, "ActiveDeadlineSeconds: "+fmt.Sprintf("%#v", this.ActiveDeadlineSeconds)+",\n")
-	s = append(s, "DnsPolicy: "+fmt.Sprintf("%#v", this.DnsPolicy)+",\n")
-	keysForNodeSelector := make([]string, 0, len(this.NodeSelector))
-	for k, _ := range this.NodeSelector {
-		keysForNodeSelector = append(keysForNodeSelector, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForNodeSelector)
-	mapStringForNodeSelector := "map[string]string{"
-	for _, k := range keysForNodeSelector {
-		mapStringForNodeSelector += fmt.Sprintf("%#v: %#v,", k, this.NodeSelector[k])
-	}
-	mapStringForNodeSelector += "}"
-	if this.NodeSelector != nil {
-		s = append(s, "NodeSelector: "+mapStringForNodeSelector+",\n")
-	}
-	s = append(s, "ServiceAccountName: "+fmt.Sprintf("%#v", this.ServiceAccountName)+",\n")
-	s = append(s, "ServiceAccount: "+fmt.Sprintf("%#v", this.ServiceAccount)+",\n")
-	s = append(s, "NodeName: "+fmt.Sprintf("%#v", this.NodeName)+",\n")
-	s = append(s, "HostNetwork: "+fmt.Sprintf("%#v", this.HostNetwork)+",\n")
-	s = append(s, "HostPID: "+fmt.Sprintf("%#v", this.HostPID)+",\n")
-	s = append(s, "HostIPC: "+fmt.Sprintf("%#v", this.HostIPC)+",\n")
-	if this.SecurityContext != nil {
-		s = append(s, "SecurityContext: "+fmt.Sprintf("%#v", this.SecurityContext)+",\n")
-	}
-	if this.ImagePullSecrets != nil {
-		s = append(s, "ImagePullSecrets: "+fmt.Sprintf("%#v", this.ImagePullSecrets)+",\n")
-	}
-	s = append(s, "Hostname: "+fmt.Sprintf("%#v", this.Hostname)+",\n")
-	s = append(s, "Subdomain: "+fmt.Sprintf("%#v", this.Subdomain)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 12)
-	s = append(s, "&v1.PodStatus{")
-	s = append(s, "Phase: "+fmt.Sprintf("%#v", this.Phase)+",\n")
-	if this.Conditions != nil {
-		s = append(s, "Conditions: "+fmt.Sprintf("%#v", this.Conditions)+",\n")
-	}
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "HostIP: "+fmt.Sprintf("%#v", this.HostIP)+",\n")
-	s = append(s, "PodIP: "+fmt.Sprintf("%#v", this.PodIP)+",\n")
-	if this.StartTime != nil {
-		s = append(s, "StartTime: "+fmt.Sprintf("%#v", this.StartTime)+",\n")
-	}
-	if this.ContainerStatuses != nil {
-		s = append(s, "ContainerStatuses: "+fmt.Sprintf("%#v", this.ContainerStatuses)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodStatusResult) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PodStatusResult{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodTemplate) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PodTemplate{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Template != nil {
-		s = append(s, "Template: "+fmt.Sprintf("%#v", this.Template)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodTemplateList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PodTemplateList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PodTemplateSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PodTemplateSpec{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Preconditions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.Preconditions{")
-	s = append(s, "Uid: "+fmt.Sprintf("%#v", this.Uid)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PreferAvoidPodsEntry) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.PreferAvoidPodsEntry{")
-	if this.PodSignature != nil {
-		s = append(s, "PodSignature: "+fmt.Sprintf("%#v", this.PodSignature)+",\n")
-	}
-	if this.EvictionTime != nil {
-		s = append(s, "EvictionTime: "+fmt.Sprintf("%#v", this.EvictionTime)+",\n")
-	}
-	s = append(s, "Reason: "+fmt.Sprintf("%#v", this.Reason)+",\n")
-	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PreferredSchedulingTerm) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.PreferredSchedulingTerm{")
-	s = append(s, "Weight: "+fmt.Sprintf("%#v", this.Weight)+",\n")
-	if this.Preference != nil {
-		s = append(s, "Preference: "+fmt.Sprintf("%#v", this.Preference)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Probe) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.Probe{")
-	if this.Handler != nil {
-		s = append(s, "Handler: "+fmt.Sprintf("%#v", this.Handler)+",\n")
-	}
-	s = append(s, "InitialDelaySeconds: "+fmt.Sprintf("%#v", this.InitialDelaySeconds)+",\n")
-	s = append(s, "TimeoutSeconds: "+fmt.Sprintf("%#v", this.TimeoutSeconds)+",\n")
-	s = append(s, "PeriodSeconds: "+fmt.Sprintf("%#v", this.PeriodSeconds)+",\n")
-	s = append(s, "SuccessThreshold: "+fmt.Sprintf("%#v", this.SuccessThreshold)+",\n")
-	s = append(s, "FailureThreshold: "+fmt.Sprintf("%#v", this.FailureThreshold)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *QuobyteVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.QuobyteVolumeSource{")
-	s = append(s, "Registry: "+fmt.Sprintf("%#v", this.Registry)+",\n")
-	s = append(s, "Volume: "+fmt.Sprintf("%#v", this.Volume)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "User: "+fmt.Sprintf("%#v", this.User)+",\n")
-	s = append(s, "Group: "+fmt.Sprintf("%#v", this.Group)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *RBDVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 12)
-	s = append(s, "&v1.RBDVolumeSource{")
-	if this.Monitors != nil {
-		s = append(s, "Monitors: "+fmt.Sprintf("%#v", this.Monitors)+",\n")
-	}
-	s = append(s, "Image: "+fmt.Sprintf("%#v", this.Image)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "Pool: "+fmt.Sprintf("%#v", this.Pool)+",\n")
-	s = append(s, "User: "+fmt.Sprintf("%#v", this.User)+",\n")
-	s = append(s, "Keyring: "+fmt.Sprintf("%#v", this.Keyring)+",\n")
-	if this.SecretRef != nil {
-		s = append(s, "SecretRef: "+fmt.Sprintf("%#v", this.SecretRef)+",\n")
-	}
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *RangeAllocation) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.RangeAllocation{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	s = append(s, "Range: "+fmt.Sprintf("%#v", this.Range)+",\n")
-	s = append(s, "Data: "+fmt.Sprintf("%#v", this.Data)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ReplicationController) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.ReplicationController{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ReplicationControllerList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ReplicationControllerList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ReplicationControllerSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.ReplicationControllerSpec{")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	keysForSelector := make([]string, 0, len(this.Selector))
-	for k, _ := range this.Selector {
-		keysForSelector = append(keysForSelector, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForSelector)
-	mapStringForSelector := "map[string]string{"
-	for _, k := range keysForSelector {
-		mapStringForSelector += fmt.Sprintf("%#v: %#v,", k, this.Selector[k])
-	}
-	mapStringForSelector += "}"
-	if this.Selector != nil {
-		s = append(s, "Selector: "+mapStringForSelector+",\n")
-	}
-	if this.Template != nil {
-		s = append(s, "Template: "+fmt.Sprintf("%#v", this.Template)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ReplicationControllerStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.ReplicationControllerStatus{")
-	s = append(s, "Replicas: "+fmt.Sprintf("%#v", this.Replicas)+",\n")
-	s = append(s, "FullyLabeledReplicas: "+fmt.Sprintf("%#v", this.FullyLabeledReplicas)+",\n")
-	s = append(s, "ReadyReplicas: "+fmt.Sprintf("%#v", this.ReadyReplicas)+",\n")
-	s = append(s, "ObservedGeneration: "+fmt.Sprintf("%#v", this.ObservedGeneration)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ResourceFieldSelector) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.ResourceFieldSelector{")
-	s = append(s, "ContainerName: "+fmt.Sprintf("%#v", this.ContainerName)+",\n")
-	s = append(s, "Resource: "+fmt.Sprintf("%#v", this.Resource)+",\n")
-	if this.Divisor != nil {
-		s = append(s, "Divisor: "+fmt.Sprintf("%#v", this.Divisor)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ResourceQuota) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.ResourceQuota{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ResourceQuotaList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ResourceQuotaList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ResourceQuotaSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ResourceQuotaSpec{")
-	keysForHard := make([]string, 0, len(this.Hard))
-	for k, _ := range this.Hard {
-		keysForHard = append(keysForHard, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForHard)
-	mapStringForHard := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForHard {
-		mapStringForHard += fmt.Sprintf("%#v: %#v,", k, this.Hard[k])
-	}
-	mapStringForHard += "}"
-	if this.Hard != nil {
-		s = append(s, "Hard: "+mapStringForHard+",\n")
-	}
-	if this.Scopes != nil {
-		s = append(s, "Scopes: "+fmt.Sprintf("%#v", this.Scopes)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ResourceQuotaStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ResourceQuotaStatus{")
-	keysForHard := make([]string, 0, len(this.Hard))
-	for k, _ := range this.Hard {
-		keysForHard = append(keysForHard, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForHard)
-	mapStringForHard := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForHard {
-		mapStringForHard += fmt.Sprintf("%#v: %#v,", k, this.Hard[k])
-	}
-	mapStringForHard += "}"
-	if this.Hard != nil {
-		s = append(s, "Hard: "+mapStringForHard+",\n")
-	}
-	keysForUsed := make([]string, 0, len(this.Used))
-	for k, _ := range this.Used {
-		keysForUsed = append(keysForUsed, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForUsed)
-	mapStringForUsed := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForUsed {
-		mapStringForUsed += fmt.Sprintf("%#v: %#v,", k, this.Used[k])
-	}
-	mapStringForUsed += "}"
-	if this.Used != nil {
-		s = append(s, "Used: "+mapStringForUsed+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ResourceRequirements) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ResourceRequirements{")
-	keysForLimits := make([]string, 0, len(this.Limits))
-	for k, _ := range this.Limits {
-		keysForLimits = append(keysForLimits, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForLimits)
-	mapStringForLimits := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForLimits {
-		mapStringForLimits += fmt.Sprintf("%#v: %#v,", k, this.Limits[k])
-	}
-	mapStringForLimits += "}"
-	if this.Limits != nil {
-		s = append(s, "Limits: "+mapStringForLimits+",\n")
-	}
-	keysForRequests := make([]string, 0, len(this.Requests))
-	for k, _ := range this.Requests {
-		keysForRequests = append(keysForRequests, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForRequests)
-	mapStringForRequests := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForRequests {
-		mapStringForRequests += fmt.Sprintf("%#v: %#v,", k, this.Requests[k])
-	}
-	mapStringForRequests += "}"
-	if this.Requests != nil {
-		s = append(s, "Requests: "+mapStringForRequests+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SELinuxOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.SELinuxOptions{")
-	s = append(s, "User: "+fmt.Sprintf("%#v", this.User)+",\n")
-	s = append(s, "Role: "+fmt.Sprintf("%#v", this.Role)+",\n")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "Level: "+fmt.Sprintf("%#v", this.Level)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Secret) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.Secret{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	keysForData := make([]string, 0, len(this.Data))
-	for k, _ := range this.Data {
-		keysForData = append(keysForData, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForData)
-	mapStringForData := "map[string][]byte{"
-	for _, k := range keysForData {
-		mapStringForData += fmt.Sprintf("%#v: %#v,", k, this.Data[k])
-	}
-	mapStringForData += "}"
-	if this.Data != nil {
-		s = append(s, "Data: "+mapStringForData+",\n")
-	}
-	keysForStringData := make([]string, 0, len(this.StringData))
-	for k, _ := range this.StringData {
-		keysForStringData = append(keysForStringData, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForStringData)
-	mapStringForStringData := "map[string]string{"
-	for _, k := range keysForStringData {
-		mapStringForStringData += fmt.Sprintf("%#v: %#v,", k, this.StringData[k])
-	}
-	mapStringForStringData += "}"
-	if this.StringData != nil {
-		s = append(s, "StringData: "+mapStringForStringData+",\n")
-	}
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SecretKeySelector) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.SecretKeySelector{")
-	if this.LocalObjectReference != nil {
-		s = append(s, "LocalObjectReference: "+fmt.Sprintf("%#v", this.LocalObjectReference)+",\n")
-	}
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SecretList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.SecretList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SecretVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.SecretVolumeSource{")
-	s = append(s, "SecretName: "+fmt.Sprintf("%#v", this.SecretName)+",\n")
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "DefaultMode: "+fmt.Sprintf("%#v", this.DefaultMode)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SecurityContext) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&v1.SecurityContext{")
-	if this.Capabilities != nil {
-		s = append(s, "Capabilities: "+fmt.Sprintf("%#v", this.Capabilities)+",\n")
-	}
-	s = append(s, "Privileged: "+fmt.Sprintf("%#v", this.Privileged)+",\n")
-	if this.SeLinuxOptions != nil {
-		s = append(s, "SeLinuxOptions: "+fmt.Sprintf("%#v", this.SeLinuxOptions)+",\n")
-	}
-	s = append(s, "RunAsUser: "+fmt.Sprintf("%#v", this.RunAsUser)+",\n")
-	s = append(s, "RunAsNonRoot: "+fmt.Sprintf("%#v", this.RunAsNonRoot)+",\n")
-	s = append(s, "ReadOnlyRootFilesystem: "+fmt.Sprintf("%#v", this.ReadOnlyRootFilesystem)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *SerializedReference) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.SerializedReference{")
-	if this.Reference != nil {
-		s = append(s, "Reference: "+fmt.Sprintf("%#v", this.Reference)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Service) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Service{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Spec != nil {
-		s = append(s, "Spec: "+fmt.Sprintf("%#v", this.Spec)+",\n")
-	}
-	if this.Status != nil {
-		s = append(s, "Status: "+fmt.Sprintf("%#v", this.Status)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceAccount) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.ServiceAccount{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Secrets != nil {
-		s = append(s, "Secrets: "+fmt.Sprintf("%#v", this.Secrets)+",\n")
-	}
-	if this.ImagePullSecrets != nil {
-		s = append(s, "ImagePullSecrets: "+fmt.Sprintf("%#v", this.ImagePullSecrets)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceAccountList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ServiceAccountList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.ServiceList{")
-	if this.Metadata != nil {
-		s = append(s, "Metadata: "+fmt.Sprintf("%#v", this.Metadata)+",\n")
-	}
-	if this.Items != nil {
-		s = append(s, "Items: "+fmt.Sprintf("%#v", this.Items)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServicePort) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&v1.ServicePort{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "Protocol: "+fmt.Sprintf("%#v", this.Protocol)+",\n")
-	s = append(s, "Port: "+fmt.Sprintf("%#v", this.Port)+",\n")
-	if this.TargetPort != nil {
-		s = append(s, "TargetPort: "+fmt.Sprintf("%#v", this.TargetPort)+",\n")
-	}
-	s = append(s, "NodePort: "+fmt.Sprintf("%#v", this.NodePort)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceProxyOptions) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.ServiceProxyOptions{")
-	s = append(s, "Path: "+fmt.Sprintf("%#v", this.Path)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceSpec) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 14)
-	s = append(s, "&v1.ServiceSpec{")
-	if this.Ports != nil {
-		s = append(s, "Ports: "+fmt.Sprintf("%#v", this.Ports)+",\n")
-	}
-	keysForSelector := make([]string, 0, len(this.Selector))
-	for k, _ := range this.Selector {
-		keysForSelector = append(keysForSelector, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForSelector)
-	mapStringForSelector := "map[string]string{"
-	for _, k := range keysForSelector {
-		mapStringForSelector += fmt.Sprintf("%#v: %#v,", k, this.Selector[k])
-	}
-	mapStringForSelector += "}"
-	if this.Selector != nil {
-		s = append(s, "Selector: "+mapStringForSelector+",\n")
-	}
-	s = append(s, "ClusterIP: "+fmt.Sprintf("%#v", this.ClusterIP)+",\n")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	if this.ExternalIPs != nil {
-		s = append(s, "ExternalIPs: "+fmt.Sprintf("%#v", this.ExternalIPs)+",\n")
-	}
-	if this.DeprecatedPublicIPs != nil {
-		s = append(s, "DeprecatedPublicIPs: "+fmt.Sprintf("%#v", this.DeprecatedPublicIPs)+",\n")
-	}
-	s = append(s, "SessionAffinity: "+fmt.Sprintf("%#v", this.SessionAffinity)+",\n")
-	s = append(s, "LoadBalancerIP: "+fmt.Sprintf("%#v", this.LoadBalancerIP)+",\n")
-	if this.LoadBalancerSourceRanges != nil {
-		s = append(s, "LoadBalancerSourceRanges: "+fmt.Sprintf("%#v", this.LoadBalancerSourceRanges)+",\n")
-	}
-	s = append(s, "ExternalName: "+fmt.Sprintf("%#v", this.ExternalName)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceStatus) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.ServiceStatus{")
-	if this.LoadBalancer != nil {
-		s = append(s, "LoadBalancer: "+fmt.Sprintf("%#v", this.LoadBalancer)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TCPSocketAction) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&v1.TCPSocketAction{")
-	if this.Port != nil {
-		s = append(s, "Port: "+fmt.Sprintf("%#v", this.Port)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Taint) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&v1.Taint{")
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
-	s = append(s, "Effect: "+fmt.Sprintf("%#v", this.Effect)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Toleration) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.Toleration{")
-	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
-	s = append(s, "Operator: "+fmt.Sprintf("%#v", this.Operator)+",\n")
-	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
-	s = append(s, "Effect: "+fmt.Sprintf("%#v", this.Effect)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Volume) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.Volume{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	if this.VolumeSource != nil {
-		s = append(s, "VolumeSource: "+fmt.Sprintf("%#v", this.VolumeSource)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *VolumeMount) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&v1.VolumeMount{")
-	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
-	s = append(s, "ReadOnly: "+fmt.Sprintf("%#v", this.ReadOnly)+",\n")
-	s = append(s, "MountPath: "+fmt.Sprintf("%#v", this.MountPath)+",\n")
-	s = append(s, "SubPath: "+fmt.Sprintf("%#v", this.SubPath)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *VolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 26)
-	s = append(s, "&v1.VolumeSource{")
-	if this.HostPath != nil {
-		s = append(s, "HostPath: "+fmt.Sprintf("%#v", this.HostPath)+",\n")
-	}
-	if this.EmptyDir != nil {
-		s = append(s, "EmptyDir: "+fmt.Sprintf("%#v", this.EmptyDir)+",\n")
-	}
-	if this.GcePersistentDisk != nil {
-		s = append(s, "GcePersistentDisk: "+fmt.Sprintf("%#v", this.GcePersistentDisk)+",\n")
-	}
-	if this.AwsElasticBlockStore != nil {
-		s = append(s, "AwsElasticBlockStore: "+fmt.Sprintf("%#v", this.AwsElasticBlockStore)+",\n")
-	}
-	if this.GitRepo != nil {
-		s = append(s, "GitRepo: "+fmt.Sprintf("%#v", this.GitRepo)+",\n")
-	}
-	if this.Secret != nil {
-		s = append(s, "Secret: "+fmt.Sprintf("%#v", this.Secret)+",\n")
-	}
-	if this.Nfs != nil {
-		s = append(s, "Nfs: "+fmt.Sprintf("%#v", this.Nfs)+",\n")
-	}
-	if this.Iscsi != nil {
-		s = append(s, "Iscsi: "+fmt.Sprintf("%#v", this.Iscsi)+",\n")
-	}
-	if this.Glusterfs != nil {
-		s = append(s, "Glusterfs: "+fmt.Sprintf("%#v", this.Glusterfs)+",\n")
-	}
-	if this.PersistentVolumeClaim != nil {
-		s = append(s, "PersistentVolumeClaim: "+fmt.Sprintf("%#v", this.PersistentVolumeClaim)+",\n")
-	}
-	if this.Rbd != nil {
-		s = append(s, "Rbd: "+fmt.Sprintf("%#v", this.Rbd)+",\n")
-	}
-	if this.FlexVolume != nil {
-		s = append(s, "FlexVolume: "+fmt.Sprintf("%#v", this.FlexVolume)+",\n")
-	}
-	if this.Cinder != nil {
-		s = append(s, "Cinder: "+fmt.Sprintf("%#v", this.Cinder)+",\n")
-	}
-	if this.Cephfs != nil {
-		s = append(s, "Cephfs: "+fmt.Sprintf("%#v", this.Cephfs)+",\n")
-	}
-	if this.Flocker != nil {
-		s = append(s, "Flocker: "+fmt.Sprintf("%#v", this.Flocker)+",\n")
-	}
-	if this.DownwardAPI != nil {
-		s = append(s, "DownwardAPI: "+fmt.Sprintf("%#v", this.DownwardAPI)+",\n")
-	}
-	if this.Fc != nil {
-		s = append(s, "Fc: "+fmt.Sprintf("%#v", this.Fc)+",\n")
-	}
-	if this.AzureFile != nil {
-		s = append(s, "AzureFile: "+fmt.Sprintf("%#v", this.AzureFile)+",\n")
-	}
-	if this.ConfigMap != nil {
-		s = append(s, "ConfigMap: "+fmt.Sprintf("%#v", this.ConfigMap)+",\n")
-	}
-	if this.VsphereVolume != nil {
-		s = append(s, "VsphereVolume: "+fmt.Sprintf("%#v", this.VsphereVolume)+",\n")
-	}
-	if this.Quobyte != nil {
-		s = append(s, "Quobyte: "+fmt.Sprintf("%#v", this.Quobyte)+",\n")
-	}
-	if this.AzureDisk != nil {
-		s = append(s, "AzureDisk: "+fmt.Sprintf("%#v", this.AzureDisk)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *VsphereVirtualDiskVolumeSource) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.VsphereVirtualDiskVolumeSource{")
-	s = append(s, "VolumePath: "+fmt.Sprintf("%#v", this.VolumePath)+",\n")
-	s = append(s, "FsType: "+fmt.Sprintf("%#v", this.FsType)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *WeightedPodAffinityTerm) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&v1.WeightedPodAffinityTerm{")
-	s = append(s, "Weight: "+fmt.Sprintf("%#v", this.Weight)+",\n")
-	if this.PodAffinityTerm != nil {
-		s = append(s, "PodAffinityTerm: "+fmt.Sprintf("%#v", this.PodAffinityTerm)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringGenerated(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
-func extensionToGoStringGenerated(m github_com_gogo_protobuf_proto.Message) string {
-	e := github_com_gogo_protobuf_proto.GetUnsafeExtensionsMap(m)
-	if e == nil {
-		return "nil"
-	}
-	s := "proto.NewUnsafeXXX_InternalExtensions(map[int32]proto.Extension{"
-	keys := make([]int, 0, len(e))
-	for k := range e {
-		keys = append(keys, int(k))
-	}
-	sort.Ints(keys)
-	ss := []string{}
-	for _, k := range keys {
-		ss = append(ss, strconv.Itoa(k)+": "+e[int32(k)].GoString())
-	}
-	s += strings.Join(ss, ",") + "})"
-	return s
-}
 func (m *AWSElasticBlockStoreVolumeSource) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -16602,25 +7853,36 @@ func (m *AWSElasticBlockStoreVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.VolumeID)))
-	i += copy(dAtA[i:], m.VolumeID)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Partition))
-	dAtA[i] = 0x20
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.VolumeID != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.VolumeID)))
+		i += copy(dAtA[i:], *m.VolumeID)
 	}
-	i++
+	if m.FsType != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.Partition != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Partition))
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16669,6 +7931,9 @@ func (m *Affinity) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16687,14 +7952,21 @@ func (m *AttachedVolume) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.DevicePath)))
-	i += copy(dAtA[i:], m.DevicePath)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.DevicePath != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.DevicePath)))
+		i += copy(dAtA[i:], *m.DevicePath)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16725,6 +7997,9 @@ func (m *AvoidPods) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16743,30 +8018,43 @@ func (m *AzureDiskVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.DiskName)))
-	i += copy(dAtA[i:], m.DiskName)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.DiskURI)))
-	i += copy(dAtA[i:], m.DiskURI)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.CachingMode)))
-	i += copy(dAtA[i:], m.CachingMode)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
-	dAtA[i] = 0x28
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.DiskName != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.DiskName)))
+		i += copy(dAtA[i:], *m.DiskName)
 	}
-	i++
+	if m.DiskURI != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.DiskURI)))
+		i += copy(dAtA[i:], *m.DiskURI)
+	}
+	if m.CachingMode != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.CachingMode)))
+		i += copy(dAtA[i:], *m.CachingMode)
+	}
+	if m.FsType != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x28
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16785,22 +8073,31 @@ func (m *AzureFileVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.SecretName)))
-	i += copy(dAtA[i:], m.SecretName)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ShareName)))
-	i += copy(dAtA[i:], m.ShareName)
-	dAtA[i] = 0x18
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.SecretName != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SecretName)))
+		i += copy(dAtA[i:], *m.SecretName)
 	}
-	i++
+	if m.ShareName != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ShareName)))
+		i += copy(dAtA[i:], *m.ShareName)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16838,6 +8135,9 @@ func (m *Binding) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n5
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -16887,6 +8187,9 @@ func (m *Capabilities) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16920,18 +8223,24 @@ func (m *CephFSVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.User)))
-	i += copy(dAtA[i:], m.User)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.SecretFile)))
-	i += copy(dAtA[i:], m.SecretFile)
+	if m.Path != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.User != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.User)))
+		i += copy(dAtA[i:], *m.User)
+	}
+	if m.SecretFile != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SecretFile)))
+		i += copy(dAtA[i:], *m.SecretFile)
+	}
 	if m.SecretRef != nil {
 		dAtA[i] = 0x2a
 		i++
@@ -16942,14 +8251,19 @@ func (m *CephFSVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n6
 	}
-	dAtA[i] = 0x30
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x30
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -16968,22 +8282,31 @@ func (m *CinderVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.VolumeID)))
-	i += copy(dAtA[i:], m.VolumeID)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
-	dAtA[i] = 0x18
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.VolumeID != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.VolumeID)))
+		i += copy(dAtA[i:], *m.VolumeID)
 	}
-	i++
+	if m.FsType != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17002,22 +8325,33 @@ func (m *ComponentCondition) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Status)))
-	i += copy(dAtA[i:], m.Status)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Error)))
-	i += copy(dAtA[i:], m.Error)
+	if m.Type != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.Status != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Status)))
+		i += copy(dAtA[i:], *m.Status)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.Error != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Error)))
+		i += copy(dAtA[i:], *m.Error)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17058,6 +8392,9 @@ func (m *ComponentStatus) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17097,6 +8434,9 @@ func (m *ComponentStatusList) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -17143,6 +8483,9 @@ func (m *ConfigMap) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], v)
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17171,10 +8514,15 @@ func (m *ConfigMapKeySelector) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n10
 	}
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
+	if m.Key != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17214,6 +8562,9 @@ func (m *ConfigMapList) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -17255,9 +8606,14 @@ func (m *ConfigMapVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.DefaultMode))
+	if m.DefaultMode != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.DefaultMode))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17276,14 +8632,18 @@ func (m *Container) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Image)))
-	i += copy(dAtA[i:], m.Image)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Image != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Image)))
+		i += copy(dAtA[i:], *m.Image)
+	}
 	if len(m.Command) > 0 {
 		for _, s := range m.Command {
 			dAtA[i] = 0x1a
@@ -17314,10 +8674,12 @@ func (m *Container) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.WorkingDir)))
-	i += copy(dAtA[i:], m.WorkingDir)
+	if m.WorkingDir != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.WorkingDir)))
+		i += copy(dAtA[i:], *m.WorkingDir)
+	}
 	if len(m.Ports) > 0 {
 		for _, msg := range m.Ports {
 			dAtA[i] = 0x32
@@ -17394,14 +8756,18 @@ func (m *Container) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n16
 	}
-	dAtA[i] = 0x6a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.TerminationMessagePath)))
-	i += copy(dAtA[i:], m.TerminationMessagePath)
-	dAtA[i] = 0x72
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ImagePullPolicy)))
-	i += copy(dAtA[i:], m.ImagePullPolicy)
+	if m.TerminationMessagePath != nil {
+		dAtA[i] = 0x6a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.TerminationMessagePath)))
+		i += copy(dAtA[i:], *m.TerminationMessagePath)
+	}
+	if m.ImagePullPolicy != nil {
+		dAtA[i] = 0x72
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ImagePullPolicy)))
+		i += copy(dAtA[i:], *m.ImagePullPolicy)
+	}
 	if m.SecurityContext != nil {
 		dAtA[i] = 0x7a
 		i++
@@ -17412,36 +8778,45 @@ func (m *Container) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n17
 	}
-	dAtA[i] = 0x80
-	i++
-	dAtA[i] = 0x1
-	i++
-	if m.Stdin {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Stdin != nil {
+		dAtA[i] = 0x80
+		i++
+		dAtA[i] = 0x1
+		i++
+		if *m.Stdin {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x88
-	i++
-	dAtA[i] = 0x1
-	i++
-	if m.StdinOnce {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.StdinOnce != nil {
+		dAtA[i] = 0x88
+		i++
+		dAtA[i] = 0x1
+		i++
+		if *m.StdinOnce {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x90
-	i++
-	dAtA[i] = 0x1
-	i++
-	if m.Tty {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Tty != nil {
+		dAtA[i] = 0x90
+		i++
+		dAtA[i] = 0x1
+		i++
+		if *m.Tty {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17475,9 +8850,14 @@ func (m *ContainerImage) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.SizeBytes))
+	if m.SizeBytes != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.SizeBytes))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17496,24 +8876,37 @@ func (m *ContainerPort) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.HostPort))
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ContainerPort))
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Protocol)))
-	i += copy(dAtA[i:], m.Protocol)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.HostIP)))
-	i += copy(dAtA[i:], m.HostIP)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.HostPort != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.HostPort))
+	}
+	if m.ContainerPort != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ContainerPort))
+	}
+	if m.Protocol != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Protocol)))
+		i += copy(dAtA[i:], *m.Protocol)
+	}
+	if m.HostIP != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.HostIP)))
+		i += copy(dAtA[i:], *m.HostIP)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17562,6 +8955,9 @@ func (m *ContainerState) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n20
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17590,6 +8986,9 @@ func (m *ContainerStateRunning) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n21
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17608,20 +9007,28 @@ func (m *ContainerStateTerminated) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ExitCode))
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Signal))
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
+	if m.ExitCode != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ExitCode))
+	}
+	if m.Signal != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Signal))
+	}
+	if m.Reason != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
 	if m.StartedAt != nil {
 		dAtA[i] = 0x2a
 		i++
@@ -17642,10 +9049,15 @@ func (m *ContainerStateTerminated) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n23
 	}
-	dAtA[i] = 0x3a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ContainerID)))
-	i += copy(dAtA[i:], m.ContainerID)
+	if m.ContainerID != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ContainerID)))
+		i += copy(dAtA[i:], *m.ContainerID)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17664,14 +9076,21 @@ func (m *ContainerStateWaiting) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
+	if m.Reason != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17690,10 +9109,12 @@ func (m *ContainerStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
 	if m.State != nil {
 		dAtA[i] = 0x12
 		i++
@@ -17714,29 +9135,42 @@ func (m *ContainerStatus) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n25
 	}
-	dAtA[i] = 0x20
-	i++
-	if m.Ready {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Ready != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.Ready {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.RestartCount))
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Image)))
-	i += copy(dAtA[i:], m.Image)
-	dAtA[i] = 0x3a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ImageID)))
-	i += copy(dAtA[i:], m.ImageID)
-	dAtA[i] = 0x42
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ContainerID)))
-	i += copy(dAtA[i:], m.ContainerID)
+	if m.RestartCount != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.RestartCount))
+	}
+	if m.Image != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Image)))
+		i += copy(dAtA[i:], *m.Image)
+	}
+	if m.ImageID != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ImageID)))
+		i += copy(dAtA[i:], *m.ImageID)
+	}
+	if m.ContainerID != nil {
+		dAtA[i] = 0x42
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ContainerID)))
+		i += copy(dAtA[i:], *m.ContainerID)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17755,9 +9189,14 @@ func (m *DaemonEndpoint) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Port))
+	if m.Port != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Port))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17776,9 +9215,11 @@ func (m *DeleteOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.GracePeriodSeconds))
+	if m.GracePeriodSeconds != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.GracePeriodSeconds))
+	}
 	if m.Preconditions != nil {
 		dAtA[i] = 0x12
 		i++
@@ -17789,14 +9230,19 @@ func (m *DeleteOptions) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n26
 	}
-	dAtA[i] = 0x18
-	i++
-	if m.OrphanDependents {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.OrphanDependents != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.OrphanDependents {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17815,10 +9261,12 @@ func (m *DownwardAPIVolumeFile) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
+	if m.Path != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
 	if m.FieldRef != nil {
 		dAtA[i] = 0x12
 		i++
@@ -17839,9 +9287,14 @@ func (m *DownwardAPIVolumeFile) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n28
 	}
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Mode))
+	if m.Mode != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Mode))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17872,9 +9325,14 @@ func (m *DownwardAPIVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.DefaultMode))
+	if m.DefaultMode != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.DefaultMode))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17893,10 +9351,15 @@ func (m *EmptyDirVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Medium)))
-	i += copy(dAtA[i:], m.Medium)
+	if m.Medium != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Medium)))
+		i += copy(dAtA[i:], *m.Medium)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17915,10 +9378,12 @@ func (m *EndpointAddress) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Ip)))
-	i += copy(dAtA[i:], m.Ip)
+	if m.Ip != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Ip)))
+		i += copy(dAtA[i:], *m.Ip)
+	}
 	if m.TargetRef != nil {
 		dAtA[i] = 0x12
 		i++
@@ -17929,14 +9394,21 @@ func (m *EndpointAddress) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n29
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Hostname)))
-	i += copy(dAtA[i:], m.Hostname)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.NodeName)))
-	i += copy(dAtA[i:], m.NodeName)
+	if m.Hostname != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Hostname)))
+		i += copy(dAtA[i:], *m.Hostname)
+	}
+	if m.NodeName != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.NodeName)))
+		i += copy(dAtA[i:], *m.NodeName)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -17955,17 +9427,26 @@ func (m *EndpointPort) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Port))
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Protocol)))
-	i += copy(dAtA[i:], m.Protocol)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Port != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Port))
+	}
+	if m.Protocol != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Protocol)))
+		i += copy(dAtA[i:], *m.Protocol)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18020,6 +9501,9 @@ func (m *EndpointSubset) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18059,6 +9543,9 @@ func (m *Endpoints) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -18100,6 +9587,9 @@ func (m *EndpointsList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18118,14 +9608,18 @@ func (m *EnvVar) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Value)))
-	i += copy(dAtA[i:], m.Value)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Value)))
+		i += copy(dAtA[i:], *m.Value)
+	}
 	if m.ValueFrom != nil {
 		dAtA[i] = 0x1a
 		i++
@@ -18135,6 +9629,9 @@ func (m *EnvVar) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n32
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -18194,6 +9691,9 @@ func (m *EnvVarSource) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n36
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18232,14 +9732,18 @@ func (m *Event) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n38
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
+	if m.Reason != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
 	if m.Source != nil {
 		dAtA[i] = 0x2a
 		i++
@@ -18270,13 +9774,20 @@ func (m *Event) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n41
 	}
-	dAtA[i] = 0x40
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Count))
-	dAtA[i] = 0x4a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
+	if m.Count != nil {
+		dAtA[i] = 0x40
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Count))
+	}
+	if m.Type != nil {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18317,6 +9828,9 @@ func (m *EventList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18335,14 +9849,21 @@ func (m *EventSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Component)))
-	i += copy(dAtA[i:], m.Component)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Host)))
-	i += copy(dAtA[i:], m.Host)
+	if m.Component != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Component)))
+		i += copy(dAtA[i:], *m.Component)
+	}
+	if m.Host != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Host)))
+		i += copy(dAtA[i:], *m.Host)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18376,6 +9897,9 @@ func (m *ExecAction) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18394,22 +9918,29 @@ func (m *ExportOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	if m.Export {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Export != nil {
+		dAtA[i] = 0x8
+		i++
+		if *m.Export {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x10
-	i++
-	if m.Exact {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Exact != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.Exact {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18443,21 +9974,30 @@ func (m *FCVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Lun))
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
-	dAtA[i] = 0x20
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Lun != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Lun))
 	}
-	i++
+	if m.FsType != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18476,14 +10016,18 @@ func (m *FlexVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Driver)))
-	i += copy(dAtA[i:], m.Driver)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
+	if m.Driver != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Driver)))
+		i += copy(dAtA[i:], *m.Driver)
+	}
+	if m.FsType != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
 	if m.SecretRef != nil {
 		dAtA[i] = 0x1a
 		i++
@@ -18494,14 +10038,16 @@ func (m *FlexVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n43
 	}
-	dAtA[i] = 0x20
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
 	if len(m.Options) > 0 {
 		for k, _ := range m.Options {
 			dAtA[i] = 0x2a
@@ -18518,6 +10064,9 @@ func (m *FlexVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 			i = encodeVarintGenerated(dAtA, i, uint64(len(v)))
 			i += copy(dAtA[i:], v)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -18537,10 +10086,15 @@ func (m *FlockerVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.DatasetName)))
-	i += copy(dAtA[i:], m.DatasetName)
+	if m.DatasetName != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.DatasetName)))
+		i += copy(dAtA[i:], *m.DatasetName)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18559,25 +10113,36 @@ func (m *GCEPersistentDiskVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.PdName)))
-	i += copy(dAtA[i:], m.PdName)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Partition))
-	dAtA[i] = 0x20
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.PdName != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.PdName)))
+		i += copy(dAtA[i:], *m.PdName)
 	}
-	i++
+	if m.FsType != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.Partition != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Partition))
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18596,18 +10161,27 @@ func (m *GitRepoVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Repository)))
-	i += copy(dAtA[i:], m.Repository)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Revision)))
-	i += copy(dAtA[i:], m.Revision)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Directory)))
-	i += copy(dAtA[i:], m.Directory)
+	if m.Repository != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Repository)))
+		i += copy(dAtA[i:], *m.Repository)
+	}
+	if m.Revision != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Revision)))
+		i += copy(dAtA[i:], *m.Revision)
+	}
+	if m.Directory != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Directory)))
+		i += copy(dAtA[i:], *m.Directory)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18626,22 +10200,31 @@ func (m *GlusterfsVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Endpoints)))
-	i += copy(dAtA[i:], m.Endpoints)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
-	dAtA[i] = 0x18
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Endpoints != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Endpoints)))
+		i += copy(dAtA[i:], *m.Endpoints)
 	}
-	i++
+	if m.Path != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18660,10 +10243,12 @@ func (m *HTTPGetAction) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
+	if m.Path != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
 	if m.Port != nil {
 		dAtA[i] = 0x12
 		i++
@@ -18674,14 +10259,18 @@ func (m *HTTPGetAction) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n44
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Host)))
-	i += copy(dAtA[i:], m.Host)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Scheme)))
-	i += copy(dAtA[i:], m.Scheme)
+	if m.Host != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Host)))
+		i += copy(dAtA[i:], *m.Host)
+	}
+	if m.Scheme != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Scheme)))
+		i += copy(dAtA[i:], *m.Scheme)
+	}
 	if len(m.HttpHeaders) > 0 {
 		for _, msg := range m.HttpHeaders {
 			dAtA[i] = 0x2a
@@ -18693,6 +10282,9 @@ func (m *HTTPGetAction) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -18712,14 +10304,21 @@ func (m *HTTPHeader) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Value)))
-	i += copy(dAtA[i:], m.Value)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Value)))
+		i += copy(dAtA[i:], *m.Value)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18768,6 +10367,9 @@ func (m *Handler) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n47
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18786,10 +10388,15 @@ func (m *HostPathVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
+	if m.Path != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18808,33 +10415,48 @@ func (m *ISCSIVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.TargetPortal)))
-	i += copy(dAtA[i:], m.TargetPortal)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Iqn)))
-	i += copy(dAtA[i:], m.Iqn)
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Lun))
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.IscsiInterface)))
-	i += copy(dAtA[i:], m.IscsiInterface)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
-	dAtA[i] = 0x30
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.TargetPortal != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.TargetPortal)))
+		i += copy(dAtA[i:], *m.TargetPortal)
 	}
-	i++
+	if m.Iqn != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Iqn)))
+		i += copy(dAtA[i:], *m.Iqn)
+	}
+	if m.Lun != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Lun))
+	}
+	if m.IscsiInterface != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.IscsiInterface)))
+		i += copy(dAtA[i:], *m.IscsiInterface)
+	}
+	if m.FsType != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x30
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18853,17 +10475,26 @@ func (m *KeyToPath) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Mode))
+	if m.Key != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.Path != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.Mode != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Mode))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18901,6 +10532,9 @@ func (m *Lifecycle) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n49
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -18940,6 +10574,9 @@ func (m *LimitRange) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n51
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -18958,10 +10595,12 @@ func (m *LimitRangeItem) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
+	if m.Type != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
 	if len(m.Max) > 0 {
 		for k, _ := range m.Max {
 			dAtA[i] = 0x12
@@ -19102,6 +10741,9 @@ func (m *LimitRangeItem) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19142,6 +10784,9 @@ func (m *LimitRangeList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19171,6 +10816,9 @@ func (m *LimitRangeSpec) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -19212,6 +10860,9 @@ func (m *List) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19230,29 +10881,42 @@ func (m *ListOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.LabelSelector)))
-	i += copy(dAtA[i:], m.LabelSelector)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FieldSelector)))
-	i += copy(dAtA[i:], m.FieldSelector)
-	dAtA[i] = 0x18
-	i++
-	if m.Watch {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.LabelSelector != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.LabelSelector)))
+		i += copy(dAtA[i:], *m.LabelSelector)
 	}
-	i++
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ResourceVersion)))
-	i += copy(dAtA[i:], m.ResourceVersion)
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.TimeoutSeconds))
+	if m.FieldSelector != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FieldSelector)))
+		i += copy(dAtA[i:], *m.FieldSelector)
+	}
+	if m.Watch != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.Watch {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.ResourceVersion != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ResourceVersion)))
+		i += copy(dAtA[i:], *m.ResourceVersion)
+	}
+	if m.TimeoutSeconds != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.TimeoutSeconds))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19271,14 +10935,21 @@ func (m *LoadBalancerIngress) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Ip)))
-	i += copy(dAtA[i:], m.Ip)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Hostname)))
-	i += copy(dAtA[i:], m.Hostname)
+	if m.Ip != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Ip)))
+		i += copy(dAtA[i:], *m.Ip)
+	}
+	if m.Hostname != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Hostname)))
+		i += copy(dAtA[i:], *m.Hostname)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19309,6 +10980,9 @@ func (m *LoadBalancerStatus) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19327,10 +11001,15 @@ func (m *LocalObjectReference) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19349,22 +11028,31 @@ func (m *NFSVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Server)))
-	i += copy(dAtA[i:], m.Server)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
-	dAtA[i] = 0x18
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Server != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Server)))
+		i += copy(dAtA[i:], *m.Server)
 	}
-	i++
+	if m.Path != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19413,6 +11101,9 @@ func (m *Namespace) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n61
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19453,6 +11144,9 @@ func (m *NamespaceList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19486,6 +11180,9 @@ func (m *NamespaceSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19504,10 +11201,15 @@ func (m *NamespaceStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Phase)))
-	i += copy(dAtA[i:], m.Phase)
+	if m.Phase != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Phase)))
+		i += copy(dAtA[i:], *m.Phase)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19556,6 +11258,9 @@ func (m *Node) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n65
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19574,14 +11279,21 @@ func (m *NodeAddress) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Address)))
-	i += copy(dAtA[i:], m.Address)
+	if m.Type != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.Address != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Address)))
+		i += copy(dAtA[i:], *m.Address)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19622,6 +11334,9 @@ func (m *NodeAffinity) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19640,14 +11355,18 @@ func (m *NodeCondition) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Status)))
-	i += copy(dAtA[i:], m.Status)
+	if m.Type != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.Status != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Status)))
+		i += copy(dAtA[i:], *m.Status)
+	}
 	if m.LastHeartbeatTime != nil {
 		dAtA[i] = 0x1a
 		i++
@@ -19668,14 +11387,21 @@ func (m *NodeCondition) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n68
 	}
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
+	if m.Reason != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19703,6 +11429,9 @@ func (m *NodeDaemonEndpoints) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n69
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -19744,6 +11473,9 @@ func (m *NodeList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19762,10 +11494,15 @@ func (m *NodeProxyOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
+	if m.Path != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19796,6 +11533,9 @@ func (m *NodeSelector) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19814,14 +11554,18 @@ func (m *NodeSelectorRequirement) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Operator)))
-	i += copy(dAtA[i:], m.Operator)
+	if m.Key != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.Operator != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Operator)))
+		i += copy(dAtA[i:], *m.Operator)
+	}
 	if len(m.Values) > 0 {
 		for _, s := range m.Values {
 			dAtA[i] = 0x1a
@@ -19836,6 +11580,9 @@ func (m *NodeSelectorRequirement) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -19867,6 +11614,9 @@ func (m *NodeSelectorTerm) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19885,26 +11635,37 @@ func (m *NodeSpec) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.PodCIDR)))
-	i += copy(dAtA[i:], m.PodCIDR)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ExternalID)))
-	i += copy(dAtA[i:], m.ExternalID)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ProviderID)))
-	i += copy(dAtA[i:], m.ProviderID)
-	dAtA[i] = 0x20
-	i++
-	if m.Unschedulable {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.PodCIDR != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.PodCIDR)))
+		i += copy(dAtA[i:], *m.PodCIDR)
 	}
-	i++
+	if m.ExternalID != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ExternalID)))
+		i += copy(dAtA[i:], *m.ExternalID)
+	}
+	if m.ProviderID != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ProviderID)))
+		i += copy(dAtA[i:], *m.ProviderID)
+	}
+	if m.Unschedulable != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.Unschedulable {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -19979,10 +11740,12 @@ func (m *NodeStatus) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Phase)))
-	i += copy(dAtA[i:], m.Phase)
+	if m.Phase != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Phase)))
+		i += copy(dAtA[i:], *m.Phase)
+	}
 	if len(m.Conditions) > 0 {
 		for _, msg := range m.Conditions {
 			dAtA[i] = 0x22
@@ -20066,6 +11829,9 @@ func (m *NodeStatus) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20084,46 +11850,69 @@ func (m *NodeSystemInfo) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.MachineID)))
-	i += copy(dAtA[i:], m.MachineID)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.SystemUUID)))
-	i += copy(dAtA[i:], m.SystemUUID)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.BootID)))
-	i += copy(dAtA[i:], m.BootID)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.KernelVersion)))
-	i += copy(dAtA[i:], m.KernelVersion)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.OsImage)))
-	i += copy(dAtA[i:], m.OsImage)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ContainerRuntimeVersion)))
-	i += copy(dAtA[i:], m.ContainerRuntimeVersion)
-	dAtA[i] = 0x3a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.KubeletVersion)))
-	i += copy(dAtA[i:], m.KubeletVersion)
-	dAtA[i] = 0x42
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.KubeProxyVersion)))
-	i += copy(dAtA[i:], m.KubeProxyVersion)
-	dAtA[i] = 0x4a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.OperatingSystem)))
-	i += copy(dAtA[i:], m.OperatingSystem)
-	dAtA[i] = 0x52
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Architecture)))
-	i += copy(dAtA[i:], m.Architecture)
+	if m.MachineID != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.MachineID)))
+		i += copy(dAtA[i:], *m.MachineID)
+	}
+	if m.SystemUUID != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SystemUUID)))
+		i += copy(dAtA[i:], *m.SystemUUID)
+	}
+	if m.BootID != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.BootID)))
+		i += copy(dAtA[i:], *m.BootID)
+	}
+	if m.KernelVersion != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.KernelVersion)))
+		i += copy(dAtA[i:], *m.KernelVersion)
+	}
+	if m.OsImage != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.OsImage)))
+		i += copy(dAtA[i:], *m.OsImage)
+	}
+	if m.ContainerRuntimeVersion != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ContainerRuntimeVersion)))
+		i += copy(dAtA[i:], *m.ContainerRuntimeVersion)
+	}
+	if m.KubeletVersion != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.KubeletVersion)))
+		i += copy(dAtA[i:], *m.KubeletVersion)
+	}
+	if m.KubeProxyVersion != nil {
+		dAtA[i] = 0x42
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.KubeProxyVersion)))
+		i += copy(dAtA[i:], *m.KubeProxyVersion)
+	}
+	if m.OperatingSystem != nil {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.OperatingSystem)))
+		i += copy(dAtA[i:], *m.OperatingSystem)
+	}
+	if m.Architecture != nil {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Architecture)))
+		i += copy(dAtA[i:], *m.Architecture)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20142,14 +11931,21 @@ func (m *ObjectFieldSelector) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ApiVersion)))
-	i += copy(dAtA[i:], m.ApiVersion)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FieldPath)))
-	i += copy(dAtA[i:], m.FieldPath)
+	if m.ApiVersion != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ApiVersion)))
+		i += copy(dAtA[i:], *m.ApiVersion)
+	}
+	if m.FieldPath != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FieldPath)))
+		i += copy(dAtA[i:], *m.FieldPath)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20168,33 +11964,47 @@ func (m *ObjectMeta) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.GenerateName)))
-	i += copy(dAtA[i:], m.GenerateName)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Namespace)))
-	i += copy(dAtA[i:], m.Namespace)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.SelfLink)))
-	i += copy(dAtA[i:], m.SelfLink)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Uid)))
-	i += copy(dAtA[i:], m.Uid)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ResourceVersion)))
-	i += copy(dAtA[i:], m.ResourceVersion)
-	dAtA[i] = 0x38
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Generation))
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.GenerateName != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.GenerateName)))
+		i += copy(dAtA[i:], *m.GenerateName)
+	}
+	if m.Namespace != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Namespace)))
+		i += copy(dAtA[i:], *m.Namespace)
+	}
+	if m.SelfLink != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SelfLink)))
+		i += copy(dAtA[i:], *m.SelfLink)
+	}
+	if m.Uid != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Uid)))
+		i += copy(dAtA[i:], *m.Uid)
+	}
+	if m.ResourceVersion != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ResourceVersion)))
+		i += copy(dAtA[i:], *m.ResourceVersion)
+	}
+	if m.Generation != nil {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Generation))
+	}
 	if m.CreationTimestamp != nil {
 		dAtA[i] = 0x42
 		i++
@@ -20215,9 +12025,11 @@ func (m *ObjectMeta) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n76
 	}
-	dAtA[i] = 0x50
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.DeletionGracePeriodSeconds))
+	if m.DeletionGracePeriodSeconds != nil {
+		dAtA[i] = 0x50
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.DeletionGracePeriodSeconds))
+	}
 	if len(m.Labels) > 0 {
 		for k, _ := range m.Labels {
 			dAtA[i] = 0x5a
@@ -20279,10 +12091,15 @@ func (m *ObjectMeta) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x7a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ClusterName)))
-	i += copy(dAtA[i:], m.ClusterName)
+	if m.ClusterName != nil {
+		dAtA[i] = 0x7a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ClusterName)))
+		i += copy(dAtA[i:], *m.ClusterName)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20301,34 +12118,51 @@ func (m *ObjectReference) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Kind)))
-	i += copy(dAtA[i:], m.Kind)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Namespace)))
-	i += copy(dAtA[i:], m.Namespace)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Uid)))
-	i += copy(dAtA[i:], m.Uid)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ApiVersion)))
-	i += copy(dAtA[i:], m.ApiVersion)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ResourceVersion)))
-	i += copy(dAtA[i:], m.ResourceVersion)
-	dAtA[i] = 0x3a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FieldPath)))
-	i += copy(dAtA[i:], m.FieldPath)
+	if m.Kind != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Kind)))
+		i += copy(dAtA[i:], *m.Kind)
+	}
+	if m.Namespace != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Namespace)))
+		i += copy(dAtA[i:], *m.Namespace)
+	}
+	if m.Name != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Uid != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Uid)))
+		i += copy(dAtA[i:], *m.Uid)
+	}
+	if m.ApiVersion != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ApiVersion)))
+		i += copy(dAtA[i:], *m.ApiVersion)
+	}
+	if m.ResourceVersion != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ResourceVersion)))
+		i += copy(dAtA[i:], *m.ResourceVersion)
+	}
+	if m.FieldPath != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FieldPath)))
+		i += copy(dAtA[i:], *m.FieldPath)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20347,30 +12181,43 @@ func (m *OwnerReference) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Kind)))
-	i += copy(dAtA[i:], m.Kind)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Uid)))
-	i += copy(dAtA[i:], m.Uid)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ApiVersion)))
-	i += copy(dAtA[i:], m.ApiVersion)
-	dAtA[i] = 0x30
-	i++
-	if m.Controller {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Kind != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Kind)))
+		i += copy(dAtA[i:], *m.Kind)
 	}
-	i++
+	if m.Name != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Uid != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Uid)))
+		i += copy(dAtA[i:], *m.Uid)
+	}
+	if m.ApiVersion != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ApiVersion)))
+		i += copy(dAtA[i:], *m.ApiVersion)
+	}
+	if m.Controller != nil {
+		dAtA[i] = 0x30
+		i++
+		if *m.Controller {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20418,6 +12265,9 @@ func (m *PersistentVolume) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n79
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -20467,6 +12317,9 @@ func (m *PersistentVolumeClaim) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n82
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20506,6 +12359,9 @@ func (m *PersistentVolumeClaimList) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -20550,10 +12406,12 @@ func (m *PersistentVolumeClaimSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n84
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.VolumeName)))
-	i += copy(dAtA[i:], m.VolumeName)
+	if m.VolumeName != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.VolumeName)))
+		i += copy(dAtA[i:], *m.VolumeName)
+	}
 	if m.Selector != nil {
 		dAtA[i] = 0x22
 		i++
@@ -20563,6 +12421,9 @@ func (m *PersistentVolumeClaimSpec) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n85
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -20582,10 +12443,12 @@ func (m *PersistentVolumeClaimStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Phase)))
-	i += copy(dAtA[i:], m.Phase)
+	if m.Phase != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Phase)))
+		i += copy(dAtA[i:], *m.Phase)
+	}
 	if len(m.AccessModes) > 0 {
 		for _, s := range m.AccessModes {
 			dAtA[i] = 0x12
@@ -20629,6 +12492,9 @@ func (m *PersistentVolumeClaimStatus) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20647,18 +12513,25 @@ func (m *PersistentVolumeClaimVolumeSource) MarshalTo(dAtA []byte) (int, error) 
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ClaimName)))
-	i += copy(dAtA[i:], m.ClaimName)
-	dAtA[i] = 0x10
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.ClaimName != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ClaimName)))
+		i += copy(dAtA[i:], *m.ClaimName)
 	}
-	i++
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20698,6 +12571,9 @@ func (m *PersistentVolumeList) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -20879,6 +12755,9 @@ func (m *PersistentVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n103
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20960,10 +12839,15 @@ func (m *PersistentVolumeSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n106
 	}
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.PersistentVolumeReclaimPolicy)))
-	i += copy(dAtA[i:], m.PersistentVolumeReclaimPolicy)
+	if m.PersistentVolumeReclaimPolicy != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.PersistentVolumeReclaimPolicy)))
+		i += copy(dAtA[i:], *m.PersistentVolumeReclaimPolicy)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -20982,18 +12866,27 @@ func (m *PersistentVolumeStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Phase)))
-	i += copy(dAtA[i:], m.Phase)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
+	if m.Phase != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Phase)))
+		i += copy(dAtA[i:], *m.Phase)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.Reason != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21042,6 +12935,9 @@ func (m *Pod) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n109
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21083,6 +12979,9 @@ func (m *PodAffinity) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -21127,10 +13026,15 @@ func (m *PodAffinityTerm) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.TopologyKey)))
-	i += copy(dAtA[i:], m.TopologyKey)
+	if m.TopologyKey != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.TopologyKey)))
+		i += copy(dAtA[i:], *m.TopologyKey)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21173,6 +13077,9 @@ func (m *PodAntiAffinity) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21191,42 +13098,55 @@ func (m *PodAttachOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	if m.Stdin {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Stdin != nil {
+		dAtA[i] = 0x8
+		i++
+		if *m.Stdin {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x10
-	i++
-	if m.Stdout {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Stdout != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.Stdout {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x18
-	i++
-	if m.Stderr {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Stderr != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.Stderr {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x20
-	i++
-	if m.Tty {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Tty != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.Tty {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Container)))
-	i += copy(dAtA[i:], m.Container)
+	if m.Container != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Container)))
+		i += copy(dAtA[i:], *m.Container)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21245,14 +13165,18 @@ func (m *PodCondition) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Status)))
-	i += copy(dAtA[i:], m.Status)
+	if m.Type != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.Status != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Status)))
+		i += copy(dAtA[i:], *m.Status)
+	}
 	if m.LastProbeTime != nil {
 		dAtA[i] = 0x1a
 		i++
@@ -21273,14 +13197,21 @@ func (m *PodCondition) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n112
 	}
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
+	if m.Reason != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21299,42 +13230,52 @@ func (m *PodExecOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	if m.Stdin {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Stdin != nil {
+		dAtA[i] = 0x8
+		i++
+		if *m.Stdin {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x10
-	i++
-	if m.Stdout {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Stdout != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.Stdout {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x18
-	i++
-	if m.Stderr {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Stderr != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.Stderr {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x20
-	i++
-	if m.Tty {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Tty != nil {
+		dAtA[i] = 0x20
+		i++
+		if *m.Tty {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Container)))
-	i += copy(dAtA[i:], m.Container)
+	if m.Container != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Container)))
+		i += copy(dAtA[i:], *m.Container)
+	}
 	if len(m.Command) > 0 {
 		for _, s := range m.Command {
 			dAtA[i] = 0x32
@@ -21349,6 +13290,9 @@ func (m *PodExecOptions) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -21390,6 +13334,9 @@ func (m *PodList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21408,29 +13355,37 @@ func (m *PodLogOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Container)))
-	i += copy(dAtA[i:], m.Container)
-	dAtA[i] = 0x10
-	i++
-	if m.Follow {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Container != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Container)))
+		i += copy(dAtA[i:], *m.Container)
 	}
-	i++
-	dAtA[i] = 0x18
-	i++
-	if m.Previous {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Follow != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.Follow {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.SinceSeconds))
+	if m.Previous != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.Previous {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.SinceSeconds != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.SinceSeconds))
+	}
 	if m.SinceTime != nil {
 		dAtA[i] = 0x2a
 		i++
@@ -21441,20 +13396,29 @@ func (m *PodLogOptions) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n114
 	}
-	dAtA[i] = 0x30
-	i++
-	if m.Timestamps {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Timestamps != nil {
+		dAtA[i] = 0x30
+		i++
+		if *m.Timestamps {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
-	dAtA[i] = 0x38
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.TailLines))
-	dAtA[i] = 0x40
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.LimitBytes))
+	if m.TailLines != nil {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.TailLines))
+	}
+	if m.LimitBytes != nil {
+		dAtA[i] = 0x40
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.LimitBytes))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21473,10 +13437,15 @@ func (m *PodProxyOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
+	if m.Path != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21505,17 +13474,21 @@ func (m *PodSecurityContext) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n115
 	}
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.RunAsUser))
-	dAtA[i] = 0x18
-	i++
-	if m.RunAsNonRoot {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.RunAsUser != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.RunAsUser))
 	}
-	i++
+	if m.RunAsNonRoot != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.RunAsNonRoot {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
 	if len(m.SupplementalGroups) > 0 {
 		for _, num := range m.SupplementalGroups {
 			dAtA[i] = 0x20
@@ -21523,9 +13496,14 @@ func (m *PodSecurityContext) MarshalTo(dAtA []byte) (int, error) {
 			i = encodeVarintGenerated(dAtA, i, uint64(num))
 		}
 	}
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.FsGroup))
+	if m.FsGroup != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.FsGroup))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21553,6 +13531,9 @@ func (m *PodSignature) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n116
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -21596,20 +13577,28 @@ func (m *PodSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.RestartPolicy)))
-	i += copy(dAtA[i:], m.RestartPolicy)
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.TerminationGracePeriodSeconds))
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ActiveDeadlineSeconds))
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.DnsPolicy)))
-	i += copy(dAtA[i:], m.DnsPolicy)
+	if m.RestartPolicy != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.RestartPolicy)))
+		i += copy(dAtA[i:], *m.RestartPolicy)
+	}
+	if m.TerminationGracePeriodSeconds != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.TerminationGracePeriodSeconds))
+	}
+	if m.ActiveDeadlineSeconds != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ActiveDeadlineSeconds))
+	}
+	if m.DnsPolicy != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.DnsPolicy)))
+		i += copy(dAtA[i:], *m.DnsPolicy)
+	}
 	if len(m.NodeSelector) > 0 {
 		for k, _ := range m.NodeSelector {
 			dAtA[i] = 0x3a
@@ -21627,42 +13616,54 @@ func (m *PodSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], v)
 		}
 	}
-	dAtA[i] = 0x42
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ServiceAccountName)))
-	i += copy(dAtA[i:], m.ServiceAccountName)
-	dAtA[i] = 0x4a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ServiceAccount)))
-	i += copy(dAtA[i:], m.ServiceAccount)
-	dAtA[i] = 0x52
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.NodeName)))
-	i += copy(dAtA[i:], m.NodeName)
-	dAtA[i] = 0x58
-	i++
-	if m.HostNetwork {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.ServiceAccountName != nil {
+		dAtA[i] = 0x42
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ServiceAccountName)))
+		i += copy(dAtA[i:], *m.ServiceAccountName)
 	}
-	i++
-	dAtA[i] = 0x60
-	i++
-	if m.HostPID {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.ServiceAccount != nil {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ServiceAccount)))
+		i += copy(dAtA[i:], *m.ServiceAccount)
 	}
-	i++
-	dAtA[i] = 0x68
-	i++
-	if m.HostIPC {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.NodeName != nil {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.NodeName)))
+		i += copy(dAtA[i:], *m.NodeName)
 	}
-	i++
+	if m.HostNetwork != nil {
+		dAtA[i] = 0x58
+		i++
+		if *m.HostNetwork {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.HostPID != nil {
+		dAtA[i] = 0x60
+		i++
+		if *m.HostPID {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.HostIPC != nil {
+		dAtA[i] = 0x68
+		i++
+		if *m.HostIPC {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
 	if m.SecurityContext != nil {
 		dAtA[i] = 0x72
 		i++
@@ -21685,18 +13686,25 @@ func (m *PodSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x82
-	i++
-	dAtA[i] = 0x1
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Hostname)))
-	i += copy(dAtA[i:], m.Hostname)
-	dAtA[i] = 0x8a
-	i++
-	dAtA[i] = 0x1
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Subdomain)))
-	i += copy(dAtA[i:], m.Subdomain)
+	if m.Hostname != nil {
+		dAtA[i] = 0x82
+		i++
+		dAtA[i] = 0x1
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Hostname)))
+		i += copy(dAtA[i:], *m.Hostname)
+	}
+	if m.Subdomain != nil {
+		dAtA[i] = 0x8a
+		i++
+		dAtA[i] = 0x1
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Subdomain)))
+		i += copy(dAtA[i:], *m.Subdomain)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21715,10 +13723,12 @@ func (m *PodStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Phase)))
-	i += copy(dAtA[i:], m.Phase)
+	if m.Phase != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Phase)))
+		i += copy(dAtA[i:], *m.Phase)
+	}
 	if len(m.Conditions) > 0 {
 		for _, msg := range m.Conditions {
 			dAtA[i] = 0x12
@@ -21731,22 +13741,30 @@ func (m *PodStatus) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.HostIP)))
-	i += copy(dAtA[i:], m.HostIP)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.PodIP)))
-	i += copy(dAtA[i:], m.PodIP)
+	if m.Message != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.Reason != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.HostIP != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.HostIP)))
+		i += copy(dAtA[i:], *m.HostIP)
+	}
+	if m.PodIP != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.PodIP)))
+		i += copy(dAtA[i:], *m.PodIP)
+	}
 	if m.StartTime != nil {
 		dAtA[i] = 0x3a
 		i++
@@ -21768,6 +13786,9 @@ func (m *PodStatus) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -21807,6 +13828,9 @@ func (m *PodStatusResult) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n120
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21844,6 +13868,9 @@ func (m *PodTemplate) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n122
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -21885,6 +13912,9 @@ func (m *PodTemplateList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21923,6 +13953,9 @@ func (m *PodTemplateSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n125
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21941,10 +13974,15 @@ func (m *Preconditions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Uid)))
-	i += copy(dAtA[i:], m.Uid)
+	if m.Uid != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Uid)))
+		i += copy(dAtA[i:], *m.Uid)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -21983,14 +14021,21 @@ func (m *PreferAvoidPodsEntry) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n127
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Reason)))
-	i += copy(dAtA[i:], m.Reason)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Message)))
-	i += copy(dAtA[i:], m.Message)
+	if m.Reason != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Reason)))
+		i += copy(dAtA[i:], *m.Reason)
+	}
+	if m.Message != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22009,9 +14054,11 @@ func (m *PreferredSchedulingTerm) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Weight))
+	if m.Weight != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Weight))
+	}
 	if m.Preference != nil {
 		dAtA[i] = 0x12
 		i++
@@ -22021,6 +14068,9 @@ func (m *PreferredSchedulingTerm) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n128
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -22050,21 +14100,34 @@ func (m *Probe) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n129
 	}
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.InitialDelaySeconds))
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.TimeoutSeconds))
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.PeriodSeconds))
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.SuccessThreshold))
-	dAtA[i] = 0x30
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.FailureThreshold))
+	if m.InitialDelaySeconds != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.InitialDelaySeconds))
+	}
+	if m.TimeoutSeconds != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.TimeoutSeconds))
+	}
+	if m.PeriodSeconds != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.PeriodSeconds))
+	}
+	if m.SuccessThreshold != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.SuccessThreshold))
+	}
+	if m.FailureThreshold != nil {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.FailureThreshold))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22083,30 +14146,43 @@ func (m *QuobyteVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Registry)))
-	i += copy(dAtA[i:], m.Registry)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Volume)))
-	i += copy(dAtA[i:], m.Volume)
-	dAtA[i] = 0x18
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Registry != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Registry)))
+		i += copy(dAtA[i:], *m.Registry)
 	}
-	i++
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.User)))
-	i += copy(dAtA[i:], m.User)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Group)))
-	i += copy(dAtA[i:], m.Group)
+	if m.Volume != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Volume)))
+		i += copy(dAtA[i:], *m.Volume)
+	}
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.User != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.User)))
+		i += copy(dAtA[i:], *m.User)
+	}
+	if m.Group != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Group)))
+		i += copy(dAtA[i:], *m.Group)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22140,26 +14216,36 @@ func (m *RBDVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Image)))
-	i += copy(dAtA[i:], m.Image)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Pool)))
-	i += copy(dAtA[i:], m.Pool)
-	dAtA[i] = 0x2a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.User)))
-	i += copy(dAtA[i:], m.User)
-	dAtA[i] = 0x32
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Keyring)))
-	i += copy(dAtA[i:], m.Keyring)
+	if m.Image != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Image)))
+		i += copy(dAtA[i:], *m.Image)
+	}
+	if m.FsType != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.Pool != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Pool)))
+		i += copy(dAtA[i:], *m.Pool)
+	}
+	if m.User != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.User)))
+		i += copy(dAtA[i:], *m.User)
+	}
+	if m.Keyring != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Keyring)))
+		i += copy(dAtA[i:], *m.Keyring)
+	}
 	if m.SecretRef != nil {
 		dAtA[i] = 0x3a
 		i++
@@ -22170,14 +14256,19 @@ func (m *RBDVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n130
 	}
-	dAtA[i] = 0x40
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x40
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22206,15 +14297,20 @@ func (m *RangeAllocation) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n131
 	}
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Range)))
-	i += copy(dAtA[i:], m.Range)
+	if m.Range != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Range)))
+		i += copy(dAtA[i:], *m.Range)
+	}
 	if m.Data != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(len(m.Data)))
 		i += copy(dAtA[i:], m.Data)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -22264,6 +14360,9 @@ func (m *ReplicationController) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n134
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22304,6 +14403,9 @@ func (m *ReplicationControllerList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22322,9 +14424,11 @@ func (m *ReplicationControllerSpec) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
+	if m.Replicas != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
 	if len(m.Selector) > 0 {
 		for k, _ := range m.Selector {
 			dAtA[i] = 0x12
@@ -22352,6 +14456,9 @@ func (m *ReplicationControllerSpec) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n136
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22370,18 +14477,29 @@ func (m *ReplicationControllerStatus) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Replicas))
-	dAtA[i] = 0x10
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.FullyLabeledReplicas))
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ObservedGeneration))
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.ReadyReplicas))
+	if m.Replicas != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Replicas))
+	}
+	if m.FullyLabeledReplicas != nil {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.FullyLabeledReplicas))
+	}
+	if m.ObservedGeneration != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ObservedGeneration))
+	}
+	if m.ReadyReplicas != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.ReadyReplicas))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22400,14 +14518,18 @@ func (m *ResourceFieldSelector) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ContainerName)))
-	i += copy(dAtA[i:], m.ContainerName)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Resource)))
-	i += copy(dAtA[i:], m.Resource)
+	if m.ContainerName != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ContainerName)))
+		i += copy(dAtA[i:], *m.ContainerName)
+	}
+	if m.Resource != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Resource)))
+		i += copy(dAtA[i:], *m.Resource)
+	}
 	if m.Divisor != nil {
 		dAtA[i] = 0x1a
 		i++
@@ -22417,6 +14539,9 @@ func (m *ResourceFieldSelector) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n137
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -22466,6 +14591,9 @@ func (m *ResourceQuota) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n140
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22505,6 +14633,9 @@ func (m *ResourceQuotaList) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -22566,6 +14697,9 @@ func (m *ResourceQuotaSpec) MarshalTo(dAtA []byte) (int, error) {
 			i++
 			i += copy(dAtA[i:], s)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -22641,6 +14775,9 @@ func (m *ResourceQuotaStatus) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22715,6 +14852,9 @@ func (m *ResourceRequirements) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22733,22 +14873,33 @@ func (m *SELinuxOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.User)))
-	i += copy(dAtA[i:], m.User)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Role)))
-	i += copy(dAtA[i:], m.Role)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Level)))
-	i += copy(dAtA[i:], m.Level)
+	if m.User != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.User)))
+		i += copy(dAtA[i:], *m.User)
+	}
+	if m.Role != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Role)))
+		i += copy(dAtA[i:], *m.Role)
+	}
+	if m.Type != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.Level != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Level)))
+		i += copy(dAtA[i:], *m.Level)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22800,10 +14951,12 @@ func (m *Secret) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
+	if m.Type != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
 	if len(m.StringData) > 0 {
 		for k, _ := range m.StringData {
 			dAtA[i] = 0x22
@@ -22820,6 +14973,9 @@ func (m *Secret) MarshalTo(dAtA []byte) (int, error) {
 			i = encodeVarintGenerated(dAtA, i, uint64(len(v)))
 			i += copy(dAtA[i:], v)
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -22849,10 +15005,15 @@ func (m *SecretKeySelector) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n148
 	}
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
+	if m.Key != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22893,6 +15054,9 @@ func (m *SecretList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22911,10 +15075,12 @@ func (m *SecretVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.SecretName)))
-	i += copy(dAtA[i:], m.SecretName)
+	if m.SecretName != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SecretName)))
+		i += copy(dAtA[i:], *m.SecretName)
+	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
 			dAtA[i] = 0x12
@@ -22927,9 +15093,14 @@ func (m *SecretVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.DefaultMode))
+	if m.DefaultMode != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.DefaultMode))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -22958,14 +15129,16 @@ func (m *SecurityContext) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n150
 	}
-	dAtA[i] = 0x10
-	i++
-	if m.Privileged {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Privileged != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.Privileged {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
 	if m.SeLinuxOptions != nil {
 		dAtA[i] = 0x1a
 		i++
@@ -22976,25 +15149,34 @@ func (m *SecurityContext) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n151
 	}
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.RunAsUser))
-	dAtA[i] = 0x28
-	i++
-	if m.RunAsNonRoot {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.RunAsUser != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.RunAsUser))
 	}
-	i++
-	dAtA[i] = 0x30
-	i++
-	if m.ReadOnlyRootFilesystem {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.RunAsNonRoot != nil {
+		dAtA[i] = 0x28
+		i++
+		if *m.RunAsNonRoot {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
 	}
-	i++
+	if m.ReadOnlyRootFilesystem != nil {
+		dAtA[i] = 0x30
+		i++
+		if *m.ReadOnlyRootFilesystem {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23022,6 +15204,9 @@ func (m *SerializedReference) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n152
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -23070,6 +15255,9 @@ func (m *Service) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n155
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -23123,6 +15311,9 @@ func (m *ServiceAccount) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23162,6 +15353,9 @@ func (m *ServiceAccountList) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -23203,6 +15397,9 @@ func (m *ServiceList) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23221,17 +15418,23 @@ func (m *ServicePort) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Protocol)))
-	i += copy(dAtA[i:], m.Protocol)
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Port))
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Protocol != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Protocol)))
+		i += copy(dAtA[i:], *m.Protocol)
+	}
+	if m.Port != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Port))
+	}
 	if m.TargetPort != nil {
 		dAtA[i] = 0x22
 		i++
@@ -23242,9 +15445,14 @@ func (m *ServicePort) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n159
 	}
-	dAtA[i] = 0x28
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.NodePort))
+	if m.NodePort != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.NodePort))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23263,10 +15471,15 @@ func (m *ServiceProxyOptions) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Path)))
-	i += copy(dAtA[i:], m.Path)
+	if m.Path != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23314,14 +15527,18 @@ func (m *ServiceSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], v)
 		}
 	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ClusterIP)))
-	i += copy(dAtA[i:], m.ClusterIP)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Type)))
-	i += copy(dAtA[i:], m.Type)
+	if m.ClusterIP != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ClusterIP)))
+		i += copy(dAtA[i:], *m.ClusterIP)
+	}
+	if m.Type != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
 	if len(m.ExternalIPs) > 0 {
 		for _, s := range m.ExternalIPs {
 			dAtA[i] = 0x2a
@@ -23352,14 +15569,18 @@ func (m *ServiceSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x3a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.SessionAffinity)))
-	i += copy(dAtA[i:], m.SessionAffinity)
-	dAtA[i] = 0x42
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.LoadBalancerIP)))
-	i += copy(dAtA[i:], m.LoadBalancerIP)
+	if m.SessionAffinity != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SessionAffinity)))
+		i += copy(dAtA[i:], *m.SessionAffinity)
+	}
+	if m.LoadBalancerIP != nil {
+		dAtA[i] = 0x42
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.LoadBalancerIP)))
+		i += copy(dAtA[i:], *m.LoadBalancerIP)
+	}
 	if len(m.LoadBalancerSourceRanges) > 0 {
 		for _, s := range m.LoadBalancerSourceRanges {
 			dAtA[i] = 0x4a
@@ -23375,10 +15596,15 @@ func (m *ServiceSpec) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
-	dAtA[i] = 0x52
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.ExternalName)))
-	i += copy(dAtA[i:], m.ExternalName)
+	if m.ExternalName != nil {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ExternalName)))
+		i += copy(dAtA[i:], *m.ExternalName)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23406,6 +15632,9 @@ func (m *ServiceStatus) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n160
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -23435,6 +15664,9 @@ func (m *TCPSocketAction) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n161
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23453,18 +15685,27 @@ func (m *Taint) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Value)))
-	i += copy(dAtA[i:], m.Value)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Effect)))
-	i += copy(dAtA[i:], m.Effect)
+	if m.Key != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Value)))
+		i += copy(dAtA[i:], *m.Value)
+	}
+	if m.Effect != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Effect)))
+		i += copy(dAtA[i:], *m.Effect)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23483,22 +15724,33 @@ func (m *Toleration) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Key)))
-	i += copy(dAtA[i:], m.Key)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Operator)))
-	i += copy(dAtA[i:], m.Operator)
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Value)))
-	i += copy(dAtA[i:], m.Value)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Effect)))
-	i += copy(dAtA[i:], m.Effect)
+	if m.Key != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.Operator != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Operator)))
+		i += copy(dAtA[i:], *m.Operator)
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Value)))
+		i += copy(dAtA[i:], *m.Value)
+	}
+	if m.Effect != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Effect)))
+		i += copy(dAtA[i:], *m.Effect)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23517,10 +15769,12 @@ func (m *Volume) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
 	if m.VolumeSource != nil {
 		dAtA[i] = 0x12
 		i++
@@ -23530,6 +15784,9 @@ func (m *Volume) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n162
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -23549,26 +15806,37 @@ func (m *VolumeMount) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	dAtA[i] = 0x10
-	i++
-	if m.ReadOnly {
-		dAtA[i] = 1
-	} else {
-		dAtA[i] = 0
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
 	}
-	i++
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.MountPath)))
-	i += copy(dAtA[i:], m.MountPath)
-	dAtA[i] = 0x22
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.SubPath)))
-	i += copy(dAtA[i:], m.SubPath)
+	if m.ReadOnly != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.ReadOnly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.MountPath != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.MountPath)))
+		i += copy(dAtA[i:], *m.MountPath)
+	}
+	if m.SubPath != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SubPath)))
+		i += copy(dAtA[i:], *m.SubPath)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23821,6 +16089,9 @@ func (m *VolumeSource) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n184
 	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23839,14 +16110,21 @@ func (m *VsphereVirtualDiskVolumeSource) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0xa
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.VolumePath)))
-	i += copy(dAtA[i:], m.VolumePath)
-	dAtA[i] = 0x12
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(len(m.FsType)))
-	i += copy(dAtA[i:], m.FsType)
+	if m.VolumePath != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.VolumePath)))
+		i += copy(dAtA[i:], *m.VolumePath)
+	}
+	if m.FsType != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FsType)))
+		i += copy(dAtA[i:], *m.FsType)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	return i, nil
 }
 
@@ -23865,9 +16143,11 @@ func (m *WeightedPodAffinityTerm) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintGenerated(dAtA, i, uint64(m.Weight))
+	if m.Weight != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Weight))
+	}
 	if m.PodAffinityTerm != nil {
 		dAtA[i] = 0x12
 		i++
@@ -23877,6 +16157,9 @@ func (m *WeightedPodAffinityTerm) MarshalTo(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i += n185
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -23911,12 +16194,23 @@ func encodeVarintGenerated(dAtA []byte, offset int, v uint64) int {
 func (m *AWSElasticBlockStoreVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.VolumeID)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.Partition))
-	n += 2
+	if m.VolumeID != nil {
+		l = len(*m.VolumeID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Partition != nil {
+		n += 1 + sovGenerated(uint64(*m.Partition))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -23935,16 +16229,26 @@ func (m *Affinity) Size() (n int) {
 		l = m.PodAntiAffinity.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *AttachedVolume) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.DevicePath)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.DevicePath != nil {
+		l = len(*m.DevicePath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -23957,32 +16261,57 @@ func (m *AvoidPods) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *AzureDiskVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.DiskName)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.DiskURI)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.CachingMode)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.DiskName != nil {
+		l = len(*m.DiskName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.DiskURI != nil {
+		l = len(*m.DiskURI)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.CachingMode != nil {
+		l = len(*m.CachingMode)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *AzureFileVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.SecretName)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ShareName)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.SecretName != nil {
+		l = len(*m.SecretName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ShareName != nil {
+		l = len(*m.ShareName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -23996,6 +16325,9 @@ func (m *Binding) Size() (n int) {
 	if m.Target != nil {
 		l = m.Target.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24015,6 +16347,9 @@ func (m *Capabilities) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24027,42 +16362,73 @@ func (m *CephFSVolumeSource) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.User)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.SecretFile)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.User != nil {
+		l = len(*m.User)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.SecretFile != nil {
+		l = len(*m.SecretFile)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.SecretRef != nil {
 		l = m.SecretRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *CinderVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.VolumeID)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.VolumeID != nil {
+		l = len(*m.VolumeID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ComponentCondition) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Status)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Error)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Status != nil {
+		l = len(*m.Status)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Error != nil {
+		l = len(*m.Error)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24079,6 +16445,9 @@ func (m *ComponentStatus) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24094,6 +16463,9 @@ func (m *ComponentStatusList) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24113,6 +16485,9 @@ func (m *ConfigMap) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24123,8 +16498,13 @@ func (m *ConfigMapKeySelector) Size() (n int) {
 		l = m.LocalObjectReference.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24140,6 +16520,9 @@ func (m *ConfigMapList) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24157,17 +16540,26 @@ func (m *ConfigMapVolumeSource) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	n += 1 + sovGenerated(uint64(m.DefaultMode))
+	if m.DefaultMode != nil {
+		n += 1 + sovGenerated(uint64(*m.DefaultMode))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Container) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Image)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Image != nil {
+		l = len(*m.Image)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Command) > 0 {
 		for _, s := range m.Command {
 			l = len(s)
@@ -24180,8 +16572,10 @@ func (m *Container) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.WorkingDir)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.WorkingDir != nil {
+		l = len(*m.WorkingDir)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Ports) > 0 {
 		for _, e := range m.Ports {
 			l = e.Size()
@@ -24216,17 +16610,30 @@ func (m *Container) Size() (n int) {
 		l = m.Lifecycle.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.TerminationMessagePath)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ImagePullPolicy)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.TerminationMessagePath != nil {
+		l = len(*m.TerminationMessagePath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ImagePullPolicy != nil {
+		l = len(*m.ImagePullPolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.SecurityContext != nil {
 		l = m.SecurityContext.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 3
-	n += 3
-	n += 3
+	if m.Stdin != nil {
+		n += 3
+	}
+	if m.StdinOnce != nil {
+		n += 3
+	}
+	if m.Tty != nil {
+		n += 3
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24239,21 +16646,39 @@ func (m *ContainerImage) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	n += 1 + sovGenerated(uint64(m.SizeBytes))
+	if m.SizeBytes != nil {
+		n += 1 + sovGenerated(uint64(*m.SizeBytes))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ContainerPort) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.HostPort))
-	n += 1 + sovGenerated(uint64(m.ContainerPort))
-	l = len(m.Protocol)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.HostIP)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.HostPort != nil {
+		n += 1 + sovGenerated(uint64(*m.HostPort))
+	}
+	if m.ContainerPort != nil {
+		n += 1 + sovGenerated(uint64(*m.ContainerPort))
+	}
+	if m.Protocol != nil {
+		l = len(*m.Protocol)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.HostIP != nil {
+		l = len(*m.HostIP)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24272,6 +16697,9 @@ func (m *ContainerState) Size() (n int) {
 		l = m.Terminated.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24282,18 +16710,29 @@ func (m *ContainerStateRunning) Size() (n int) {
 		l = m.StartedAt.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ContainerStateTerminated) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.ExitCode))
-	n += 1 + sovGenerated(uint64(m.Signal))
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ExitCode != nil {
+		n += 1 + sovGenerated(uint64(*m.ExitCode))
+	}
+	if m.Signal != nil {
+		n += 1 + sovGenerated(uint64(*m.Signal))
+	}
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.StartedAt != nil {
 		l = m.StartedAt.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -24302,26 +16741,40 @@ func (m *ContainerStateTerminated) Size() (n int) {
 		l = m.FinishedAt.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.ContainerID)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ContainerID != nil {
+		l = len(*m.ContainerID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ContainerStateWaiting) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ContainerStatus) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.State != nil {
 		l = m.State.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -24330,41 +16783,68 @@ func (m *ContainerStatus) Size() (n int) {
 		l = m.LastState.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
-	n += 1 + sovGenerated(uint64(m.RestartCount))
-	l = len(m.Image)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ImageID)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ContainerID)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Ready != nil {
+		n += 2
+	}
+	if m.RestartCount != nil {
+		n += 1 + sovGenerated(uint64(*m.RestartCount))
+	}
+	if m.Image != nil {
+		l = len(*m.Image)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ImageID != nil {
+		l = len(*m.ImageID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ContainerID != nil {
+		l = len(*m.ContainerID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *DaemonEndpoint) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Port))
+	if m.Port != nil {
+		n += 1 + sovGenerated(uint64(*m.Port))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *DeleteOptions) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.GracePeriodSeconds))
+	if m.GracePeriodSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.GracePeriodSeconds))
+	}
 	if m.Preconditions != nil {
 		l = m.Preconditions.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
+	if m.OrphanDependents != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *DownwardAPIVolumeFile) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.FieldRef != nil {
 		l = m.FieldRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -24373,7 +16853,12 @@ func (m *DownwardAPIVolumeFile) Size() (n int) {
 		l = m.ResourceFieldRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.Mode))
+	if m.Mode != nil {
+		n += 1 + sovGenerated(uint64(*m.Mode))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24386,42 +16871,70 @@ func (m *DownwardAPIVolumeSource) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	n += 1 + sovGenerated(uint64(m.DefaultMode))
+	if m.DefaultMode != nil {
+		n += 1 + sovGenerated(uint64(*m.DefaultMode))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *EmptyDirVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Medium)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Medium != nil {
+		l = len(*m.Medium)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *EndpointAddress) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Ip)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Ip != nil {
+		l = len(*m.Ip)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.TargetRef != nil {
 		l = m.TargetRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Hostname)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.NodeName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Hostname != nil {
+		l = len(*m.Hostname)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.NodeName != nil {
+		l = len(*m.NodeName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *EndpointPort) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.Port))
-	l = len(m.Protocol)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Port != nil {
+		n += 1 + sovGenerated(uint64(*m.Port))
+	}
+	if m.Protocol != nil {
+		l = len(*m.Protocol)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24446,6 +16959,9 @@ func (m *EndpointSubset) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24461,6 +16977,9 @@ func (m *Endpoints) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24478,19 +16997,29 @@ func (m *EndpointsList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *EnvVar) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Value)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Value != nil {
+		l = len(*m.Value)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.ValueFrom != nil {
 		l = m.ValueFrom.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24514,6 +17043,9 @@ func (m *EnvVarSource) Size() (n int) {
 		l = m.SecretKeyRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24528,10 +17060,14 @@ func (m *Event) Size() (n int) {
 		l = m.InvolvedObject.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.Source != nil {
 		l = m.Source.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -24544,9 +17080,16 @@ func (m *Event) Size() (n int) {
 		l = m.LastTimestamp.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.Count))
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Count != nil {
+		n += 1 + sovGenerated(uint64(*m.Count))
+	}
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24563,16 +17106,26 @@ func (m *EventList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *EventSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Component)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Host)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Component != nil {
+		l = len(*m.Component)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Host != nil {
+		l = len(*m.Host)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24585,14 +17138,24 @@ func (m *ExecAction) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ExportOptions) Size() (n int) {
 	var l int
 	_ = l
-	n += 2
-	n += 2
+	if m.Export != nil {
+		n += 2
+	}
+	if m.Exact != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24605,25 +17168,40 @@ func (m *FCVolumeSource) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	n += 1 + sovGenerated(uint64(m.Lun))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.Lun != nil {
+		n += 1 + sovGenerated(uint64(*m.Lun))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *FlexVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Driver)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Driver != nil {
+		l = len(*m.Driver)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.SecretRef != nil {
 		l = m.SecretRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
+	if m.ReadOnly != nil {
+		n += 2
+	}
 	if len(m.Options) > 0 {
 		for k, v := range m.Options {
 			_ = k
@@ -24632,70 +17210,116 @@ func (m *FlexVolumeSource) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *FlockerVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.DatasetName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.DatasetName != nil {
+		l = len(*m.DatasetName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *GCEPersistentDiskVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.PdName)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.Partition))
-	n += 2
+	if m.PdName != nil {
+		l = len(*m.PdName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Partition != nil {
+		n += 1 + sovGenerated(uint64(*m.Partition))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *GitRepoVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Repository)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Revision)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Directory)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Repository != nil {
+		l = len(*m.Repository)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Revision != nil {
+		l = len(*m.Revision)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Directory != nil {
+		l = len(*m.Directory)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *GlusterfsVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Endpoints)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.Endpoints != nil {
+		l = len(*m.Endpoints)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *HTTPGetAction) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.Port != nil {
 		l = m.Port.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Host)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Scheme)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Host != nil {
+		l = len(*m.Host)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Scheme != nil {
+		l = len(*m.Scheme)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.HttpHeaders) > 0 {
 		for _, e := range m.HttpHeaders {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24703,10 +17327,17 @@ func (m *HTTPGetAction) Size() (n int) {
 func (m *HTTPHeader) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Value)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Value != nil {
+		l = len(*m.Value)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24725,41 +17356,73 @@ func (m *Handler) Size() (n int) {
 		l = m.TcpSocket.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *HostPathVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ISCSIVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.TargetPortal)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Iqn)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.Lun))
-	l = len(m.IscsiInterface)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.TargetPortal != nil {
+		l = len(*m.TargetPortal)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Iqn != nil {
+		l = len(*m.Iqn)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Lun != nil {
+		n += 1 + sovGenerated(uint64(*m.Lun))
+	}
+	if m.IscsiInterface != nil {
+		l = len(*m.IscsiInterface)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *KeyToPath) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.Mode))
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Mode != nil {
+		n += 1 + sovGenerated(uint64(*m.Mode))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24773,6 +17436,9 @@ func (m *Lifecycle) Size() (n int) {
 	if m.PreStop != nil {
 		l = m.PreStop.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24788,14 +17454,19 @@ func (m *LimitRange) Size() (n int) {
 		l = m.Spec.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *LimitRangeItem) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Max) > 0 {
 		for k, v := range m.Max {
 			_ = k
@@ -24861,6 +17532,9 @@ func (m *LimitRangeItem) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24877,6 +17551,9 @@ func (m *LimitRangeList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24888,6 +17565,9 @@ func (m *LimitRangeSpec) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -24905,30 +17585,53 @@ func (m *List) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ListOptions) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.LabelSelector)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FieldSelector)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
-	l = len(m.ResourceVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.TimeoutSeconds))
+	if m.LabelSelector != nil {
+		l = len(*m.LabelSelector)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FieldSelector != nil {
+		l = len(*m.FieldSelector)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Watch != nil {
+		n += 2
+	}
+	if m.ResourceVersion != nil {
+		l = len(*m.ResourceVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.TimeoutSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.TimeoutSeconds))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *LoadBalancerIngress) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Ip)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Hostname)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Ip != nil {
+		l = len(*m.Ip)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Hostname != nil {
+		l = len(*m.Hostname)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24941,25 +17644,42 @@ func (m *LoadBalancerStatus) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *LocalObjectReference) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NFSVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Server)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.Server != nil {
+		l = len(*m.Server)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24978,6 +17698,9 @@ func (m *Namespace) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -24994,6 +17717,9 @@ func (m *NamespaceList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25006,14 +17732,22 @@ func (m *NamespaceSpec) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NamespaceStatus) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Phase)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Phase != nil {
+		l = len(*m.Phase)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25032,16 +17766,26 @@ func (m *Node) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NodeAddress) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Address)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Address != nil {
+		l = len(*m.Address)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25058,16 +17802,23 @@ func (m *NodeAffinity) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NodeCondition) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Status)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Status != nil {
+		l = len(*m.Status)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.LastHeartbeatTime != nil {
 		l = m.LastHeartbeatTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -25076,10 +17827,17 @@ func (m *NodeCondition) Size() (n int) {
 		l = m.LastTransitionTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25089,6 +17847,9 @@ func (m *NodeDaemonEndpoints) Size() (n int) {
 	if m.KubeletEndpoint != nil {
 		l = m.KubeletEndpoint.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25106,14 +17867,22 @@ func (m *NodeList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NodeProxyOptions) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25126,21 +17895,31 @@ func (m *NodeSelector) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NodeSelectorRequirement) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Operator)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Operator != nil {
+		l = len(*m.Operator)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Values) > 0 {
 		for _, s := range m.Values {
 			l = len(s)
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25154,19 +17933,33 @@ func (m *NodeSelectorTerm) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NodeSpec) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.PodCIDR)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ExternalID)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ProviderID)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.PodCIDR != nil {
+		l = len(*m.PodCIDR)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ExternalID != nil {
+		l = len(*m.ExternalID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ProviderID != nil {
+		l = len(*m.ProviderID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Unschedulable != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25199,8 +17992,10 @@ func (m *NodeStatus) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
-	l = len(m.Phase)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Phase != nil {
+		l = len(*m.Phase)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Conditions) > 0 {
 		for _, e := range m.Conditions {
 			l = e.Size()
@@ -25239,61 +18034,108 @@ func (m *NodeStatus) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *NodeSystemInfo) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.MachineID)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.SystemUUID)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.BootID)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.KernelVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.OsImage)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ContainerRuntimeVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.KubeletVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.KubeProxyVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.OperatingSystem)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Architecture)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.MachineID != nil {
+		l = len(*m.MachineID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.SystemUUID != nil {
+		l = len(*m.SystemUUID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.BootID != nil {
+		l = len(*m.BootID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.KernelVersion != nil {
+		l = len(*m.KernelVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.OsImage != nil {
+		l = len(*m.OsImage)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ContainerRuntimeVersion != nil {
+		l = len(*m.ContainerRuntimeVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.KubeletVersion != nil {
+		l = len(*m.KubeletVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.KubeProxyVersion != nil {
+		l = len(*m.KubeProxyVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.OperatingSystem != nil {
+		l = len(*m.OperatingSystem)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Architecture != nil {
+		l = len(*m.Architecture)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ObjectFieldSelector) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.ApiVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FieldPath)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ApiVersion != nil {
+		l = len(*m.ApiVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FieldPath != nil {
+		l = len(*m.FieldPath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ObjectMeta) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.GenerateName)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Namespace)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.SelfLink)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Uid)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ResourceVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.Generation))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.GenerateName != nil {
+		l = len(*m.GenerateName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Namespace != nil {
+		l = len(*m.Namespace)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.SelfLink != nil {
+		l = len(*m.SelfLink)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Uid != nil {
+		l = len(*m.Uid)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ResourceVersion != nil {
+		l = len(*m.ResourceVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Generation != nil {
+		n += 1 + sovGenerated(uint64(*m.Generation))
+	}
 	if m.CreationTimestamp != nil {
 		l = m.CreationTimestamp.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -25302,7 +18144,9 @@ func (m *ObjectMeta) Size() (n int) {
 		l = m.DeletionTimestamp.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.DeletionGracePeriodSeconds))
+	if m.DeletionGracePeriodSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.DeletionGracePeriodSeconds))
+	}
 	if len(m.Labels) > 0 {
 		for k, v := range m.Labels {
 			_ = k
@@ -25331,43 +18175,78 @@ func (m *ObjectMeta) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.ClusterName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ClusterName != nil {
+		l = len(*m.ClusterName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ObjectReference) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Kind)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Namespace)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Uid)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ApiVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ResourceVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FieldPath)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Kind != nil {
+		l = len(*m.Kind)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Namespace != nil {
+		l = len(*m.Namespace)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Uid != nil {
+		l = len(*m.Uid)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ApiVersion != nil {
+		l = len(*m.ApiVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ResourceVersion != nil {
+		l = len(*m.ResourceVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FieldPath != nil {
+		l = len(*m.FieldPath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *OwnerReference) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Kind)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Uid)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ApiVersion)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.Kind != nil {
+		l = len(*m.Kind)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Uid != nil {
+		l = len(*m.Uid)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ApiVersion != nil {
+		l = len(*m.ApiVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Controller != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25385,6 +18264,9 @@ func (m *PersistentVolume) Size() (n int) {
 	if m.Status != nil {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25404,6 +18286,9 @@ func (m *PersistentVolumeClaim) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25419,6 +18304,9 @@ func (m *PersistentVolumeClaimList) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25436,11 +18324,16 @@ func (m *PersistentVolumeClaimSpec) Size() (n int) {
 		l = m.Resources.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.VolumeName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.VolumeName != nil {
+		l = len(*m.VolumeName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.Selector != nil {
 		l = m.Selector.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25448,8 +18341,10 @@ func (m *PersistentVolumeClaimSpec) Size() (n int) {
 func (m *PersistentVolumeClaimStatus) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Phase)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Phase != nil {
+		l = len(*m.Phase)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.AccessModes) > 0 {
 		for _, s := range m.AccessModes {
 			l = len(s)
@@ -25469,15 +18364,25 @@ func (m *PersistentVolumeClaimStatus) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PersistentVolumeClaimVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.ClaimName)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
+	if m.ClaimName != nil {
+		l = len(*m.ClaimName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25493,6 +18398,9 @@ func (m *PersistentVolumeList) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25564,6 +18472,9 @@ func (m *PersistentVolumeSource) Size() (n int) {
 		l = m.AzureDisk.Size()
 		n += 2 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25597,20 +18508,34 @@ func (m *PersistentVolumeSpec) Size() (n int) {
 		l = m.ClaimRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.PersistentVolumeReclaimPolicy)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.PersistentVolumeReclaimPolicy != nil {
+		l = len(*m.PersistentVolumeReclaimPolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PersistentVolumeStatus) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Phase)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Phase != nil {
+		l = len(*m.Phase)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25628,6 +18553,9 @@ func (m *Pod) Size() (n int) {
 	if m.Status != nil {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25647,6 +18575,9 @@ func (m *PodAffinity) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25663,8 +18594,13 @@ func (m *PodAffinityTerm) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.TopologyKey)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.TopologyKey != nil {
+		l = len(*m.TopologyKey)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25683,28 +18619,48 @@ func (m *PodAntiAffinity) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PodAttachOptions) Size() (n int) {
 	var l int
 	_ = l
-	n += 2
-	n += 2
-	n += 2
-	n += 2
-	l = len(m.Container)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Stdin != nil {
+		n += 2
+	}
+	if m.Stdout != nil {
+		n += 2
+	}
+	if m.Stderr != nil {
+		n += 2
+	}
+	if m.Tty != nil {
+		n += 2
+	}
+	if m.Container != nil {
+		l = len(*m.Container)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PodCondition) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Status)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Status != nil {
+		l = len(*m.Status)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.LastProbeTime != nil {
 		l = m.LastProbeTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -25713,27 +18669,47 @@ func (m *PodCondition) Size() (n int) {
 		l = m.LastTransitionTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PodExecOptions) Size() (n int) {
 	var l int
 	_ = l
-	n += 2
-	n += 2
-	n += 2
-	n += 2
-	l = len(m.Container)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Stdin != nil {
+		n += 2
+	}
+	if m.Stdout != nil {
+		n += 2
+	}
+	if m.Stderr != nil {
+		n += 2
+	}
+	if m.Tty != nil {
+		n += 2
+	}
+	if m.Container != nil {
+		l = len(*m.Container)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Command) > 0 {
 		for _, s := range m.Command {
 			l = len(s)
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25751,32 +18727,57 @@ func (m *PodList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PodLogOptions) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Container)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
-	n += 2
-	n += 1 + sovGenerated(uint64(m.SinceSeconds))
+	if m.Container != nil {
+		l = len(*m.Container)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Follow != nil {
+		n += 2
+	}
+	if m.Previous != nil {
+		n += 2
+	}
+	if m.SinceSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.SinceSeconds))
+	}
 	if m.SinceTime != nil {
 		l = m.SinceTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
-	n += 1 + sovGenerated(uint64(m.TailLines))
-	n += 1 + sovGenerated(uint64(m.LimitBytes))
+	if m.Timestamps != nil {
+		n += 2
+	}
+	if m.TailLines != nil {
+		n += 1 + sovGenerated(uint64(*m.TailLines))
+	}
+	if m.LimitBytes != nil {
+		n += 1 + sovGenerated(uint64(*m.LimitBytes))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PodProxyOptions) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25787,14 +18788,23 @@ func (m *PodSecurityContext) Size() (n int) {
 		l = m.SeLinuxOptions.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.RunAsUser))
-	n += 2
+	if m.RunAsUser != nil {
+		n += 1 + sovGenerated(uint64(*m.RunAsUser))
+	}
+	if m.RunAsNonRoot != nil {
+		n += 2
+	}
 	if len(m.SupplementalGroups) > 0 {
 		for _, e := range m.SupplementalGroups {
 			n += 1 + sovGenerated(uint64(e))
 		}
 	}
-	n += 1 + sovGenerated(uint64(m.FsGroup))
+	if m.FsGroup != nil {
+		n += 1 + sovGenerated(uint64(*m.FsGroup))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25804,6 +18814,9 @@ func (m *PodSignature) Size() (n int) {
 	if m.PodController != nil {
 		l = m.PodController.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25823,12 +18836,20 @@ func (m *PodSpec) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.RestartPolicy)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.TerminationGracePeriodSeconds))
-	n += 1 + sovGenerated(uint64(m.ActiveDeadlineSeconds))
-	l = len(m.DnsPolicy)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.RestartPolicy != nil {
+		l = len(*m.RestartPolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.TerminationGracePeriodSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.TerminationGracePeriodSeconds))
+	}
+	if m.ActiveDeadlineSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.ActiveDeadlineSeconds))
+	}
+	if m.DnsPolicy != nil {
+		l = len(*m.DnsPolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.NodeSelector) > 0 {
 		for k, v := range m.NodeSelector {
 			_ = k
@@ -25837,15 +18858,27 @@ func (m *PodSpec) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
-	l = len(m.ServiceAccountName)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.ServiceAccount)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.NodeName)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
-	n += 2
-	n += 2
+	if m.ServiceAccountName != nil {
+		l = len(*m.ServiceAccountName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ServiceAccount != nil {
+		l = len(*m.ServiceAccount)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.NodeName != nil {
+		l = len(*m.NodeName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.HostNetwork != nil {
+		n += 2
+	}
+	if m.HostPID != nil {
+		n += 2
+	}
+	if m.HostIPC != nil {
+		n += 2
+	}
 	if m.SecurityContext != nil {
 		l = m.SecurityContext.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -25856,32 +18889,49 @@ func (m *PodSpec) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.Hostname)
-	n += 2 + l + sovGenerated(uint64(l))
-	l = len(m.Subdomain)
-	n += 2 + l + sovGenerated(uint64(l))
+	if m.Hostname != nil {
+		l = len(*m.Hostname)
+		n += 2 + l + sovGenerated(uint64(l))
+	}
+	if m.Subdomain != nil {
+		l = len(*m.Subdomain)
+		n += 2 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PodStatus) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Phase)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Phase != nil {
+		l = len(*m.Phase)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Conditions) > 0 {
 		for _, e := range m.Conditions {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.HostIP)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.PodIP)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.HostIP != nil {
+		l = len(*m.HostIP)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.PodIP != nil {
+		l = len(*m.PodIP)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.StartTime != nil {
 		l = m.StartTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
@@ -25891,6 +18941,9 @@ func (m *PodStatus) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25906,6 +18959,9 @@ func (m *PodStatusResult) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25919,6 +18975,9 @@ func (m *PodTemplate) Size() (n int) {
 	if m.Template != nil {
 		l = m.Template.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25936,6 +18995,9 @@ func (m *PodTemplateList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25950,14 +19012,22 @@ func (m *PodTemplateSpec) Size() (n int) {
 		l = m.Spec.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Preconditions) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Uid)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Uid != nil {
+		l = len(*m.Uid)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -25972,20 +19042,32 @@ func (m *PreferAvoidPodsEntry) Size() (n int) {
 		l = m.EvictionTime.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Reason)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Message)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Reason != nil {
+		l = len(*m.Reason)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Message != nil {
+		l = len(*m.Message)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *PreferredSchedulingTerm) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Weight))
+	if m.Weight != nil {
+		n += 1 + sovGenerated(uint64(*m.Weight))
+	}
 	if m.Preference != nil {
 		l = m.Preference.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -25997,26 +19079,52 @@ func (m *Probe) Size() (n int) {
 		l = m.Handler.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.InitialDelaySeconds))
-	n += 1 + sovGenerated(uint64(m.TimeoutSeconds))
-	n += 1 + sovGenerated(uint64(m.PeriodSeconds))
-	n += 1 + sovGenerated(uint64(m.SuccessThreshold))
-	n += 1 + sovGenerated(uint64(m.FailureThreshold))
+	if m.InitialDelaySeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.InitialDelaySeconds))
+	}
+	if m.TimeoutSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.TimeoutSeconds))
+	}
+	if m.PeriodSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.PeriodSeconds))
+	}
+	if m.SuccessThreshold != nil {
+		n += 1 + sovGenerated(uint64(*m.SuccessThreshold))
+	}
+	if m.FailureThreshold != nil {
+		n += 1 + sovGenerated(uint64(*m.FailureThreshold))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *QuobyteVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Registry)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Volume)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
-	l = len(m.User)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Group)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Registry != nil {
+		l = len(*m.Registry)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Volume != nil {
+		l = len(*m.Volume)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.User != nil {
+		l = len(*m.User)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Group != nil {
+		l = len(*m.Group)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26029,21 +19137,36 @@ func (m *RBDVolumeSource) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.Image)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Pool)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.User)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Keyring)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Image != nil {
+		l = len(*m.Image)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Pool != nil {
+		l = len(*m.Pool)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.User != nil {
+		l = len(*m.User)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Keyring != nil {
+		l = len(*m.Keyring)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.SecretRef != nil {
 		l = m.SecretRef.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26054,11 +19177,16 @@ func (m *RangeAllocation) Size() (n int) {
 		l = m.Metadata.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Range)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Range != nil {
+		l = len(*m.Range)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.Data != nil {
 		l = len(m.Data)
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26078,6 +19206,9 @@ func (m *ReplicationController) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26094,13 +19225,18 @@ func (m *ReplicationControllerList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ReplicationControllerSpec) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Replicas))
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
 	if len(m.Selector) > 0 {
 		for k, v := range m.Selector {
 			_ = k
@@ -26113,29 +19249,50 @@ func (m *ReplicationControllerSpec) Size() (n int) {
 		l = m.Template.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ReplicationControllerStatus) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Replicas))
-	n += 1 + sovGenerated(uint64(m.FullyLabeledReplicas))
-	n += 1 + sovGenerated(uint64(m.ObservedGeneration))
-	n += 1 + sovGenerated(uint64(m.ReadyReplicas))
+	if m.Replicas != nil {
+		n += 1 + sovGenerated(uint64(*m.Replicas))
+	}
+	if m.FullyLabeledReplicas != nil {
+		n += 1 + sovGenerated(uint64(*m.FullyLabeledReplicas))
+	}
+	if m.ObservedGeneration != nil {
+		n += 1 + sovGenerated(uint64(*m.ObservedGeneration))
+	}
+	if m.ReadyReplicas != nil {
+		n += 1 + sovGenerated(uint64(*m.ReadyReplicas))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ResourceFieldSelector) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.ContainerName)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Resource)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ContainerName != nil {
+		l = len(*m.ContainerName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Resource != nil {
+		l = len(*m.Resource)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.Divisor != nil {
 		l = m.Divisor.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26155,6 +19312,9 @@ func (m *ResourceQuota) Size() (n int) {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26170,6 +19330,9 @@ func (m *ResourceQuotaList) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26195,6 +19358,9 @@ func (m *ResourceQuotaSpec) Size() (n int) {
 			l = len(s)
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26228,6 +19394,9 @@ func (m *ResourceQuotaStatus) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26260,20 +19429,34 @@ func (m *ResourceRequirements) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *SELinuxOptions) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.User)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Role)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Level)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.User != nil {
+		l = len(*m.User)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Role != nil {
+		l = len(*m.Role)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Level != nil {
+		l = len(*m.Level)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26296,8 +19479,10 @@ func (m *Secret) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.StringData) > 0 {
 		for k, v := range m.StringData {
 			_ = k
@@ -26305,6 +19490,9 @@ func (m *Secret) Size() (n int) {
 			mapEntrySize := 1 + len(k) + sovGenerated(uint64(len(k))) + 1 + len(v) + sovGenerated(uint64(len(v)))
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26316,8 +19504,13 @@ func (m *SecretKeySelector) Size() (n int) {
 		l = m.LocalObjectReference.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26334,21 +19527,31 @@ func (m *SecretList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *SecretVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.SecretName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.SecretName != nil {
+		l = len(*m.SecretName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.Items) > 0 {
 		for _, e := range m.Items {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	n += 1 + sovGenerated(uint64(m.DefaultMode))
+	if m.DefaultMode != nil {
+		n += 1 + sovGenerated(uint64(*m.DefaultMode))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26359,14 +19562,25 @@ func (m *SecurityContext) Size() (n int) {
 		l = m.Capabilities.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 2
+	if m.Privileged != nil {
+		n += 2
+	}
 	if m.SeLinuxOptions != nil {
 		l = m.SeLinuxOptions.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.RunAsUser))
-	n += 2
-	n += 2
+	if m.RunAsUser != nil {
+		n += 1 + sovGenerated(uint64(*m.RunAsUser))
+	}
+	if m.RunAsNonRoot != nil {
+		n += 2
+	}
+	if m.ReadOnlyRootFilesystem != nil {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26376,6 +19590,9 @@ func (m *SerializedReference) Size() (n int) {
 	if m.Reference != nil {
 		l = m.Reference.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26394,6 +19611,9 @@ func (m *Service) Size() (n int) {
 	if m.Status != nil {
 		l = m.Status.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26417,6 +19637,9 @@ func (m *ServiceAccount) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26432,6 +19655,9 @@ func (m *ServiceAccountList) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovGenerated(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26449,30 +19675,49 @@ func (m *ServiceList) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ServicePort) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Protocol)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 1 + sovGenerated(uint64(m.Port))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Protocol != nil {
+		l = len(*m.Protocol)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Port != nil {
+		n += 1 + sovGenerated(uint64(*m.Port))
+	}
 	if m.TargetPort != nil {
 		l = m.TargetPort.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
-	n += 1 + sovGenerated(uint64(m.NodePort))
+	if m.NodePort != nil {
+		n += 1 + sovGenerated(uint64(*m.NodePort))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *ServiceProxyOptions) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Path)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26493,10 +19738,14 @@ func (m *ServiceSpec) Size() (n int) {
 			n += mapEntrySize + 1 + sovGenerated(uint64(mapEntrySize))
 		}
 	}
-	l = len(m.ClusterIP)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Type)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ClusterIP != nil {
+		l = len(*m.ClusterIP)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.ExternalIPs) > 0 {
 		for _, s := range m.ExternalIPs {
 			l = len(s)
@@ -26509,18 +19758,27 @@ func (m *ServiceSpec) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.SessionAffinity)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.LoadBalancerIP)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.SessionAffinity != nil {
+		l = len(*m.SessionAffinity)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.LoadBalancerIP != nil {
+		l = len(*m.LoadBalancerIP)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if len(m.LoadBalancerSourceRanges) > 0 {
 		for _, s := range m.LoadBalancerSourceRanges {
 			l = len(s)
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
-	l = len(m.ExternalName)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.ExternalName != nil {
+		l = len(*m.ExternalName)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26530,6 +19788,9 @@ func (m *ServiceStatus) Size() (n int) {
 	if m.LoadBalancer != nil {
 		l = m.LoadBalancer.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26541,43 +19802,71 @@ func (m *TCPSocketAction) Size() (n int) {
 		l = m.Port.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Taint) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Value)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Effect)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Value != nil {
+		l = len(*m.Value)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Effect != nil {
+		l = len(*m.Effect)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Toleration) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Key)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Operator)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Value)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.Effect)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Operator != nil {
+		l = len(*m.Operator)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Value != nil {
+		l = len(*m.Value)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Effect != nil {
+		l = len(*m.Effect)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Volume) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.VolumeSource != nil {
 		l = m.VolumeSource.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26585,13 +19874,24 @@ func (m *Volume) Size() (n int) {
 func (m *VolumeMount) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Name)
-	n += 1 + l + sovGenerated(uint64(l))
-	n += 2
-	l = len(m.MountPath)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.SubPath)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReadOnly != nil {
+		n += 2
+	}
+	if m.MountPath != nil {
+		l = len(*m.MountPath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.SubPath != nil {
+		l = len(*m.SubPath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -26686,26 +19986,41 @@ func (m *VolumeSource) Size() (n int) {
 		l = m.AzureDisk.Size()
 		n += 2 + l + sovGenerated(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *VsphereVirtualDiskVolumeSource) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.VolumePath)
-	n += 1 + l + sovGenerated(uint64(l))
-	l = len(m.FsType)
-	n += 1 + l + sovGenerated(uint64(l))
+	if m.VolumePath != nil {
+		l = len(*m.VolumePath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.FsType != nil {
+		l = len(*m.FsType)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *WeightedPodAffinityTerm) Size() (n int) {
 	var l int
 	_ = l
-	n += 1 + sovGenerated(uint64(m.Weight))
+	if m.Weight != nil {
+		n += 1 + sovGenerated(uint64(*m.Weight))
+	}
 	if m.PodAffinityTerm != nil {
 		l = m.PodAffinityTerm.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -26722,2185 +20037,6 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (this *AWSElasticBlockStoreVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&AWSElasticBlockStoreVolumeSource{`,
-		`VolumeID:` + fmt.Sprintf("%v", this.VolumeID) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`Partition:` + fmt.Sprintf("%v", this.Partition) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Affinity) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Affinity{`,
-		`NodeAffinity:` + strings.Replace(fmt.Sprintf("%v", this.NodeAffinity), "NodeAffinity", "NodeAffinity", 1) + `,`,
-		`PodAffinity:` + strings.Replace(fmt.Sprintf("%v", this.PodAffinity), "PodAffinity", "PodAffinity", 1) + `,`,
-		`PodAntiAffinity:` + strings.Replace(fmt.Sprintf("%v", this.PodAntiAffinity), "PodAntiAffinity", "PodAntiAffinity", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *AttachedVolume) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&AttachedVolume{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`DevicePath:` + fmt.Sprintf("%v", this.DevicePath) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *AvoidPods) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&AvoidPods{`,
-		`PreferAvoidPods:` + strings.Replace(fmt.Sprintf("%v", this.PreferAvoidPods), "PreferAvoidPodsEntry", "PreferAvoidPodsEntry", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *AzureDiskVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&AzureDiskVolumeSource{`,
-		`DiskName:` + fmt.Sprintf("%v", this.DiskName) + `,`,
-		`DiskURI:` + fmt.Sprintf("%v", this.DiskURI) + `,`,
-		`CachingMode:` + fmt.Sprintf("%v", this.CachingMode) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *AzureFileVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&AzureFileVolumeSource{`,
-		`SecretName:` + fmt.Sprintf("%v", this.SecretName) + `,`,
-		`ShareName:` + fmt.Sprintf("%v", this.ShareName) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Binding) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Binding{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Target:` + strings.Replace(fmt.Sprintf("%v", this.Target), "ObjectReference", "ObjectReference", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Capabilities) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Capabilities{`,
-		`Add:` + fmt.Sprintf("%v", this.Add) + `,`,
-		`Drop:` + fmt.Sprintf("%v", this.Drop) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *CephFSVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&CephFSVolumeSource{`,
-		`Monitors:` + fmt.Sprintf("%v", this.Monitors) + `,`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`User:` + fmt.Sprintf("%v", this.User) + `,`,
-		`SecretFile:` + fmt.Sprintf("%v", this.SecretFile) + `,`,
-		`SecretRef:` + strings.Replace(fmt.Sprintf("%v", this.SecretRef), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *CinderVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&CinderVolumeSource{`,
-		`VolumeID:` + fmt.Sprintf("%v", this.VolumeID) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ComponentCondition) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ComponentCondition{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Status:` + fmt.Sprintf("%v", this.Status) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`Error:` + fmt.Sprintf("%v", this.Error) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ComponentStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ComponentStatus{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Conditions:` + strings.Replace(fmt.Sprintf("%v", this.Conditions), "ComponentCondition", "ComponentCondition", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ComponentStatusList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ComponentStatusList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "ComponentStatus", "ComponentStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ConfigMap) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForData := make([]string, 0, len(this.Data))
-	for k, _ := range this.Data {
-		keysForData = append(keysForData, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForData)
-	mapStringForData := "map[string]string{"
-	for _, k := range keysForData {
-		mapStringForData += fmt.Sprintf("%v: %v,", k, this.Data[k])
-	}
-	mapStringForData += "}"
-	s := strings.Join([]string{`&ConfigMap{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Data:` + mapStringForData + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ConfigMapKeySelector) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ConfigMapKeySelector{`,
-		`LocalObjectReference:` + strings.Replace(fmt.Sprintf("%v", this.LocalObjectReference), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ConfigMapList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ConfigMapList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "ConfigMap", "ConfigMap", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ConfigMapVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ConfigMapVolumeSource{`,
-		`LocalObjectReference:` + strings.Replace(fmt.Sprintf("%v", this.LocalObjectReference), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "KeyToPath", "KeyToPath", 1) + `,`,
-		`DefaultMode:` + fmt.Sprintf("%v", this.DefaultMode) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Container) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Container{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Image:` + fmt.Sprintf("%v", this.Image) + `,`,
-		`Command:` + fmt.Sprintf("%v", this.Command) + `,`,
-		`Args:` + fmt.Sprintf("%v", this.Args) + `,`,
-		`WorkingDir:` + fmt.Sprintf("%v", this.WorkingDir) + `,`,
-		`Ports:` + strings.Replace(fmt.Sprintf("%v", this.Ports), "ContainerPort", "ContainerPort", 1) + `,`,
-		`Env:` + strings.Replace(fmt.Sprintf("%v", this.Env), "EnvVar", "EnvVar", 1) + `,`,
-		`Resources:` + strings.Replace(fmt.Sprintf("%v", this.Resources), "ResourceRequirements", "ResourceRequirements", 1) + `,`,
-		`VolumeMounts:` + strings.Replace(fmt.Sprintf("%v", this.VolumeMounts), "VolumeMount", "VolumeMount", 1) + `,`,
-		`LivenessProbe:` + strings.Replace(fmt.Sprintf("%v", this.LivenessProbe), "Probe", "Probe", 1) + `,`,
-		`ReadinessProbe:` + strings.Replace(fmt.Sprintf("%v", this.ReadinessProbe), "Probe", "Probe", 1) + `,`,
-		`Lifecycle:` + strings.Replace(fmt.Sprintf("%v", this.Lifecycle), "Lifecycle", "Lifecycle", 1) + `,`,
-		`TerminationMessagePath:` + fmt.Sprintf("%v", this.TerminationMessagePath) + `,`,
-		`ImagePullPolicy:` + fmt.Sprintf("%v", this.ImagePullPolicy) + `,`,
-		`SecurityContext:` + strings.Replace(fmt.Sprintf("%v", this.SecurityContext), "SecurityContext", "SecurityContext", 1) + `,`,
-		`Stdin:` + fmt.Sprintf("%v", this.Stdin) + `,`,
-		`StdinOnce:` + fmt.Sprintf("%v", this.StdinOnce) + `,`,
-		`Tty:` + fmt.Sprintf("%v", this.Tty) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ContainerImage) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ContainerImage{`,
-		`Names:` + fmt.Sprintf("%v", this.Names) + `,`,
-		`SizeBytes:` + fmt.Sprintf("%v", this.SizeBytes) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ContainerPort) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ContainerPort{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`HostPort:` + fmt.Sprintf("%v", this.HostPort) + `,`,
-		`ContainerPort:` + fmt.Sprintf("%v", this.ContainerPort) + `,`,
-		`Protocol:` + fmt.Sprintf("%v", this.Protocol) + `,`,
-		`HostIP:` + fmt.Sprintf("%v", this.HostIP) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ContainerState) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ContainerState{`,
-		`Waiting:` + strings.Replace(fmt.Sprintf("%v", this.Waiting), "ContainerStateWaiting", "ContainerStateWaiting", 1) + `,`,
-		`Running:` + strings.Replace(fmt.Sprintf("%v", this.Running), "ContainerStateRunning", "ContainerStateRunning", 1) + `,`,
-		`Terminated:` + strings.Replace(fmt.Sprintf("%v", this.Terminated), "ContainerStateTerminated", "ContainerStateTerminated", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ContainerStateRunning) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ContainerStateRunning{`,
-		`StartedAt:` + strings.Replace(fmt.Sprintf("%v", this.StartedAt), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ContainerStateTerminated) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ContainerStateTerminated{`,
-		`ExitCode:` + fmt.Sprintf("%v", this.ExitCode) + `,`,
-		`Signal:` + fmt.Sprintf("%v", this.Signal) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`StartedAt:` + strings.Replace(fmt.Sprintf("%v", this.StartedAt), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`FinishedAt:` + strings.Replace(fmt.Sprintf("%v", this.FinishedAt), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`ContainerID:` + fmt.Sprintf("%v", this.ContainerID) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ContainerStateWaiting) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ContainerStateWaiting{`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ContainerStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ContainerStatus{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`State:` + strings.Replace(fmt.Sprintf("%v", this.State), "ContainerState", "ContainerState", 1) + `,`,
-		`LastState:` + strings.Replace(fmt.Sprintf("%v", this.LastState), "ContainerState", "ContainerState", 1) + `,`,
-		`Ready:` + fmt.Sprintf("%v", this.Ready) + `,`,
-		`RestartCount:` + fmt.Sprintf("%v", this.RestartCount) + `,`,
-		`Image:` + fmt.Sprintf("%v", this.Image) + `,`,
-		`ImageID:` + fmt.Sprintf("%v", this.ImageID) + `,`,
-		`ContainerID:` + fmt.Sprintf("%v", this.ContainerID) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *DaemonEndpoint) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&DaemonEndpoint{`,
-		`Port:` + fmt.Sprintf("%v", this.Port) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *DeleteOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&DeleteOptions{`,
-		`GracePeriodSeconds:` + fmt.Sprintf("%v", this.GracePeriodSeconds) + `,`,
-		`Preconditions:` + strings.Replace(fmt.Sprintf("%v", this.Preconditions), "Preconditions", "Preconditions", 1) + `,`,
-		`OrphanDependents:` + fmt.Sprintf("%v", this.OrphanDependents) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *DownwardAPIVolumeFile) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&DownwardAPIVolumeFile{`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`FieldRef:` + strings.Replace(fmt.Sprintf("%v", this.FieldRef), "ObjectFieldSelector", "ObjectFieldSelector", 1) + `,`,
-		`ResourceFieldRef:` + strings.Replace(fmt.Sprintf("%v", this.ResourceFieldRef), "ResourceFieldSelector", "ResourceFieldSelector", 1) + `,`,
-		`Mode:` + fmt.Sprintf("%v", this.Mode) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *DownwardAPIVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&DownwardAPIVolumeSource{`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "DownwardAPIVolumeFile", "DownwardAPIVolumeFile", 1) + `,`,
-		`DefaultMode:` + fmt.Sprintf("%v", this.DefaultMode) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EmptyDirVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EmptyDirVolumeSource{`,
-		`Medium:` + fmt.Sprintf("%v", this.Medium) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EndpointAddress) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EndpointAddress{`,
-		`Ip:` + fmt.Sprintf("%v", this.Ip) + `,`,
-		`TargetRef:` + strings.Replace(fmt.Sprintf("%v", this.TargetRef), "ObjectReference", "ObjectReference", 1) + `,`,
-		`Hostname:` + fmt.Sprintf("%v", this.Hostname) + `,`,
-		`NodeName:` + fmt.Sprintf("%v", this.NodeName) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EndpointPort) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EndpointPort{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Port:` + fmt.Sprintf("%v", this.Port) + `,`,
-		`Protocol:` + fmt.Sprintf("%v", this.Protocol) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EndpointSubset) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EndpointSubset{`,
-		`Addresses:` + strings.Replace(fmt.Sprintf("%v", this.Addresses), "EndpointAddress", "EndpointAddress", 1) + `,`,
-		`NotReadyAddresses:` + strings.Replace(fmt.Sprintf("%v", this.NotReadyAddresses), "EndpointAddress", "EndpointAddress", 1) + `,`,
-		`Ports:` + strings.Replace(fmt.Sprintf("%v", this.Ports), "EndpointPort", "EndpointPort", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Endpoints) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Endpoints{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Subsets:` + strings.Replace(fmt.Sprintf("%v", this.Subsets), "EndpointSubset", "EndpointSubset", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EndpointsList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EndpointsList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Endpoints", "Endpoints", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EnvVar) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EnvVar{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
-		`ValueFrom:` + strings.Replace(fmt.Sprintf("%v", this.ValueFrom), "EnvVarSource", "EnvVarSource", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EnvVarSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EnvVarSource{`,
-		`FieldRef:` + strings.Replace(fmt.Sprintf("%v", this.FieldRef), "ObjectFieldSelector", "ObjectFieldSelector", 1) + `,`,
-		`ResourceFieldRef:` + strings.Replace(fmt.Sprintf("%v", this.ResourceFieldRef), "ResourceFieldSelector", "ResourceFieldSelector", 1) + `,`,
-		`ConfigMapKeyRef:` + strings.Replace(fmt.Sprintf("%v", this.ConfigMapKeyRef), "ConfigMapKeySelector", "ConfigMapKeySelector", 1) + `,`,
-		`SecretKeyRef:` + strings.Replace(fmt.Sprintf("%v", this.SecretKeyRef), "SecretKeySelector", "SecretKeySelector", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Event) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Event{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`InvolvedObject:` + strings.Replace(fmt.Sprintf("%v", this.InvolvedObject), "ObjectReference", "ObjectReference", 1) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`Source:` + strings.Replace(fmt.Sprintf("%v", this.Source), "EventSource", "EventSource", 1) + `,`,
-		`FirstTimestamp:` + strings.Replace(fmt.Sprintf("%v", this.FirstTimestamp), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`LastTimestamp:` + strings.Replace(fmt.Sprintf("%v", this.LastTimestamp), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`Count:` + fmt.Sprintf("%v", this.Count) + `,`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EventList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EventList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Event", "Event", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *EventSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&EventSource{`,
-		`Component:` + fmt.Sprintf("%v", this.Component) + `,`,
-		`Host:` + fmt.Sprintf("%v", this.Host) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ExecAction) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ExecAction{`,
-		`Command:` + fmt.Sprintf("%v", this.Command) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ExportOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ExportOptions{`,
-		`Export:` + fmt.Sprintf("%v", this.Export) + `,`,
-		`Exact:` + fmt.Sprintf("%v", this.Exact) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *FCVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&FCVolumeSource{`,
-		`TargetWWNs:` + fmt.Sprintf("%v", this.TargetWWNs) + `,`,
-		`Lun:` + fmt.Sprintf("%v", this.Lun) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *FlexVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForOptions := make([]string, 0, len(this.Options))
-	for k, _ := range this.Options {
-		keysForOptions = append(keysForOptions, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForOptions)
-	mapStringForOptions := "map[string]string{"
-	for _, k := range keysForOptions {
-		mapStringForOptions += fmt.Sprintf("%v: %v,", k, this.Options[k])
-	}
-	mapStringForOptions += "}"
-	s := strings.Join([]string{`&FlexVolumeSource{`,
-		`Driver:` + fmt.Sprintf("%v", this.Driver) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`SecretRef:` + strings.Replace(fmt.Sprintf("%v", this.SecretRef), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`Options:` + mapStringForOptions + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *FlockerVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&FlockerVolumeSource{`,
-		`DatasetName:` + fmt.Sprintf("%v", this.DatasetName) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *GCEPersistentDiskVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&GCEPersistentDiskVolumeSource{`,
-		`PdName:` + fmt.Sprintf("%v", this.PdName) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`Partition:` + fmt.Sprintf("%v", this.Partition) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *GitRepoVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&GitRepoVolumeSource{`,
-		`Repository:` + fmt.Sprintf("%v", this.Repository) + `,`,
-		`Revision:` + fmt.Sprintf("%v", this.Revision) + `,`,
-		`Directory:` + fmt.Sprintf("%v", this.Directory) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *GlusterfsVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&GlusterfsVolumeSource{`,
-		`Endpoints:` + fmt.Sprintf("%v", this.Endpoints) + `,`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *HTTPGetAction) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&HTTPGetAction{`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`Port:` + strings.Replace(fmt.Sprintf("%v", this.Port), "IntOrString", "github.com/ericchiang.k8s.util_intstr.IntOrString", 1) + `,`,
-		`Host:` + fmt.Sprintf("%v", this.Host) + `,`,
-		`Scheme:` + fmt.Sprintf("%v", this.Scheme) + `,`,
-		`HttpHeaders:` + strings.Replace(fmt.Sprintf("%v", this.HttpHeaders), "HTTPHeader", "HTTPHeader", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *HTTPHeader) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&HTTPHeader{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Handler) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Handler{`,
-		`Exec:` + strings.Replace(fmt.Sprintf("%v", this.Exec), "ExecAction", "ExecAction", 1) + `,`,
-		`HttpGet:` + strings.Replace(fmt.Sprintf("%v", this.HttpGet), "HTTPGetAction", "HTTPGetAction", 1) + `,`,
-		`TcpSocket:` + strings.Replace(fmt.Sprintf("%v", this.TcpSocket), "TCPSocketAction", "TCPSocketAction", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *HostPathVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&HostPathVolumeSource{`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ISCSIVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ISCSIVolumeSource{`,
-		`TargetPortal:` + fmt.Sprintf("%v", this.TargetPortal) + `,`,
-		`Iqn:` + fmt.Sprintf("%v", this.Iqn) + `,`,
-		`Lun:` + fmt.Sprintf("%v", this.Lun) + `,`,
-		`IscsiInterface:` + fmt.Sprintf("%v", this.IscsiInterface) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *KeyToPath) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&KeyToPath{`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`Mode:` + fmt.Sprintf("%v", this.Mode) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Lifecycle) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Lifecycle{`,
-		`PostStart:` + strings.Replace(fmt.Sprintf("%v", this.PostStart), "Handler", "Handler", 1) + `,`,
-		`PreStop:` + strings.Replace(fmt.Sprintf("%v", this.PreStop), "Handler", "Handler", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LimitRange) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LimitRange{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "LimitRangeSpec", "LimitRangeSpec", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LimitRangeItem) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForMax := make([]string, 0, len(this.Max))
-	for k, _ := range this.Max {
-		keysForMax = append(keysForMax, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMax)
-	mapStringForMax := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForMax {
-		mapStringForMax += fmt.Sprintf("%v: %v,", k, this.Max[k])
-	}
-	mapStringForMax += "}"
-	keysForMin := make([]string, 0, len(this.Min))
-	for k, _ := range this.Min {
-		keysForMin = append(keysForMin, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMin)
-	mapStringForMin := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForMin {
-		mapStringForMin += fmt.Sprintf("%v: %v,", k, this.Min[k])
-	}
-	mapStringForMin += "}"
-	keysForDefault := make([]string, 0, len(this.Default))
-	for k, _ := range this.Default {
-		keysForDefault = append(keysForDefault, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForDefault)
-	mapStringForDefault := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForDefault {
-		mapStringForDefault += fmt.Sprintf("%v: %v,", k, this.Default[k])
-	}
-	mapStringForDefault += "}"
-	keysForDefaultRequest := make([]string, 0, len(this.DefaultRequest))
-	for k, _ := range this.DefaultRequest {
-		keysForDefaultRequest = append(keysForDefaultRequest, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForDefaultRequest)
-	mapStringForDefaultRequest := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForDefaultRequest {
-		mapStringForDefaultRequest += fmt.Sprintf("%v: %v,", k, this.DefaultRequest[k])
-	}
-	mapStringForDefaultRequest += "}"
-	keysForMaxLimitRequestRatio := make([]string, 0, len(this.MaxLimitRequestRatio))
-	for k, _ := range this.MaxLimitRequestRatio {
-		keysForMaxLimitRequestRatio = append(keysForMaxLimitRequestRatio, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMaxLimitRequestRatio)
-	mapStringForMaxLimitRequestRatio := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForMaxLimitRequestRatio {
-		mapStringForMaxLimitRequestRatio += fmt.Sprintf("%v: %v,", k, this.MaxLimitRequestRatio[k])
-	}
-	mapStringForMaxLimitRequestRatio += "}"
-	s := strings.Join([]string{`&LimitRangeItem{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Max:` + mapStringForMax + `,`,
-		`Min:` + mapStringForMin + `,`,
-		`Default:` + mapStringForDefault + `,`,
-		`DefaultRequest:` + mapStringForDefaultRequest + `,`,
-		`MaxLimitRequestRatio:` + mapStringForMaxLimitRequestRatio + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LimitRangeList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LimitRangeList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "LimitRange", "LimitRange", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LimitRangeSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LimitRangeSpec{`,
-		`Limits:` + strings.Replace(fmt.Sprintf("%v", this.Limits), "LimitRangeItem", "LimitRangeItem", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *List) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&List{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "RawExtension", "github.com/ericchiang.k8s.runtime.RawExtension", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ListOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ListOptions{`,
-		`LabelSelector:` + fmt.Sprintf("%v", this.LabelSelector) + `,`,
-		`FieldSelector:` + fmt.Sprintf("%v", this.FieldSelector) + `,`,
-		`Watch:` + fmt.Sprintf("%v", this.Watch) + `,`,
-		`ResourceVersion:` + fmt.Sprintf("%v", this.ResourceVersion) + `,`,
-		`TimeoutSeconds:` + fmt.Sprintf("%v", this.TimeoutSeconds) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LoadBalancerIngress) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LoadBalancerIngress{`,
-		`Ip:` + fmt.Sprintf("%v", this.Ip) + `,`,
-		`Hostname:` + fmt.Sprintf("%v", this.Hostname) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LoadBalancerStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LoadBalancerStatus{`,
-		`Ingress:` + strings.Replace(fmt.Sprintf("%v", this.Ingress), "LoadBalancerIngress", "LoadBalancerIngress", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LocalObjectReference) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LocalObjectReference{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NFSVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NFSVolumeSource{`,
-		`Server:` + fmt.Sprintf("%v", this.Server) + `,`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Namespace) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Namespace{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "NamespaceSpec", "NamespaceSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "NamespaceStatus", "NamespaceStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NamespaceList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NamespaceList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Namespace", "Namespace", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NamespaceSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NamespaceSpec{`,
-		`Finalizers:` + fmt.Sprintf("%v", this.Finalizers) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NamespaceStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NamespaceStatus{`,
-		`Phase:` + fmt.Sprintf("%v", this.Phase) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Node) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Node{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "NodeSpec", "NodeSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "NodeStatus", "NodeStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeAddress) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeAddress{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Address:` + fmt.Sprintf("%v", this.Address) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeAffinity) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeAffinity{`,
-		`RequiredDuringSchedulingIgnoredDuringExecution:` + strings.Replace(fmt.Sprintf("%v", this.RequiredDuringSchedulingIgnoredDuringExecution), "NodeSelector", "NodeSelector", 1) + `,`,
-		`PreferredDuringSchedulingIgnoredDuringExecution:` + strings.Replace(fmt.Sprintf("%v", this.PreferredDuringSchedulingIgnoredDuringExecution), "PreferredSchedulingTerm", "PreferredSchedulingTerm", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeCondition) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeCondition{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Status:` + fmt.Sprintf("%v", this.Status) + `,`,
-		`LastHeartbeatTime:` + strings.Replace(fmt.Sprintf("%v", this.LastHeartbeatTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`LastTransitionTime:` + strings.Replace(fmt.Sprintf("%v", this.LastTransitionTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeDaemonEndpoints) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeDaemonEndpoints{`,
-		`KubeletEndpoint:` + strings.Replace(fmt.Sprintf("%v", this.KubeletEndpoint), "DaemonEndpoint", "DaemonEndpoint", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Node", "Node", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeProxyOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeProxyOptions{`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeSelector) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeSelector{`,
-		`NodeSelectorTerms:` + strings.Replace(fmt.Sprintf("%v", this.NodeSelectorTerms), "NodeSelectorTerm", "NodeSelectorTerm", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeSelectorRequirement) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeSelectorRequirement{`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`Operator:` + fmt.Sprintf("%v", this.Operator) + `,`,
-		`Values:` + fmt.Sprintf("%v", this.Values) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeSelectorTerm) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeSelectorTerm{`,
-		`MatchExpressions:` + strings.Replace(fmt.Sprintf("%v", this.MatchExpressions), "NodeSelectorRequirement", "NodeSelectorRequirement", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeSpec{`,
-		`PodCIDR:` + fmt.Sprintf("%v", this.PodCIDR) + `,`,
-		`ExternalID:` + fmt.Sprintf("%v", this.ExternalID) + `,`,
-		`ProviderID:` + fmt.Sprintf("%v", this.ProviderID) + `,`,
-		`Unschedulable:` + fmt.Sprintf("%v", this.Unschedulable) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForCapacity := make([]string, 0, len(this.Capacity))
-	for k, _ := range this.Capacity {
-		keysForCapacity = append(keysForCapacity, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForCapacity)
-	mapStringForCapacity := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForCapacity {
-		mapStringForCapacity += fmt.Sprintf("%v: %v,", k, this.Capacity[k])
-	}
-	mapStringForCapacity += "}"
-	keysForAllocatable := make([]string, 0, len(this.Allocatable))
-	for k, _ := range this.Allocatable {
-		keysForAllocatable = append(keysForAllocatable, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForAllocatable)
-	mapStringForAllocatable := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForAllocatable {
-		mapStringForAllocatable += fmt.Sprintf("%v: %v,", k, this.Allocatable[k])
-	}
-	mapStringForAllocatable += "}"
-	s := strings.Join([]string{`&NodeStatus{`,
-		`Capacity:` + mapStringForCapacity + `,`,
-		`Allocatable:` + mapStringForAllocatable + `,`,
-		`Phase:` + fmt.Sprintf("%v", this.Phase) + `,`,
-		`Conditions:` + strings.Replace(fmt.Sprintf("%v", this.Conditions), "NodeCondition", "NodeCondition", 1) + `,`,
-		`Addresses:` + strings.Replace(fmt.Sprintf("%v", this.Addresses), "NodeAddress", "NodeAddress", 1) + `,`,
-		`DaemonEndpoints:` + strings.Replace(fmt.Sprintf("%v", this.DaemonEndpoints), "NodeDaemonEndpoints", "NodeDaemonEndpoints", 1) + `,`,
-		`NodeInfo:` + strings.Replace(fmt.Sprintf("%v", this.NodeInfo), "NodeSystemInfo", "NodeSystemInfo", 1) + `,`,
-		`Images:` + strings.Replace(fmt.Sprintf("%v", this.Images), "ContainerImage", "ContainerImage", 1) + `,`,
-		`VolumesInUse:` + fmt.Sprintf("%v", this.VolumesInUse) + `,`,
-		`VolumesAttached:` + strings.Replace(fmt.Sprintf("%v", this.VolumesAttached), "AttachedVolume", "AttachedVolume", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *NodeSystemInfo) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&NodeSystemInfo{`,
-		`MachineID:` + fmt.Sprintf("%v", this.MachineID) + `,`,
-		`SystemUUID:` + fmt.Sprintf("%v", this.SystemUUID) + `,`,
-		`BootID:` + fmt.Sprintf("%v", this.BootID) + `,`,
-		`KernelVersion:` + fmt.Sprintf("%v", this.KernelVersion) + `,`,
-		`OsImage:` + fmt.Sprintf("%v", this.OsImage) + `,`,
-		`ContainerRuntimeVersion:` + fmt.Sprintf("%v", this.ContainerRuntimeVersion) + `,`,
-		`KubeletVersion:` + fmt.Sprintf("%v", this.KubeletVersion) + `,`,
-		`KubeProxyVersion:` + fmt.Sprintf("%v", this.KubeProxyVersion) + `,`,
-		`OperatingSystem:` + fmt.Sprintf("%v", this.OperatingSystem) + `,`,
-		`Architecture:` + fmt.Sprintf("%v", this.Architecture) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ObjectFieldSelector) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ObjectFieldSelector{`,
-		`ApiVersion:` + fmt.Sprintf("%v", this.ApiVersion) + `,`,
-		`FieldPath:` + fmt.Sprintf("%v", this.FieldPath) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ObjectMeta) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForLabels := make([]string, 0, len(this.Labels))
-	for k, _ := range this.Labels {
-		keysForLabels = append(keysForLabels, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForLabels)
-	mapStringForLabels := "map[string]string{"
-	for _, k := range keysForLabels {
-		mapStringForLabels += fmt.Sprintf("%v: %v,", k, this.Labels[k])
-	}
-	mapStringForLabels += "}"
-	keysForAnnotations := make([]string, 0, len(this.Annotations))
-	for k, _ := range this.Annotations {
-		keysForAnnotations = append(keysForAnnotations, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForAnnotations)
-	mapStringForAnnotations := "map[string]string{"
-	for _, k := range keysForAnnotations {
-		mapStringForAnnotations += fmt.Sprintf("%v: %v,", k, this.Annotations[k])
-	}
-	mapStringForAnnotations += "}"
-	s := strings.Join([]string{`&ObjectMeta{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`GenerateName:` + fmt.Sprintf("%v", this.GenerateName) + `,`,
-		`Namespace:` + fmt.Sprintf("%v", this.Namespace) + `,`,
-		`SelfLink:` + fmt.Sprintf("%v", this.SelfLink) + `,`,
-		`Uid:` + fmt.Sprintf("%v", this.Uid) + `,`,
-		`ResourceVersion:` + fmt.Sprintf("%v", this.ResourceVersion) + `,`,
-		`Generation:` + fmt.Sprintf("%v", this.Generation) + `,`,
-		`CreationTimestamp:` + strings.Replace(fmt.Sprintf("%v", this.CreationTimestamp), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`DeletionTimestamp:` + strings.Replace(fmt.Sprintf("%v", this.DeletionTimestamp), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`DeletionGracePeriodSeconds:` + fmt.Sprintf("%v", this.DeletionGracePeriodSeconds) + `,`,
-		`Labels:` + mapStringForLabels + `,`,
-		`Annotations:` + mapStringForAnnotations + `,`,
-		`OwnerReferences:` + strings.Replace(fmt.Sprintf("%v", this.OwnerReferences), "OwnerReference", "OwnerReference", 1) + `,`,
-		`Finalizers:` + fmt.Sprintf("%v", this.Finalizers) + `,`,
-		`ClusterName:` + fmt.Sprintf("%v", this.ClusterName) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ObjectReference) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ObjectReference{`,
-		`Kind:` + fmt.Sprintf("%v", this.Kind) + `,`,
-		`Namespace:` + fmt.Sprintf("%v", this.Namespace) + `,`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Uid:` + fmt.Sprintf("%v", this.Uid) + `,`,
-		`ApiVersion:` + fmt.Sprintf("%v", this.ApiVersion) + `,`,
-		`ResourceVersion:` + fmt.Sprintf("%v", this.ResourceVersion) + `,`,
-		`FieldPath:` + fmt.Sprintf("%v", this.FieldPath) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *OwnerReference) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&OwnerReference{`,
-		`Kind:` + fmt.Sprintf("%v", this.Kind) + `,`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Uid:` + fmt.Sprintf("%v", this.Uid) + `,`,
-		`ApiVersion:` + fmt.Sprintf("%v", this.ApiVersion) + `,`,
-		`Controller:` + fmt.Sprintf("%v", this.Controller) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolume) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolume{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "PersistentVolumeSpec", "PersistentVolumeSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "PersistentVolumeStatus", "PersistentVolumeStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeClaim) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolumeClaim{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "PersistentVolumeClaimSpec", "PersistentVolumeClaimSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "PersistentVolumeClaimStatus", "PersistentVolumeClaimStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeClaimList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolumeClaimList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "PersistentVolumeClaim", "PersistentVolumeClaim", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeClaimSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolumeClaimSpec{`,
-		`AccessModes:` + fmt.Sprintf("%v", this.AccessModes) + `,`,
-		`Resources:` + strings.Replace(fmt.Sprintf("%v", this.Resources), "ResourceRequirements", "ResourceRequirements", 1) + `,`,
-		`VolumeName:` + fmt.Sprintf("%v", this.VolumeName) + `,`,
-		`Selector:` + strings.Replace(fmt.Sprintf("%v", this.Selector), "LabelSelector", "github.com/ericchiang.k8s.api_unversioned.LabelSelector", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeClaimStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForCapacity := make([]string, 0, len(this.Capacity))
-	for k, _ := range this.Capacity {
-		keysForCapacity = append(keysForCapacity, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForCapacity)
-	mapStringForCapacity := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForCapacity {
-		mapStringForCapacity += fmt.Sprintf("%v: %v,", k, this.Capacity[k])
-	}
-	mapStringForCapacity += "}"
-	s := strings.Join([]string{`&PersistentVolumeClaimStatus{`,
-		`Phase:` + fmt.Sprintf("%v", this.Phase) + `,`,
-		`AccessModes:` + fmt.Sprintf("%v", this.AccessModes) + `,`,
-		`Capacity:` + mapStringForCapacity + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeClaimVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolumeClaimVolumeSource{`,
-		`ClaimName:` + fmt.Sprintf("%v", this.ClaimName) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolumeList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "PersistentVolume", "PersistentVolume", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolumeSource{`,
-		`GcePersistentDisk:` + strings.Replace(fmt.Sprintf("%v", this.GcePersistentDisk), "GCEPersistentDiskVolumeSource", "GCEPersistentDiskVolumeSource", 1) + `,`,
-		`AwsElasticBlockStore:` + strings.Replace(fmt.Sprintf("%v", this.AwsElasticBlockStore), "AWSElasticBlockStoreVolumeSource", "AWSElasticBlockStoreVolumeSource", 1) + `,`,
-		`HostPath:` + strings.Replace(fmt.Sprintf("%v", this.HostPath), "HostPathVolumeSource", "HostPathVolumeSource", 1) + `,`,
-		`Glusterfs:` + strings.Replace(fmt.Sprintf("%v", this.Glusterfs), "GlusterfsVolumeSource", "GlusterfsVolumeSource", 1) + `,`,
-		`Nfs:` + strings.Replace(fmt.Sprintf("%v", this.Nfs), "NFSVolumeSource", "NFSVolumeSource", 1) + `,`,
-		`Rbd:` + strings.Replace(fmt.Sprintf("%v", this.Rbd), "RBDVolumeSource", "RBDVolumeSource", 1) + `,`,
-		`Iscsi:` + strings.Replace(fmt.Sprintf("%v", this.Iscsi), "ISCSIVolumeSource", "ISCSIVolumeSource", 1) + `,`,
-		`Cinder:` + strings.Replace(fmt.Sprintf("%v", this.Cinder), "CinderVolumeSource", "CinderVolumeSource", 1) + `,`,
-		`Cephfs:` + strings.Replace(fmt.Sprintf("%v", this.Cephfs), "CephFSVolumeSource", "CephFSVolumeSource", 1) + `,`,
-		`Fc:` + strings.Replace(fmt.Sprintf("%v", this.Fc), "FCVolumeSource", "FCVolumeSource", 1) + `,`,
-		`Flocker:` + strings.Replace(fmt.Sprintf("%v", this.Flocker), "FlockerVolumeSource", "FlockerVolumeSource", 1) + `,`,
-		`FlexVolume:` + strings.Replace(fmt.Sprintf("%v", this.FlexVolume), "FlexVolumeSource", "FlexVolumeSource", 1) + `,`,
-		`AzureFile:` + strings.Replace(fmt.Sprintf("%v", this.AzureFile), "AzureFileVolumeSource", "AzureFileVolumeSource", 1) + `,`,
-		`VsphereVolume:` + strings.Replace(fmt.Sprintf("%v", this.VsphereVolume), "VsphereVirtualDiskVolumeSource", "VsphereVirtualDiskVolumeSource", 1) + `,`,
-		`Quobyte:` + strings.Replace(fmt.Sprintf("%v", this.Quobyte), "QuobyteVolumeSource", "QuobyteVolumeSource", 1) + `,`,
-		`AzureDisk:` + strings.Replace(fmt.Sprintf("%v", this.AzureDisk), "AzureDiskVolumeSource", "AzureDiskVolumeSource", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForCapacity := make([]string, 0, len(this.Capacity))
-	for k, _ := range this.Capacity {
-		keysForCapacity = append(keysForCapacity, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForCapacity)
-	mapStringForCapacity := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForCapacity {
-		mapStringForCapacity += fmt.Sprintf("%v: %v,", k, this.Capacity[k])
-	}
-	mapStringForCapacity += "}"
-	s := strings.Join([]string{`&PersistentVolumeSpec{`,
-		`Capacity:` + mapStringForCapacity + `,`,
-		`PersistentVolumeSource:` + strings.Replace(fmt.Sprintf("%v", this.PersistentVolumeSource), "PersistentVolumeSource", "PersistentVolumeSource", 1) + `,`,
-		`AccessModes:` + fmt.Sprintf("%v", this.AccessModes) + `,`,
-		`ClaimRef:` + strings.Replace(fmt.Sprintf("%v", this.ClaimRef), "ObjectReference", "ObjectReference", 1) + `,`,
-		`PersistentVolumeReclaimPolicy:` + fmt.Sprintf("%v", this.PersistentVolumeReclaimPolicy) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PersistentVolumeStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PersistentVolumeStatus{`,
-		`Phase:` + fmt.Sprintf("%v", this.Phase) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Pod) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Pod{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "PodSpec", "PodSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "PodStatus", "PodStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodAffinity) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodAffinity{`,
-		`RequiredDuringSchedulingIgnoredDuringExecution:` + strings.Replace(fmt.Sprintf("%v", this.RequiredDuringSchedulingIgnoredDuringExecution), "PodAffinityTerm", "PodAffinityTerm", 1) + `,`,
-		`PreferredDuringSchedulingIgnoredDuringExecution:` + strings.Replace(fmt.Sprintf("%v", this.PreferredDuringSchedulingIgnoredDuringExecution), "WeightedPodAffinityTerm", "WeightedPodAffinityTerm", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodAffinityTerm) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodAffinityTerm{`,
-		`LabelSelector:` + strings.Replace(fmt.Sprintf("%v", this.LabelSelector), "LabelSelector", "github.com/ericchiang.k8s.api_unversioned.LabelSelector", 1) + `,`,
-		`Namespaces:` + fmt.Sprintf("%v", this.Namespaces) + `,`,
-		`TopologyKey:` + fmt.Sprintf("%v", this.TopologyKey) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodAntiAffinity) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodAntiAffinity{`,
-		`RequiredDuringSchedulingIgnoredDuringExecution:` + strings.Replace(fmt.Sprintf("%v", this.RequiredDuringSchedulingIgnoredDuringExecution), "PodAffinityTerm", "PodAffinityTerm", 1) + `,`,
-		`PreferredDuringSchedulingIgnoredDuringExecution:` + strings.Replace(fmt.Sprintf("%v", this.PreferredDuringSchedulingIgnoredDuringExecution), "WeightedPodAffinityTerm", "WeightedPodAffinityTerm", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodAttachOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodAttachOptions{`,
-		`Stdin:` + fmt.Sprintf("%v", this.Stdin) + `,`,
-		`Stdout:` + fmt.Sprintf("%v", this.Stdout) + `,`,
-		`Stderr:` + fmt.Sprintf("%v", this.Stderr) + `,`,
-		`Tty:` + fmt.Sprintf("%v", this.Tty) + `,`,
-		`Container:` + fmt.Sprintf("%v", this.Container) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodCondition) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodCondition{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Status:` + fmt.Sprintf("%v", this.Status) + `,`,
-		`LastProbeTime:` + strings.Replace(fmt.Sprintf("%v", this.LastProbeTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`LastTransitionTime:` + strings.Replace(fmt.Sprintf("%v", this.LastTransitionTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodExecOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodExecOptions{`,
-		`Stdin:` + fmt.Sprintf("%v", this.Stdin) + `,`,
-		`Stdout:` + fmt.Sprintf("%v", this.Stdout) + `,`,
-		`Stderr:` + fmt.Sprintf("%v", this.Stderr) + `,`,
-		`Tty:` + fmt.Sprintf("%v", this.Tty) + `,`,
-		`Container:` + fmt.Sprintf("%v", this.Container) + `,`,
-		`Command:` + fmt.Sprintf("%v", this.Command) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Pod", "Pod", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodLogOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodLogOptions{`,
-		`Container:` + fmt.Sprintf("%v", this.Container) + `,`,
-		`Follow:` + fmt.Sprintf("%v", this.Follow) + `,`,
-		`Previous:` + fmt.Sprintf("%v", this.Previous) + `,`,
-		`SinceSeconds:` + fmt.Sprintf("%v", this.SinceSeconds) + `,`,
-		`SinceTime:` + strings.Replace(fmt.Sprintf("%v", this.SinceTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`Timestamps:` + fmt.Sprintf("%v", this.Timestamps) + `,`,
-		`TailLines:` + fmt.Sprintf("%v", this.TailLines) + `,`,
-		`LimitBytes:` + fmt.Sprintf("%v", this.LimitBytes) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodProxyOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodProxyOptions{`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodSecurityContext) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodSecurityContext{`,
-		`SeLinuxOptions:` + strings.Replace(fmt.Sprintf("%v", this.SeLinuxOptions), "SELinuxOptions", "SELinuxOptions", 1) + `,`,
-		`RunAsUser:` + fmt.Sprintf("%v", this.RunAsUser) + `,`,
-		`RunAsNonRoot:` + fmt.Sprintf("%v", this.RunAsNonRoot) + `,`,
-		`SupplementalGroups:` + fmt.Sprintf("%v", this.SupplementalGroups) + `,`,
-		`FsGroup:` + fmt.Sprintf("%v", this.FsGroup) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodSignature) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodSignature{`,
-		`PodController:` + strings.Replace(fmt.Sprintf("%v", this.PodController), "OwnerReference", "OwnerReference", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForNodeSelector := make([]string, 0, len(this.NodeSelector))
-	for k, _ := range this.NodeSelector {
-		keysForNodeSelector = append(keysForNodeSelector, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForNodeSelector)
-	mapStringForNodeSelector := "map[string]string{"
-	for _, k := range keysForNodeSelector {
-		mapStringForNodeSelector += fmt.Sprintf("%v: %v,", k, this.NodeSelector[k])
-	}
-	mapStringForNodeSelector += "}"
-	s := strings.Join([]string{`&PodSpec{`,
-		`Volumes:` + strings.Replace(fmt.Sprintf("%v", this.Volumes), "Volume", "Volume", 1) + `,`,
-		`Containers:` + strings.Replace(fmt.Sprintf("%v", this.Containers), "Container", "Container", 1) + `,`,
-		`RestartPolicy:` + fmt.Sprintf("%v", this.RestartPolicy) + `,`,
-		`TerminationGracePeriodSeconds:` + fmt.Sprintf("%v", this.TerminationGracePeriodSeconds) + `,`,
-		`ActiveDeadlineSeconds:` + fmt.Sprintf("%v", this.ActiveDeadlineSeconds) + `,`,
-		`DnsPolicy:` + fmt.Sprintf("%v", this.DnsPolicy) + `,`,
-		`NodeSelector:` + mapStringForNodeSelector + `,`,
-		`ServiceAccountName:` + fmt.Sprintf("%v", this.ServiceAccountName) + `,`,
-		`ServiceAccount:` + fmt.Sprintf("%v", this.ServiceAccount) + `,`,
-		`NodeName:` + fmt.Sprintf("%v", this.NodeName) + `,`,
-		`HostNetwork:` + fmt.Sprintf("%v", this.HostNetwork) + `,`,
-		`HostPID:` + fmt.Sprintf("%v", this.HostPID) + `,`,
-		`HostIPC:` + fmt.Sprintf("%v", this.HostIPC) + `,`,
-		`SecurityContext:` + strings.Replace(fmt.Sprintf("%v", this.SecurityContext), "PodSecurityContext", "PodSecurityContext", 1) + `,`,
-		`ImagePullSecrets:` + strings.Replace(fmt.Sprintf("%v", this.ImagePullSecrets), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`Hostname:` + fmt.Sprintf("%v", this.Hostname) + `,`,
-		`Subdomain:` + fmt.Sprintf("%v", this.Subdomain) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodStatus{`,
-		`Phase:` + fmt.Sprintf("%v", this.Phase) + `,`,
-		`Conditions:` + strings.Replace(fmt.Sprintf("%v", this.Conditions), "PodCondition", "PodCondition", 1) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`HostIP:` + fmt.Sprintf("%v", this.HostIP) + `,`,
-		`PodIP:` + fmt.Sprintf("%v", this.PodIP) + `,`,
-		`StartTime:` + strings.Replace(fmt.Sprintf("%v", this.StartTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`ContainerStatuses:` + strings.Replace(fmt.Sprintf("%v", this.ContainerStatuses), "ContainerStatus", "ContainerStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodStatusResult) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodStatusResult{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "PodStatus", "PodStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodTemplate) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodTemplate{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Template:` + strings.Replace(fmt.Sprintf("%v", this.Template), "PodTemplateSpec", "PodTemplateSpec", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodTemplateList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodTemplateList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "PodTemplate", "PodTemplate", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PodTemplateSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PodTemplateSpec{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "PodSpec", "PodSpec", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Preconditions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Preconditions{`,
-		`Uid:` + fmt.Sprintf("%v", this.Uid) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PreferAvoidPodsEntry) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PreferAvoidPodsEntry{`,
-		`PodSignature:` + strings.Replace(fmt.Sprintf("%v", this.PodSignature), "PodSignature", "PodSignature", 1) + `,`,
-		`EvictionTime:` + strings.Replace(fmt.Sprintf("%v", this.EvictionTime), "Time", "github.com/ericchiang.k8s.api_unversioned.Time", 1) + `,`,
-		`Reason:` + fmt.Sprintf("%v", this.Reason) + `,`,
-		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PreferredSchedulingTerm) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PreferredSchedulingTerm{`,
-		`Weight:` + fmt.Sprintf("%v", this.Weight) + `,`,
-		`Preference:` + strings.Replace(fmt.Sprintf("%v", this.Preference), "NodeSelectorTerm", "NodeSelectorTerm", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Probe) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Probe{`,
-		`Handler:` + strings.Replace(fmt.Sprintf("%v", this.Handler), "Handler", "Handler", 1) + `,`,
-		`InitialDelaySeconds:` + fmt.Sprintf("%v", this.InitialDelaySeconds) + `,`,
-		`TimeoutSeconds:` + fmt.Sprintf("%v", this.TimeoutSeconds) + `,`,
-		`PeriodSeconds:` + fmt.Sprintf("%v", this.PeriodSeconds) + `,`,
-		`SuccessThreshold:` + fmt.Sprintf("%v", this.SuccessThreshold) + `,`,
-		`FailureThreshold:` + fmt.Sprintf("%v", this.FailureThreshold) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *QuobyteVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&QuobyteVolumeSource{`,
-		`Registry:` + fmt.Sprintf("%v", this.Registry) + `,`,
-		`Volume:` + fmt.Sprintf("%v", this.Volume) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`User:` + fmt.Sprintf("%v", this.User) + `,`,
-		`Group:` + fmt.Sprintf("%v", this.Group) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *RBDVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&RBDVolumeSource{`,
-		`Monitors:` + fmt.Sprintf("%v", this.Monitors) + `,`,
-		`Image:` + fmt.Sprintf("%v", this.Image) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`Pool:` + fmt.Sprintf("%v", this.Pool) + `,`,
-		`User:` + fmt.Sprintf("%v", this.User) + `,`,
-		`Keyring:` + fmt.Sprintf("%v", this.Keyring) + `,`,
-		`SecretRef:` + strings.Replace(fmt.Sprintf("%v", this.SecretRef), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *RangeAllocation) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&RangeAllocation{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Range:` + fmt.Sprintf("%v", this.Range) + `,`,
-		`Data:` + fmt.Sprintf("%v", this.Data) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ReplicationController) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ReplicationController{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "ReplicationControllerSpec", "ReplicationControllerSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "ReplicationControllerStatus", "ReplicationControllerStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ReplicationControllerList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ReplicationControllerList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "ReplicationController", "ReplicationController", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ReplicationControllerSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForSelector := make([]string, 0, len(this.Selector))
-	for k, _ := range this.Selector {
-		keysForSelector = append(keysForSelector, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForSelector)
-	mapStringForSelector := "map[string]string{"
-	for _, k := range keysForSelector {
-		mapStringForSelector += fmt.Sprintf("%v: %v,", k, this.Selector[k])
-	}
-	mapStringForSelector += "}"
-	s := strings.Join([]string{`&ReplicationControllerSpec{`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`Selector:` + mapStringForSelector + `,`,
-		`Template:` + strings.Replace(fmt.Sprintf("%v", this.Template), "PodTemplateSpec", "PodTemplateSpec", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ReplicationControllerStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ReplicationControllerStatus{`,
-		`Replicas:` + fmt.Sprintf("%v", this.Replicas) + `,`,
-		`FullyLabeledReplicas:` + fmt.Sprintf("%v", this.FullyLabeledReplicas) + `,`,
-		`ObservedGeneration:` + fmt.Sprintf("%v", this.ObservedGeneration) + `,`,
-		`ReadyReplicas:` + fmt.Sprintf("%v", this.ReadyReplicas) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ResourceFieldSelector) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ResourceFieldSelector{`,
-		`ContainerName:` + fmt.Sprintf("%v", this.ContainerName) + `,`,
-		`Resource:` + fmt.Sprintf("%v", this.Resource) + `,`,
-		`Divisor:` + strings.Replace(fmt.Sprintf("%v", this.Divisor), "Quantity", "github.com/ericchiang.k8s.api_resource.Quantity", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ResourceQuota) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ResourceQuota{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "ResourceQuotaSpec", "ResourceQuotaSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "ResourceQuotaStatus", "ResourceQuotaStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ResourceQuotaList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ResourceQuotaList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "ResourceQuota", "ResourceQuota", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ResourceQuotaSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForHard := make([]string, 0, len(this.Hard))
-	for k, _ := range this.Hard {
-		keysForHard = append(keysForHard, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForHard)
-	mapStringForHard := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForHard {
-		mapStringForHard += fmt.Sprintf("%v: %v,", k, this.Hard[k])
-	}
-	mapStringForHard += "}"
-	s := strings.Join([]string{`&ResourceQuotaSpec{`,
-		`Hard:` + mapStringForHard + `,`,
-		`Scopes:` + fmt.Sprintf("%v", this.Scopes) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ResourceQuotaStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForHard := make([]string, 0, len(this.Hard))
-	for k, _ := range this.Hard {
-		keysForHard = append(keysForHard, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForHard)
-	mapStringForHard := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForHard {
-		mapStringForHard += fmt.Sprintf("%v: %v,", k, this.Hard[k])
-	}
-	mapStringForHard += "}"
-	keysForUsed := make([]string, 0, len(this.Used))
-	for k, _ := range this.Used {
-		keysForUsed = append(keysForUsed, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForUsed)
-	mapStringForUsed := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForUsed {
-		mapStringForUsed += fmt.Sprintf("%v: %v,", k, this.Used[k])
-	}
-	mapStringForUsed += "}"
-	s := strings.Join([]string{`&ResourceQuotaStatus{`,
-		`Hard:` + mapStringForHard + `,`,
-		`Used:` + mapStringForUsed + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ResourceRequirements) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForLimits := make([]string, 0, len(this.Limits))
-	for k, _ := range this.Limits {
-		keysForLimits = append(keysForLimits, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForLimits)
-	mapStringForLimits := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForLimits {
-		mapStringForLimits += fmt.Sprintf("%v: %v,", k, this.Limits[k])
-	}
-	mapStringForLimits += "}"
-	keysForRequests := make([]string, 0, len(this.Requests))
-	for k, _ := range this.Requests {
-		keysForRequests = append(keysForRequests, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForRequests)
-	mapStringForRequests := "map[string]*k8s_io_kubernetes_pkg_api_resource.Quantity{"
-	for _, k := range keysForRequests {
-		mapStringForRequests += fmt.Sprintf("%v: %v,", k, this.Requests[k])
-	}
-	mapStringForRequests += "}"
-	s := strings.Join([]string{`&ResourceRequirements{`,
-		`Limits:` + mapStringForLimits + `,`,
-		`Requests:` + mapStringForRequests + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SELinuxOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SELinuxOptions{`,
-		`User:` + fmt.Sprintf("%v", this.User) + `,`,
-		`Role:` + fmt.Sprintf("%v", this.Role) + `,`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Level:` + fmt.Sprintf("%v", this.Level) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Secret) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForData := make([]string, 0, len(this.Data))
-	for k, _ := range this.Data {
-		keysForData = append(keysForData, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForData)
-	mapStringForData := "map[string][]byte{"
-	for _, k := range keysForData {
-		mapStringForData += fmt.Sprintf("%v: %v,", k, this.Data[k])
-	}
-	mapStringForData += "}"
-	keysForStringData := make([]string, 0, len(this.StringData))
-	for k, _ := range this.StringData {
-		keysForStringData = append(keysForStringData, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForStringData)
-	mapStringForStringData := "map[string]string{"
-	for _, k := range keysForStringData {
-		mapStringForStringData += fmt.Sprintf("%v: %v,", k, this.StringData[k])
-	}
-	mapStringForStringData += "}"
-	s := strings.Join([]string{`&Secret{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Data:` + mapStringForData + `,`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`StringData:` + mapStringForStringData + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SecretKeySelector) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SecretKeySelector{`,
-		`LocalObjectReference:` + strings.Replace(fmt.Sprintf("%v", this.LocalObjectReference), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SecretList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SecretList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Secret", "Secret", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SecretVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SecretVolumeSource{`,
-		`SecretName:` + fmt.Sprintf("%v", this.SecretName) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "KeyToPath", "KeyToPath", 1) + `,`,
-		`DefaultMode:` + fmt.Sprintf("%v", this.DefaultMode) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SecurityContext) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SecurityContext{`,
-		`Capabilities:` + strings.Replace(fmt.Sprintf("%v", this.Capabilities), "Capabilities", "Capabilities", 1) + `,`,
-		`Privileged:` + fmt.Sprintf("%v", this.Privileged) + `,`,
-		`SeLinuxOptions:` + strings.Replace(fmt.Sprintf("%v", this.SeLinuxOptions), "SELinuxOptions", "SELinuxOptions", 1) + `,`,
-		`RunAsUser:` + fmt.Sprintf("%v", this.RunAsUser) + `,`,
-		`RunAsNonRoot:` + fmt.Sprintf("%v", this.RunAsNonRoot) + `,`,
-		`ReadOnlyRootFilesystem:` + fmt.Sprintf("%v", this.ReadOnlyRootFilesystem) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *SerializedReference) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SerializedReference{`,
-		`Reference:` + strings.Replace(fmt.Sprintf("%v", this.Reference), "ObjectReference", "ObjectReference", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Service) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Service{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Spec:` + strings.Replace(fmt.Sprintf("%v", this.Spec), "ServiceSpec", "ServiceSpec", 1) + `,`,
-		`Status:` + strings.Replace(fmt.Sprintf("%v", this.Status), "ServiceStatus", "ServiceStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ServiceAccount) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ServiceAccount{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ObjectMeta", "ObjectMeta", 1) + `,`,
-		`Secrets:` + strings.Replace(fmt.Sprintf("%v", this.Secrets), "ObjectReference", "ObjectReference", 1) + `,`,
-		`ImagePullSecrets:` + strings.Replace(fmt.Sprintf("%v", this.ImagePullSecrets), "LocalObjectReference", "LocalObjectReference", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ServiceAccountList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ServiceAccountList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "ServiceAccount", "ServiceAccount", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ServiceList) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ServiceList{`,
-		`Metadata:` + strings.Replace(fmt.Sprintf("%v", this.Metadata), "ListMeta", "github.com/ericchiang.k8s.api_unversioned.ListMeta", 1) + `,`,
-		`Items:` + strings.Replace(fmt.Sprintf("%v", this.Items), "Service", "Service", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ServicePort) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ServicePort{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Protocol:` + fmt.Sprintf("%v", this.Protocol) + `,`,
-		`Port:` + fmt.Sprintf("%v", this.Port) + `,`,
-		`TargetPort:` + strings.Replace(fmt.Sprintf("%v", this.TargetPort), "IntOrString", "github.com/ericchiang.k8s.util_intstr.IntOrString", 1) + `,`,
-		`NodePort:` + fmt.Sprintf("%v", this.NodePort) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ServiceProxyOptions) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ServiceProxyOptions{`,
-		`Path:` + fmt.Sprintf("%v", this.Path) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ServiceSpec) String() string {
-	if this == nil {
-		return "nil"
-	}
-	keysForSelector := make([]string, 0, len(this.Selector))
-	for k, _ := range this.Selector {
-		keysForSelector = append(keysForSelector, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForSelector)
-	mapStringForSelector := "map[string]string{"
-	for _, k := range keysForSelector {
-		mapStringForSelector += fmt.Sprintf("%v: %v,", k, this.Selector[k])
-	}
-	mapStringForSelector += "}"
-	s := strings.Join([]string{`&ServiceSpec{`,
-		`Ports:` + strings.Replace(fmt.Sprintf("%v", this.Ports), "ServicePort", "ServicePort", 1) + `,`,
-		`Selector:` + mapStringForSelector + `,`,
-		`ClusterIP:` + fmt.Sprintf("%v", this.ClusterIP) + `,`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`ExternalIPs:` + fmt.Sprintf("%v", this.ExternalIPs) + `,`,
-		`DeprecatedPublicIPs:` + fmt.Sprintf("%v", this.DeprecatedPublicIPs) + `,`,
-		`SessionAffinity:` + fmt.Sprintf("%v", this.SessionAffinity) + `,`,
-		`LoadBalancerIP:` + fmt.Sprintf("%v", this.LoadBalancerIP) + `,`,
-		`LoadBalancerSourceRanges:` + fmt.Sprintf("%v", this.LoadBalancerSourceRanges) + `,`,
-		`ExternalName:` + fmt.Sprintf("%v", this.ExternalName) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ServiceStatus) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ServiceStatus{`,
-		`LoadBalancer:` + strings.Replace(fmt.Sprintf("%v", this.LoadBalancer), "LoadBalancerStatus", "LoadBalancerStatus", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *TCPSocketAction) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&TCPSocketAction{`,
-		`Port:` + strings.Replace(fmt.Sprintf("%v", this.Port), "IntOrString", "github.com/ericchiang.k8s.util_intstr.IntOrString", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Taint) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Taint{`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
-		`Effect:` + fmt.Sprintf("%v", this.Effect) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Toleration) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Toleration{`,
-		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
-		`Operator:` + fmt.Sprintf("%v", this.Operator) + `,`,
-		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
-		`Effect:` + fmt.Sprintf("%v", this.Effect) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Volume) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Volume{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`VolumeSource:` + strings.Replace(fmt.Sprintf("%v", this.VolumeSource), "VolumeSource", "VolumeSource", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *VolumeMount) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&VolumeMount{`,
-		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`ReadOnly:` + fmt.Sprintf("%v", this.ReadOnly) + `,`,
-		`MountPath:` + fmt.Sprintf("%v", this.MountPath) + `,`,
-		`SubPath:` + fmt.Sprintf("%v", this.SubPath) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *VolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&VolumeSource{`,
-		`HostPath:` + strings.Replace(fmt.Sprintf("%v", this.HostPath), "HostPathVolumeSource", "HostPathVolumeSource", 1) + `,`,
-		`EmptyDir:` + strings.Replace(fmt.Sprintf("%v", this.EmptyDir), "EmptyDirVolumeSource", "EmptyDirVolumeSource", 1) + `,`,
-		`GcePersistentDisk:` + strings.Replace(fmt.Sprintf("%v", this.GcePersistentDisk), "GCEPersistentDiskVolumeSource", "GCEPersistentDiskVolumeSource", 1) + `,`,
-		`AwsElasticBlockStore:` + strings.Replace(fmt.Sprintf("%v", this.AwsElasticBlockStore), "AWSElasticBlockStoreVolumeSource", "AWSElasticBlockStoreVolumeSource", 1) + `,`,
-		`GitRepo:` + strings.Replace(fmt.Sprintf("%v", this.GitRepo), "GitRepoVolumeSource", "GitRepoVolumeSource", 1) + `,`,
-		`Secret:` + strings.Replace(fmt.Sprintf("%v", this.Secret), "SecretVolumeSource", "SecretVolumeSource", 1) + `,`,
-		`Nfs:` + strings.Replace(fmt.Sprintf("%v", this.Nfs), "NFSVolumeSource", "NFSVolumeSource", 1) + `,`,
-		`Iscsi:` + strings.Replace(fmt.Sprintf("%v", this.Iscsi), "ISCSIVolumeSource", "ISCSIVolumeSource", 1) + `,`,
-		`Glusterfs:` + strings.Replace(fmt.Sprintf("%v", this.Glusterfs), "GlusterfsVolumeSource", "GlusterfsVolumeSource", 1) + `,`,
-		`PersistentVolumeClaim:` + strings.Replace(fmt.Sprintf("%v", this.PersistentVolumeClaim), "PersistentVolumeClaimVolumeSource", "PersistentVolumeClaimVolumeSource", 1) + `,`,
-		`Rbd:` + strings.Replace(fmt.Sprintf("%v", this.Rbd), "RBDVolumeSource", "RBDVolumeSource", 1) + `,`,
-		`FlexVolume:` + strings.Replace(fmt.Sprintf("%v", this.FlexVolume), "FlexVolumeSource", "FlexVolumeSource", 1) + `,`,
-		`Cinder:` + strings.Replace(fmt.Sprintf("%v", this.Cinder), "CinderVolumeSource", "CinderVolumeSource", 1) + `,`,
-		`Cephfs:` + strings.Replace(fmt.Sprintf("%v", this.Cephfs), "CephFSVolumeSource", "CephFSVolumeSource", 1) + `,`,
-		`Flocker:` + strings.Replace(fmt.Sprintf("%v", this.Flocker), "FlockerVolumeSource", "FlockerVolumeSource", 1) + `,`,
-		`DownwardAPI:` + strings.Replace(fmt.Sprintf("%v", this.DownwardAPI), "DownwardAPIVolumeSource", "DownwardAPIVolumeSource", 1) + `,`,
-		`Fc:` + strings.Replace(fmt.Sprintf("%v", this.Fc), "FCVolumeSource", "FCVolumeSource", 1) + `,`,
-		`AzureFile:` + strings.Replace(fmt.Sprintf("%v", this.AzureFile), "AzureFileVolumeSource", "AzureFileVolumeSource", 1) + `,`,
-		`ConfigMap:` + strings.Replace(fmt.Sprintf("%v", this.ConfigMap), "ConfigMapVolumeSource", "ConfigMapVolumeSource", 1) + `,`,
-		`VsphereVolume:` + strings.Replace(fmt.Sprintf("%v", this.VsphereVolume), "VsphereVirtualDiskVolumeSource", "VsphereVirtualDiskVolumeSource", 1) + `,`,
-		`Quobyte:` + strings.Replace(fmt.Sprintf("%v", this.Quobyte), "QuobyteVolumeSource", "QuobyteVolumeSource", 1) + `,`,
-		`AzureDisk:` + strings.Replace(fmt.Sprintf("%v", this.AzureDisk), "AzureDiskVolumeSource", "AzureDiskVolumeSource", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *VsphereVirtualDiskVolumeSource) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&VsphereVirtualDiskVolumeSource{`,
-		`VolumePath:` + fmt.Sprintf("%v", this.VolumePath) + `,`,
-		`FsType:` + fmt.Sprintf("%v", this.FsType) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *WeightedPodAffinityTerm) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&WeightedPodAffinityTerm{`,
-		`Weight:` + fmt.Sprintf("%v", this.Weight) + `,`,
-		`PodAffinityTerm:` + strings.Replace(fmt.Sprintf("%v", this.PodAffinityTerm), "PodAffinityTerm", "PodAffinityTerm", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func valueToStringGenerated(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("*%v", pv)
 }
 func (m *AWSElasticBlockStoreVolumeSource) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -28958,7 +20094,8 @@ func (m *AWSElasticBlockStoreVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.VolumeID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.VolumeID = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -28987,13 +20124,14 @@ func (m *AWSElasticBlockStoreVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Partition", wireType)
 			}
-			m.Partition = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -29003,11 +20141,12 @@ func (m *AWSElasticBlockStoreVolumeSource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Partition |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Partition = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ReadOnly", wireType)
@@ -29027,7 +20166,8 @@ func (m *AWSElasticBlockStoreVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -29040,6 +20180,7 @@ func (m *AWSElasticBlockStoreVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -29189,6 +20330,7 @@ func (m *Affinity) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -29254,7 +20396,8 @@ func (m *AttachedVolume) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -29283,7 +20426,8 @@ func (m *AttachedVolume) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DevicePath = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.DevicePath = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -29297,6 +20441,7 @@ func (m *AttachedVolume) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -29378,6 +20523,7 @@ func (m *AvoidPods) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -29443,7 +20589,8 @@ func (m *AzureDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DiskName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.DiskName = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -29472,7 +20619,8 @@ func (m *AzureDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DiskURI = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.DiskURI = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -29501,7 +20649,8 @@ func (m *AzureDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.CachingMode = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.CachingMode = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -29530,7 +20679,8 @@ func (m *AzureDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 0 {
@@ -29551,7 +20701,8 @@ func (m *AzureDiskVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -29564,6 +20715,7 @@ func (m *AzureDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -29629,7 +20781,8 @@ func (m *AzureFileVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SecretName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.SecretName = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -29658,7 +20811,8 @@ func (m *AzureFileVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ShareName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ShareName = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -29679,7 +20833,8 @@ func (m *AzureFileVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -29692,6 +20847,7 @@ func (m *AzureFileVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -29808,6 +20964,7 @@ func (m *Binding) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -29916,6 +21073,7 @@ func (m *Capabilities) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -30010,7 +21168,8 @@ func (m *CephFSVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -30039,7 +21198,8 @@ func (m *CephFSVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.User = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -30068,7 +21228,8 @@ func (m *CephFSVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SecretFile = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.SecretFile = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -30122,7 +21283,8 @@ func (m *CephFSVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -30135,6 +21297,7 @@ func (m *CephFSVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -30200,7 +21363,8 @@ func (m *CinderVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.VolumeID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.VolumeID = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -30229,7 +21393,8 @@ func (m *CinderVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -30250,7 +21415,8 @@ func (m *CinderVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -30263,6 +21429,7 @@ func (m *CinderVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -30328,7 +21495,8 @@ func (m *ComponentCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -30357,7 +21525,8 @@ func (m *ComponentCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Status = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Status = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -30386,7 +21555,8 @@ func (m *ComponentCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -30415,7 +21585,8 @@ func (m *ComponentCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Error = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Error = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -30429,6 +21600,7 @@ func (m *ComponentCondition) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -30543,6 +21715,7 @@ func (m *ComponentStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -30657,6 +21830,7 @@ func (m *ComponentStatusList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -30856,6 +22030,7 @@ func (m *ConfigMap) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -30954,7 +22129,8 @@ func (m *ConfigMapKeySelector) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Key = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -30968,6 +22144,7 @@ func (m *ConfigMapKeySelector) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -31082,6 +22259,7 @@ func (m *ConfigMapList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -31188,7 +22366,7 @@ func (m *ConfigMapVolumeSource) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultMode", wireType)
 			}
-			m.DefaultMode = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -31198,11 +22376,12 @@ func (m *ConfigMapVolumeSource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DefaultMode |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.DefaultMode = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -31215,6 +22394,7 @@ func (m *ConfigMapVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -31280,7 +22460,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -31309,7 +22490,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Image = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Image = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -31396,7 +22578,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.WorkingDir = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.WorkingDir = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -31650,7 +22833,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.TerminationMessagePath = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.TerminationMessagePath = &s
 			iNdEx = postIndex
 		case 14:
 			if wireType != 2 {
@@ -31679,7 +22863,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ImagePullPolicy = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ImagePullPolicy = &s
 			iNdEx = postIndex
 		case 15:
 			if wireType != 2 {
@@ -31733,7 +22918,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Stdin = bool(v != 0)
+			b := bool(v != 0)
+			m.Stdin = &b
 		case 17:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field StdinOnce", wireType)
@@ -31753,7 +22939,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.StdinOnce = bool(v != 0)
+			b := bool(v != 0)
+			m.StdinOnce = &b
 		case 18:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Tty", wireType)
@@ -31773,7 +22960,8 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Tty = bool(v != 0)
+			b := bool(v != 0)
+			m.Tty = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -31786,6 +22974,7 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -31857,7 +23046,7 @@ func (m *ContainerImage) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SizeBytes", wireType)
 			}
-			m.SizeBytes = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -31867,11 +23056,12 @@ func (m *ContainerImage) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SizeBytes |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.SizeBytes = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -31884,6 +23074,7 @@ func (m *ContainerImage) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -31949,13 +23140,14 @@ func (m *ContainerPort) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field HostPort", wireType)
 			}
-			m.HostPort = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -31965,16 +23157,17 @@ func (m *ContainerPort) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.HostPort |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.HostPort = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ContainerPort", wireType)
 			}
-			m.ContainerPort = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -31984,11 +23177,12 @@ func (m *ContainerPort) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ContainerPort |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ContainerPort = &v
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Protocol", wireType)
@@ -32016,7 +23210,8 @@ func (m *ContainerPort) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Protocol = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Protocol = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -32045,7 +23240,8 @@ func (m *ContainerPort) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.HostIP = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.HostIP = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -32059,6 +23255,7 @@ func (m *ContainerPort) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -32208,6 +23405,7 @@ func (m *ContainerState) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -32291,6 +23489,7 @@ func (m *ContainerStateRunning) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -32333,7 +23532,7 @@ func (m *ContainerStateTerminated) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExitCode", wireType)
 			}
-			m.ExitCode = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -32343,16 +23542,17 @@ func (m *ContainerStateTerminated) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ExitCode |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ExitCode = &v
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Signal", wireType)
 			}
-			m.Signal = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -32362,11 +23562,12 @@ func (m *ContainerStateTerminated) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Signal |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Signal = &v
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
@@ -32394,7 +23595,8 @@ func (m *ContainerStateTerminated) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -32423,7 +23625,8 @@ func (m *ContainerStateTerminated) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -32518,7 +23721,8 @@ func (m *ContainerStateTerminated) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ContainerID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ContainerID = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -32532,6 +23736,7 @@ func (m *ContainerStateTerminated) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -32597,7 +23802,8 @@ func (m *ContainerStateWaiting) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -32626,7 +23832,8 @@ func (m *ContainerStateWaiting) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -32640,6 +23847,7 @@ func (m *ContainerStateWaiting) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -32705,7 +23913,8 @@ func (m *ContainerStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -32792,12 +24001,13 @@ func (m *ContainerStatus) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Ready = bool(v != 0)
+			b := bool(v != 0)
+			m.Ready = &b
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RestartCount", wireType)
 			}
-			m.RestartCount = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -32807,11 +24017,12 @@ func (m *ContainerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.RestartCount |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.RestartCount = &v
 		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Image", wireType)
@@ -32839,7 +24050,8 @@ func (m *ContainerStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Image = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Image = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
@@ -32868,7 +24080,8 @@ func (m *ContainerStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ImageID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ImageID = &s
 			iNdEx = postIndex
 		case 8:
 			if wireType != 2 {
@@ -32897,7 +24110,8 @@ func (m *ContainerStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ContainerID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ContainerID = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -32911,6 +24125,7 @@ func (m *ContainerStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -32953,7 +24168,7 @@ func (m *DaemonEndpoint) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Port", wireType)
 			}
-			m.Port = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -32963,11 +24178,12 @@ func (m *DaemonEndpoint) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Port |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Port = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -32980,6 +24196,7 @@ func (m *DaemonEndpoint) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33022,7 +24239,7 @@ func (m *DeleteOptions) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field GracePeriodSeconds", wireType)
 			}
-			m.GracePeriodSeconds = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -33032,11 +24249,12 @@ func (m *DeleteOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.GracePeriodSeconds |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.GracePeriodSeconds = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Preconditions", wireType)
@@ -33089,7 +24307,8 @@ func (m *DeleteOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.OrphanDependents = bool(v != 0)
+			b := bool(v != 0)
+			m.OrphanDependents = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -33102,6 +24321,7 @@ func (m *DeleteOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33167,7 +24387,8 @@ func (m *DownwardAPIVolumeFile) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -33239,7 +24460,7 @@ func (m *DownwardAPIVolumeFile) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Mode", wireType)
 			}
-			m.Mode = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -33249,11 +24470,12 @@ func (m *DownwardAPIVolumeFile) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Mode |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Mode = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -33266,6 +24488,7 @@ func (m *DownwardAPIVolumeFile) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33339,7 +24562,7 @@ func (m *DownwardAPIVolumeSource) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultMode", wireType)
 			}
-			m.DefaultMode = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -33349,11 +24572,12 @@ func (m *DownwardAPIVolumeSource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DefaultMode |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.DefaultMode = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -33366,6 +24590,7 @@ func (m *DownwardAPIVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33431,7 +24656,8 @@ func (m *EmptyDirVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Medium = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Medium = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -33445,6 +24671,7 @@ func (m *EmptyDirVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33510,7 +24737,8 @@ func (m *EndpointAddress) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Ip = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Ip = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -33572,7 +24800,8 @@ func (m *EndpointAddress) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Hostname = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Hostname = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -33601,7 +24830,8 @@ func (m *EndpointAddress) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.NodeName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.NodeName = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -33615,6 +24845,7 @@ func (m *EndpointAddress) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33680,13 +24911,14 @@ func (m *EndpointPort) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Port", wireType)
 			}
-			m.Port = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -33696,11 +24928,12 @@ func (m *EndpointPort) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Port |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Port = &v
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Protocol", wireType)
@@ -33728,7 +24961,8 @@ func (m *EndpointPort) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Protocol = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Protocol = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -33742,6 +24976,7 @@ func (m *EndpointPort) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33885,6 +25120,7 @@ func (m *EndpointSubset) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -33999,6 +25235,7 @@ func (m *Endpoints) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -34113,6 +25350,7 @@ func (m *EndpointsList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -34178,7 +25416,8 @@ func (m *EnvVar) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -34207,7 +25446,8 @@ func (m *EnvVar) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Value = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Value = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -34254,6 +25494,7 @@ func (m *EnvVar) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -34436,6 +25677,7 @@ func (m *EnvVarSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -34567,7 +25809,8 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -34596,7 +25839,8 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -34701,7 +25945,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
 			}
-			m.Count = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -34711,11 +25955,12 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Count |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Count = &v
 		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
@@ -34743,7 +25988,8 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -34757,6 +26003,7 @@ func (m *Event) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -34871,6 +26118,7 @@ func (m *EventList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -34936,7 +26184,8 @@ func (m *EventSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Component = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Component = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -34965,7 +26214,8 @@ func (m *EventSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Host = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Host = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -34979,6 +26229,7 @@ func (m *EventSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -35058,6 +26309,7 @@ func (m *ExecAction) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -35115,7 +26367,8 @@ func (m *ExportOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Export = bool(v != 0)
+			b := bool(v != 0)
+			m.Export = &b
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Exact", wireType)
@@ -35135,7 +26388,8 @@ func (m *ExportOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Exact = bool(v != 0)
+			b := bool(v != 0)
+			m.Exact = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -35148,6 +26402,7 @@ func (m *ExportOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -35219,7 +26474,7 @@ func (m *FCVolumeSource) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Lun", wireType)
 			}
-			m.Lun = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -35229,11 +26484,12 @@ func (m *FCVolumeSource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Lun |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Lun = &v
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FsType", wireType)
@@ -35261,7 +26517,8 @@ func (m *FCVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 0 {
@@ -35282,7 +26539,8 @@ func (m *FCVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -35295,6 +26553,7 @@ func (m *FCVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -35360,7 +26619,8 @@ func (m *FlexVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Driver = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Driver = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -35389,7 +26649,8 @@ func (m *FlexVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -35443,7 +26704,8 @@ func (m *FlexVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Options", wireType)
@@ -35572,6 +26834,7 @@ func (m *FlexVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -35637,7 +26900,8 @@ func (m *FlockerVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DatasetName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.DatasetName = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -35651,6 +26915,7 @@ func (m *FlockerVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -35716,7 +26981,8 @@ func (m *GCEPersistentDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PdName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.PdName = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -35745,13 +27011,14 @@ func (m *GCEPersistentDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Partition", wireType)
 			}
-			m.Partition = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -35761,11 +27028,12 @@ func (m *GCEPersistentDiskVolumeSource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Partition |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Partition = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ReadOnly", wireType)
@@ -35785,7 +27053,8 @@ func (m *GCEPersistentDiskVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -35798,6 +27067,7 @@ func (m *GCEPersistentDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -35863,7 +27133,8 @@ func (m *GitRepoVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Repository = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Repository = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -35892,7 +27163,8 @@ func (m *GitRepoVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Revision = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Revision = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -35921,7 +27193,8 @@ func (m *GitRepoVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Directory = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Directory = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -35935,6 +27208,7 @@ func (m *GitRepoVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -36000,7 +27274,8 @@ func (m *GlusterfsVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Endpoints = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Endpoints = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -36029,7 +27304,8 @@ func (m *GlusterfsVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -36050,7 +27326,8 @@ func (m *GlusterfsVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -36063,6 +27340,7 @@ func (m *GlusterfsVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -36128,7 +27406,8 @@ func (m *HTTPGetAction) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -36190,7 +27469,8 @@ func (m *HTTPGetAction) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Host = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Host = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -36219,7 +27499,8 @@ func (m *HTTPGetAction) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Scheme = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Scheme = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -36264,6 +27545,7 @@ func (m *HTTPGetAction) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -36329,7 +27611,8 @@ func (m *HTTPHeader) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -36358,7 +27641,8 @@ func (m *HTTPHeader) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Value = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Value = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -36372,6 +27656,7 @@ func (m *HTTPHeader) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -36521,6 +27806,7 @@ func (m *Handler) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -36586,7 +27872,8 @@ func (m *HostPathVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -36600,6 +27887,7 @@ func (m *HostPathVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -36665,7 +27953,8 @@ func (m *ISCSIVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.TargetPortal = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.TargetPortal = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -36694,13 +27983,14 @@ func (m *ISCSIVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Iqn = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Iqn = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Lun", wireType)
 			}
-			m.Lun = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -36710,11 +28000,12 @@ func (m *ISCSIVolumeSource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Lun |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Lun = &v
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field IscsiInterface", wireType)
@@ -36742,7 +28033,8 @@ func (m *ISCSIVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.IscsiInterface = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.IscsiInterface = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -36771,7 +28063,8 @@ func (m *ISCSIVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 0 {
@@ -36792,7 +28085,8 @@ func (m *ISCSIVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -36805,6 +28099,7 @@ func (m *ISCSIVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -36870,7 +28165,8 @@ func (m *KeyToPath) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Key = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -36899,13 +28195,14 @@ func (m *KeyToPath) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Mode", wireType)
 			}
-			m.Mode = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -36915,11 +28212,12 @@ func (m *KeyToPath) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Mode |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Mode = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -36932,6 +28230,7 @@ func (m *KeyToPath) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -37048,6 +28347,7 @@ func (m *Lifecycle) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -37164,6 +28464,7 @@ func (m *LimitRange) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -37229,7 +28530,8 @@ func (m *LimitRangeItem) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -37848,6 +29150,7 @@ func (m *LimitRangeItem) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -37962,6 +29265,7 @@ func (m *LimitRangeList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38043,6 +29347,7 @@ func (m *LimitRangeSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38157,6 +29462,7 @@ func (m *List) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38222,7 +29528,8 @@ func (m *ListOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.LabelSelector = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.LabelSelector = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -38251,7 +29558,8 @@ func (m *ListOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FieldSelector = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FieldSelector = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -38272,7 +29580,8 @@ func (m *ListOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Watch = bool(v != 0)
+			b := bool(v != 0)
+			m.Watch = &b
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ResourceVersion", wireType)
@@ -38300,13 +29609,14 @@ func (m *ListOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ResourceVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ResourceVersion = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutSeconds", wireType)
 			}
-			m.TimeoutSeconds = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -38316,11 +29626,12 @@ func (m *ListOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TimeoutSeconds |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.TimeoutSeconds = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -38333,6 +29644,7 @@ func (m *ListOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38398,7 +29710,8 @@ func (m *LoadBalancerIngress) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Ip = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Ip = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -38427,7 +29740,8 @@ func (m *LoadBalancerIngress) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Hostname = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Hostname = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -38441,6 +29755,7 @@ func (m *LoadBalancerIngress) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38522,6 +29837,7 @@ func (m *LoadBalancerStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38587,7 +29903,8 @@ func (m *LocalObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -38601,6 +29918,7 @@ func (m *LocalObjectReference) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38666,7 +29984,8 @@ func (m *NFSVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Server = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Server = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -38695,7 +30014,8 @@ func (m *NFSVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -38716,7 +30036,8 @@ func (m *NFSVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -38729,6 +30050,7 @@ func (m *NFSVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38878,6 +30200,7 @@ func (m *Namespace) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -38992,6 +30315,7 @@ func (m *NamespaceList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39071,6 +30395,7 @@ func (m *NamespaceSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39136,7 +30461,8 @@ func (m *NamespaceStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Phase = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Phase = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -39150,6 +30476,7 @@ func (m *NamespaceStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39299,6 +30626,7 @@ func (m *Node) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39364,7 +30692,8 @@ func (m *NodeAddress) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -39393,7 +30722,8 @@ func (m *NodeAddress) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Address = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Address = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -39407,6 +30737,7 @@ func (m *NodeAddress) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39521,6 +30852,7 @@ func (m *NodeAffinity) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39586,7 +30918,8 @@ func (m *NodeCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -39615,7 +30948,8 @@ func (m *NodeCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Status = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Status = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -39710,7 +31044,8 @@ func (m *NodeCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -39739,7 +31074,8 @@ func (m *NodeCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -39753,6 +31089,7 @@ func (m *NodeCondition) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39836,6 +31173,7 @@ func (m *NodeDaemonEndpoints) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -39950,6 +31288,7 @@ func (m *NodeList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -40015,7 +31354,8 @@ func (m *NodeProxyOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -40029,6 +31369,7 @@ func (m *NodeProxyOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -40110,6 +31451,7 @@ func (m *NodeSelector) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -40175,7 +31517,8 @@ func (m *NodeSelectorRequirement) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Key = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -40204,7 +31547,8 @@ func (m *NodeSelectorRequirement) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Operator = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Operator = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -40247,6 +31591,7 @@ func (m *NodeSelectorRequirement) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -40328,6 +31673,7 @@ func (m *NodeSelectorTerm) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -40393,7 +31739,8 @@ func (m *NodeSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PodCIDR = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.PodCIDR = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -40422,7 +31769,8 @@ func (m *NodeSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ExternalID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ExternalID = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -40451,7 +31799,8 @@ func (m *NodeSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ProviderID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ProviderID = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 0 {
@@ -40472,7 +31821,8 @@ func (m *NodeSpec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Unschedulable = bool(v != 0)
+			b := bool(v != 0)
+			m.Unschedulable = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -40485,6 +31835,7 @@ func (m *NodeSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -40792,7 +32143,8 @@ func (m *NodeStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Phase = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Phase = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -41025,6 +32377,7 @@ func (m *NodeStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -41090,7 +32443,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MachineID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.MachineID = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -41119,7 +32473,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SystemUUID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.SystemUUID = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -41148,7 +32503,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.BootID = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.BootID = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -41177,7 +32533,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KernelVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.KernelVersion = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -41206,7 +32563,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.OsImage = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.OsImage = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -41235,7 +32593,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ContainerRuntimeVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ContainerRuntimeVersion = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
@@ -41264,7 +32623,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KubeletVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.KubeletVersion = &s
 			iNdEx = postIndex
 		case 8:
 			if wireType != 2 {
@@ -41293,7 +32653,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KubeProxyVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.KubeProxyVersion = &s
 			iNdEx = postIndex
 		case 9:
 			if wireType != 2 {
@@ -41322,7 +32683,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.OperatingSystem = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.OperatingSystem = &s
 			iNdEx = postIndex
 		case 10:
 			if wireType != 2 {
@@ -41351,7 +32713,8 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Architecture = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Architecture = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -41365,6 +32728,7 @@ func (m *NodeSystemInfo) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -41430,7 +32794,8 @@ func (m *ObjectFieldSelector) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ApiVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ApiVersion = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -41459,7 +32824,8 @@ func (m *ObjectFieldSelector) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FieldPath = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FieldPath = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -41473,6 +32839,7 @@ func (m *ObjectFieldSelector) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -41538,7 +32905,8 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -41567,7 +32935,8 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.GenerateName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.GenerateName = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -41596,7 +32965,8 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Namespace = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Namespace = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -41625,7 +32995,8 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SelfLink = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.SelfLink = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -41654,7 +33025,8 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Uid = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Uid = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -41683,13 +33055,14 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ResourceVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ResourceVersion = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Generation", wireType)
 			}
-			m.Generation = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -41699,11 +33072,12 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Generation |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Generation = &v
 		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreationTimestamp", wireType)
@@ -41774,7 +33148,7 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DeletionGracePeriodSeconds", wireType)
 			}
-			m.DeletionGracePeriodSeconds = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -41784,11 +33158,12 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DeletionGracePeriodSeconds |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.DeletionGracePeriodSeconds = &v
 		case 11:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
@@ -42108,7 +33483,8 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ClusterName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ClusterName = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -42122,6 +33498,7 @@ func (m *ObjectMeta) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -42187,7 +33564,8 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Kind = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Kind = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -42216,7 +33594,8 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Namespace = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Namespace = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -42245,7 +33624,8 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -42274,7 +33654,8 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Uid = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Uid = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -42303,7 +33684,8 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ApiVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ApiVersion = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -42332,7 +33714,8 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ResourceVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ResourceVersion = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
@@ -42361,7 +33744,8 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FieldPath = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FieldPath = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -42375,6 +33759,7 @@ func (m *ObjectReference) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -42440,7 +33825,8 @@ func (m *OwnerReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Kind = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Kind = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -42469,7 +33855,8 @@ func (m *OwnerReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -42498,7 +33885,8 @@ func (m *OwnerReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Uid = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Uid = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -42527,7 +33915,8 @@ func (m *OwnerReference) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ApiVersion = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ApiVersion = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 0 {
@@ -42548,7 +33937,8 @@ func (m *OwnerReference) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Controller = bool(v != 0)
+			b := bool(v != 0)
+			m.Controller = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -42561,6 +33951,7 @@ func (m *OwnerReference) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -42710,6 +34101,7 @@ func (m *PersistentVolume) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -42859,6 +34251,7 @@ func (m *PersistentVolumeClaim) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -42973,6 +34366,7 @@ func (m *PersistentVolumeClaimList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -43100,7 +34494,8 @@ func (m *PersistentVolumeClaimSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.VolumeName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.VolumeName = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -43147,6 +34542,7 @@ func (m *PersistentVolumeClaimSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -43212,7 +34608,8 @@ func (m *PersistentVolumeClaimStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Phase = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Phase = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -43376,6 +34773,7 @@ func (m *PersistentVolumeClaimStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -43441,7 +34839,8 @@ func (m *PersistentVolumeClaimVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ClaimName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ClaimName = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -43462,7 +34861,8 @@ func (m *PersistentVolumeClaimVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -43475,6 +34875,7 @@ func (m *PersistentVolumeClaimVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -43589,6 +34990,7 @@ func (m *PersistentVolumeList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -44167,6 +35569,7 @@ func (m *PersistentVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -44448,7 +35851,8 @@ func (m *PersistentVolumeSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PersistentVolumeReclaimPolicy = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.PersistentVolumeReclaimPolicy = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -44462,6 +35866,7 @@ func (m *PersistentVolumeSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -44527,7 +35932,8 @@ func (m *PersistentVolumeStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Phase = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Phase = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -44556,7 +35962,8 @@ func (m *PersistentVolumeStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -44585,7 +35992,8 @@ func (m *PersistentVolumeStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -44599,6 +36007,7 @@ func (m *PersistentVolumeStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -44748,6 +36157,7 @@ func (m *Pod) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -44860,6 +36270,7 @@ func (m *PodAffinity) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -44987,7 +36398,8 @@ func (m *PodAffinityTerm) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.TopologyKey = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.TopologyKey = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -45001,6 +36413,7 @@ func (m *PodAffinityTerm) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -45113,6 +36526,7 @@ func (m *PodAntiAffinity) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -45170,7 +36584,8 @@ func (m *PodAttachOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Stdin = bool(v != 0)
+			b := bool(v != 0)
+			m.Stdin = &b
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Stdout", wireType)
@@ -45190,7 +36605,8 @@ func (m *PodAttachOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Stdout = bool(v != 0)
+			b := bool(v != 0)
+			m.Stdout = &b
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Stderr", wireType)
@@ -45210,7 +36626,8 @@ func (m *PodAttachOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Stderr = bool(v != 0)
+			b := bool(v != 0)
+			m.Stderr = &b
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Tty", wireType)
@@ -45230,7 +36647,8 @@ func (m *PodAttachOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Tty = bool(v != 0)
+			b := bool(v != 0)
+			m.Tty = &b
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Container", wireType)
@@ -45258,7 +36676,8 @@ func (m *PodAttachOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Container = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Container = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -45272,6 +36691,7 @@ func (m *PodAttachOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -45337,7 +36757,8 @@ func (m *PodCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -45366,7 +36787,8 @@ func (m *PodCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Status = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Status = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -45461,7 +36883,8 @@ func (m *PodCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -45490,7 +36913,8 @@ func (m *PodCondition) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -45504,6 +36928,7 @@ func (m *PodCondition) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -45561,7 +36986,8 @@ func (m *PodExecOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Stdin = bool(v != 0)
+			b := bool(v != 0)
+			m.Stdin = &b
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Stdout", wireType)
@@ -45581,7 +37007,8 @@ func (m *PodExecOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Stdout = bool(v != 0)
+			b := bool(v != 0)
+			m.Stdout = &b
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Stderr", wireType)
@@ -45601,7 +37028,8 @@ func (m *PodExecOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Stderr = bool(v != 0)
+			b := bool(v != 0)
+			m.Stderr = &b
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Tty", wireType)
@@ -45621,7 +37049,8 @@ func (m *PodExecOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Tty = bool(v != 0)
+			b := bool(v != 0)
+			m.Tty = &b
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Container", wireType)
@@ -45649,7 +37078,8 @@ func (m *PodExecOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Container = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Container = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -45692,6 +37122,7 @@ func (m *PodExecOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -45806,6 +37237,7 @@ func (m *PodList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -45871,7 +37303,8 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Container = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Container = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -45892,7 +37325,8 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Follow = bool(v != 0)
+			b := bool(v != 0)
+			m.Follow = &b
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Previous", wireType)
@@ -45912,12 +37346,13 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Previous = bool(v != 0)
+			b := bool(v != 0)
+			m.Previous = &b
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SinceSeconds", wireType)
 			}
-			m.SinceSeconds = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -45927,11 +37362,12 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SinceSeconds |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.SinceSeconds = &v
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SinceTime", wireType)
@@ -45984,12 +37420,13 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Timestamps = bool(v != 0)
+			b := bool(v != 0)
+			m.Timestamps = &b
 		case 7:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TailLines", wireType)
 			}
-			m.TailLines = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -45999,16 +37436,17 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TailLines |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.TailLines = &v
 		case 8:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field LimitBytes", wireType)
 			}
-			m.LimitBytes = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -46018,11 +37456,12 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.LimitBytes |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.LimitBytes = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -46035,6 +37474,7 @@ func (m *PodLogOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -46100,7 +37540,8 @@ func (m *PodProxyOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -46114,6 +37555,7 @@ func (m *PodProxyOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -46189,7 +37631,7 @@ func (m *PodSecurityContext) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RunAsUser", wireType)
 			}
-			m.RunAsUser = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -46199,11 +37641,12 @@ func (m *PodSecurityContext) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.RunAsUser |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.RunAsUser = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RunAsNonRoot", wireType)
@@ -46223,7 +37666,8 @@ func (m *PodSecurityContext) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.RunAsNonRoot = bool(v != 0)
+			b := bool(v != 0)
+			m.RunAsNonRoot = &b
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SupplementalGroups", wireType)
@@ -46248,7 +37692,7 @@ func (m *PodSecurityContext) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FsGroup", wireType)
 			}
-			m.FsGroup = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -46258,11 +37702,12 @@ func (m *PodSecurityContext) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.FsGroup |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.FsGroup = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -46275,6 +37720,7 @@ func (m *PodSecurityContext) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -46358,6 +37804,7 @@ func (m *PodSignature) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -46485,13 +37932,14 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.RestartPolicy = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.RestartPolicy = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TerminationGracePeriodSeconds", wireType)
 			}
-			m.TerminationGracePeriodSeconds = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -46501,16 +37949,17 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TerminationGracePeriodSeconds |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.TerminationGracePeriodSeconds = &v
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ActiveDeadlineSeconds", wireType)
 			}
-			m.ActiveDeadlineSeconds = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -46520,11 +37969,12 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ActiveDeadlineSeconds |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ActiveDeadlineSeconds = &v
 		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DnsPolicy", wireType)
@@ -46552,7 +38002,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DnsPolicy = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.DnsPolicy = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
@@ -46697,7 +38148,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ServiceAccountName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ServiceAccountName = &s
 			iNdEx = postIndex
 		case 9:
 			if wireType != 2 {
@@ -46726,7 +38178,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ServiceAccount = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ServiceAccount = &s
 			iNdEx = postIndex
 		case 10:
 			if wireType != 2 {
@@ -46755,7 +38208,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.NodeName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.NodeName = &s
 			iNdEx = postIndex
 		case 11:
 			if wireType != 0 {
@@ -46776,7 +38230,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.HostNetwork = bool(v != 0)
+			b := bool(v != 0)
+			m.HostNetwork = &b
 		case 12:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field HostPID", wireType)
@@ -46796,7 +38251,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.HostPID = bool(v != 0)
+			b := bool(v != 0)
+			m.HostPID = &b
 		case 13:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field HostIPC", wireType)
@@ -46816,7 +38272,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.HostIPC = bool(v != 0)
+			b := bool(v != 0)
+			m.HostIPC = &b
 		case 14:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SecurityContext", wireType)
@@ -46908,7 +38365,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Hostname = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Hostname = &s
 			iNdEx = postIndex
 		case 17:
 			if wireType != 2 {
@@ -46937,7 +38395,8 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Subdomain = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Subdomain = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -46951,6 +38410,7 @@ func (m *PodSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47016,7 +38476,8 @@ func (m *PodStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Phase = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Phase = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -47076,7 +38537,8 @@ func (m *PodStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -47105,7 +38567,8 @@ func (m *PodStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -47134,7 +38597,8 @@ func (m *PodStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.HostIP = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.HostIP = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -47163,7 +38627,8 @@ func (m *PodStatus) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PodIP = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.PodIP = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
@@ -47241,6 +38706,7 @@ func (m *PodStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47357,6 +38823,7 @@ func (m *PodStatusResult) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47473,6 +38940,7 @@ func (m *PodTemplate) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47587,6 +39055,7 @@ func (m *PodTemplateList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47703,6 +39172,7 @@ func (m *PodTemplateSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47768,7 +39238,8 @@ func (m *Preconditions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Uid = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Uid = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -47782,6 +39253,7 @@ func (m *Preconditions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47913,7 +39385,8 @@ func (m *PreferAvoidPodsEntry) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reason = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Reason = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -47942,7 +39415,8 @@ func (m *PreferAvoidPodsEntry) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Message = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Message = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -47956,6 +39430,7 @@ func (m *PreferAvoidPodsEntry) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -47998,7 +39473,7 @@ func (m *PreferredSchedulingTerm) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Weight", wireType)
 			}
-			m.Weight = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -48008,11 +39483,12 @@ func (m *PreferredSchedulingTerm) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Weight |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Weight = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Preference", wireType)
@@ -48058,6 +39534,7 @@ func (m *PreferredSchedulingTerm) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -48133,7 +39610,7 @@ func (m *Probe) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field InitialDelaySeconds", wireType)
 			}
-			m.InitialDelaySeconds = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -48143,16 +39620,17 @@ func (m *Probe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.InitialDelaySeconds |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.InitialDelaySeconds = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutSeconds", wireType)
 			}
-			m.TimeoutSeconds = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -48162,16 +39640,17 @@ func (m *Probe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TimeoutSeconds |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.TimeoutSeconds = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PeriodSeconds", wireType)
 			}
-			m.PeriodSeconds = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -48181,16 +39660,17 @@ func (m *Probe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PeriodSeconds |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.PeriodSeconds = &v
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SuccessThreshold", wireType)
 			}
-			m.SuccessThreshold = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -48200,16 +39680,17 @@ func (m *Probe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SuccessThreshold |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.SuccessThreshold = &v
 		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FailureThreshold", wireType)
 			}
-			m.FailureThreshold = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -48219,11 +39700,12 @@ func (m *Probe) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.FailureThreshold |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.FailureThreshold = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -48236,6 +39718,7 @@ func (m *Probe) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -48301,7 +39784,8 @@ func (m *QuobyteVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Registry = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Registry = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -48330,7 +39814,8 @@ func (m *QuobyteVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Volume = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Volume = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -48351,7 +39836,8 @@ func (m *QuobyteVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
@@ -48379,7 +39865,8 @@ func (m *QuobyteVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.User = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -48408,7 +39895,8 @@ func (m *QuobyteVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Group = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Group = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -48422,6 +39910,7 @@ func (m *QuobyteVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -48516,7 +40005,8 @@ func (m *RBDVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Image = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Image = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -48545,7 +40035,8 @@ func (m *RBDVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -48574,7 +40065,8 @@ func (m *RBDVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Pool = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Pool = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -48603,7 +40095,8 @@ func (m *RBDVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.User = &s
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
@@ -48632,7 +40125,8 @@ func (m *RBDVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Keyring = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Keyring = &s
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
@@ -48686,7 +40180,8 @@ func (m *RBDVolumeSource) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -48699,6 +40194,7 @@ func (m *RBDVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -48797,7 +40293,8 @@ func (m *RangeAllocation) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Range = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Range = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -48842,6 +40339,7 @@ func (m *RangeAllocation) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -48991,6 +40489,7 @@ func (m *ReplicationController) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -49105,6 +40604,7 @@ func (m *ReplicationControllerList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -49147,7 +40647,7 @@ func (m *ReplicationControllerSpec) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -49157,11 +40657,12 @@ func (m *ReplicationControllerSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Selector", wireType)
@@ -49323,6 +40824,7 @@ func (m *ReplicationControllerSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -49365,7 +40867,7 @@ func (m *ReplicationControllerStatus) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
 			}
-			m.Replicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -49375,16 +40877,17 @@ func (m *ReplicationControllerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Replicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Replicas = &v
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FullyLabeledReplicas", wireType)
 			}
-			m.FullyLabeledReplicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -49394,16 +40897,17 @@ func (m *ReplicationControllerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.FullyLabeledReplicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.FullyLabeledReplicas = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ObservedGeneration", wireType)
 			}
-			m.ObservedGeneration = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -49413,16 +40917,17 @@ func (m *ReplicationControllerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ObservedGeneration |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ObservedGeneration = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ReadyReplicas", wireType)
 			}
-			m.ReadyReplicas = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -49432,11 +40937,12 @@ func (m *ReplicationControllerStatus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ReadyReplicas |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.ReadyReplicas = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -49449,6 +40955,7 @@ func (m *ReplicationControllerStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -49514,7 +41021,8 @@ func (m *ResourceFieldSelector) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ContainerName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ContainerName = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -49543,7 +41051,8 @@ func (m *ResourceFieldSelector) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Resource = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Resource = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -49590,6 +41099,7 @@ func (m *ResourceFieldSelector) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -49739,6 +41249,7 @@ func (m *ResourceQuota) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -49853,6 +41364,7 @@ func (m *ResourceQuotaList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -50053,6 +41565,7 @@ func (m *ResourceQuotaSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -50345,6 +41858,7 @@ func (m *ResourceQuotaStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -50637,6 +42151,7 @@ func (m *ResourceRequirements) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -50702,7 +42217,8 @@ func (m *SELinuxOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.User = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -50731,7 +42247,8 @@ func (m *SELinuxOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Role = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Role = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -50760,7 +42277,8 @@ func (m *SELinuxOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -50789,7 +42307,8 @@ func (m *SELinuxOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Level = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Level = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -50803,6 +42322,7 @@ func (m *SELinuxOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -51018,7 +42538,8 @@ func (m *Secret) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -51148,6 +42669,7 @@ func (m *Secret) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -51246,7 +42768,8 @@ func (m *SecretKeySelector) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Key = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -51260,6 +42783,7 @@ func (m *SecretKeySelector) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -51374,6 +42898,7 @@ func (m *SecretList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -51439,7 +42964,8 @@ func (m *SecretVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SecretName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.SecretName = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -51476,7 +43002,7 @@ func (m *SecretVolumeSource) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultMode", wireType)
 			}
-			m.DefaultMode = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -51486,11 +43012,12 @@ func (m *SecretVolumeSource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DefaultMode |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.DefaultMode = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -51503,6 +43030,7 @@ func (m *SecretVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -51593,7 +43121,8 @@ func (m *SecurityContext) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.Privileged = bool(v != 0)
+			b := bool(v != 0)
+			m.Privileged = &b
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SeLinuxOptions", wireType)
@@ -51631,7 +43160,7 @@ func (m *SecurityContext) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RunAsUser", wireType)
 			}
-			m.RunAsUser = 0
+			var v int64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -51641,11 +43170,12 @@ func (m *SecurityContext) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.RunAsUser |= (int64(b) & 0x7F) << shift
+				v |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.RunAsUser = &v
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RunAsNonRoot", wireType)
@@ -51665,7 +43195,8 @@ func (m *SecurityContext) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.RunAsNonRoot = bool(v != 0)
+			b := bool(v != 0)
+			m.RunAsNonRoot = &b
 		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ReadOnlyRootFilesystem", wireType)
@@ -51685,7 +43216,8 @@ func (m *SecurityContext) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnlyRootFilesystem = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnlyRootFilesystem = &b
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -51698,6 +43230,7 @@ func (m *SecurityContext) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -51781,6 +43314,7 @@ func (m *SerializedReference) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -51930,6 +43464,7 @@ func (m *Service) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -52075,6 +43610,7 @@ func (m *ServiceAccount) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -52189,6 +43725,7 @@ func (m *ServiceAccountList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -52303,6 +43840,7 @@ func (m *ServiceList) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -52368,7 +43906,8 @@ func (m *ServicePort) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -52397,13 +43936,14 @@ func (m *ServicePort) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Protocol = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Protocol = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Port", wireType)
 			}
-			m.Port = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -52413,11 +43953,12 @@ func (m *ServicePort) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Port |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Port = &v
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TargetPort", wireType)
@@ -52455,7 +43996,7 @@ func (m *ServicePort) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field NodePort", wireType)
 			}
-			m.NodePort = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -52465,11 +44006,12 @@ func (m *ServicePort) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodePort |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.NodePort = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -52482,6 +44024,7 @@ func (m *ServicePort) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -52547,7 +44090,8 @@ func (m *ServiceProxyOptions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Path = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -52561,6 +44105,7 @@ func (m *ServiceProxyOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -52773,7 +44318,8 @@ func (m *ServiceSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ClusterIP = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ClusterIP = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -52802,7 +44348,8 @@ func (m *ServiceSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Type = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
@@ -52889,7 +44436,8 @@ func (m *ServiceSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SessionAffinity = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.SessionAffinity = &s
 			iNdEx = postIndex
 		case 8:
 			if wireType != 2 {
@@ -52918,7 +44466,8 @@ func (m *ServiceSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.LoadBalancerIP = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.LoadBalancerIP = &s
 			iNdEx = postIndex
 		case 9:
 			if wireType != 2 {
@@ -52976,7 +44525,8 @@ func (m *ServiceSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ExternalName = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.ExternalName = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -52990,6 +44540,7 @@ func (m *ServiceSpec) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -53073,6 +44624,7 @@ func (m *ServiceStatus) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -53156,6 +44708,7 @@ func (m *TCPSocketAction) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -53221,7 +44774,8 @@ func (m *Taint) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Key = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -53250,7 +44804,8 @@ func (m *Taint) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Value = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Value = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -53279,7 +44834,8 @@ func (m *Taint) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Effect = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Effect = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -53293,6 +44849,7 @@ func (m *Taint) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -53358,7 +44915,8 @@ func (m *Toleration) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Key = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -53387,7 +44945,8 @@ func (m *Toleration) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Operator = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Operator = &s
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -53416,7 +44975,8 @@ func (m *Toleration) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Value = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Value = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -53445,7 +45005,8 @@ func (m *Toleration) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Effect = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Effect = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -53459,6 +45020,7 @@ func (m *Toleration) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -53524,7 +45086,8 @@ func (m *Volume) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -53571,6 +45134,7 @@ func (m *Volume) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -53636,7 +45200,8 @@ func (m *VolumeMount) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Name = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -53657,7 +45222,8 @@ func (m *VolumeMount) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			m.ReadOnly = bool(v != 0)
+			b := bool(v != 0)
+			m.ReadOnly = &b
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MountPath", wireType)
@@ -53685,7 +45251,8 @@ func (m *VolumeMount) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MountPath = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.MountPath = &s
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -53714,7 +45281,8 @@ func (m *VolumeMount) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SubPath = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.SubPath = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -53728,6 +45296,7 @@ func (m *VolumeMount) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -54504,6 +46073,7 @@ func (m *VolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -54569,7 +46139,8 @@ func (m *VsphereVirtualDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.VolumePath = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.VolumePath = &s
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -54598,7 +46169,8 @@ func (m *VsphereVirtualDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FsType = string(dAtA[iNdEx:postIndex])
+			s := string(dAtA[iNdEx:postIndex])
+			m.FsType = &s
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -54612,6 +46184,7 @@ func (m *VsphereVirtualDiskVolumeSource) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -54654,7 +46227,7 @@ func (m *WeightedPodAffinityTerm) Unmarshal(dAtA []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Weight", wireType)
 			}
-			m.Weight = 0
+			var v int32
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenerated
@@ -54664,11 +46237,12 @@ func (m *WeightedPodAffinityTerm) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Weight |= (int32(b) & 0x7F) << shift
+				v |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			m.Weight = &v
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PodAffinityTerm", wireType)
@@ -54714,6 +46288,7 @@ func (m *WeightedPodAffinityTerm) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -54833,475 +46408,467 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 7515 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xec, 0x7d, 0x5b, 0x8c, 0x24, 0x57,
-	0x79, 0xb0, 0xab, 0xbb, 0x67, 0x7a, 0xfa, 0x9b, 0xeb, 0x9e, 0xbd, 0xb8, 0x19, 0xcc, 0xfc, 0x4b,
-	0xb1, 0x98, 0x65, 0xbd, 0xee, 0xbd, 0x60, 0xf0, 0x05, 0x63, 0x7b, 0x76, 0x66, 0x76, 0x77, 0x3c,
-	0xbb, 0xb3, 0xed, 0x9a, 0xd9, 0x5d, 0x81, 0xad, 0x1f, 0xd5, 0x54, 0x9d, 0xe9, 0x29, 0xa6, 0xba,
-	0xaa, 0x5d, 0x55, 0x3d, 0x3b, 0xe3, 0xff, 0x85, 0x5f, 0x44, 0x81, 0x07, 0x50, 0xb8, 0x04, 0x92,
-	0x28, 0x4a, 0x10, 0x89, 0x92, 0x60, 0x29, 0x11, 0x8a, 0x20, 0x4a, 0x5e, 0x40, 0x4a, 0xa4, 0x08,
-	0x44, 0x5e, 0x90, 0xa2, 0x48, 0x44, 0x28, 0x24, 0x76, 0x44, 0x2e, 0x2f, 0x11, 0x3c, 0xe4, 0x89,
-	0xdc, 0x74, 0x6e, 0x55, 0xe7, 0x54, 0x55, 0x77, 0x57, 0xf7, 0xf6, 0xda, 0x3c, 0xe4, 0xad, 0xfb,
-	0x3b, 0xf5, 0x7d, 0x75, 0xae, 0xdf, 0xf9, 0xee, 0x05, 0xe7, 0xf7, 0x9f, 0x0a, 0x1b, 0x8e, 0x7f,
-	0x61, 0xbf, 0xbb, 0x83, 0x03, 0x0f, 0x47, 0x38, 0xbc, 0xd0, 0xd9, 0x6f, 0x5d, 0x30, 0x3b, 0xce,
-	0x85, 0x83, 0x4b, 0x17, 0x5a, 0xd8, 0xc3, 0x81, 0x19, 0x61, 0xbb, 0xd1, 0x09, 0xfc, 0xc8, 0x47,
-	0x8f, 0xb0, 0xa7, 0x1b, 0xc9, 0xd3, 0x8d, 0xce, 0x7e, 0xab, 0x61, 0x76, 0x9c, 0xc6, 0xc1, 0xa5,
-	0xc5, 0xcb, 0xbd, 0x69, 0x05, 0x38, 0xf4, 0xbb, 0x81, 0x85, 0xd3, 0x14, 0x17, 0x3f, 0xd8, 0x1b,
-	0xa7, 0xeb, 0x1d, 0xe0, 0x20, 0x74, 0x7c, 0x0f, 0xdb, 0x19, 0xb4, 0xc7, 0xf3, 0xd1, 0x82, 0xae,
-	0x17, 0x39, 0xed, 0xec, 0x5b, 0x2e, 0xe5, 0x3f, 0xde, 0x8d, 0x1c, 0xf7, 0x82, 0xe3, 0x45, 0x61,
-	0x14, 0xa4, 0x51, 0xf4, 0xaf, 0x6b, 0x70, 0x7a, 0xf9, 0xee, 0xd6, 0x9a, 0x6b, 0x86, 0x91, 0x63,
-	0x5d, 0x71, 0x7d, 0x6b, 0x7f, 0x2b, 0xf2, 0x03, 0x7c, 0xc7, 0x77, 0xbb, 0x6d, 0xbc, 0x45, 0x47,
-	0x83, 0x4e, 0xc3, 0xd4, 0x01, 0xfd, 0xbf, 0xbe, 0x5a, 0xd7, 0x4e, 0x6b, 0x67, 0x6b, 0x57, 0x2a,
-	0xdf, 0xfb, 0xf1, 0xff, 0x79, 0xc8, 0x88, 0xa1, 0xe8, 0x11, 0x98, 0xdc, 0x0d, 0xb7, 0x8f, 0x3a,
-	0xb8, 0x5e, 0x92, 0xda, 0x39, 0x0c, 0xe9, 0x50, 0xeb, 0x98, 0x41, 0xe4, 0x44, 0x8e, 0xef, 0xd5,
-	0xcb, 0xa7, 0xb5, 0xb3, 0x13, 0xfc, 0x81, 0x04, 0x4c, 0xde, 0x11, 0x60, 0xd3, 0xbe, 0xe5, 0xb9,
-	0x47, 0xf5, 0xca, 0x69, 0xed, 0xec, 0x94, 0x78, 0x87, 0x80, 0xea, 0x9f, 0x2c, 0xc1, 0xd4, 0xf2,
-	0xee, 0xae, 0xe3, 0x39, 0xd1, 0x11, 0xda, 0x84, 0x19, 0xcf, 0xb7, 0xb1, 0xf8, 0x4f, 0xbb, 0x35,
-	0x7d, 0xf9, 0x5c, 0xa3, 0xdf, 0xca, 0x35, 0x36, 0x25, 0x0c, 0x43, 0xc1, 0x47, 0x1b, 0x30, 0xdd,
-	0xf1, 0xed, 0x98, 0x5c, 0x89, 0x92, 0x7b, 0x7f, 0x7f, 0x72, 0xcd, 0x04, 0xc1, 0x90, 0xb1, 0xd1,
-	0x5d, 0x98, 0x27, 0x7f, 0xbd, 0xc8, 0x89, 0x09, 0x96, 0x29, 0xc1, 0xc7, 0x07, 0x13, 0x94, 0x90,
-	0x8c, 0x34, 0x15, 0xbd, 0x09, 0x73, 0xcb, 0x51, 0x64, 0x5a, 0x7b, 0xd8, 0x66, 0x0b, 0x84, 0xea,
-	0x50, 0xf1, 0xcc, 0x36, 0x56, 0x96, 0x85, 0x42, 0xd0, 0x19, 0x00, 0x1b, 0x1f, 0x38, 0x16, 0x6e,
-	0x9a, 0xd1, 0x9e, 0xb2, 0x2c, 0x12, 0x5c, 0x77, 0xa0, 0xb6, 0x7c, 0xe0, 0x3b, 0x76, 0xd3, 0xb7,
-	0x43, 0xf4, 0x0a, 0xcc, 0x77, 0x02, 0xbc, 0x8b, 0x83, 0x18, 0x54, 0xd7, 0x4e, 0x97, 0xcf, 0x4e,
-	0x5f, 0xbe, 0x3c, 0xa0, 0xdf, 0x2a, 0xd2, 0x9a, 0x17, 0x05, 0xa4, 0xf3, 0x2a, 0x54, 0xff, 0x73,
-	0x0d, 0x4e, 0x2e, 0xbf, 0xd6, 0x0d, 0xf0, 0xaa, 0x13, 0xee, 0xa7, 0xf7, 0x97, 0xed, 0x84, 0xfb,
-	0x9b, 0xe9, 0x81, 0xc4, 0x50, 0xb4, 0x04, 0x55, 0xf2, 0xfb, 0xb6, 0xb1, 0xae, 0x8c, 0x44, 0x00,
-	0xd1, 0xa3, 0x30, 0x6d, 0x99, 0xd6, 0x9e, 0xe3, 0xb5, 0x6e, 0xfa, 0x36, 0xa6, 0xb3, 0x2d, 0x9e,
-	0x91, 0x1b, 0xa4, 0x7d, 0x5a, 0xc9, 0xd9, 0xa7, 0xf2, 0x1e, 0x9c, 0xc8, 0xdd, 0x83, 0x9f, 0x12,
-	0x63, 0xb8, 0xea, 0xb8, 0xea, 0x19, 0x39, 0x03, 0x10, 0x62, 0x2b, 0xc0, 0x51, 0x66, 0x14, 0x12,
-	0x9c, 0x9c, 0x84, 0x70, 0xcf, 0x0c, 0x30, 0x7d, 0x48, 0x1e, 0x49, 0x02, 0x56, 0x7a, 0x51, 0xce,
-	0xed, 0xc5, 0x57, 0x34, 0xa8, 0x5e, 0x71, 0x3c, 0xdb, 0xf1, 0x5a, 0x68, 0x15, 0xa6, 0xda, 0x38,
-	0x32, 0x6d, 0x33, 0x32, 0xf9, 0x21, 0x38, 0xdb, 0x7f, 0xb1, 0x6e, 0xed, 0x7c, 0x02, 0x5b, 0xd1,
-	0x4d, 0x1c, 0x99, 0x46, 0x8c, 0x89, 0xd6, 0x60, 0x32, 0x32, 0x83, 0x16, 0x8e, 0xf8, 0xce, 0x7f,
-	0xbc, 0x08, 0x0d, 0x83, 0xac, 0x2f, 0xf6, 0x2c, 0x6c, 0x70, 0x64, 0xfd, 0x09, 0x98, 0x59, 0x31,
-	0x3b, 0xe6, 0x8e, 0xe3, 0x3a, 0x91, 0x83, 0x43, 0xb4, 0x00, 0x65, 0xd3, 0xb6, 0xe9, 0x26, 0xaa,
-	0x19, 0xe4, 0x27, 0x42, 0x50, 0xb1, 0x03, 0xbf, 0x53, 0x2f, 0x51, 0x10, 0xfd, 0xad, 0xff, 0x97,
-	0x06, 0x68, 0x05, 0x77, 0xf6, 0xae, 0x6e, 0x29, 0x33, 0xba, 0x08, 0x53, 0x6d, 0xdf, 0x73, 0x22,
-	0x3f, 0x08, 0x39, 0x85, 0xf8, 0x3f, 0xd9, 0xf6, 0x9d, 0xf4, 0xb6, 0xa6, 0x10, 0xd2, 0xd2, 0x0d,
-	0x71, 0xa0, 0x6c, 0x01, 0x0a, 0x49, 0x56, 0x88, 0xac, 0x9d, 0xb2, 0xfe, 0x12, 0x1c, 0x35, 0xa1,
-	0xc6, 0xfe, 0x19, 0x78, 0x97, 0x6e, 0x82, 0x81, 0xbb, 0xff, 0x86, 0x6f, 0x99, 0x6e, 0x7a, 0x46,
-	0x12, 0x22, 0xca, 0x7a, 0x4e, 0xe6, 0xae, 0xe7, 0x01, 0xa0, 0x15, 0xc7, 0xb3, 0x71, 0x30, 0x56,
-	0xae, 0x3b, 0x78, 0x1f, 0x7d, 0x86, 0x4c, 0xbc, 0xdf, 0xee, 0xf8, 0x1e, 0xf6, 0xa2, 0x15, 0xdf,
-	0xb3, 0x19, 0x2b, 0xae, 0x43, 0x25, 0x22, 0x44, 0x15, 0x9e, 0x42, 0x20, 0xe4, 0x85, 0x61, 0x64,
-	0x46, 0xdd, 0x50, 0x7d, 0x21, 0x83, 0x91, 0x43, 0xda, 0xc6, 0x61, 0x68, 0xb6, 0xd4, 0x03, 0x28,
-	0x80, 0x68, 0x11, 0x26, 0x70, 0x10, 0xf8, 0x81, 0x32, 0xf7, 0x0c, 0xa4, 0xbf, 0xae, 0xc1, 0x7c,
-	0xdc, 0x95, 0x2d, 0x46, 0x6f, 0x3c, 0x5b, 0xbb, 0x09, 0x60, 0x89, 0xa1, 0x85, 0x74, 0xdf, 0x4d,
-	0x5f, 0xbe, 0xd8, 0x9f, 0x4e, 0x76, 0x4e, 0x0c, 0x89, 0x86, 0xfe, 0x07, 0x1a, 0x1c, 0x4f, 0xf5,
-	0xf5, 0x86, 0x13, 0x46, 0x68, 0x23, 0xd3, 0xdf, 0x0b, 0x7d, 0xde, 0x23, 0xdd, 0xfb, 0x0d, 0x82,
-	0x9e, 0xea, 0xf6, 0x0a, 0x4c, 0x38, 0x11, 0x6e, 0x8b, 0x1e, 0x3f, 0x5e, 0xb0, 0xc7, 0xac, 0x3b,
-	0x06, 0xc3, 0xd5, 0xff, 0x4e, 0x83, 0xda, 0x8a, 0xef, 0xed, 0x3a, 0xad, 0x9b, 0x66, 0x67, 0x6c,
-	0xac, 0xa2, 0x42, 0x29, 0xb0, 0x7e, 0x5d, 0x1a, 0xd4, 0x2f, 0xfe, 0xf2, 0xc6, 0xaa, 0x19, 0x99,
-	0xec, 0x62, 0xa0, 0xe8, 0x8b, 0x2b, 0x50, 0x8b, 0x41, 0xe8, 0x14, 0x94, 0xf7, 0xf1, 0x91, 0xb2,
-	0xe1, 0x08, 0x80, 0xec, 0x98, 0x03, 0xd3, 0xed, 0xaa, 0xfb, 0x9b, 0x81, 0x9e, 0x29, 0x3d, 0xa5,
-	0x11, 0x46, 0x78, 0x22, 0x7e, 0xc5, 0x06, 0x3e, 0xda, 0xc2, 0x2e, 0xb6, 0x22, 0x3f, 0x40, 0xbb,
-	0x70, 0xc2, 0xcd, 0x39, 0x96, 0x7c, 0xd8, 0xa3, 0x1c, 0xe8, 0x5c, 0x7a, 0xa2, 0xe3, 0xa5, 0x54,
-	0xc7, 0xf5, 0xdf, 0xd4, 0x60, 0x36, 0xee, 0xd8, 0xf8, 0x37, 0xc7, 0x47, 0xd4, 0xcd, 0xf1, 0xbe,
-	0x82, 0x8b, 0x20, 0xb6, 0xc5, 0x3f, 0x69, 0x70, 0x32, 0x06, 0x2a, 0x3c, 0xe7, 0xad, 0x9a, 0xb7,
-	0xe1, 0x06, 0xb0, 0x81, 0x8f, 0xb6, 0x7d, 0x22, 0xae, 0xf0, 0x01, 0x90, 0xeb, 0xde, 0xc6, 0xbb,
-	0x66, 0xd7, 0x8d, 0xe2, 0xeb, 0x5e, 0x88, 0x94, 0x72, 0x83, 0xfe, 0x8d, 0x2a, 0xdd, 0xff, 0x91,
-	0xe9, 0x78, 0x38, 0xe8, 0x23, 0x2b, 0x2d, 0xc2, 0x84, 0xd3, 0x26, 0x7c, 0x4b, 0xd9, 0x67, 0x14,
-	0x84, 0xea, 0x50, 0xb5, 0xfc, 0x76, 0xdb, 0xf4, 0xec, 0x7a, 0x99, 0xde, 0x42, 0xe2, 0x2f, 0xb9,
-	0xcb, 0xcc, 0xa0, 0x15, 0xd6, 0x2b, 0xec, 0x2e, 0x23, 0xbf, 0xc9, 0x25, 0x73, 0xcf, 0x0f, 0xf6,
-	0x1d, 0xaf, 0xb5, 0xea, 0x04, 0xf4, 0xfe, 0x88, 0x2f, 0x99, 0x04, 0x8e, 0x96, 0x61, 0xa2, 0xe3,
-	0x07, 0x51, 0x58, 0x9f, 0xa4, 0xc3, 0x7f, 0x6c, 0xe0, 0xfa, 0xb1, 0x11, 0x34, 0xfd, 0x20, 0x32,
-	0x18, 0x26, 0xfa, 0x10, 0x94, 0xb1, 0x77, 0x50, 0xaf, 0x52, 0x02, 0x67, 0xfa, 0x13, 0x58, 0xf3,
-	0x0e, 0xee, 0x98, 0x81, 0x41, 0x10, 0xc8, 0xfd, 0x26, 0xb4, 0x94, 0xb0, 0x3e, 0x55, 0x64, 0x59,
-	0x0d, 0xfe, 0xb8, 0x81, 0x5f, 0xed, 0x3a, 0x01, 0x6e, 0x63, 0x2f, 0x0a, 0x8d, 0x84, 0x08, 0xba,
-	0x09, 0x33, 0xec, 0x46, 0xba, 0xe9, 0x77, 0xbd, 0x28, 0xac, 0xd7, 0x68, 0x97, 0x06, 0xc8, 0xce,
-	0x77, 0x12, 0x0c, 0x43, 0x41, 0x47, 0xeb, 0x30, 0xeb, 0x3a, 0x07, 0xd8, 0xc3, 0x61, 0xd8, 0x0c,
-	0xfc, 0x1d, 0x5c, 0x07, 0xda, 0xc9, 0xf7, 0x0c, 0x12, 0x41, 0xfd, 0x1d, 0x6c, 0xa8, 0x98, 0x68,
-	0x03, 0xe6, 0xc8, 0x5d, 0xe7, 0x24, 0xb4, 0xa6, 0x8b, 0xd3, 0x4a, 0xa1, 0xa2, 0x35, 0xa8, 0xb9,
-	0xce, 0x2e, 0xb6, 0x8e, 0x2c, 0x17, 0xd7, 0x67, 0x28, 0x9d, 0x01, 0xdb, 0xf6, 0x86, 0x78, 0xdc,
-	0x48, 0x30, 0xd1, 0xb3, 0x70, 0x2a, 0xc2, 0x41, 0xdb, 0xf1, 0x4c, 0x72, 0x99, 0xdc, 0x64, 0x57,
-	0x23, 0x15, 0xd1, 0x67, 0xa5, 0xcd, 0xd2, 0xe3, 0x19, 0xd4, 0x80, 0x79, 0xba, 0x2b, 0x9b, 0x5d,
-	0xd7, 0x6d, 0xfa, 0xae, 0x63, 0x1d, 0xd5, 0xe7, 0x24, 0xb4, 0x74, 0x23, 0xd1, 0x44, 0x42, 0x6c,
-	0x75, 0x03, 0x27, 0x3a, 0x22, 0xbb, 0x08, 0x1f, 0x46, 0xf5, 0xf9, 0x22, 0x02, 0xde, 0x96, 0x8a,
-	0x64, 0xa4, 0xa9, 0x90, 0x13, 0x13, 0x46, 0xb6, 0xe3, 0xd5, 0x17, 0x24, 0xc9, 0x82, 0x81, 0xa8,
-	0x90, 0x4b, 0x7e, 0xdc, 0x22, 0x9c, 0xe3, 0x98, 0xd4, 0x9e, 0x80, 0x09, 0xe3, 0x8c, 0xa2, 0xa3,
-	0x3a, 0x92, 0x5a, 0x09, 0x40, 0x7f, 0x11, 0xe6, 0xe2, 0xed, 0xbe, 0x4e, 0xcf, 0xdf, 0x09, 0x98,
-	0x20, 0x67, 0x54, 0xc8, 0x80, 0xec, 0x0f, 0x7d, 0x87, 0xf3, 0x1a, 0xbe, 0x72, 0x14, 0x61, 0x26,
-	0x8c, 0x94, 0xe3, 0x77, 0x08, 0xb0, 0xfe, 0xa7, 0x8c, 0x09, 0x27, 0x67, 0xa7, 0x0f, 0x07, 0x38,
-	0x0d, 0x53, 0x7b, 0x7e, 0x18, 0x91, 0xa7, 0x28, 0x39, 0xc1, 0x4e, 0x62, 0x28, 0x3a, 0x07, 0xb3,
-	0x96, 0x4c, 0x4c, 0xe1, 0x3a, 0x6a, 0x13, 0xa1, 0x46, 0xd5, 0x6b, 0xcb, 0x77, 0x15, 0x61, 0x27,
-	0x86, 0x12, 0x49, 0x8a, 0x50, 0x5e, 0x6f, 0x2a, 0x3c, 0x82, 0xc3, 0xf4, 0x5f, 0x2e, 0x49, 0xd3,
-	0x40, 0xae, 0x74, 0x8c, 0x6e, 0x42, 0xf5, 0x9e, 0xe9, 0x44, 0x8e, 0xd7, 0xe2, 0xcc, 0xf8, 0x03,
-	0x05, 0x99, 0x06, 0x45, 0xbf, 0xcb, 0x50, 0x0d, 0x41, 0x83, 0x90, 0x0b, 0xba, 0x9e, 0x47, 0xc8,
-	0x95, 0x86, 0x27, 0x67, 0x30, 0x54, 0x43, 0xd0, 0x40, 0x77, 0x00, 0xc4, 0x8e, 0xc5, 0x36, 0x57,
-	0x76, 0x3f, 0x34, 0x0c, 0xc5, 0xed, 0x18, 0xdb, 0x90, 0x28, 0xe9, 0x3b, 0xf4, 0xa2, 0xca, 0xbe,
-	0x19, 0xad, 0x93, 0x3d, 0x66, 0x06, 0x11, 0xb6, 0x97, 0x23, 0x3e, 0x21, 0x8f, 0x15, 0xbc, 0x4f,
-	0xb7, 0x9d, 0x36, 0x91, 0xcf, 0x05, 0xb6, 0xfe, 0xc3, 0x12, 0xd4, 0x7b, 0x75, 0x86, 0xac, 0x24,
-	0x3e, 0x74, 0xa2, 0x15, 0x72, 0xcd, 0x68, 0xf2, 0xbe, 0x10, 0x50, 0x2a, 0x13, 0x3b, 0x2d, 0xcf,
-	0x74, 0x95, 0x7d, 0xc3, 0x61, 0xa4, 0x35, 0xc0, 0x66, 0xc8, 0xed, 0x1e, 0xf1, 0x3a, 0x33, 0x98,
-	0x2c, 0x31, 0x57, 0xf2, 0x24, 0x66, 0x65, 0x94, 0x13, 0xf7, 0x33, 0x4a, 0xb4, 0x01, 0xb0, 0xeb,
-	0x78, 0x4e, 0xb8, 0x47, 0x69, 0x4d, 0x0e, 0x4f, 0x4b, 0x42, 0xa7, 0xea, 0x76, 0x7c, 0x4a, 0x57,
-	0xeb, 0x55, 0x45, 0xdd, 0x4e, 0x1a, 0xf4, 0xdb, 0xe9, 0xe5, 0xe3, 0xfb, 0x50, 0x9a, 0x16, 0xad,
-	0xff, 0xb4, 0x94, 0x72, 0xa6, 0x45, 0xff, 0x49, 0x89, 0x28, 0x0b, 0x12, 0xdd, 0x6e, 0xd8, 0xe7,
-	0x68, 0x5f, 0x21, 0xac, 0xca, 0x8c, 0x30, 0xdf, 0xe8, 0xe7, 0x87, 0xda, 0xe8, 0x0c, 0x15, 0xbd,
-	0x08, 0x35, 0xd7, 0x0c, 0xa9, 0x74, 0x8d, 0xf9, 0xf6, 0x1e, 0x8e, 0x4e, 0x82, 0x4e, 0x58, 0x27,
-	0xb9, 0x5a, 0x54, 0x33, 0x17, 0x03, 0xa1, 0xb3, 0x30, 0x13, 0x60, 0xba, 0x68, 0x2b, 0xe4, 0x36,
-	0xa4, 0x6b, 0x2e, 0xb6, 0x94, 0xd2, 0x92, 0x88, 0x2c, 0x93, 0x59, 0x91, 0x65, 0x09, 0xaa, 0xf4,
-	0x47, 0x6a, 0x69, 0x04, 0x30, 0xbd, 0x7c, 0x53, 0xbd, 0x96, 0xef, 0x1c, 0xcc, 0xad, 0x9a, 0xb8,
-	0xed, 0x7b, 0x6b, 0x9e, 0xdd, 0xf1, 0x1d, 0x8f, 0x32, 0x50, 0xca, 0xfb, 0xe4, 0xa3, 0x40, 0x21,
-	0xfa, 0xf7, 0x35, 0x98, 0x5d, 0xc5, 0x2e, 0x8e, 0xf0, 0xad, 0x0e, 0x55, 0x93, 0xd0, 0x13, 0x80,
-	0x5a, 0x81, 0x69, 0xe1, 0x26, 0x0e, 0x1c, 0xdf, 0xde, 0xc2, 0x44, 0x83, 0x0a, 0x29, 0xa6, 0xe0,
-	0xd5, 0x39, 0xed, 0xe8, 0x25, 0x98, 0xed, 0x04, 0x58, 0xd1, 0xd8, 0xb4, 0xc1, 0x22, 0x52, 0x53,
-	0x46, 0x31, 0x54, 0x0a, 0xe8, 0x22, 0x2c, 0xf8, 0x41, 0x67, 0xcf, 0xf4, 0x56, 0x71, 0x07, 0x7b,
-	0x36, 0x91, 0x5f, 0x14, 0x85, 0x38, 0xd3, 0xaa, 0xff, 0x5c, 0x83, 0x93, 0xab, 0xfe, 0x3d, 0xef,
-	0x9e, 0x19, 0xd8, 0xcb, 0xcd, 0x75, 0x26, 0xac, 0x50, 0xf3, 0x80, 0x30, 0x3c, 0x68, 0x19, 0xc3,
-	0xc3, 0x4d, 0x98, 0xda, 0x75, 0xb0, 0x6b, 0x1b, 0x78, 0x97, 0xf7, 0xf9, 0x52, 0x11, 0xed, 0xea,
-	0x2a, 0xc1, 0x11, 0x7a, 0x8b, 0x11, 0x93, 0x40, 0x1f, 0x87, 0x05, 0x21, 0x62, 0x5d, 0x15, 0x64,
-	0xcb, 0x45, 0x38, 0xb5, 0x21, 0x63, 0xc5, 0x84, 0x33, 0xc4, 0xc8, 0x48, 0xda, 0x84, 0xab, 0x55,
-	0xe4, 0xa5, 0x24, 0x10, 0xfd, 0xb3, 0x1a, 0x3c, 0x9c, 0x19, 0x3d, 0x57, 0x10, 0xd6, 0x85, 0xe0,
-	0xce, 0x0c, 0x83, 0x03, 0xfa, 0x92, 0x3b, 0x87, 0x3d, 0x84, 0xf8, 0x52, 0x2f, 0x21, 0xfe, 0x09,
-	0x38, 0xb1, 0xd6, 0xee, 0x44, 0x47, 0xab, 0x8e, 0x6a, 0x1f, 0x79, 0x04, 0x26, 0xdb, 0xd8, 0x76,
-	0xba, 0x6d, 0x95, 0x87, 0x30, 0x98, 0xfe, 0x67, 0x1a, 0xcc, 0x8b, 0x6d, 0xbb, 0x6c, 0xdb, 0x01,
-	0x0e, 0x43, 0x74, 0x02, 0x4a, 0x4e, 0x47, 0x79, 0xba, 0xe4, 0x74, 0xd0, 0x06, 0xd4, 0x98, 0xf9,
-	0x2a, 0x59, 0xb9, 0x21, 0xcd, 0x5f, 0x09, 0xbe, 0x90, 0x23, 0x28, 0x2b, 0x92, 0x39, 0x7e, 0x0c,
-	0x25, 0x4f, 0x78, 0xbe, 0xcd, 0x2c, 0x80, 0x8a, 0x6c, 0x20, 0xa0, 0xba, 0x0d, 0x33, 0xa2, 0xe7,
-	0x03, 0xa4, 0x16, 0xb2, 0x1b, 0xd3, 0x12, 0x0b, 0x85, 0x28, 0x12, 0x48, 0x39, 0x4f, 0x02, 0xd1,
-	0xff, 0x43, 0x83, 0x39, 0xf1, 0x9a, 0xad, 0xee, 0x4e, 0x88, 0xc9, 0x1d, 0x51, 0x33, 0xd9, 0x54,
-	0x61, 0xb1, 0xc0, 0x8f, 0x0f, 0xd2, 0x2c, 0x94, 0x19, 0x36, 0x12, 0x7c, 0xf4, 0x32, 0x1c, 0xf3,
-	0xfc, 0xc8, 0x20, 0x6c, 0x6d, 0x39, 0x26, 0x5a, 0x1a, 0x85, 0x68, 0x96, 0x0e, 0x7a, 0x41, 0x28,
-	0x50, 0x65, 0x4a, 0xf0, 0x5c, 0x31, 0x82, 0x92, 0xfe, 0xa4, 0xff, 0x86, 0x06, 0x35, 0x01, 0x1f,
-	0x97, 0xa9, 0xe9, 0x2a, 0x54, 0x43, 0x3a, 0x93, 0x62, 0xa0, 0xe7, 0x8b, 0xf5, 0x8b, 0x4d, 0xbf,
-	0x21, 0x90, 0xa9, 0xf5, 0x20, 0xee, 0xdb, 0xdb, 0x6d, 0x3d, 0x88, 0x3b, 0x22, 0xac, 0x07, 0x9f,
-	0xd1, 0x60, 0x92, 0x69, 0x94, 0xfd, 0x35, 0xea, 0x5e, 0x96, 0x1b, 0x74, 0x1d, 0x6a, 0xf4, 0xc7,
-	0xd5, 0xc0, 0x6f, 0x73, 0x9e, 0x76, 0xae, 0x88, 0x02, 0xcb, 0xce, 0xbd, 0x91, 0x20, 0xeb, 0x3f,
-	0x2b, 0x91, 0xa3, 0x92, 0xb4, 0x29, 0x4c, 0x58, 0x7b, 0x30, 0x4c, 0xb8, 0x34, 0x4e, 0x26, 0xfc,
-	0x0a, 0xcc, 0x5b, 0x92, 0xfd, 0x2a, 0x61, 0xf2, 0x97, 0x0b, 0x9a, 0x74, 0x24, 0xa3, 0x97, 0x91,
-	0x26, 0x85, 0xb6, 0x60, 0x86, 0x99, 0xa1, 0x39, 0xe9, 0xca, 0xc0, 0x9d, 0xc3, 0x54, 0x3f, 0x86,
-	0x11, 0xd3, 0x55, 0x88, 0xe8, 0x9f, 0xaa, 0xc0, 0xc4, 0xda, 0x01, 0xf6, 0xa2, 0x31, 0x1d, 0x9a,
-	0xdb, 0x30, 0xe7, 0x78, 0x07, 0xbe, 0x7b, 0x80, 0x6d, 0xd6, 0x3e, 0x1a, 0x0f, 0x4e, 0x11, 0xb9,
-	0x4f, 0xc1, 0x7b, 0x19, 0x26, 0xd9, 0x4a, 0x71, 0xa9, 0x7b, 0x80, 0x35, 0x83, 0xce, 0x07, 0xdf,
-	0x9e, 0x1c, 0x11, 0x6d, 0xc1, 0xdc, 0xae, 0x13, 0x84, 0x11, 0x11, 0x9e, 0xc3, 0xc8, 0x6c, 0x77,
-	0x46, 0x11, 0xba, 0x53, 0x24, 0x88, 0x74, 0x44, 0x04, 0xc9, 0x84, 0x66, 0x75, 0x78, 0x9a, 0x2a,
-	0x05, 0x72, 0x52, 0x2d, 0x2a, 0x6b, 0x4e, 0x49, 0x97, 0x08, 0x03, 0xc5, 0x9e, 0x80, 0x5a, 0xda,
-	0x13, 0xa0, 0x7f, 0x89, 0xb0, 0x4f, 0x32, 0xea, 0xf1, 0xb3, 0xa7, 0xa7, 0x55, 0xf6, 0xf4, 0x9e,
-	0x02, 0x53, 0x2f, 0x58, 0xd3, 0x06, 0x4c, 0x4b, 0x4b, 0x81, 0x74, 0xa8, 0x59, 0xc2, 0x30, 0xae,
-	0xf0, 0xa8, 0x04, 0x4c, 0x86, 0x48, 0xae, 0x66, 0xd5, 0x93, 0x44, 0x20, 0xfa, 0xa3, 0x00, 0x6b,
-	0x87, 0xd8, 0x5a, 0xb6, 0xb8, 0x53, 0x24, 0x36, 0x03, 0x6a, 0x8a, 0x19, 0x50, 0x5f, 0x87, 0xd9,
-	0xb5, 0x43, 0x72, 0xa9, 0x08, 0xc1, 0xf7, 0x11, 0x98, 0xc4, 0x14, 0x40, 0xdf, 0x29, 0xa4, 0x4c,
-	0x0e, 0xa3, 0x5e, 0x90, 0x43, 0x93, 0x6f, 0xf3, 0x58, 0xfc, 0xa7, 0x20, 0xc2, 0x5a, 0xe7, 0xae,
-	0xae, 0x28, 0x52, 0xce, 0x12, 0x00, 0x93, 0x2e, 0xee, 0xde, 0xdd, 0x14, 0x36, 0x10, 0x09, 0x82,
-	0x4e, 0x41, 0xd9, 0xed, 0x7a, 0x8a, 0x04, 0x40, 0x00, 0x92, 0x6f, 0xa8, 0x3c, 0xc0, 0x37, 0x94,
-	0xef, 0x6d, 0x7f, 0xa3, 0x04, 0x0b, 0x57, 0x5d, 0x7c, 0x98, 0x16, 0xb9, 0xec, 0xc0, 0x39, 0xc0,
-	0x81, 0x2a, 0x72, 0x31, 0xd8, 0x00, 0x77, 0x94, 0xe2, 0x58, 0x2b, 0x8f, 0xdb, 0xb1, 0x96, 0x3b,
-	0x08, 0x74, 0x1b, 0xaa, 0x3e, 0x5b, 0x94, 0xfa, 0x04, 0xdd, 0x4c, 0x1f, 0xee, 0xff, 0xc6, 0xf4,
-	0x80, 0x1b, 0x7c, 0x49, 0x99, 0xe3, 0x42, 0xd0, 0x5a, 0xbc, 0x0a, 0x33, 0x72, 0xc3, 0xc8, 0xee,
-	0x8b, 0x8f, 0xc0, 0xf1, 0xab, 0xae, 0x6f, 0xed, 0xa7, 0x1c, 0x7f, 0x44, 0x30, 0x36, 0x23, 0x33,
-	0xcc, 0xf1, 0x25, 0xcb, 0x0d, 0xfa, 0xd7, 0x34, 0x78, 0xd7, 0xb5, 0x95, 0xb5, 0x26, 0x39, 0x4c,
-	0x61, 0x84, 0xbd, 0x28, 0xe3, 0x58, 0x7f, 0x04, 0x26, 0x3b, 0x76, 0x86, 0x08, 0x87, 0xbd, 0x25,
-	0x41, 0x1b, 0xff, 0x5f, 0x83, 0xe3, 0xd7, 0x9c, 0xc8, 0xc0, 0x1d, 0x3f, 0xed, 0x2e, 0x0f, 0x70,
-	0xc7, 0x0f, 0x9d, 0xc8, 0x0f, 0xd4, 0x99, 0x93, 0xe0, 0x8c, 0xfe, 0x81, 0x43, 0x78, 0x85, 0xd2,
-	0xc7, 0x18, 0x4a, 0x7a, 0x69, 0x3b, 0x01, 0xbd, 0xa7, 0x8e, 0x94, 0x9d, 0x9e, 0x80, 0xf5, 0x7b,
-	0x70, 0xf2, 0x9a, 0xdb, 0x0d, 0x23, 0x1c, 0xec, 0x86, 0x4a, 0x27, 0x74, 0xa8, 0x61, 0x21, 0xdd,
-	0xa8, 0xfc, 0x21, 0x06, 0xf7, 0xf1, 0x34, 0x0f, 0xf6, 0xaf, 0xfe, 0x4c, 0x83, 0xd9, 0xeb, 0xdb,
-	0xdb, 0xcd, 0x6b, 0x38, 0x8a, 0xb9, 0x48, 0x2f, 0xf5, 0xf1, 0x8a, 0x24, 0xca, 0x4f, 0x5f, 0x6e,
-	0xf4, 0xd8, 0xa7, 0xdd, 0xc8, 0x71, 0x1b, 0x2c, 0x94, 0xa7, 0xb1, 0xee, 0x45, 0xb7, 0x82, 0xad,
-	0x28, 0x70, 0xbc, 0x16, 0x17, 0xfa, 0x05, 0x2f, 0x2b, 0xa7, 0x79, 0x19, 0x35, 0x52, 0x59, 0x7b,
-	0x38, 0xa5, 0x72, 0x70, 0x18, 0x7a, 0x11, 0xa6, 0xf7, 0xa2, 0xa8, 0x73, 0x1d, 0x9b, 0x36, 0x0e,
-	0xc4, 0x51, 0x19, 0x70, 0x97, 0x93, 0x71, 0x31, 0x04, 0x43, 0x46, 0xd6, 0xaf, 0x00, 0x24, 0x4d,
-	0xa3, 0x09, 0x88, 0xfa, 0x8f, 0x34, 0xa8, 0x5e, 0x37, 0x3d, 0xdb, 0xc5, 0x01, 0x7a, 0x16, 0x2a,
-	0xf8, 0x10, 0x5b, 0xc5, 0x04, 0x8c, 0x84, 0x5f, 0x1b, 0x14, 0x0b, 0xad, 0x41, 0x95, 0x74, 0xee,
-	0x5a, 0x1c, 0xd8, 0xf0, 0xd8, 0xe0, 0x51, 0xc5, 0xab, 0x65, 0x08, 0x5c, 0xaa, 0x22, 0x5a, 0x9d,
-	0x2d, 0x72, 0x54, 0xa3, 0x62, 0xa1, 0x3c, 0xdb, 0x2b, 0x4d, 0xf6, 0x38, 0x27, 0x95, 0xe0, 0xeb,
-	0x17, 0xe1, 0xc4, 0x75, 0x3f, 0x8c, 0x9a, 0x66, 0xb4, 0xa7, 0xec, 0xc6, 0x9e, 0x7b, 0x83, 0xcc,
-	0xc7, 0xb1, 0xf5, 0xad, 0x95, 0x2d, 0x55, 0x15, 0x3f, 0x0b, 0x33, 0xec, 0x1e, 0x20, 0x6a, 0x8d,
-	0xe9, 0x2a, 0x78, 0x4a, 0x0b, 0xe1, 0x4f, 0xce, 0xab, 0xea, 0x09, 0x22, 0x00, 0x71, 0x77, 0x94,
-	0xd3, 0x77, 0xc7, 0x79, 0x98, 0x73, 0x42, 0x2b, 0x74, 0xd6, 0x3d, 0x72, 0x66, 0x4c, 0x4b, 0xdd,
-	0x35, 0xa9, 0x36, 0x89, 0x8d, 0x4c, 0x0c, 0xb8, 0x69, 0xf2, 0xa3, 0x1f, 0xee, 0x42, 0x2d, 0x76,
-	0xf0, 0xf5, 0x64, 0xa5, 0x7d, 0x03, 0x3e, 0xda, 0x69, 0x27, 0x20, 0xb3, 0x63, 0x7c, 0x41, 0x83,
-	0x5a, 0xec, 0x83, 0x41, 0x2b, 0x50, 0xeb, 0xf8, 0xd4, 0x06, 0x17, 0x08, 0x8b, 0xf1, 0x7b, 0x07,
-	0x6c, 0x06, 0xb6, 0x05, 0x8d, 0x04, 0x0f, 0x3d, 0x0f, 0xd5, 0x4e, 0x80, 0xb7, 0x22, 0x1a, 0xc1,
-	0x32, 0x04, 0x09, 0x81, 0xa5, 0xff, 0xaa, 0x06, 0x70, 0xc3, 0x69, 0x3b, 0x91, 0x61, 0x7a, 0x2d,
-	0x3c, 0x26, 0x11, 0xfa, 0x05, 0xa8, 0x84, 0x1d, 0x6c, 0x15, 0x33, 0x70, 0x26, 0x6f, 0xdf, 0xea,
-	0x60, 0xcb, 0xa0, 0x98, 0xfa, 0x37, 0xa7, 0x60, 0x2e, 0x69, 0x58, 0x8f, 0x70, 0xbb, 0x4f, 0x14,
-	0xc8, 0x35, 0x28, 0xb7, 0xcd, 0x43, 0x2e, 0x9e, 0x7d, 0xb0, 0xe8, 0xdb, 0x08, 0xd1, 0xc6, 0x4d,
-	0xf3, 0x90, 0xdd, 0xa5, 0x84, 0x02, 0x25, 0xe4, 0x78, 0x5c, 0x87, 0x1f, 0x92, 0x90, 0xe3, 0x09,
-	0x42, 0x8e, 0x87, 0xb6, 0xa0, 0xca, 0x2d, 0x46, 0xd4, 0x19, 0x3b, 0x7d, 0xf9, 0xe9, 0xa1, 0x88,
-	0xad, 0x32, 0x5c, 0x7e, 0xcb, 0x73, 0x4a, 0x68, 0x0f, 0xe6, 0xf8, 0x4f, 0x03, 0xbf, 0xda, 0xc5,
-	0x61, 0xc4, 0x19, 0xe3, 0x0b, 0xa3, 0xd0, 0xe6, 0x24, 0xd8, 0x2b, 0x52, 0x74, 0xd1, 0x6b, 0x70,
-	0xa2, 0x6d, 0x1e, 0x32, 0x44, 0x06, 0x32, 0xcc, 0xc8, 0xf1, 0xb9, 0x77, 0xf8, 0xea, 0xb0, 0x33,
-	0x9c, 0x21, 0xc4, 0xde, 0x9a, 0xfb, 0x8e, 0xc5, 0x4f, 0xc0, 0x94, 0x58, 0x94, 0x9e, 0x87, 0xef,
-	0x8a, 0xcc, 0xab, 0xfb, 0x6f, 0x30, 0xa1, 0xe1, 0x36, 0x5e, 0xea, 0x9a, 0x5e, 0xe4, 0x44, 0x47,
-	0x92, 0xbc, 0x43, 0xdf, 0xc5, 0xd7, 0xed, 0x81, 0xbf, 0xcb, 0x83, 0x19, 0x79, 0x59, 0x1f, 0xf8,
-	0xfb, 0xba, 0x70, 0x3c, 0x67, 0xa9, 0x1f, 0xf8, 0x6b, 0xff, 0x1f, 0xbc, 0xa3, 0xe7, 0x8a, 0x3f,
-	0xe8, 0x97, 0xeb, 0xbf, 0xa5, 0xc9, 0x5c, 0x63, 0xfc, 0x9a, 0xe0, 0x73, 0xaa, 0x26, 0x78, 0xb6,
-	0xe8, 0x41, 0x10, 0xea, 0xe0, 0x1d, 0xb9, 0x7b, 0x84, 0xdb, 0xa1, 0x55, 0x98, 0x74, 0x09, 0x44,
-	0x98, 0x37, 0xcf, 0x0f, 0x73, 0xb6, 0x0c, 0x8e, 0xab, 0x7f, 0x45, 0x83, 0xca, 0xf8, 0x47, 0xbb,
-	0xac, 0x8e, 0xb6, 0x97, 0xa4, 0xc2, 0x83, 0xbf, 0x1b, 0x86, 0x79, 0x6f, 0xed, 0x30, 0xc2, 0x1e,
-	0x21, 0x28, 0x06, 0xfc, 0xf7, 0x1a, 0x4c, 0x13, 0xca, 0x42, 0x13, 0x3d, 0x07, 0xb3, 0xae, 0xb9,
-	0x83, 0x5d, 0x61, 0xca, 0x51, 0xb6, 0x82, 0xda, 0x44, 0x9e, 0xdd, 0x95, 0xad, 0x55, 0xca, 0x55,
-	0xab, 0x36, 0x11, 0xe1, 0xed, 0x9e, 0x19, 0x59, 0x7b, 0x8a, 0xdc, 0xcb, 0x40, 0xa8, 0x01, 0xf3,
-	0x62, 0xd3, 0xdc, 0x61, 0xc3, 0x55, 0xa4, 0x87, 0x74, 0x23, 0x11, 0x36, 0xc8, 0x78, 0xfc, 0x6e,
-	0x24, 0x5c, 0x44, 0x13, 0x92, 0x8b, 0x28, 0xd5, 0xa6, 0xdf, 0x84, 0xe3, 0x37, 0x7c, 0xd3, 0xbe,
-	0x62, 0xba, 0xa6, 0x67, 0xe1, 0x60, 0xdd, 0x6b, 0xf5, 0xb1, 0xec, 0xcb, 0xc6, 0xf8, 0x52, 0x9e,
-	0x31, 0x5e, 0x37, 0x01, 0xc9, 0xe4, 0xb8, 0x2f, 0x71, 0x03, 0xaa, 0x0e, 0x23, 0xcc, 0xb7, 0xc9,
-	0xa5, 0x41, 0x8a, 0x6a, 0xa6, 0x47, 0x86, 0xa0, 0x40, 0xc4, 0xbd, 0x3c, 0x45, 0xb6, 0xb7, 0x68,
-	0xac, 0xef, 0xc3, 0xfc, 0x66, 0x2a, 0x16, 0x96, 0xc8, 0xef, 0x38, 0xc8, 0x28, 0xde, 0x0c, 0x76,
-	0x5f, 0x3a, 0xca, 0xdf, 0x6a, 0x50, 0x23, 0xda, 0x60, 0xd8, 0x21, 0xb2, 0xdc, 0x78, 0xe4, 0x91,
-	0xe7, 0x15, 0x79, 0x64, 0x80, 0xc8, 0x1d, 0xbf, 0x3c, 0x11, 0x47, 0xd0, 0x5a, 0x1c, 0x67, 0x5a,
-	0x48, 0xd8, 0x4e, 0x48, 0xb0, 0xe8, 0x47, 0x8e, 0x4c, 0xed, 0xe8, 0x71, 0xdb, 0xdb, 0x6d, 0x47,
-	0x8f, 0x3b, 0x22, 0x0e, 0xeb, 0x05, 0xa9, 0x73, 0x94, 0x39, 0x2d, 0x51, 0x17, 0xbd, 0xe9, 0x3a,
-	0xaf, 0xe1, 0x38, 0xe4, 0x59, 0x82, 0xe8, 0x8f, 0xc3, 0x7c, 0x6a, 0xa4, 0xe4, 0x20, 0x76, 0xf6,
-	0xcc, 0x50, 0xdd, 0x45, 0x0c, 0xa4, 0x7f, 0x5f, 0x83, 0xca, 0xa6, 0x6f, 0x8f, 0x6b, 0x51, 0x9f,
-	0x51, 0x16, 0xf5, 0xd1, 0xc1, 0x99, 0x16, 0xd2, 0x7a, 0xbe, 0x90, 0x5a, 0xcf, 0xb3, 0x05, 0xb0,
-	0xd5, 0xa5, 0xbc, 0x06, 0xd3, 0x34, 0x7b, 0x83, 0x7b, 0xf2, 0x7a, 0x0b, 0xa7, 0x4b, 0x50, 0xe5,
-	0x3e, 0x28, 0x35, 0x76, 0x80, 0x03, 0xf5, 0xbf, 0x2c, 0xc1, 0x8c, 0x9c, 0x07, 0x82, 0xbe, 0xa8,
-	0x41, 0x23, 0x60, 0xa1, 0x6d, 0xf6, 0x6a, 0x97, 0x68, 0xd3, 0x5b, 0xd6, 0x1e, 0xb6, 0xbb, 0xae,
-	0xe3, 0xb5, 0xd6, 0x5b, 0x9e, 0x1f, 0x83, 0x89, 0x72, 0xd9, 0xa5, 0xd6, 0x90, 0xc2, 0xc9, 0x26,
-	0xb1, 0x09, 0x7d, 0xc8, 0x37, 0xa0, 0xaf, 0x6a, 0x70, 0x81, 0xe5, 0x4f, 0x14, 0xef, 0x55, 0x21,
-	0x79, 0xbc, 0x29, 0x88, 0x26, 0xe4, 0xb6, 0x71, 0xd0, 0x36, 0x86, 0x7d, 0x9b, 0xfe, 0xed, 0x12,
-	0xcc, 0x92, 0x21, 0xde, 0x7f, 0xd8, 0xf8, 0x47, 0xe1, 0x98, 0x6b, 0x86, 0xd1, 0x75, 0x6c, 0x06,
-	0xd1, 0x0e, 0x36, 0xa9, 0x69, 0x9a, 0xef, 0x93, 0xa1, 0xec, 0xda, 0x59, 0x2a, 0xe8, 0x65, 0x40,
-	0xd4, 0xd8, 0x1d, 0x98, 0x5e, 0x48, 0x3b, 0x49, 0x69, 0x57, 0x86, 0xa7, 0x9d, 0x43, 0x46, 0xf2,
-	0x30, 0x4c, 0xf4, 0xf7, 0x30, 0x4c, 0xe6, 0xc5, 0xb0, 0xb4, 0xe1, 0x38, 0x99, 0x3e, 0x35, 0xbe,
-	0x22, 0x44, 0x77, 0x60, 0x9e, 0xf4, 0xc7, 0xc5, 0x91, 0x80, 0xf1, 0xdd, 0x36, 0x40, 0x52, 0x51,
-	0xe9, 0x18, 0x69, 0x22, 0x44, 0x17, 0x9e, 0x22, 0xef, 0x1b, 0x3f, 0x17, 0x7c, 0x4a, 0xe5, 0x82,
-	0xfa, 0xe0, 0x53, 0x21, 0x18, 0xe0, 0x79, 0x58, 0x20, 0x7f, 0x9b, 0x81, 0x7f, 0x78, 0x24, 0x24,
-	0x96, 0xde, 0x46, 0x10, 0x97, 0x9d, 0xdb, 0x58, 0x06, 0x79, 0x05, 0x8e, 0x79, 0xd2, 0x7f, 0xb2,
-	0x8b, 0xc5, 0x75, 0xdd, 0x28, 0x7e, 0x32, 0xe9, 0xe6, 0xcf, 0x12, 0xd2, 0xf7, 0xe1, 0x61, 0xe5,
-	0x00, 0x27, 0xb1, 0xaf, 0x3d, 0xa5, 0xea, 0xd3, 0x30, 0xe5, 0x77, 0x70, 0x60, 0xa6, 0x65, 0xa7,
-	0x18, 0x8a, 0x4e, 0xc1, 0x24, 0x15, 0x9e, 0x43, 0x1e, 0x49, 0xcc, 0xff, 0xe9, 0x5d, 0x36, 0x11,
-	0x72, 0x0f, 0x90, 0x09, 0x0b, 0x6d, 0x22, 0x4f, 0xad, 0x1d, 0x76, 0x08, 0xdf, 0xa2, 0x36, 0x6c,
-	0xad, 0xc8, 0x09, 0xef, 0xd1, 0x6d, 0x23, 0x43, 0x4e, 0xff, 0x1d, 0xbe, 0x27, 0xf8, 0xe5, 0x53,
-	0xed, 0xf8, 0xf6, 0xca, 0xfa, 0xaa, 0xa1, 0x8c, 0x4c, 0x00, 0xd1, 0x19, 0x00, 0x7c, 0x18, 0xe1,
-	0xc0, 0x33, 0xdd, 0xf5, 0x55, 0x35, 0x9d, 0x2c, 0x81, 0x93, 0xa7, 0x3a, 0x81, 0x7f, 0xe0, 0xd8,
-	0x34, 0xb0, 0x48, 0xb6, 0x43, 0x4a, 0x70, 0x22, 0x6a, 0x76, 0xbd, 0x90, 0x71, 0x18, 0x73, 0x87,
-	0x27, 0xe3, 0x08, 0xd1, 0x44, 0x6d, 0xd2, 0xbf, 0x5d, 0x05, 0x48, 0xee, 0x03, 0x64, 0xc0, 0x94,
-	0x65, 0x76, 0x4c, 0x8b, 0xe5, 0xfc, 0x95, 0x07, 0x87, 0x19, 0x26, 0xb8, 0x8d, 0x15, 0x8e, 0xc8,
-	0xd4, 0xe1, 0x98, 0x0e, 0x7a, 0x19, 0xa6, 0x4d, 0xd7, 0xf5, 0x2d, 0x33, 0xa2, 0x9d, 0x29, 0x15,
-	0xb1, 0x20, 0x48, 0x64, 0x97, 0x13, 0x5c, 0x46, 0x59, 0xa6, 0x96, 0xdc, 0xd0, 0xe5, 0xcc, 0x0d,
-	0x8d, 0x36, 0x94, 0xd4, 0x94, 0x4a, 0x91, 0x58, 0x70, 0x85, 0xe5, 0xca, 0x59, 0x29, 0xe8, 0x9a,
-	0x1c, 0xbc, 0x31, 0x51, 0x24, 0x06, 0x5b, 0xba, 0x50, 0xd5, 0xc0, 0x8d, 0x79, 0x5b, 0xe5, 0x4a,
-	0xdc, 0x73, 0x79, 0x69, 0x30, 0xb9, 0x14, 0x3b, 0x33, 0xd2, 0x94, 0xd0, 0x75, 0x16, 0xfd, 0xb2,
-	0xee, 0xed, 0xfa, 0xdc, 0x77, 0x79, 0xbe, 0xc0, 0x44, 0x1f, 0x85, 0x11, 0x6e, 0x13, 0x1c, 0x23,
-	0xc6, 0x26, 0xaa, 0x1c, 0x8d, 0x67, 0x0b, 0xeb, 0x53, 0x45, 0x54, 0x39, 0x35, 0xaa, 0xd8, 0xe0,
-	0xb8, 0x48, 0x17, 0xc1, 0xeb, 0xe1, 0xba, 0x77, 0x3b, 0xc4, 0x34, 0x78, 0xbd, 0x66, 0x28, 0x30,
-	0xc2, 0x93, 0xf9, 0x7f, 0x91, 0x7c, 0x59, 0x87, 0x22, 0xaf, 0x54, 0x53, 0x35, 0x8d, 0x34, 0x91,
-	0x45, 0x1f, 0x66, 0x95, 0x2d, 0xf9, 0xc0, 0x8d, 0x05, 0x01, 0x2c, 0xa4, 0x37, 0xeb, 0x03, 0xb7,
-	0x11, 0x7c, 0xa7, 0x0c, 0x73, 0xea, 0x1a, 0x22, 0x1d, 0x6a, 0x6d, 0x9a, 0x93, 0x99, 0xce, 0x6c,
-	0x4b, 0xc0, 0x34, 0x59, 0x8f, 0x62, 0xdc, 0xbe, 0x9d, 0x66, 0x37, 0x09, 0x9c, 0x5c, 0xc1, 0x3b,
-	0xbe, 0x1f, 0xa5, 0x58, 0x0d, 0x87, 0x11, 0x36, 0xb3, 0x4f, 0xfa, 0xea, 0xe6, 0xe9, 0xa1, 0x6a,
-	0x13, 0x61, 0x7f, 0x7e, 0x48, 0xb7, 0x86, 0x72, 0x9b, 0x0b, 0x20, 0x7a, 0x0e, 0x1e, 0x8e, 0x23,
-	0x23, 0x0d, 0xa6, 0x81, 0x0b, 0xaa, 0xf2, 0xf5, 0xde, 0xeb, 0x21, 0xa2, 0xe5, 0xf2, 0x2b, 0x59,
-	0xa0, 0xc9, 0x91, 0x99, 0xa9, 0x36, 0x74, 0x11, 0x16, 0x08, 0x84, 0xde, 0x8c, 0xe2, 0x79, 0x39,
-	0x4a, 0x33, 0xd3, 0x4a, 0xb4, 0x6e, 0x76, 0xcd, 0x10, 0xd9, 0x8d, 0x4e, 0x90, 0xe2, 0xb4, 0x4f,
-	0x37, 0xa2, 0xb3, 0x30, 0x63, 0x06, 0xd6, 0x9e, 0x13, 0x61, 0x2b, 0xea, 0x06, 0x2c, 0xc9, 0x22,
-	0x76, 0x1e, 0xc8, 0x2d, 0xfa, 0xc7, 0xe1, 0x78, 0x4e, 0x90, 0x0c, 0x59, 0x20, 0xb3, 0xe3, 0x88,
-	0xce, 0x29, 0x0e, 0xbc, 0x04, 0x4e, 0x96, 0x9a, 0x5a, 0x0e, 0x32, 0x39, 0xc8, 0x09, 0x58, 0xff,
-	0x71, 0x15, 0x20, 0xd1, 0x38, 0xfa, 0xb8, 0x8c, 0xce, 0xc2, 0x8c, 0x48, 0x5f, 0xcf, 0xe4, 0xcf,
-	0x2a, 0x2d, 0xe4, 0xb5, 0x9e, 0xd0, 0x94, 0x54, 0xaf, 0x60, 0x0c, 0x26, 0xd7, 0x75, 0x88, 0xdd,
-	0xdd, 0x1b, 0x8e, 0xb7, 0xaf, 0xc6, 0xe1, 0x09, 0x28, 0x39, 0x1a, 0x5d, 0xc7, 0x56, 0xf6, 0x03,
-	0x01, 0xe4, 0x59, 0x38, 0x26, 0xfb, 0x59, 0x38, 0xce, 0x00, 0xf0, 0xde, 0x89, 0x75, 0x17, 0xd6,
-	0x0d, 0x09, 0x4e, 0xc4, 0x60, 0x2b, 0xc0, 0xa6, 0x10, 0x2f, 0x59, 0x78, 0xc7, 0xd4, 0x08, 0x62,
-	0x70, 0x86, 0x0a, 0x21, 0x6d, 0x93, 0xed, 0xa5, 0x90, 0xae, 0x8d, 0x40, 0x3a, 0x43, 0x05, 0xad,
-	0xc2, 0xa2, 0x00, 0x5e, 0xcb, 0x06, 0xfb, 0x82, 0x34, 0xd6, 0x3e, 0xcf, 0xa1, 0x1b, 0x30, 0x49,
-	0x8d, 0x51, 0x61, 0x7d, 0x9a, 0x32, 0xd6, 0x27, 0x8a, 0xea, 0xa7, 0x8d, 0x1b, 0x14, 0x8d, 0xdd,
-	0xbb, 0x9c, 0x06, 0xbd, 0xcf, 0x3d, 0xcf, 0x8f, 0x4c, 0x76, 0xaf, 0xce, 0x14, 0xb9, 0xcf, 0x25,
-	0x92, 0xcb, 0x09, 0xae, 0xb8, 0xcf, 0x13, 0x08, 0xb9, 0x0c, 0xfc, 0x7b, 0xe4, 0x7c, 0x0b, 0x43,
-	0x4e, 0x58, 0x9f, 0x2d, 0x72, 0x19, 0xdc, 0x52, 0x90, 0x8c, 0x34, 0x91, 0x94, 0xf2, 0x3f, 0x97,
-	0x56, 0xfe, 0x69, 0xcc, 0x36, 0x73, 0x62, 0xd3, 0xbd, 0x3f, 0xaf, 0xc4, 0x6c, 0x27, 0x0d, 0x8b,
-	0x6b, 0x30, 0x2d, 0xcd, 0xc9, 0xa8, 0xa1, 0x09, 0x8b, 0x2f, 0xc2, 0x42, 0x7a, 0x1e, 0x46, 0x0e,
-	0x73, 0xf8, 0xb9, 0x06, 0xf3, 0x39, 0xd6, 0xaf, 0x7d, 0x87, 0xc6, 0xd2, 0x48, 0xa7, 0x9c, 0x40,
-	0xd4, 0xb3, 0x5b, 0xca, 0x3f, 0xbb, 0x82, 0x47, 0x94, 0x33, 0x3c, 0x82, 0x9f, 0xd9, 0x4a, 0xfa,
-	0xcc, 0xaa, 0xec, 0x6a, 0xa2, 0x07, 0xbb, 0x1a, 0xf6, 0x64, 0x2b, 0xec, 0xad, 0x9a, 0xcf, 0xde,
-	0xbe, 0xae, 0xc1, 0x9c, 0xba, 0xf8, 0x7d, 0x06, 0xff, 0xa0, 0x06, 0x76, 0x86, 0x4a, 0x9a, 0x51,
-	0xe0, 0xbb, 0x2e, 0x0e, 0x14, 0x3f, 0xac, 0x04, 0xd7, 0xff, 0x4d, 0x83, 0x85, 0x24, 0x9a, 0x84,
-	0x57, 0x98, 0x18, 0x57, 0x68, 0xac, 0x6c, 0x3d, 0x1a, 0x54, 0x4f, 0x22, 0xd5, 0x07, 0xc9, 0x92,
-	0x74, 0x23, 0x65, 0x49, 0x7a, 0x62, 0x48, 0x4a, 0xaa, 0x55, 0xe9, 0x3f, 0x35, 0x38, 0x99, 0x7e,
-	0x64, 0xc5, 0x35, 0x9d, 0xf6, 0x98, 0x46, 0xbd, 0xa1, 0x8c, 0xfa, 0xc9, 0xe1, 0xfa, 0x4a, 0x3b,
-	0x22, 0x0d, 0xfd, 0xa5, 0xd4, 0xd0, 0x9f, 0x1e, 0x85, 0x9c, 0x3a, 0xfe, 0x6f, 0x6a, 0xf0, 0x8e,
-	0xdc, 0xe7, 0xc6, 0x6f, 0x26, 0x58, 0x57, 0xcd, 0x04, 0x1f, 0x18, 0xa1, 0xf3, 0xc2, 0x6e, 0xf0,
-	0xe9, 0x52, 0x8f, 0x5e, 0x53, 0x45, 0xf6, 0x34, 0x4c, 0x9b, 0x96, 0x85, 0xc3, 0xf0, 0xa6, 0x6f,
-	0xc7, 0x59, 0x83, 0x32, 0x48, 0x4d, 0x81, 0x2d, 0x8d, 0x23, 0x05, 0xf6, 0x0c, 0x00, 0x13, 0xee,
-	0x37, 0xd3, 0x87, 0x57, 0x82, 0xa3, 0x26, 0x95, 0x38, 0x98, 0x73, 0xa5, 0x32, 0x70, 0xf7, 0x2a,
-	0xf3, 0x29, 0x7b, 0x6a, 0x8c, 0x98, 0x8a, 0xfe, 0xc7, 0x25, 0x78, 0x67, 0x9f, 0x75, 0xee, 0x67,
-	0x1e, 0x4e, 0xcf, 0x53, 0x29, 0x3b, 0x4f, 0x96, 0xa4, 0x6b, 0x33, 0x1f, 0xfd, 0xb5, 0x91, 0xb7,
-	0x5c, 0x2f, 0xe5, 0xfb, 0x2d, 0x57, 0x82, 0x74, 0x07, 0xde, 0x9d, 0xdb, 0xcf, 0x74, 0x64, 0x98,
-	0x45, 0x80, 0x99, 0xd8, 0xb9, 0x04, 0xac, 0xf8, 0x56, 0x4a, 0xb9, 0xbe, 0x95, 0xd7, 0x35, 0x38,
-	0x91, 0x7e, 0xd7, 0xf8, 0x4f, 0xd6, 0xaa, 0x7a, 0xb2, 0x1a, 0xc3, 0xad, 0x91, 0x38, 0x54, 0xaf,
-	0x03, 0x9c, 0xca, 0x70, 0x4b, 0x36, 0x19, 0x0e, 0x1c, 0x6b, 0x51, 0x89, 0x4d, 0x0a, 0x33, 0xe4,
-	0xdd, 0x1e, 0x10, 0x4f, 0xd9, 0x37, 0x3a, 0xd1, 0xc8, 0x52, 0x45, 0x01, 0x9c, 0x30, 0xef, 0x85,
-	0x99, 0x6a, 0x54, 0x7c, 0xcd, 0x9f, 0x1b, 0xa0, 0x6f, 0x0f, 0xa8, 0x63, 0x65, 0xe4, 0xd2, 0x46,
-	0x9b, 0x3c, 0xf5, 0x97, 0xdc, 0xe1, 0x85, 0xe2, 0x52, 0xf3, 0xa2, 0xb7, 0x8c, 0x98, 0x06, 0x7a,
-	0x09, 0x6a, 0x2d, 0x11, 0x6e, 0xc8, 0xcf, 0xf9, 0x00, 0x6e, 0x97, 0x1b, 0x9d, 0x68, 0x24, 0x54,
-	0xd0, 0xf3, 0x50, 0xf6, 0x76, 0x43, 0x1e, 0x8b, 0x3e, 0xc8, 0x19, 0xa6, 0xba, 0x0e, 0x0d, 0x82,
-	0x49, 0x08, 0x04, 0x3b, 0x36, 0xb7, 0xe3, 0x0c, 0x20, 0x60, 0x5c, 0x59, 0x55, 0x09, 0x04, 0x3b,
-	0x36, 0x5a, 0x83, 0x09, 0x1a, 0xf6, 0xc5, 0x8d, 0x36, 0x03, 0x72, 0x08, 0x32, 0xc1, 0x6a, 0x06,
-	0xc3, 0x46, 0xd7, 0x61, 0xd2, 0xa2, 0x95, 0x6e, 0xb8, 0x66, 0x33, 0xa8, 0x10, 0x4b, 0xa6, 0x2a,
-	0x8e, 0xc1, 0xf1, 0x29, 0x25, 0xdc, 0xd9, 0xdb, 0x0d, 0xb9, 0x22, 0x33, 0x88, 0x52, 0xa6, 0xbe,
-	0x90, 0xc1, 0xf1, 0xd1, 0xb3, 0x50, 0xda, 0xb5, 0x78, 0x95, 0x81, 0x01, 0x42, 0xbc, 0x1a, 0x9b,
-	0x6d, 0x94, 0x76, 0x2d, 0xb4, 0x01, 0xd5, 0x5d, 0x16, 0xc3, 0xcb, 0x8b, 0x0b, 0x5c, 0x1a, 0x14,
-	0x62, 0x9c, 0x09, 0xf8, 0x35, 0x04, 0x05, 0xb4, 0x09, 0xb0, 0x1b, 0x87, 0x20, 0xf3, 0x22, 0x03,
-	0x8d, 0xe1, 0x42, 0x96, 0x0d, 0x89, 0x02, 0xd9, 0x8a, 0xa6, 0xa8, 0x56, 0x45, 0xeb, 0x0b, 0x0c,
-	0xdc, 0x8a, 0xb9, 0xc5, 0xad, 0x8c, 0x84, 0x0a, 0xda, 0x81, 0xd9, 0x83, 0xb0, 0xb3, 0x87, 0xc5,
-	0xd1, 0xa2, 0xf5, 0x07, 0xa6, 0x2f, 0x3f, 0x3b, 0xa0, 0xdc, 0x03, 0x47, 0x71, 0x82, 0xa8, 0x6b,
-	0xba, 0x19, 0x4e, 0xa0, 0x92, 0x24, 0x73, 0xfa, 0x6a, 0xd7, 0xdf, 0x39, 0x8a, 0x30, 0xaf, 0x56,
-	0x30, 0x60, 0x4e, 0x5f, 0x62, 0x0f, 0xab, 0x73, 0xca, 0x29, 0xc4, 0x73, 0x40, 0xb9, 0xd6, 0x42,
-	0xe1, 0x39, 0xc8, 0xf4, 0x31, 0xa1, 0xa2, 0x7f, 0xb6, 0x92, 0xe5, 0xeb, 0x54, 0xf6, 0x78, 0x25,
-	0x63, 0x9d, 0x7e, 0x61, 0x78, 0x49, 0xb7, 0xa7, 0x9d, 0xda, 0x85, 0x53, 0x9d, 0x5c, 0x0e, 0xcd,
-	0xd9, 0xe3, 0xb0, 0xb2, 0x30, 0x1b, 0x57, 0x0f, 0x9a, 0x69, 0xf9, 0xa0, 0x9c, 0x95, 0x0f, 0xd6,
-	0x61, 0x8a, 0xde, 0x86, 0x49, 0x6a, 0xd1, 0x90, 0x39, 0x3b, 0x31, 0x3a, 0x7a, 0x11, 0xde, 0x95,
-	0xee, 0x86, 0x81, 0x69, 0x2b, 0xaf, 0x72, 0x21, 0x2b, 0x36, 0xfd, 0x1f, 0x7d, 0xeb, 0x25, 0x8a,
-	0x20, 0xe7, 0xe6, 0x1c, 0x2c, 0x7f, 0x0d, 0x48, 0x72, 0xef, 0x9f, 0xc0, 0xa4, 0x7f, 0x57, 0x83,
-	0x72, 0xd3, 0xb7, 0xc7, 0xa4, 0xa7, 0x3c, 0xad, 0xe8, 0x29, 0xef, 0x1d, 0x58, 0xa5, 0x50, 0xd2,
-	0x4a, 0x9e, 0x4f, 0x69, 0x25, 0xef, 0x1b, 0x8c, 0xac, 0xea, 0x20, 0xdf, 0x2d, 0xc1, 0xb4, 0x54,
-	0x49, 0x11, 0x7d, 0x79, 0x14, 0x7f, 0x7c, 0xb9, 0x58, 0x71, 0x45, 0xfe, 0x0e, 0xea, 0xf4, 0xfb,
-	0x85, 0x71, 0xc9, 0xdf, 0xc5, 0x4e, 0x6b, 0x2f, 0xc2, 0x76, 0xba, 0x83, 0x43, 0xbb, 0xe4, 0xff,
-	0x44, 0x83, 0xf9, 0x14, 0x11, 0xf4, 0xb1, 0xbc, 0x08, 0xb0, 0x51, 0x15, 0x8f, 0x54, 0xc4, 0xd8,
-	0x12, 0x40, 0x6c, 0x92, 0x11, 0x0a, 0x84, 0x04, 0x41, 0x8f, 0xc2, 0x74, 0xe4, 0x77, 0x7c, 0xd7,
-	0x6f, 0x1d, 0x6d, 0x60, 0x35, 0x3b, 0x43, 0x6e, 0xd0, 0xff, 0xaa, 0xc4, 0xfa, 0x2d, 0x55, 0xba,
-	0xfc, 0xdf, 0x5d, 0x30, 0xf2, 0x2e, 0xf8, 0x7d, 0x0d, 0x16, 0x08, 0x11, 0xea, 0x65, 0x12, 0x6e,
-	0xf5, 0xb8, 0x5c, 0x8f, 0x96, 0x2d, 0xd7, 0x43, 0xa3, 0x33, 0x6c, 0xbf, 0xab, 0x66, 0xa4, 0x71,
-	0x18, 0x6f, 0xc5, 0x41, 0xa0, 0xc4, 0x8f, 0x71, 0x98, 0x28, 0xe3, 0x53, 0x49, 0x95, 0xf1, 0x61,
-	0x99, 0x77, 0xdc, 0x13, 0xa2, 0xf0, 0xee, 0x04, 0xac, 0x7f, 0xab, 0x04, 0x33, 0x4d, 0xdf, 0xbe,
-	0xff, 0x00, 0x12, 0x9e, 0x14, 0x49, 0xcb, 0x34, 0x8d, 0x1a, 0x3c, 0xa2, 0x52, 0xf8, 0x45, 0x0e,
-	0x1c, 0xf9, 0x8e, 0x06, 0x73, 0x4d, 0xdf, 0x26, 0x0b, 0xfe, 0x0b, 0xbc, 0xba, 0x72, 0xbe, 0xe4,
-	0xa4, 0x9a, 0x2f, 0xf9, 0x2b, 0x1a, 0x54, 0x9b, 0xbe, 0x3d, 0x7e, 0x45, 0xf8, 0x49, 0x55, 0x11,
-	0x7e, 0xf7, 0x40, 0x4e, 0x20, 0x74, 0xdf, 0x1f, 0x96, 0x60, 0x96, 0xf4, 0xc8, 0x6f, 0x89, 0x19,
-	0x55, 0x46, 0xa8, 0xe5, 0x8f, 0xf0, 0x11, 0x98, 0xdc, 0xf5, 0x5d, 0xd7, 0xbf, 0xa7, 0xce, 0x2c,
-	0x83, 0xb1, 0x02, 0x0c, 0xf8, 0xc0, 0xf1, 0xbb, 0x6a, 0xb1, 0x91, 0x18, 0x8a, 0xce, 0xc2, 0x4c,
-	0xe8, 0x78, 0x16, 0x16, 0xce, 0x92, 0x8a, 0xe4, 0x2c, 0x51, 0x5a, 0x68, 0x19, 0x20, 0xf2, 0x9f,
-	0x6e, 0xc2, 0x91, 0xca, 0x00, 0x09, 0x6c, 0x74, 0x06, 0x20, 0x12, 0xce, 0x9b, 0x50, 0x35, 0x04,
-	0x27, 0x70, 0x32, 0xfc, 0xc8, 0x74, 0xdc, 0x1b, 0x8e, 0x87, 0x43, 0xc5, 0x61, 0x95, 0x80, 0x09,
-	0x25, 0x1a, 0x0e, 0xcd, 0x4a, 0x70, 0x4d, 0xc9, 0x5e, 0xad, 0x04, 0xae, 0x3f, 0x46, 0x59, 0x7b,
-	0xc1, 0x10, 0x9f, 0xcf, 0x94, 0x00, 0x35, 0xa9, 0x57, 0x48, 0xa9, 0x35, 0xb6, 0x0d, 0x73, 0x21,
-	0xbe, 0xe1, 0x78, 0xdd, 0x43, 0x4e, 0xa2, 0x58, 0x48, 0xd4, 0xd6, 0x9a, 0x8c, 0x63, 0xa4, 0x68,
-	0x90, 0x31, 0x06, 0x5d, 0x6f, 0x39, 0xbc, 0x1d, 0xe2, 0x40, 0xad, 0x20, 0x16, 0x83, 0x69, 0x39,
-	0x1e, 0xf2, 0x67, 0xd3, 0xf7, 0x0c, 0xdf, 0x8f, 0x94, 0x85, 0x54, 0x5a, 0x50, 0x03, 0x50, 0xd8,
-	0xed, 0x74, 0x5c, 0x6a, 0x1b, 0x34, 0xdd, 0x6b, 0x81, 0xdf, 0xed, 0xb0, 0x90, 0x8e, 0xb2, 0x91,
-	0xd3, 0x42, 0x4e, 0xf9, 0x6e, 0x48, 0x7f, 0x2b, 0xe1, 0xce, 0x02, 0xa8, 0xef, 0x50, 0xde, 0xb8,
-	0xe5, 0xb4, 0x3c, 0x33, 0xea, 0x06, 0x18, 0x19, 0x30, 0xdb, 0xa1, 0xbc, 0x52, 0xd8, 0xf0, 0x0b,
-	0x4d, 0x41, 0xca, 0xe9, 0xa4, 0x92, 0xd0, 0x7f, 0x69, 0x8a, 0x1e, 0x44, 0xaa, 0xb9, 0x3c, 0x07,
-	0x55, 0x1e, 0x9e, 0xc0, 0xef, 0xd1, 0x33, 0x45, 0xea, 0xf7, 0x19, 0x02, 0x09, 0x5d, 0x63, 0x0e,
-	0x06, 0x7a, 0x32, 0x8a, 0x97, 0xa5, 0xe4, 0xae, 0x72, 0x09, 0x15, 0x9d, 0x83, 0x59, 0x5e, 0xe7,
-	0x88, 0x4b, 0xfe, 0xb2, 0xd8, 0xa0, 0x36, 0x11, 0xad, 0x41, 0xaa, 0x93, 0x97, 0xe3, 0x7f, 0x94,
-	0x8f, 0x54, 0xff, 0x47, 0xd1, 0x33, 0x70, 0xd2, 0xb4, 0x22, 0xe7, 0x00, 0xaf, 0x62, 0xd3, 0x76,
-	0x1d, 0x0f, 0xe7, 0x45, 0xa3, 0xe7, 0x3f, 0x42, 0x93, 0x50, 0xbd, 0x90, 0xf7, 0x77, 0x52, 0x49,
-	0x42, 0x15, 0x60, 0xf4, 0x32, 0x2b, 0x58, 0x1e, 0xcb, 0x61, 0xac, 0x70, 0xe3, 0x93, 0x85, 0x44,
-	0x6d, 0x25, 0xa6, 0x8b, 0x69, 0x85, 0x0a, 0x31, 0xf4, 0x04, 0xa0, 0x10, 0x07, 0x07, 0x8e, 0x85,
-	0x97, 0x2d, 0x9a, 0xb9, 0x4f, 0xed, 0x96, 0x72, 0xc4, 0x40, 0x4e, 0x3b, 0x3a, 0x4f, 0xce, 0x95,
-	0x0c, 0x55, 0x42, 0x06, 0x52, 0x6d, 0x4a, 0xdd, 0x1a, 0xc8, 0xab, 0x5b, 0x43, 0xe4, 0xbd, 0x3d,
-	0x3f, 0x8c, 0x36, 0x71, 0x74, 0xcf, 0x0f, 0xf6, 0xa9, 0x39, 0x44, 0x1c, 0x16, 0xb9, 0x81, 0xec,
-	0x7d, 0x6a, 0x2c, 0x5b, 0x5f, 0xa5, 0x26, 0x0e, 0xf1, 0x8c, 0x00, 0x8a, 0xf6, 0xf5, 0xe6, 0x0a,
-	0xb5, 0x59, 0x28, 0xed, 0xeb, 0xcd, 0x15, 0xf4, 0xb1, 0x6c, 0x51, 0xc3, 0xb9, 0x22, 0x36, 0xa0,
-	0x2c, 0x6b, 0xc9, 0xd6, 0x35, 0xfc, 0xbf, 0xb0, 0x10, 0xd7, 0x50, 0x64, 0x95, 0x30, 0xc2, 0xfa,
-	0x7c, 0x91, 0x1a, 0xe8, 0xb9, 0xc9, 0xea, 0x19, 0x5a, 0x4a, 0x4a, 0xc2, 0x42, 0x6e, 0x7d, 0x20,
-	0x1d, 0x6a, 0x61, 0x77, 0xc7, 0xf6, 0xdb, 0xa6, 0xe3, 0xd1, 0xea, 0x89, 0x49, 0x89, 0x70, 0x01,
-	0x5e, 0xdc, 0x80, 0x63, 0x99, 0x2d, 0x31, 0xb2, 0x7b, 0xf6, 0x4b, 0x65, 0xa8, 0xc5, 0x6a, 0x59,
-	0x5f, 0x95, 0xf5, 0xc5, 0x9c, 0x52, 0xca, 0xe7, 0x06, 0xce, 0x79, 0x7e, 0xb8, 0xda, 0xa0, 0x62,
-	0xd1, 0x89, 0x90, 0x54, 0xc9, 0x11, 0x92, 0xfa, 0x96, 0x4f, 0xa4, 0x63, 0xf0, 0xed, 0xf5, 0xa6,
-	0x5a, 0x1b, 0x8d, 0x82, 0xe2, 0x92, 0x7a, 0xf4, 0x2e, 0xad, 0x8e, 0x5a, 0x52, 0x8f, 0x0b, 0x89,
-	0xc7, 0x2c, 0xb5, 0x0a, 0x5d, 0x1c, 0x8c, 0xf6, 0xf8, 0x10, 0xc5, 0xe1, 0xba, 0xa1, 0x91, 0xa5,
-	0xa3, 0xff, 0x3a, 0x53, 0xe6, 0xf8, 0x03, 0x38, 0xec, 0xba, 0xd1, 0xd8, 0xb2, 0x33, 0x64, 0x61,
-	0x7a, 0x04, 0x8d, 0xfd, 0xb7, 0x35, 0xaa, 0xb1, 0x6f, 0xe3, 0x76, 0xc7, 0x35, 0xa3, 0x71, 0x79,
-	0x88, 0xd7, 0x61, 0x2a, 0xe2, 0x14, 0x8b, 0x55, 0x80, 0x91, 0xba, 0x40, 0xed, 0x11, 0x31, 0xba,
-	0xfe, 0x55, 0x36, 0x77, 0xa2, 0x75, 0xfc, 0x92, 0xe6, 0xf3, 0xaa, 0xa4, 0xf9, 0xfe, 0xc2, 0x1d,
-	0x15, 0x12, 0xe7, 0x17, 0xd5, 0x1e, 0xf2, 0xdc, 0xb4, 0xb7, 0xd7, 0x94, 0xa3, 0xbf, 0x0f, 0x66,
-	0x95, 0x3a, 0x7a, 0x22, 0xe6, 0x40, 0x4b, 0xc5, 0x1c, 0xe8, 0xff, 0xae, 0xc1, 0x89, 0xbc, 0x6f,
-	0x3e, 0xa0, 0x4d, 0x98, 0xe9, 0x48, 0x52, 0x4b, 0xb1, 0x44, 0x09, 0x59, 0xce, 0x31, 0x14, 0x7c,
-	0x74, 0x0b, 0x66, 0xf0, 0x81, 0x63, 0xc5, 0x0a, 0x58, 0x69, 0xf8, 0xf3, 0xaa, 0x10, 0xb8, 0xbf,
-	0xaa, 0x40, 0xfa, 0xa7, 0x35, 0x78, 0xb8, 0x47, 0x02, 0x05, 0xa1, 0x7c, 0x8f, 0xaa, 0xf0, 0x4a,
-	0x6d, 0x44, 0x0e, 0x43, 0x9b, 0x00, 0x4c, 0x8f, 0xa7, 0xd5, 0xb4, 0x4b, 0x45, 0x0c, 0xfb, 0x99,
-	0x28, 0x75, 0x89, 0x82, 0xfe, 0x9d, 0x12, 0x4c, 0xb0, 0xb2, 0xc4, 0xcf, 0x43, 0x75, 0x8f, 0x25,
-	0x99, 0x0f, 0x97, 0xd4, 0x2e, 0xb0, 0xd0, 0x87, 0xe0, 0xb8, 0xe3, 0x39, 0x91, 0x63, 0xba, 0xab,
-	0xd8, 0x35, 0x8f, 0x84, 0xd8, 0x23, 0x17, 0x94, 0xc9, 0x7b, 0x20, 0x27, 0x6f, 0x4f, 0xce, 0xc0,
-	0x4f, 0xb5, 0x11, 0xb1, 0xae, 0x93, 0x11, 0xcd, 0xe2, 0xea, 0xb9, 0x4a, 0x13, 0xba, 0x08, 0x0b,
-	0x61, 0x97, 0xda, 0x99, 0xb7, 0xf7, 0x02, 0x1c, 0xee, 0xf9, 0xae, 0xad, 0x14, 0xc2, 0xcc, 0xb4,
-	0x12, 0x8c, 0x5d, 0xd3, 0x71, 0xbb, 0x01, 0x4e, 0x30, 0x26, 0x65, 0x8c, 0x74, 0xab, 0xfe, 0x47,
-	0x1a, 0x1c, 0xcf, 0x71, 0x1b, 0x30, 0xa7, 0x6e, 0xcb, 0x09, 0xa3, 0x54, 0x55, 0x92, 0x18, 0x4a,
-	0x16, 0x9a, 0x09, 0xbd, 0xaa, 0x2d, 0x82, 0xc1, 0x06, 0x27, 0xdc, 0xc5, 0x1f, 0xa8, 0xa8, 0x64,
-	0x3e, 0x50, 0xb1, 0x08, 0x13, 0xad, 0x58, 0x23, 0x88, 0xaf, 0x2d, 0x0a, 0xd2, 0xbf, 0x51, 0x82,
-	0xf9, 0x94, 0x63, 0xae, 0xef, 0x07, 0x32, 0xfa, 0x55, 0x34, 0xef, 0x5f, 0x1a, 0x88, 0xd6, 0x14,
-	0x4c, 0xd5, 0x2d, 0xa6, 0x90, 0xb8, 0xe7, 0x13, 0x99, 0x9e, 0x2f, 0x41, 0x75, 0x1f, 0x1f, 0x05,
-	0x8e, 0xd7, 0x52, 0x6d, 0x16, 0x1c, 0xa8, 0xd6, 0xfe, 0xa9, 0x8e, 0xbb, 0xf6, 0xcf, 0x54, 0xae,
-	0xf3, 0xfd, 0x73, 0x1a, 0xcc, 0xd3, 0xd4, 0x5d, 0x1e, 0xf2, 0xec, 0xf8, 0xde, 0x98, 0x58, 0xec,
-	0x22, 0x4c, 0x04, 0x84, 0xb0, 0x3a, 0xb7, 0x14, 0x44, 0xe6, 0x88, 0x52, 0x27, 0x33, 0x3b, 0x23,
-	0xe6, 0x88, 0x40, 0x68, 0xac, 0x91, 0x81, 0x3b, 0xae, 0xc3, 0xfa, 0x92, 0xe8, 0x61, 0x6f, 0x47,
-	0xac, 0x51, 0x6e, 0x47, 0x46, 0x8f, 0x35, 0xca, 0x27, 0x97, 0x8d, 0x35, 0xca, 0x7d, 0xee, 0xed,
-	0x8e, 0x35, 0xca, 0xed, 0x94, 0xb8, 0xa8, 0xbf, 0x55, 0xea, 0xd1, 0x6b, 0x1e, 0x6b, 0x34, 0x15,
-	0xb0, 0xc6, 0x50, 0xad, 0x0e, 0x2d, 0xa0, 0xc8, 0x94, 0x62, 0x7e, 0x58, 0x6f, 0xd6, 0x46, 0x5c,
-	0x99, 0x86, 0xaa, 0x00, 0xc6, 0x64, 0x15, 0xc1, 0xa9, 0x7c, 0x5f, 0x82, 0xd3, 0xe2, 0x35, 0x98,
-	0x1d, 0x8f, 0x4e, 0xf1, 0x23, 0x0d, 0xde, 0xd9, 0x67, 0x53, 0x14, 0x98, 0xb8, 0xa7, 0xe0, 0xc4,
-	0x6e, 0xd7, 0x75, 0x8f, 0xa8, 0x07, 0x02, 0xdb, 0x86, 0x78, 0x5a, 0xbe, 0x97, 0x72, 0x9f, 0x20,
-	0xca, 0xb0, 0xbf, 0x43, 0x33, 0xa3, 0xed, 0x6b, 0x49, 0xd8, 0x75, 0x59, 0xae, 0x3b, 0x9c, 0x6d,
-	0x67, 0x76, 0x07, 0xd3, 0x3e, 0x8a, 0x5f, 0xa4, 0x5c, 0x50, 0x4a, 0x13, 0xb9, 0x3c, 0x4e, 0xe6,
-	0x56, 0x78, 0x54, 0x8a, 0xc4, 0x67, 0x62, 0x87, 0xd4, 0x26, 0x36, 0x07, 0x61, 0xe2, 0xc0, 0x95,
-	0xae, 0x1a, 0x5e, 0x42, 0xf0, 0x2a, 0x54, 0x6d, 0xe7, 0xc0, 0x09, 0xfd, 0xa0, 0x40, 0xcd, 0xe9,
-	0xac, 0x8b, 0x52, 0x20, 0xeb, 0x3f, 0xd1, 0x60, 0x56, 0xf4, 0xf7, 0xa5, 0xae, 0x4f, 0x63, 0x86,
-	0xc6, 0xc1, 0x72, 0x56, 0x14, 0x96, 0x73, 0xa1, 0x58, 0x0c, 0x1d, 0xed, 0x80, 0xc4, 0x6a, 0xd6,
-	0x53, 0xac, 0xe6, 0xd2, 0x30, 0x64, 0x54, 0x16, 0xf3, 0xbb, 0x1a, 0x1c, 0x53, 0xda, 0xdf, 0xb6,
-	0x22, 0x0d, 0x79, 0x9d, 0x15, 0x2c, 0xe5, 0x9f, 0xd3, 0xbd, 0xa4, 0xac, 0xe4, 0x26, 0x54, 0xf6,
-	0xcc, 0xc0, 0xe6, 0xd6, 0xb7, 0xa7, 0x87, 0x9c, 0xcb, 0xc6, 0x75, 0x33, 0xb0, 0xf9, 0xe7, 0x75,
-	0x08, 0x19, 0x74, 0x0a, 0x26, 0x43, 0xcb, 0xef, 0xc4, 0x7e, 0x39, 0xfe, 0x6f, 0x71, 0x1f, 0x6a,
-	0xf1, 0xa3, 0x0f, 0xdc, 0x31, 0xfe, 0x85, 0x32, 0x1c, 0xcf, 0x59, 0x2f, 0x74, 0x4b, 0x19, 0xeb,
-	0x87, 0x87, 0x5e, 0xf0, 0xcc, 0x68, 0x6f, 0x51, 0xc9, 0xc4, 0xe6, 0x8b, 0x32, 0x02, 0xc1, 0xdb,
-	0x21, 0x16, 0x04, 0x09, 0xa1, 0xb7, 0x74, 0x9a, 0xc8, 0xcb, 0xe2, 0xf7, 0x3f, 0xf0, 0x35, 0xf9,
-	0xc3, 0x32, 0x9c, 0xc8, 0x0b, 0x67, 0x45, 0x77, 0x52, 0xa5, 0x51, 0x9e, 0x1b, 0x3e, 0x24, 0x96,
-	0xd5, 0x4b, 0x89, 0xb3, 0x31, 0xe8, 0x1f, 0xf4, 0x0a, 0x61, 0x73, 0xb4, 0x32, 0x8d, 0x38, 0x34,
-	0x2f, 0x8c, 0x40, 0x99, 0x17, 0xb7, 0xe1, 0xb4, 0x63, 0x8a, 0x8b, 0x6d, 0x98, 0x96, 0x5e, 0xfa,
-	0xc0, 0x97, 0xca, 0x27, 0x8c, 0x54, 0xea, 0xc9, 0x03, 0x5f, 0xae, 0xd7, 0x60, 0x4e, 0xf5, 0x63,
-	0xc4, 0x52, 0xb8, 0x96, 0x91, 0xc2, 0xeb, 0x50, 0x09, 0x7c, 0x57, 0xbd, 0x4c, 0x28, 0x24, 0xf6,
-	0xac, 0x96, 0x33, 0x9e, 0xd5, 0x45, 0x98, 0x70, 0xf1, 0x01, 0x56, 0xc5, 0x7d, 0x06, 0xd2, 0xbf,
-	0x58, 0x86, 0x49, 0x66, 0xb7, 0x1c, 0xd3, 0x7d, 0x71, 0x45, 0xf9, 0x74, 0x58, 0xa3, 0x48, 0x1d,
-	0xe2, 0xf4, 0x77, 0xc3, 0xfa, 0x0c, 0x65, 0x1b, 0x20, 0xa4, 0xd5, 0x10, 0x09, 0x0a, 0xcf, 0xa6,
-	0x7d, 0xa2, 0xd0, 0x3b, 0xb6, 0x62, 0x34, 0xf6, 0x26, 0x89, 0xce, 0x08, 0xdf, 0x29, 0x9b, 0xc9,
-	0x66, 0xd3, 0xac, 0xc3, 0x7c, 0xea, 0x1d, 0xa3, 0x5b, 0x6b, 0x35, 0x38, 0x96, 0x29, 0xd1, 0xfc,
-	0xb6, 0x7f, 0xef, 0xec, 0xcb, 0x1a, 0x00, 0xeb, 0xd5, 0xf8, 0xaf, 0xdc, 0x67, 0xd4, 0x2b, 0xf7,
-	0x4c, 0x91, 0x25, 0x15, 0x77, 0xed, 0xd7, 0x34, 0x40, 0x0c, 0x32, 0xc2, 0xc7, 0x3a, 0xdf, 0xa2,
-	0x8f, 0x94, 0xfd, 0x6b, 0x09, 0xe6, 0xd3, 0x2e, 0xcf, 0x4d, 0x98, 0xb1, 0xa4, 0x0f, 0x69, 0x16,
-	0x33, 0xa4, 0xc9, 0x9f, 0xde, 0x34, 0x14, 0x7c, 0x96, 0x97, 0xef, 0x1c, 0x38, 0x2e, 0x6e, 0xd1,
-	0x6b, 0x52, 0x72, 0xfb, 0x26, 0xf0, 0x1c, 0x47, 0x6b, 0x79, 0xdc, 0x8e, 0xd6, 0x4a, 0x31, 0x47,
-	0xeb, 0x44, 0x4f, 0x47, 0xeb, 0xb3, 0x70, 0x4a, 0xa8, 0xf8, 0xe4, 0xff, 0x55, 0xc7, 0xc5, 0x2c,
-	0x21, 0x58, 0x71, 0x66, 0xf7, 0x78, 0x46, 0xdf, 0x81, 0xe3, 0x5b, 0x38, 0x70, 0x68, 0x52, 0x9d,
-	0x9d, 0x6c, 0xeb, 0x0d, 0xa8, 0x05, 0xa9, 0x33, 0x33, 0xec, 0x27, 0x20, 0x12, 0xdb, 0xdc, 0x5f,
-	0x6b, 0x50, 0xdd, 0x62, 0xbe, 0xb3, 0x31, 0xf1, 0xcd, 0x8f, 0x28, 0x72, 0xf6, 0xfb, 0x07, 0x1d,
-	0x00, 0xfa, 0x6a, 0x49, 0xc2, 0x5e, 0x49, 0x49, 0xd8, 0x8f, 0x15, 0x23, 0xa0, 0xca, 0xd6, 0xff,
-	0xad, 0xc1, 0xdc, 0x96, 0xea, 0x11, 0x1c, 0xcf, 0xe0, 0xae, 0x41, 0x35, 0xe4, 0x8e, 0xb6, 0x42,
-	0x5f, 0x87, 0x48, 0xcf, 0xbc, 0xc0, 0xce, 0x75, 0xdd, 0x95, 0xc7, 0xe7, 0xba, 0xd3, 0x7f, 0x8f,
-	0xf2, 0x12, 0x79, 0x06, 0xc6, 0xcf, 0xeb, 0xae, 0xa8, 0x2c, 0xe7, 0x7c, 0xa1, 0x95, 0xe2, 0xbd,
-	0x11, 0x3c, 0xef, 0xd7, 0x34, 0x98, 0xe6, 0x2d, 0xe3, 0xef, 0xe0, 0x87, 0xd5, 0x0e, 0xbe, 0xb7,
-	0x50, 0x07, 0x45, 0xcf, 0xfe, 0x26, 0xe9, 0xd9, 0xe0, 0xcf, 0xb1, 0xc5, 0x9f, 0x2f, 0x29, 0xe5,
-	0x7e, 0x40, 0x4d, 0x7c, 0xfa, 0xa4, 0x9c, 0xf9, 0xf4, 0xc9, 0xa6, 0xa8, 0x98, 0x4e, 0xbf, 0x54,
-	0x54, 0x19, 0xa9, 0x9e, 0xb2, 0x44, 0x41, 0x38, 0xbe, 0x29, 0x35, 0xd9, 0x0c, 0x1d, 0x43, 0xf5,
-	0x0b, 0x94, 0xab, 0xd0, 0x61, 0x15, 0x0b, 0x74, 0xf9, 0x8b, 0x4a, 0x3c, 0x11, 0x5b, 0x2c, 0x88,
-	0x96, 0x7f, 0xce, 0x44, 0x2b, 0xe2, 0x4f, 0x92, 0xa6, 0x50, 0x7c, 0x0d, 0x72, 0x2b, 0x63, 0x66,
-	0x7a, 0xb2, 0x30, 0x97, 0xe8, 0x69, 0x58, 0xa2, 0x49, 0x50, 0x34, 0x05, 0x65, 0xbd, 0xa9, 0x66,
-	0xd1, 0xc7, 0xe0, 0x58, 0x1c, 0xab, 0x64, 0xc4, 0xb1, 0xd3, 0x30, 0x1d, 0x17, 0x86, 0x69, 0xb2,
-	0x8a, 0x24, 0x35, 0x43, 0x06, 0xa1, 0x8b, 0x70, 0xdc, 0xc6, 0x9d, 0x00, 0x5b, 0x66, 0x84, 0xed,
-	0x66, 0x77, 0xc7, 0x75, 0x2c, 0xf2, 0x24, 0x0b, 0x17, 0xcb, 0x6b, 0x42, 0x0d, 0x98, 0x0f, 0x59,
-	0xf5, 0x9a, 0xf8, 0xc3, 0xea, 0x72, 0xd6, 0x6d, 0xba, 0x11, 0x9d, 0x87, 0x39, 0x57, 0xae, 0xcd,
-	0xd7, 0x54, 0x62, 0x22, 0x52, 0x6d, 0xe8, 0x19, 0xa8, 0xcb, 0x10, 0x1e, 0x1f, 0x6f, 0x7a, 0x2d,
-	0x1c, 0xf2, 0xba, 0x20, 0x3d, 0xdb, 0xc9, 0x05, 0x26, 0x86, 0x96, 0x89, 0x90, 0x50, 0x5a, 0xc6,
-	0x67, 0x63, 0xc3, 0x84, 0x90, 0xc4, 0xaa, 0xd1, 0x36, 0xcc, 0xc8, 0xfd, 0xe3, 0x87, 0xfd, 0x62,
-	0xf1, 0xda, 0x85, 0x9c, 0xe5, 0x2b, 0x54, 0xf4, 0xdb, 0x30, 0x9f, 0x2a, 0x66, 0x1d, 0xd7, 0x2a,
-	0xd7, 0x46, 0xaf, 0x55, 0xae, 0x7f, 0x14, 0x26, 0xb6, 0x4d, 0xa7, 0x4f, 0x39, 0xa5, 0x7e, 0x5f,
-	0x90, 0x79, 0x04, 0x26, 0xf1, 0xee, 0x2e, 0xb6, 0xd4, 0x52, 0xe7, 0x1c, 0xa6, 0x7f, 0x52, 0x03,
-	0xd8, 0xf6, 0x5d, 0x61, 0xd9, 0x1b, 0xbd, 0x5e, 0x53, 0xdc, 0x85, 0x72, 0xbf, 0x2e, 0x54, 0x72,
-	0xba, 0x10, 0xc0, 0xe4, 0xc0, 0x0f, 0xf4, 0x6f, 0x8a, 0xd2, 0x33, 0x4a, 0x12, 0xc7, 0xb9, 0x22,
-	0x71, 0x57, 0x7c, 0xeb, 0x29, 0xf8, 0xfa, 0xe7, 0x34, 0x98, 0x96, 0x3e, 0xab, 0xda, 0x9f, 0xbb,
-	0xf6, 0xcf, 0x5c, 0xa4, 0x25, 0x5a, 0x08, 0x91, 0x38, 0x29, 0x2e, 0x29, 0xd1, 0x22, 0xc0, 0x68,
-	0x89, 0x7e, 0xed, 0x88, 0x3e, 0xa1, 0x78, 0x4b, 0x39, 0x50, 0x7f, 0x7d, 0x0e, 0x66, 0x14, 0xa9,
-	0x5b, 0x4e, 0xb4, 0xd3, 0xc6, 0x90, 0x68, 0xb7, 0x09, 0x53, 0x98, 0x7f, 0x18, 0xac, 0x58, 0x1a,
-	0x6f, 0xde, 0x67, 0xc4, 0x8c, 0x98, 0x46, 0x7e, 0x9e, 0x63, 0xf9, 0x2d, 0xcd, 0x73, 0xac, 0x3c,
-	0xc0, 0x3c, 0xc7, 0x0d, 0xa8, 0xb6, 0xd8, 0x97, 0x18, 0x78, 0x0c, 0xe9, 0x00, 0x4b, 0x6b, 0xce,
-	0x67, 0x1b, 0x0c, 0x41, 0x01, 0x5d, 0x87, 0x49, 0x26, 0x77, 0xf1, 0x9c, 0xc2, 0x8b, 0x45, 0xb4,
-	0x32, 0x35, 0xfd, 0x8e, 0xe1, 0x8b, 0xdc, 0xc6, 0xea, 0xc8, 0xb9, 0x8d, 0x71, 0x6a, 0xe2, 0xd4,
-	0x7d, 0xa5, 0x26, 0x2a, 0x69, 0x9b, 0xb5, 0xb1, 0xa4, 0x6d, 0x76, 0xe1, 0x64, 0x27, 0x2f, 0xd5,
-	0x98, 0x27, 0x1b, 0x3e, 0x3f, 0x42, 0x36, 0xb5, 0xf2, 0xaa, 0x7c, 0xea, 0x22, 0xd9, 0x73, 0x7a,
-	0xe4, 0x64, 0xcf, 0x71, 0xa7, 0x21, 0x26, 0x59, 0x9f, 0xb3, 0x63, 0xcb, 0xfa, 0x9c, 0xbb, 0xcf,
-	0xac, 0x4f, 0x29, 0x6f, 0x73, 0xfe, 0xbe, 0xf3, 0x36, 0xef, 0xc2, 0xb4, 0x9d, 0x7c, 0xea, 0x90,
-	0x67, 0x19, 0x7e, 0x70, 0xc8, 0x6f, 0x23, 0x72, 0xa2, 0x32, 0x25, 0x9e, 0x9b, 0x7a, 0x6c, 0xc4,
-	0xdc, 0x54, 0x25, 0xfd, 0x13, 0x8d, 0x25, 0xfd, 0xf3, 0x25, 0x1a, 0x18, 0xcf, 0xbe, 0x32, 0x56,
-	0x3f, 0x5e, 0xf0, 0xcb, 0xc1, 0xd9, 0x0f, 0xcd, 0x1b, 0x09, 0x95, 0x6c, 0x46, 0xe9, 0x89, 0x07,
-	0x9a, 0x51, 0x7a, 0x72, 0xbc, 0x19, 0xa5, 0xa7, 0xc6, 0x92, 0x51, 0x6a, 0xc3, 0x52, 0xff, 0x01,
-	0x25, 0x25, 0x26, 0x9a, 0x69, 0x95, 0x42, 0x82, 0xf7, 0xff, 0xa4, 0x8f, 0xfe, 0x79, 0x0d, 0x1e,
-	0xee, 0x91, 0x67, 0x34, 0x20, 0x7e, 0xe9, 0x2e, 0xcc, 0x77, 0x54, 0x84, 0xc2, 0x31, 0x7a, 0x4a,
-	0x36, 0x53, 0x9a, 0xca, 0x95, 0x8b, 0x3f, 0x78, 0x63, 0xe9, 0xa1, 0x1f, 0xbe, 0xb1, 0xf4, 0xd0,
-	0x4f, 0xdf, 0x58, 0xd2, 0x3e, 0xf9, 0xe6, 0x92, 0xf6, 0xf5, 0x37, 0x97, 0xb4, 0xef, 0xbd, 0xb9,
-	0xa4, 0xfd, 0xe0, 0xcd, 0x25, 0xed, 0x1f, 0xde, 0x5c, 0xd2, 0xfe, 0xe5, 0xcd, 0xa5, 0x87, 0x7e,
-	0xfa, 0xe6, 0x92, 0xf6, 0xf9, 0x7f, 0x5c, 0x7a, 0xe8, 0x63, 0xa5, 0x83, 0x4b, 0xff, 0x13, 0x00,
-	0x00, 0xff, 0xff, 0x2e, 0x6c, 0xff, 0x5d, 0xcb, 0x8b, 0x00, 0x00,
+	// 7384 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xec, 0x7d, 0x5b, 0x8c, 0xe4, 0xd8,
+	0x59, 0xf0, 0xef, 0xaa, 0xea, 0xae, 0xae, 0xaf, 0xaf, 0x73, 0xa6, 0x67, 0xb6, 0xd2, 0xd9, 0x8c,
+	0x26, 0xce, 0xee, 0x66, 0x76, 0x76, 0xb7, 0x67, 0x67, 0xb2, 0xd9, 0x6b, 0x76, 0x67, 0x7b, 0xba,
+	0x7b, 0x66, 0x3a, 0x33, 0xd3, 0x53, 0xeb, 0x9e, 0xcb, 0x9f, 0xec, 0xfe, 0x7f, 0x70, 0xdb, 0xa7,
+	0xab, 0x0f, 0xed, 0xb2, 0xbd, 0xb6, 0xab, 0xa7, 0x7b, 0xc5, 0x43, 0x82, 0x44, 0x04, 0x41, 0x28,
+	0x21, 0x90, 0x10, 0xc4, 0x25, 0x81, 0x28, 0xa0, 0x15, 0x12, 0x20, 0xf1, 0x80, 0x84, 0x04, 0x52,
+	0x14, 0xa1, 0x20, 0x78, 0x21, 0xe2, 0x09, 0xf1, 0x40, 0x08, 0x02, 0x09, 0x21, 0x81, 0x90, 0x80,
+	0x27, 0x50, 0xd0, 0xb9, 0xd9, 0xe7, 0xb8, 0x5c, 0x5d, 0xae, 0xda, 0xea, 0x9d, 0x3c, 0xf0, 0xe6,
+	0xf3, 0xd9, 0xdf, 0xe7, 0x73, 0x7c, 0xce, 0xf9, 0xce, 0x77, 0x37, 0x3c, 0xbd, 0xf7, 0x62, 0xbc,
+	0x4c, 0x82, 0x0b, 0x7b, 0xdd, 0x6d, 0x1c, 0xf9, 0x38, 0xc1, 0xf1, 0x85, 0x70, 0xaf, 0x7d, 0xc1,
+	0x0e, 0xc9, 0x85, 0xfd, 0x8b, 0x17, 0xda, 0xd8, 0xc7, 0x91, 0x9d, 0x60, 0x77, 0x39, 0x8c, 0x82,
+	0x24, 0x40, 0x8f, 0xf2, 0xa7, 0x97, 0xb3, 0xa7, 0x97, 0xc3, 0xbd, 0xf6, 0xb2, 0x1d, 0x92, 0xe5,
+	0xfd, 0x8b, 0x4b, 0x97, 0xfa, 0xd3, 0x8a, 0x70, 0x1c, 0x74, 0x23, 0x07, 0xe7, 0x29, 0x2e, 0x7d,
+	0xbc, 0x3f, 0x4e, 0xd7, 0xdf, 0xc7, 0x51, 0x4c, 0x02, 0x1f, 0xbb, 0x3d, 0x68, 0xcf, 0x14, 0xa3,
+	0x45, 0x5d, 0x3f, 0x21, 0x9d, 0xde, 0xb7, 0x5c, 0x2c, 0x7e, 0xbc, 0x9b, 0x10, 0xef, 0x02, 0xf1,
+	0x93, 0x38, 0x89, 0xf2, 0x28, 0xe6, 0x97, 0x0c, 0x38, 0xbb, 0x72, 0x7f, 0x6b, 0xdd, 0xb3, 0xe3,
+	0x84, 0x38, 0x57, 0xbc, 0xc0, 0xd9, 0xdb, 0x4a, 0x82, 0x08, 0xdf, 0x0b, 0xbc, 0x6e, 0x07, 0x6f,
+	0xb1, 0xd1, 0xa0, 0x25, 0x98, 0xda, 0x67, 0xed, 0x8d, 0xb5, 0xa6, 0x71, 0xd6, 0x38, 0xd7, 0xb0,
+	0xd2, 0x36, 0x3a, 0x0d, 0x93, 0x3b, 0xf1, 0x9d, 0xc3, 0x10, 0x37, 0x2b, 0xec, 0x8e, 0x68, 0xa1,
+	0x47, 0xa1, 0x11, 0xda, 0x51, 0x42, 0x12, 0x12, 0xf8, 0xcd, 0xea, 0x59, 0xe3, 0xdc, 0x84, 0x95,
+	0x01, 0x28, 0xc5, 0x08, 0xdb, 0xee, 0x6d, 0xdf, 0x3b, 0x6c, 0xd6, 0xce, 0x1a, 0xe7, 0xa6, 0xac,
+	0xb4, 0x6d, 0x7e, 0xb6, 0x02, 0x53, 0x2b, 0x3b, 0x3b, 0xc4, 0x27, 0xc9, 0x21, 0xda, 0x84, 0x19,
+	0x3f, 0x70, 0xb1, 0x6c, 0xb3, 0xd7, 0x4f, 0x5f, 0x3a, 0xbf, 0x7c, 0xd4, 0x0c, 0x2d, 0x6f, 0x2a,
+	0x18, 0x96, 0x86, 0x8f, 0x6e, 0xc0, 0x74, 0x18, 0xb8, 0x29, 0xb9, 0x0a, 0x23, 0xf7, 0xe4, 0xd1,
+	0xe4, 0x5a, 0x19, 0x82, 0xa5, 0x62, 0xa3, 0xfb, 0x30, 0x4f, 0x9b, 0x7e, 0x42, 0x52, 0x82, 0x55,
+	0x46, 0xf0, 0x99, 0xc1, 0x04, 0x15, 0x24, 0x2b, 0x4f, 0xc5, 0x5c, 0x83, 0xb9, 0x95, 0x24, 0xb1,
+	0x9d, 0x5d, 0xec, 0xf2, 0x89, 0x40, 0x08, 0x6a, 0xbe, 0xdd, 0xc1, 0xe2, 0xf3, 0xb3, 0x6b, 0x74,
+	0x06, 0xc0, 0xc5, 0xfb, 0xc4, 0xc1, 0x2d, 0x3b, 0xd9, 0x15, 0x9f, 0x5f, 0x81, 0x98, 0x04, 0x1a,
+	0x2b, 0xfb, 0x01, 0x71, 0x5b, 0x81, 0x1b, 0xa3, 0xb7, 0x60, 0x3e, 0x8c, 0xf0, 0x0e, 0x8e, 0x52,
+	0x50, 0xd3, 0x38, 0x5b, 0x3d, 0x37, 0x7d, 0xe9, 0xd2, 0x80, 0xbe, 0xea, 0x48, 0xeb, 0x7e, 0x12,
+	0xd1, 0x0e, 0xeb, 0x50, 0xf3, 0x9b, 0x06, 0x9c, 0x5a, 0x79, 0xa7, 0x1b, 0xe1, 0x35, 0x12, 0xef,
+	0xe5, 0xd7, 0x8e, 0x4b, 0xe2, 0xbd, 0xcd, 0xac, 0xf3, 0x69, 0x1b, 0x35, 0xa1, 0x4e, 0xaf, 0xef,
+	0x5a, 0x1b, 0xa2, 0xf7, 0xb2, 0x89, 0xce, 0xc2, 0xb4, 0x63, 0x3b, 0xbb, 0xc4, 0x6f, 0xdf, 0x0a,
+	0x5c, 0xcc, 0xbe, 0x6a, 0xc3, 0x52, 0x41, 0xca, 0xba, 0xab, 0x69, 0xeb, 0x4e, 0x5d, 0x59, 0x13,
+	0xb9, 0x95, 0xf5, 0xb6, 0xe8, 0xe4, 0x55, 0xe2, 0xe9, 0x0b, 0xfc, 0x0c, 0x40, 0x8c, 0x9d, 0x08,
+	0x27, 0x4a, 0x37, 0x15, 0x08, 0x5d, 0xcc, 0xf1, 0xae, 0x1d, 0x61, 0x76, 0x9b, 0x77, 0x35, 0x03,
+	0x68, 0xaf, 0xac, 0xe6, 0x5e, 0xf9, 0x55, 0x03, 0xea, 0x57, 0x88, 0xef, 0x12, 0xbf, 0x8d, 0xd6,
+	0x60, 0xaa, 0x83, 0x13, 0xdb, 0xb5, 0x13, 0x5b, 0xac, 0xe3, 0x73, 0x47, 0x7f, 0xfb, 0xdb, 0xdb,
+	0x3f, 0x8e, 0x9d, 0xe4, 0x16, 0x4e, 0x6c, 0x2b, 0xc5, 0x44, 0xeb, 0x30, 0x99, 0xd8, 0x51, 0x1b,
+	0x27, 0x62, 0xf1, 0x3e, 0x53, 0x86, 0x86, 0x45, 0xa7, 0x0b, 0xfb, 0x0e, 0xb6, 0x04, 0xb2, 0xf9,
+	0x1c, 0xcc, 0xac, 0xda, 0xa1, 0xbd, 0x4d, 0x3c, 0x92, 0x10, 0x1c, 0xa3, 0x05, 0xa8, 0xda, 0xae,
+	0xcb, 0xd6, 0x44, 0xc3, 0xa2, 0x97, 0x74, 0xc9, 0xb9, 0x51, 0x10, 0x36, 0x2b, 0x0c, 0xc4, 0xae,
+	0xcd, 0x7f, 0x34, 0x00, 0xad, 0xe2, 0x70, 0xf7, 0xea, 0x56, 0x7e, 0x92, 0x3b, 0x81, 0x4f, 0x92,
+	0x20, 0x8a, 0x05, 0x85, 0xb4, 0x4d, 0xc9, 0x84, 0xd9, 0xfa, 0x64, 0xd7, 0x14, 0xd6, 0x8d, 0x71,
+	0x24, 0xe6, 0x95, 0x5d, 0x67, 0x73, 0x40, 0x67, 0x47, 0x4c, 0xaa, 0x02, 0x41, 0x2d, 0x68, 0xf0,
+	0x96, 0x85, 0x77, 0xd8, 0xcc, 0x0e, 0x5c, 0xba, 0x37, 0x03, 0xc7, 0xf6, 0xf2, 0xe3, 0xcf, 0x88,
+	0x68, 0xf3, 0x36, 0x99, 0x9b, 0x37, 0x17, 0xd0, 0x2a, 0xf1, 0x5d, 0x1c, 0xbd, 0x67, 0x46, 0x78,
+	0xd4, 0xea, 0x08, 0x01, 0xad, 0x06, 0x9d, 0x30, 0xf0, 0xb1, 0x9f, 0xac, 0x06, 0xbe, 0xcb, 0x99,
+	0x23, 0x82, 0x5a, 0x42, 0xe9, 0x88, 0xbd, 0x4e, 0xaf, 0x29, 0xf5, 0x38, 0xb1, 0x93, 0x6e, 0x2c,
+	0xa9, 0xf3, 0x16, 0xdd, 0x42, 0x1d, 0x1c, 0xc7, 0x76, 0x5b, 0x6e, 0x12, 0xd9, 0x44, 0x8b, 0x30,
+	0x81, 0xa3, 0x28, 0x88, 0xc4, 0xa7, 0xe4, 0x0d, 0xf3, 0x5d, 0x03, 0xe6, 0xd3, 0x57, 0x6e, 0x71,
+	0x1a, 0xe3, 0x59, 0x97, 0x2d, 0x00, 0x47, 0x0e, 0x21, 0x66, 0x8b, 0x66, 0xfa, 0xd2, 0xb3, 0x47,
+	0xd3, 0xe9, 0x1d, 0xbb, 0xa5, 0xd0, 0x30, 0x7f, 0xdb, 0x80, 0x93, 0xb9, 0xbe, 0xde, 0x24, 0x71,
+	0x82, 0x6e, 0xf4, 0xf4, 0xf7, 0xc2, 0x11, 0xef, 0x51, 0xce, 0xd7, 0x65, 0x8a, 0x9e, 0xeb, 0xf6,
+	0x2a, 0x4c, 0x90, 0x04, 0x77, 0x64, 0x8f, 0x9f, 0x29, 0xd9, 0x63, 0xde, 0x1d, 0x8b, 0xe3, 0x9a,
+	0xdf, 0x33, 0xa0, 0xb1, 0x1a, 0xf8, 0x3b, 0xa4, 0x7d, 0xcb, 0x0e, 0xc7, 0xb6, 0xcf, 0x6b, 0x8c,
+	0x02, 0xef, 0xd7, 0xc5, 0x41, 0xfd, 0x12, 0x2f, 0x5f, 0x5e, 0xb3, 0x13, 0x9b, 0x33, 0x69, 0x86,
+	0xbe, 0xf4, 0x02, 0x34, 0x52, 0x10, 0xdd, 0xe4, 0x7b, 0xf8, 0x50, 0x2c, 0x2c, 0x7a, 0x49, 0x57,
+	0xc9, 0xbe, 0xed, 0x75, 0xe5, 0xa2, 0xe5, 0x8d, 0x97, 0x2b, 0x2f, 0x1a, 0x54, 0x32, 0x58, 0x4c,
+	0xc9, 0xde, 0xc0, 0x87, 0x5b, 0xd8, 0xc3, 0x4e, 0x12, 0x44, 0x68, 0x07, 0x16, 0xbd, 0x82, 0x9d,
+	0x25, 0x86, 0x3a, 0xca, 0x9e, 0x2c, 0xa4, 0x27, 0x3b, 0x5b, 0x49, 0x3b, 0x6b, 0xfe, 0x8a, 0x01,
+	0xb3, 0x69, 0x97, 0xc6, 0xbf, 0x14, 0x5e, 0xd5, 0x97, 0xc2, 0x47, 0x4b, 0x7e, 0x72, 0xb9, 0x08,
+	0xbe, 0x6f, 0xc0, 0xa9, 0x14, 0xa8, 0xb1, 0x8d, 0xf7, 0xeb, 0x8b, 0x0d, 0x37, 0x80, 0x1b, 0xf8,
+	0xf0, 0x4e, 0x40, 0x05, 0x05, 0x31, 0x00, 0x7a, 0xe8, 0xba, 0x78, 0xc7, 0xee, 0x7a, 0x49, 0x7a,
+	0xe8, 0x4e, 0x58, 0x2a, 0xc8, 0xfc, 0xe1, 0x24, 0x5b, 0xe7, 0x89, 0x4d, 0x7c, 0x1c, 0x15, 0xca,
+	0x24, 0x8b, 0x30, 0x41, 0x3a, 0x94, 0x1b, 0x89, 0xf5, 0xc4, 0x1a, 0x94, 0x4b, 0x39, 0x41, 0xa7,
+	0x63, 0xfb, 0x6e, 0xb3, 0xca, 0x8e, 0x07, 0xd9, 0xa4, 0x34, 0xec, 0xa8, 0x1d, 0x37, 0x6b, 0xfc,
+	0x90, 0xa1, 0xd7, 0xf4, 0x24, 0x78, 0x10, 0x44, 0x7b, 0xc4, 0x6f, 0xaf, 0x91, 0x88, 0xb1, 0xfa,
+	0x86, 0xa5, 0x40, 0xd0, 0x0a, 0x4c, 0x84, 0x41, 0x94, 0xc4, 0xcd, 0x49, 0x36, 0xcc, 0xa7, 0x06,
+	0xce, 0x13, 0xef, 0x6f, 0x2b, 0x88, 0x12, 0x8b, 0x63, 0xa2, 0xe7, 0xa1, 0x8a, 0xfd, 0xfd, 0x66,
+	0x9d, 0x11, 0x78, 0xec, 0x68, 0x02, 0xeb, 0xfe, 0xfe, 0x3d, 0x3b, 0xb2, 0x28, 0x02, 0x3d, 0x84,
+	0xa4, 0x8c, 0x1f, 0x37, 0xa7, 0xca, 0x4c, 0x9f, 0x25, 0x1e, 0xb7, 0xf0, 0xdb, 0x5d, 0x12, 0xe1,
+	0x0e, 0xf6, 0x93, 0xd8, 0xca, 0x88, 0xa0, 0x5b, 0x30, 0xc3, 0x8f, 0x90, 0x5b, 0x41, 0xd7, 0x4f,
+	0xe2, 0x66, 0x83, 0x75, 0x69, 0x80, 0x44, 0x7a, 0x2f, 0xc3, 0xb0, 0x34, 0x74, 0xb4, 0x01, 0xb3,
+	0x1e, 0xd9, 0xc7, 0x3e, 0x8e, 0xe3, 0x56, 0x14, 0x6c, 0xe3, 0x26, 0xb0, 0x4e, 0x7e, 0x64, 0x90,
+	0x90, 0x17, 0x6c, 0x63, 0x4b, 0xc7, 0x44, 0x37, 0x60, 0x8e, 0x1e, 0x54, 0x24, 0xa3, 0x35, 0x5d,
+	0x9e, 0x56, 0x0e, 0x15, 0xad, 0x43, 0xc3, 0x23, 0x3b, 0xd8, 0x39, 0x74, 0x3c, 0xdc, 0x9c, 0x61,
+	0x74, 0x06, 0x2c, 0xcf, 0x9b, 0xf2, 0x71, 0x2b, 0xc3, 0x44, 0xcf, 0xc3, 0xe9, 0x04, 0x47, 0x1d,
+	0xe2, 0xdb, 0xf4, 0x88, 0xb8, 0xc5, 0x8f, 0x3a, 0x26, 0xfe, 0xce, 0xb2, 0x65, 0xd2, 0xe7, 0x2e,
+	0x3a, 0x07, 0xf3, 0x6c, 0x25, 0xb6, 0xba, 0x9e, 0xd7, 0x0a, 0x3c, 0xe2, 0x1c, 0x36, 0xe7, 0x18,
+	0x42, 0x1e, 0x4c, 0x65, 0xfa, 0x18, 0x3b, 0xdd, 0x88, 0x24, 0x87, 0x74, 0xe5, 0xe0, 0x83, 0xa4,
+	0x39, 0x5f, 0x46, 0xce, 0xda, 0xd2, 0x91, 0xac, 0x3c, 0x15, 0xba, 0x33, 0xe2, 0xc4, 0x25, 0x7e,
+	0x73, 0x81, 0x09, 0x01, 0xbc, 0xc1, 0x24, 0x4b, 0x7a, 0x71, 0x9b, 0xf2, 0x83, 0x13, 0xec, 0x4e,
+	0x06, 0xa0, 0x2c, 0x30, 0x49, 0x0e, 0x9b, 0x88, 0xc1, 0xe9, 0x25, 0xd5, 0x0c, 0xd2, 0x05, 0xbd,
+	0xd1, 0x11, 0xe7, 0x3c, 0xdd, 0x79, 0x52, 0xf0, 0xe2, 0x0d, 0x46, 0x97, 0xbc, 0x83, 0xaf, 0x1c,
+	0x26, 0x98, 0x8b, 0x0c, 0x55, 0x2b, 0x03, 0x98, 0xbf, 0xcc, 0x19, 0x69, 0xb6, 0x2f, 0x0a, 0xf7,
+	0xf2, 0x12, 0x4c, 0xed, 0x06, 0x71, 0x42, 0xef, 0x33, 0x12, 0x13, 0x56, 0xda, 0x46, 0x8f, 0xc1,
+	0xac, 0xa3, 0x12, 0x10, 0xdc, 0x42, 0x07, 0x52, 0x0a, 0x4c, 0xcd, 0x74, 0x02, 0x4f, 0x88, 0x21,
+	0x69, 0x9b, 0x4a, 0x34, 0x94, 0xda, 0x46, 0x4b, 0xec, 0x70, 0xd1, 0x32, 0x3f, 0x5f, 0x51, 0x86,
+	0x48, 0x8f, 0x59, 0x8c, 0x6e, 0x41, 0xfd, 0x81, 0x4d, 0x12, 0xe2, 0xb7, 0x05, 0xcb, 0xfc, 0x58,
+	0xc9, 0x2d, 0xcf, 0xd0, 0xef, 0x73, 0x54, 0x4b, 0xd2, 0xa0, 0xe4, 0xa2, 0xae, 0xef, 0x53, 0x72,
+	0x95, 0xe1, 0xc9, 0x59, 0x1c, 0xd5, 0x92, 0x34, 0xd0, 0x3d, 0x00, 0xb9, 0xea, 0xb0, 0x2b, 0x14,
+	0xc0, 0xe7, 0x87, 0xa1, 0x78, 0x27, 0xc5, 0xb6, 0x14, 0x4a, 0xe6, 0x36, 0x3b, 0x4e, 0x7a, 0xdf,
+	0x8c, 0x36, 0xe8, 0x9a, 0xb1, 0xa3, 0x04, 0xbb, 0x2b, 0x89, 0xf8, 0x20, 0x4f, 0x95, 0x3c, 0xf5,
+	0xee, 0x90, 0x0e, 0x15, 0x81, 0x25, 0xb6, 0xf9, 0x47, 0x15, 0x68, 0xf6, 0xeb, 0x0c, 0x9d, 0x3d,
+	0x7c, 0x40, 0x92, 0x55, 0x7a, 0x18, 0x18, 0x7c, 0xfe, 0x65, 0x9b, 0xc9, 0xa3, 0xa4, 0xed, 0xdb,
+	0x9e, 0x58, 0x19, 0xa2, 0x45, 0xe1, 0x11, 0xb6, 0x63, 0xa1, 0xf3, 0x37, 0x2c, 0xd1, 0x52, 0xe5,
+	0xd4, 0x9a, 0x2e, 0xa7, 0x6a, 0xa3, 0x99, 0x78, 0x2f, 0xa3, 0x41, 0x37, 0x00, 0xa8, 0x02, 0x1d,
+	0xef, 0x32, 0x5a, 0x93, 0xc3, 0xd3, 0x52, 0xd0, 0x99, 0x0a, 0x9a, 0xee, 0xb4, 0xb5, 0x66, 0x5d,
+	0xa8, 0xa0, 0x19, 0xc8, 0xdc, 0xc8, 0x4f, 0x90, 0x58, 0x69, 0xca, 0x47, 0x30, 0xfa, 0x7d, 0x84,
+	0x8a, 0xf6, 0x11, 0xcc, 0x6f, 0x57, 0xa8, 0x58, 0xae, 0xd0, 0xea, 0xc6, 0x85, 0x5b, 0xf2, 0x0a,
+	0x65, 0x22, 0x76, 0x82, 0xc5, 0xc2, 0x7d, 0x7a, 0xa8, 0x85, 0xcb, 0x51, 0xd1, 0x27, 0xa1, 0xe1,
+	0xd9, 0x31, 0x93, 0x60, 0xb1, 0x58, 0xae, 0xc3, 0xd1, 0xc9, 0xd0, 0x29, 0xf3, 0xa1, 0x8c, 0x5e,
+	0x1a, 0x71, 0x78, 0x03, 0x99, 0x30, 0x13, 0x61, 0x36, 0x2d, 0xab, 0xf4, 0x54, 0x62, 0xb3, 0x3a,
+	0x61, 0x69, 0xb0, 0x4c, 0x50, 0x98, 0xcc, 0x09, 0x0a, 0xec, 0x22, 0xfd, 0xe0, 0xb2, 0x99, 0x9f,
+	0x8e, 0xa9, 0xde, 0xe9, 0x78, 0x0c, 0xe6, 0xd6, 0x6c, 0xdc, 0x09, 0xfc, 0x75, 0xdf, 0x0d, 0x03,
+	0xe2, 0x33, 0xa6, 0xc6, 0x78, 0x13, 0x5f, 0xbc, 0xec, 0xda, 0xfc, 0x13, 0x03, 0x66, 0xd7, 0xb0,
+	0x87, 0x13, 0x7c, 0x3b, 0x64, 0x6a, 0x06, 0x5a, 0x06, 0xd4, 0x8e, 0x6c, 0x07, 0xb7, 0x70, 0x44,
+	0x02, 0x77, 0x0b, 0x53, 0x0d, 0x24, 0x66, 0x38, 0x55, 0xab, 0xe0, 0x0e, 0x7a, 0x03, 0x66, 0xc3,
+	0x08, 0x6b, 0xba, 0x8e, 0x31, 0x58, 0x0c, 0x69, 0xa9, 0x28, 0x96, 0x4e, 0x01, 0x9d, 0x87, 0x85,
+	0x20, 0x0a, 0x77, 0x6d, 0x7f, 0x0d, 0x87, 0xd8, 0x77, 0xa9, 0x8c, 0x20, 0x74, 0xc5, 0x1e, 0xb8,
+	0xf9, 0xaf, 0x06, 0x9c, 0x5a, 0x0b, 0x1e, 0xf8, 0x0f, 0xec, 0xc8, 0x5d, 0x69, 0x6d, 0x70, 0x51,
+	0x80, 0x69, 0xc8, 0x52, 0xd3, 0x36, 0x14, 0x4d, 0xfb, 0x16, 0x4c, 0xed, 0x10, 0xec, 0xb9, 0x54,
+	0x69, 0xe6, 0xfd, 0xbc, 0x58, 0x46, 0x17, 0xb9, 0x4a, 0x71, 0xa4, 0xc4, 0x6f, 0xa5, 0x24, 0xd0,
+	0x67, 0x60, 0x41, 0x8a, 0x2e, 0x57, 0x25, 0xd9, 0x6a, 0x19, 0x1e, 0x6a, 0xa9, 0x58, 0x29, 0xe1,
+	0x1e, 0x62, 0x74, 0x0c, 0x1d, 0xca, 0x6f, 0x6a, 0x7c, 0xca, 0xe8, 0xb5, 0xf9, 0x79, 0x03, 0x1e,
+	0xe9, 0x19, 0xb1, 0x10, 0xad, 0x37, 0xa4, 0xc8, 0xcb, 0x8d, 0x59, 0x03, 0x7a, 0x51, 0xf8, 0xdd,
+	0xfa, 0x88, 0xbf, 0x95, 0x5e, 0xf1, 0x77, 0x19, 0x16, 0xd7, 0x3b, 0x61, 0x72, 0xb8, 0x46, 0x74,
+	0xb3, 0xc0, 0x69, 0x98, 0xec, 0x60, 0x97, 0x74, 0x3b, 0x72, 0xbf, 0xf3, 0x96, 0xf9, 0x5b, 0x06,
+	0xcc, 0xcb, 0xc5, 0xb8, 0xe2, 0xba, 0x11, 0x8e, 0x63, 0x34, 0x07, 0x15, 0x12, 0x8a, 0xe7, 0x2a,
+	0x24, 0x44, 0x37, 0xa0, 0xc1, 0x2d, 0x32, 0xd9, 0x0c, 0x0d, 0x69, 0xd1, 0xc9, 0xf0, 0xe5, 0x89,
+	0xcd, 0xd8, 0x06, 0xe7, 0xbf, 0x69, 0x9b, 0xde, 0xf3, 0x03, 0x97, 0x9b, 0xb0, 0xc4, 0x59, 0x2c,
+	0xdb, 0xa6, 0x05, 0x33, 0xb2, 0x9f, 0x7d, 0xa5, 0x01, 0xba, 0xba, 0x32, 0x49, 0x80, 0x5d, 0x6b,
+	0xe7, 0x7b, 0x55, 0x3f, 0xdf, 0xcd, 0xff, 0x32, 0x60, 0x4e, 0x12, 0xdd, 0xea, 0x6e, 0xc7, 0x98,
+	0xf2, 0xe7, 0x86, 0xcd, 0x3f, 0x03, 0x96, 0x13, 0xf6, 0xcc, 0x20, 0xd9, 0x5b, 0xfb, 0x7a, 0x56,
+	0x86, 0x8f, 0xde, 0x84, 0x13, 0x7e, 0x90, 0x58, 0x94, 0xe1, 0xac, 0xa4, 0x44, 0x2b, 0xa3, 0x10,
+	0xed, 0xa5, 0x83, 0x5e, 0x97, 0x2a, 0x46, 0x95, 0x11, 0x3c, 0x5f, 0x8e, 0xa0, 0xa2, 0x61, 0x50,
+	0x11, 0xab, 0x21, 0xe1, 0xe3, 0x32, 0xb1, 0x5c, 0x85, 0x7a, 0xcc, 0xbe, 0xa4, 0x1c, 0xe8, 0xd3,
+	0xe5, 0xfa, 0xc5, 0x3f, 0xbf, 0x25, 0x91, 0x99, 0x1e, 0x9d, 0xf6, 0xed, 0x61, 0xeb, 0xd1, 0x69,
+	0x47, 0xa4, 0x1e, 0xfd, 0x13, 0x30, 0xc9, 0x55, 0xae, 0x7e, 0x0a, 0x66, 0xaf, 0xc1, 0x02, 0x5d,
+	0x87, 0x06, 0xbb, 0xb8, 0x1a, 0x05, 0x1d, 0xc1, 0x90, 0xce, 0x97, 0xd1, 0xea, 0xf8, 0x06, 0xb6,
+	0x32, 0x64, 0xf3, 0xdf, 0x2a, 0x74, 0x2f, 0x64, 0xf7, 0x34, 0x0e, 0x6a, 0x1c, 0x0f, 0x07, 0xad,
+	0x8c, 0x93, 0x83, 0xbe, 0x05, 0xf3, 0x8e, 0x62, 0xb6, 0xc9, 0x38, 0xf4, 0xa5, 0x92, 0xf6, 0x0c,
+	0xc5, 0xd6, 0x63, 0xe5, 0x49, 0xa1, 0x2d, 0x98, 0xe1, 0x06, 0x54, 0x41, 0xba, 0x36, 0x70, 0xb1,
+	0x70, 0xdd, 0x88, 0x63, 0xa4, 0x74, 0x35, 0x22, 0xe6, 0x3f, 0x57, 0x61, 0x62, 0x7d, 0x1f, 0xfb,
+	0xc9, 0x98, 0xf6, 0xc9, 0x5d, 0x98, 0x23, 0xfe, 0x7e, 0xe0, 0xed, 0x63, 0x97, 0xdf, 0x1f, 0x8d,
+	0xb1, 0xe6, 0x88, 0x8c, 0x20, 0xdb, 0xae, 0xc0, 0x24, 0x9f, 0x1d, 0x21, 0xd8, 0x0e, 0x50, 0xeb,
+	0xd9, 0x37, 0x10, 0x4b, 0x52, 0x20, 0xa2, 0x2d, 0x98, 0xdb, 0x21, 0x51, 0x9c, 0x50, 0xf9, 0x34,
+	0x4e, 0xec, 0x4e, 0x38, 0x8a, 0x5c, 0x9b, 0x23, 0x41, 0x45, 0x18, 0x2a, 0xc3, 0x65, 0x34, 0xeb,
+	0xc3, 0xd3, 0xd4, 0x29, 0xd0, 0x7d, 0xe9, 0x30, 0x61, 0x6f, 0x8a, 0x9d, 0x0f, 0xbc, 0x91, 0x9a,
+	0xb2, 0x1b, 0x99, 0x29, 0xdb, 0xfc, 0x05, 0xca, 0x19, 0xe9, 0x48, 0xc7, 0xcf, 0x79, 0x5e, 0xd2,
+	0x39, 0xcf, 0x47, 0x4a, 0x7c, 0x6e, 0xc9, 0x75, 0x2e, 0xc3, 0xb4, 0xf2, 0xf9, 0xa9, 0xfe, 0xec,
+	0x48, 0x5b, 0xaf, 0xe0, 0x3f, 0x19, 0x80, 0x0e, 0x8b, 0x9e, 0xab, 0xd2, 0xa7, 0x41, 0xaf, 0xcd,
+	0x27, 0x00, 0xd6, 0x0f, 0xb0, 0xb3, 0xe2, 0x30, 0x1b, 0xbe, 0x62, 0xf1, 0x32, 0x34, 0x8b, 0x97,
+	0xf9, 0x2a, 0xcc, 0xae, 0x1f, 0xd0, 0x33, 0x42, 0xca, 0x9f, 0xa7, 0x61, 0x12, 0x33, 0x00, 0x7b,
+	0xcf, 0x94, 0x25, 0x5a, 0xcc, 0x80, 0x7f, 0x60, 0x8b, 0xc5, 0x3b, 0x65, 0xf1, 0x86, 0xb9, 0x0f,
+	0x73, 0x57, 0x57, 0xf3, 0xce, 0x2b, 0x2e, 0x01, 0xdc, 0xbf, 0xbf, 0x29, 0xad, 0x00, 0x0a, 0x04,
+	0x2d, 0x40, 0xd5, 0xeb, 0xfa, 0xe2, 0xdc, 0xa6, 0x97, 0x8a, 0xab, 0xa2, 0xda, 0xd7, 0x55, 0x91,
+	0xf7, 0xca, 0x7e, 0xa7, 0x02, 0x0b, 0x57, 0x3d, 0x7c, 0x90, 0x17, 0x7c, 0xdc, 0x88, 0xec, 0xe3,
+	0x48, 0x0a, 0x3e, 0xbc, 0xd5, 0xd7, 0x17, 0xa2, 0xf9, 0x70, 0xaa, 0xe3, 0xf6, 0xe1, 0xe4, 0xba,
+	0x8c, 0xee, 0x42, 0x3d, 0xe0, 0xdf, 0xb8, 0x39, 0xc1, 0xd6, 0xc3, 0x2b, 0x47, 0xbf, 0x2b, 0x3f,
+	0xbc, 0x65, 0x31, 0x43, 0xdc, 0x9c, 0x2e, 0x69, 0x2d, 0xbd, 0x0c, 0x33, 0xea, 0x8d, 0xa1, 0x8c,
+	0xea, 0x2f, 0xc0, 0xc9, 0xab, 0x5e, 0xe0, 0xec, 0xe5, 0xfc, 0x4a, 0x54, 0xf4, 0xb4, 0x13, 0x3b,
+	0xd6, 0x1c, 0x90, 0x2a, 0xc8, 0xfc, 0x19, 0x03, 0x3e, 0x74, 0x6d, 0x75, 0xbd, 0x45, 0x57, 0x7f,
+	0x9c, 0x60, 0x3f, 0xe9, 0x71, 0xb4, 0x9e, 0x86, 0xc9, 0xd0, 0x55, 0xd0, 0x45, 0xeb, 0x18, 0x1c,
+	0xf4, 0x01, 0x9c, 0xbc, 0x46, 0x12, 0x0b, 0x87, 0x41, 0x7e, 0x1d, 0x46, 0x38, 0x0c, 0x62, 0x92,
+	0x04, 0x91, 0xfc, 0x1c, 0x0a, 0x84, 0x93, 0xdc, 0x27, 0x74, 0xf7, 0x8a, 0xae, 0xa4, 0x6d, 0xda,
+	0x19, 0x97, 0x44, 0xec, 0x6c, 0x38, 0x14, 0x8b, 0x32, 0x03, 0x98, 0x18, 0x4e, 0x5d, 0xf3, 0xba,
+	0x71, 0x82, 0xa3, 0x9d, 0x58, 0x7b, 0xe5, 0xa3, 0xd0, 0xc0, 0x52, 0x7c, 0x90, 0xbb, 0x34, 0x05,
+	0x14, 0x7a, 0x1e, 0x8f, 0xf2, 0xc6, 0xfd, 0xad, 0x01, 0xb3, 0xd7, 0xef, 0xdc, 0x69, 0x5d, 0xc3,
+	0x89, 0xd8, 0xc5, 0x45, 0x1a, 0xd5, 0x15, 0x45, 0x0e, 0x9e, 0xbe, 0xb4, 0xdc, 0x67, 0x49, 0x75,
+	0x13, 0xe2, 0x2d, 0xf3, 0x98, 0x8b, 0xe5, 0x0d, 0x3f, 0xb9, 0x1d, 0x6d, 0x25, 0x11, 0xf1, 0xdb,
+	0x42, 0x6e, 0x96, 0xfc, 0xa3, 0x9a, 0xf1, 0x0f, 0x66, 0x51, 0x71, 0x76, 0x71, 0x2a, 0x9d, 0x8b,
+	0x16, 0xfa, 0x24, 0x4c, 0xef, 0x26, 0x49, 0x78, 0x1d, 0xdb, 0x2e, 0x8e, 0xe4, 0x4a, 0x1e, 0x70,
+	0x2a, 0xd2, 0x51, 0x70, 0x04, 0x4b, 0x45, 0x36, 0x9f, 0x07, 0xc8, 0x6e, 0x95, 0x17, 0xaf, 0xcc,
+	0xbf, 0x31, 0xa0, 0x7e, 0xdd, 0xf6, 0x5d, 0x0f, 0x47, 0xe8, 0x13, 0x50, 0xc3, 0x07, 0xd8, 0x29,
+	0x77, 0x3c, 0x67, 0x1c, 0xd1, 0x62, 0x58, 0x68, 0x1d, 0xea, 0xb4, 0x43, 0xd7, 0x52, 0xf7, 0xf5,
+	0x53, 0x83, 0x47, 0x92, 0xce, 0x87, 0x25, 0x71, 0x99, 0xd6, 0xe4, 0x84, 0x5b, 0x74, 0x27, 0x25,
+	0xe5, 0x62, 0x2e, 0xee, 0xac, 0xb6, 0xf8, 0xe3, 0x82, 0x54, 0x86, 0x6f, 0x9e, 0x87, 0xc5, 0xeb,
+	0x41, 0x9c, 0xb4, 0xec, 0x64, 0x57, 0x5b, 0x5d, 0x05, 0xb3, 0x6f, 0xfe, 0xa1, 0x01, 0x27, 0x36,
+	0xb6, 0x56, 0xb7, 0x74, 0x2d, 0xd4, 0x84, 0x19, 0xce, 0x70, 0xa9, 0x06, 0x60, 0x7b, 0x02, 0x43,
+	0x83, 0x51, 0x36, 0x41, 0xde, 0x96, 0x2b, 0x9f, 0x5e, 0x4a, 0xc6, 0x5c, 0xcd, 0x18, 0xf3, 0x13,
+	0x30, 0x47, 0x62, 0x27, 0x26, 0x1b, 0x3e, 0x5d, 0xeb, 0xb6, 0x23, 0xd7, 0x42, 0x0e, 0xaa, 0xec,
+	0xe9, 0x89, 0xbe, 0x0c, 0x3c, 0xef, 0xd1, 0x5e, 0x87, 0x46, 0xea, 0xf1, 0x29, 0xe0, 0x59, 0x7d,
+	0xdc, 0xf4, 0x9d, 0xcc, 0x13, 0xc4, 0x95, 0xf1, 0x9f, 0x37, 0xa0, 0x91, 0x9a, 0xe6, 0xd1, 0x2a,
+	0x34, 0xc2, 0x80, 0x19, 0x83, 0x22, 0x69, 0x8a, 0x7c, 0x7c, 0xc0, 0x84, 0xf2, 0x65, 0x64, 0x65,
+	0x78, 0xe8, 0x32, 0xd4, 0xc3, 0x08, 0x6f, 0x25, 0x2c, 0xd6, 0x60, 0x08, 0x12, 0x12, 0xcb, 0xfc,
+	0x45, 0x03, 0xe0, 0x26, 0xe9, 0x90, 0xc4, 0xb2, 0xfd, 0x36, 0x1e, 0x93, 0x10, 0xf9, 0x3a, 0xd4,
+	0xe2, 0x10, 0x3b, 0xe5, 0x2c, 0x6d, 0xd9, 0xdb, 0xb7, 0x42, 0xec, 0x58, 0x0c, 0xd3, 0xfc, 0xe2,
+	0x14, 0xcc, 0x65, 0x37, 0x36, 0x12, 0xdc, 0x29, 0x74, 0xed, 0x5f, 0x83, 0x6a, 0xc7, 0x3e, 0x10,
+	0x22, 0xcb, 0xc7, 0xcb, 0xbe, 0x87, 0x92, 0x5b, 0xbe, 0x65, 0x1f, 0xf0, 0xc3, 0x89, 0x52, 0x60,
+	0x84, 0x88, 0x2f, 0x54, 0xd6, 0x21, 0x09, 0x11, 0x5f, 0x12, 0x22, 0x3e, 0xda, 0x82, 0xba, 0x30,
+	0x7b, 0x30, 0xbf, 0xdc, 0xf4, 0xa5, 0x97, 0x86, 0x22, 0xb6, 0xc6, 0x71, 0xc5, 0xb1, 0x29, 0x28,
+	0xa1, 0x5d, 0x98, 0x13, 0x97, 0x16, 0x7e, 0xbb, 0x8b, 0xe3, 0x44, 0xb0, 0xb2, 0xd7, 0x47, 0xa1,
+	0x2d, 0x48, 0xf0, 0x57, 0xe4, 0xe8, 0xa2, 0x77, 0x60, 0xb1, 0x63, 0x1f, 0x70, 0x44, 0x0e, 0xb2,
+	0xec, 0x84, 0x04, 0xc2, 0x5d, 0x78, 0x75, 0xd8, 0x2f, 0xdc, 0x43, 0x88, 0xbf, 0xb5, 0xf0, 0x1d,
+	0x4b, 0x2e, 0x4c, 0xc9, 0x49, 0x29, 0xd8, 0x64, 0x57, 0x54, 0xee, 0x7a, 0xf4, 0xa2, 0x92, 0x7a,
+	0xdd, 0xf2, 0x1b, 0x5d, 0xdb, 0x4f, 0x48, 0x72, 0xa8, 0x88, 0x11, 0xec, 0x2d, 0x62, 0xc6, 0x8e,
+	0xf1, 0x2d, 0xbb, 0x30, 0xa3, 0x4e, 0xe5, 0x31, 0xbe, 0x29, 0x80, 0x93, 0x05, 0x13, 0x7b, 0x8c,
+	0x2f, 0xec, 0xc2, 0x07, 0xfa, 0xce, 0xec, 0xf1, 0xbd, 0xd6, 0xfc, 0x35, 0x43, 0xe5, 0x08, 0xe3,
+	0xd7, 0x7f, 0x5e, 0xd3, 0xf5, 0x9f, 0x73, 0x65, 0x97, 0xba, 0x54, 0x82, 0xee, 0xa9, 0xdd, 0xa3,
+	0x9c, 0x0c, 0xad, 0xc1, 0xa4, 0x47, 0x21, 0xd2, 0x5e, 0xf7, 0xf4, 0x30, 0xbb, 0xc7, 0x12, 0xb8,
+	0xe6, 0x57, 0x0d, 0xa8, 0x8d, 0x7f, 0xb4, 0x2b, 0xfa, 0x68, 0xfb, 0x49, 0x12, 0x22, 0x5a, 0x76,
+	0xd9, 0xb2, 0x1f, 0xac, 0x1f, 0x24, 0xd8, 0xa7, 0x04, 0xe5, 0x80, 0xbf, 0x6d, 0xc0, 0x34, 0xa5,
+	0x2c, 0x75, 0xb1, 0xc7, 0xa8, 0x62, 0xbc, 0x8d, 0x3d, 0x69, 0xa8, 0x10, 0x8b, 0x40, 0x07, 0xd2,
+	0xa7, 0x76, 0x54, 0x2b, 0x8c, 0x38, 0x34, 0x75, 0x20, 0x15, 0xa5, 0x1e, 0xd8, 0x89, 0xb3, 0x2b,
+	0xe4, 0x4c, 0xde, 0x40, 0xe7, 0x60, 0x5e, 0x2e, 0x91, 0x7b, 0x7c, 0x70, 0xe2, 0x8c, 0xcf, 0x83,
+	0xa9, 0x30, 0x40, 0xfb, 0x1d, 0x74, 0x13, 0xe9, 0x93, 0x98, 0x60, 0x3e, 0x89, 0x1c, 0xd4, 0x5c,
+	0x81, 0x93, 0x37, 0x03, 0xdb, 0xbd, 0x62, 0x7b, 0xb6, 0xef, 0xe0, 0x68, 0xc3, 0x6f, 0x17, 0x1a,
+	0x9a, 0x55, 0xdb, 0x70, 0x45, 0xb7, 0x0d, 0x9b, 0x36, 0x20, 0x95, 0x84, 0x70, 0x40, 0xdd, 0x80,
+	0x3a, 0xe1, 0xc4, 0xc4, 0xe4, 0x5f, 0x1c, 0xa4, 0xab, 0xf5, 0xf4, 0xc2, 0x92, 0x14, 0xa8, 0x90,
+	0x55, 0xa4, 0xcb, 0x15, 0x09, 0xa1, 0xe6, 0xa7, 0x60, 0x7e, 0x33, 0x17, 0x61, 0x48, 0xa5, 0x63,
+	0x1c, 0x29, 0x9a, 0x26, 0x6f, 0x0d, 0x2d, 0xe3, 0xff, 0xb5, 0x01, 0x0d, 0xaa, 0x16, 0xc5, 0x21,
+	0x95, 0xa3, 0xc6, 0x23, 0x29, 0x5c, 0xd6, 0x24, 0x85, 0x01, 0x02, 0x6d, 0xfa, 0xf2, 0x4c, 0x50,
+	0x40, 0xeb, 0x69, 0x70, 0x5f, 0x29, 0x51, 0x36, 0x23, 0xc1, 0x83, 0xd0, 0x04, 0x32, 0x33, 0xeb,
+	0xa6, 0xf7, 0x1e, 0xb6, 0x59, 0x37, 0xed, 0x88, 0xdc, 0x6a, 0x17, 0x94, 0xce, 0x31, 0xd6, 0x72,
+	0x86, 0x79, 0x6b, 0x6d, 0x8f, 0xbc, 0x83, 0xd3, 0xb0, 0x51, 0x05, 0x62, 0x7e, 0x14, 0xe6, 0x73,
+	0x23, 0xa5, 0x5b, 0x2a, 0xdc, 0xb5, 0x63, 0xb9, 0x5a, 0x78, 0xc3, 0xfc, 0x73, 0x03, 0x6a, 0x9b,
+	0x81, 0x3b, 0xae, 0xe9, 0x7c, 0x59, 0x9b, 0xce, 0x27, 0x06, 0x87, 0x9a, 0x2b, 0x33, 0xf9, 0x7a,
+	0x6e, 0x26, 0xcf, 0x95, 0xc0, 0xd6, 0x27, 0xf1, 0x15, 0x98, 0x66, 0xe1, 0xeb, 0xc2, 0x5d, 0x54,
+	0x24, 0x30, 0x36, 0xa1, 0x2e, 0xdc, 0x20, 0xd2, 0x8d, 0x2c, 0x9a, 0xe6, 0x9f, 0x56, 0x60, 0x46,
+	0x0d, 0x7e, 0x47, 0x5f, 0x36, 0x60, 0x39, 0xe2, 0x91, 0x47, 0xee, 0x5a, 0x97, 0x6a, 0xa0, 0x5b,
+	0xce, 0x2e, 0x76, 0xbb, 0x1e, 0xf1, 0xdb, 0x1b, 0x6d, 0x3f, 0x48, 0xc1, 0x54, 0x51, 0xeb, 0x32,
+	0x53, 0x40, 0xe9, 0x08, 0xfb, 0xd4, 0x98, 0x3b, 0xe4, 0x1b, 0xd0, 0xd7, 0x0d, 0xb8, 0xc0, 0x03,
+	0xc8, 0xcb, 0xf7, 0xaa, 0x94, 0x74, 0xdc, 0x92, 0x44, 0x33, 0x72, 0x77, 0x70, 0xd4, 0xb1, 0x86,
+	0x7d, 0x9b, 0xf9, 0xad, 0x0a, 0xcc, 0xd2, 0x21, 0x8e, 0x16, 0x93, 0xfb, 0x29, 0x38, 0xe1, 0xd9,
+	0x71, 0x72, 0x1d, 0xdb, 0x51, 0xb2, 0x8d, 0x6d, 0x66, 0x24, 0x15, 0xeb, 0x61, 0x28, 0x0b, 0x6b,
+	0x2f, 0x15, 0xf4, 0x26, 0x20, 0x66, 0x76, 0x8d, 0x6c, 0x3f, 0x66, 0x1d, 0x63, 0xb4, 0x6b, 0xc3,
+	0xd3, 0x2e, 0x20, 0xa3, 0xd8, 0xb7, 0x27, 0xfa, 0xd9, 0xb7, 0x27, 0xf5, 0xb0, 0x85, 0x0e, 0x9c,
+	0xa4, 0x9f, 0x49, 0x77, 0xbb, 0xc7, 0xe8, 0x1e, 0xcc, 0xd3, 0x3e, 0x78, 0x38, 0x91, 0x30, 0xb1,
+	0xaa, 0x06, 0x48, 0x0f, 0x3a, 0x1d, 0x2b, 0x4f, 0x84, 0xea, 0x9e, 0x53, 0xf4, 0x7d, 0xe3, 0xe7,
+	0x6d, 0x2f, 0xea, 0xbc, 0xcd, 0x1c, 0xbc, 0xfa, 0x25, 0x5b, 0x7b, 0x02, 0x16, 0x68, 0xb3, 0x15,
+	0x05, 0x07, 0x87, 0x52, 0x8a, 0x28, 0x32, 0x1c, 0x78, 0x7c, 0x67, 0xa6, 0xd2, 0xc1, 0x5b, 0x70,
+	0xc2, 0x57, 0xda, 0x74, 0x9d, 0xca, 0x63, 0x76, 0xb9, 0xfc, 0xde, 0x63, 0xcb, 0xbb, 0x97, 0x90,
+	0xf9, 0x19, 0x78, 0x44, 0xdb, 0xa2, 0x59, 0xf0, 0x61, 0x81, 0x74, 0xbb, 0x04, 0x53, 0x41, 0x88,
+	0x23, 0x3b, 0x93, 0x64, 0xd2, 0x36, 0x5d, 0x13, 0x4c, 0x7c, 0x8d, 0x45, 0xe0, 0xa6, 0x68, 0x99,
+	0x5d, 0x3e, 0x6c, 0xf5, 0xad, 0xc8, 0x86, 0x85, 0x0e, 0x95, 0x71, 0xd6, 0x0f, 0x42, 0xca, 0x8d,
+	0x98, 0xe1, 0xd5, 0x28, 0xb3, 0x6f, 0xfb, 0x74, 0xd5, 0xea, 0x21, 0x67, 0x7e, 0x41, 0xac, 0x00,
+	0x76, 0x80, 0x34, 0xa1, 0x1e, 0x06, 0xee, 0xea, 0xc6, 0x9a, 0x25, 0x46, 0x23, 0x9b, 0xf4, 0x68,
+	0xc1, 0x07, 0x09, 0x8e, 0x7c, 0xdb, 0xdb, 0x58, 0x93, 0x99, 0x31, 0x19, 0x84, 0xde, 0x0f, 0xa3,
+	0x60, 0x9f, 0xb8, 0x2c, 0x96, 0x84, 0x5b, 0xe1, 0x14, 0x08, 0x15, 0xf0, 0xba, 0x7e, 0xcc, 0xb9,
+	0x84, 0xbd, 0x2d, 0xd2, 0x11, 0xa6, 0x2c, 0x1d, 0x68, 0xfe, 0x4e, 0x1d, 0x20, 0xe3, 0xe0, 0xc8,
+	0x82, 0x29, 0xc7, 0x0e, 0x6d, 0x87, 0xa7, 0x29, 0x55, 0x07, 0x47, 0x81, 0x65, 0xb8, 0xcb, 0xab,
+	0x02, 0x91, 0xab, 0x96, 0x29, 0x1d, 0xf4, 0x26, 0x4c, 0xdb, 0x9e, 0x17, 0x38, 0x76, 0xc2, 0xba,
+	0x51, 0x29, 0xa3, 0x8d, 0x2b, 0x64, 0x57, 0x32, 0x5c, 0x4e, 0x59, 0xa5, 0x96, 0x9d, 0xa6, 0x55,
+	0xe5, 0x34, 0x45, 0x37, 0xb4, 0x38, 0xfe, 0x5a, 0x99, 0x10, 0x5b, 0x8d, 0x55, 0xaa, 0x21, 0xfc,
+	0xe8, 0x9a, 0xea, 0xf1, 0x9f, 0x28, 0x13, 0xda, 0xaa, 0x1c, 0x7e, 0xba, 0xb7, 0x7f, 0xde, 0xd5,
+	0xb9, 0x8c, 0xf0, 0x83, 0x5d, 0x1c, 0x4c, 0x2e, 0xc7, 0x9e, 0xac, 0x3c, 0x25, 0x74, 0x9d, 0x87,
+	0x46, 0x6c, 0xf8, 0x3b, 0x81, 0xf0, 0x84, 0x3d, 0x5d, 0xe2, 0x13, 0x1f, 0xc6, 0x09, 0xee, 0x50,
+	0x1c, 0x2b, 0xc5, 0xa6, 0xea, 0x12, 0x0b, 0x58, 0x8a, 0x9b, 0x53, 0x65, 0xd4, 0x25, 0x3d, 0x94,
+	0xd3, 0x12, 0xb8, 0xc8, 0x94, 0x31, 0xc1, 0xf1, 0x86, 0x7f, 0x37, 0xc6, 0x2c, 0x26, 0xb8, 0x61,
+	0x69, 0x30, 0xca, 0x63, 0x45, 0x5b, 0x66, 0x8a, 0x35, 0xa1, 0xcc, 0x2b, 0xf5, 0xbc, 0x32, 0x2b,
+	0x4f, 0x64, 0x89, 0xc0, 0xac, 0xb6, 0x18, 0x8f, 0x51, 0x09, 0xf7, 0x60, 0x21, 0xbf, 0x40, 0x8f,
+	0x51, 0xf7, 0xfe, 0xc9, 0x2a, 0xcc, 0xe9, 0xf3, 0x86, 0x1e, 0x85, 0x46, 0x87, 0xa5, 0x94, 0x65,
+	0xf9, 0x3c, 0x19, 0x80, 0x25, 0x24, 0xb1, 0x67, 0xef, 0xde, 0xcd, 0x98, 0x48, 0x06, 0xa1, 0xac,
+	0x71, 0x3b, 0x08, 0x92, 0x94, 0x81, 0x88, 0x16, 0x65, 0x1e, 0x7b, 0xb4, 0x67, 0x9e, 0xae, 0xdf,
+	0xe9, 0x40, 0xca, 0xbc, 0x82, 0x98, 0x4d, 0xbb, 0x38, 0x6d, 0x65, 0x13, 0xbd, 0x08, 0x8f, 0xa4,
+	0x61, 0x6d, 0x16, 0xd7, 0x5d, 0x25, 0x25, 0x7e, 0xfc, 0xf6, 0xbb, 0x4d, 0x35, 0x46, 0x71, 0x64,
+	0x4a, 0x04, 0x1e, 0x44, 0x97, 0x83, 0xa2, 0xf3, 0xb0, 0x40, 0x21, 0xec, 0xcc, 0x92, 0x4f, 0xf2,
+	0x80, 0xba, 0x1e, 0x38, 0xd5, 0x57, 0xf9, 0x61, 0x40, 0xe5, 0x26, 0x36, 0x78, 0xe1, 0xcc, 0xcd,
+	0x83, 0xe9, 0xaa, 0xb5, 0x23, 0x67, 0x97, 0x24, 0xd8, 0x49, 0xba, 0x11, 0x8f, 0x3c, 0x6f, 0x58,
+	0x1a, 0xcc, 0xdc, 0x82, 0x93, 0x05, 0xe1, 0x11, 0xf4, 0x53, 0xdb, 0x21, 0x91, 0x5d, 0x11, 0xae,
+	0xa3, 0x0c, 0x42, 0x27, 0x8a, 0xe9, 0xd6, 0x4a, 0xa2, 0x63, 0x06, 0x30, 0xbf, 0x54, 0x07, 0xc8,
+	0x24, 0xf9, 0x42, 0xb7, 0x86, 0x09, 0x33, 0x32, 0xf3, 0x55, 0xc9, 0xe1, 0xd3, 0x60, 0xf4, 0x25,
+	0xbe, 0xd4, 0x37, 0xa4, 0x0f, 0x2a, 0x05, 0xd0, 0x43, 0x32, 0xc6, 0xde, 0xce, 0x4d, 0xe2, 0xef,
+	0xc9, 0xf0, 0x29, 0xd9, 0xa6, 0x8b, 0xb6, 0x4b, 0x5c, 0x31, 0x8f, 0xf4, 0xb2, 0x48, 0xcb, 0x9f,
+	0x2c, 0xd6, 0xf2, 0xcf, 0x00, 0x88, 0x5e, 0xc8, 0xf9, 0xaa, 0x5a, 0x0a, 0x84, 0x0a, 0x93, 0x4e,
+	0x84, 0x6d, 0x29, 0xa4, 0x71, 0x77, 0xfd, 0xd4, 0x08, 0xc2, 0x64, 0x0f, 0x15, 0x4a, 0xda, 0xa5,
+	0xcb, 0x42, 0x23, 0xdd, 0x18, 0x81, 0x74, 0x0f, 0x15, 0xf4, 0x1a, 0x2c, 0x49, 0xe0, 0xb5, 0xde,
+	0xd8, 0x4a, 0x60, 0xa3, 0x3c, 0xe2, 0x09, 0x74, 0x13, 0x26, 0x99, 0xc9, 0x25, 0x6e, 0x4e, 0x33,
+	0xa6, 0xf6, 0x5c, 0x59, 0x3d, 0x6e, 0xf9, 0x26, 0x43, 0xe3, 0xa7, 0x9d, 0xa0, 0xc1, 0x4e, 0x51,
+	0xdf, 0x0f, 0x12, 0x9b, 0x9f, 0x69, 0x33, 0x65, 0x4e, 0x51, 0x85, 0xe4, 0x4a, 0x86, 0x2b, 0x4f,
+	0xd1, 0x0c, 0x42, 0x19, 0x71, 0xf0, 0x80, 0xee, 0x45, 0x69, 0xd2, 0x88, 0x9b, 0xb3, 0x65, 0x18,
+	0xf1, 0x6d, 0x0d, 0xc9, 0xca, 0x13, 0xc9, 0xa9, 0xc7, 0x73, 0x79, 0xf5, 0x98, 0x05, 0xc4, 0x72,
+	0xa7, 0x28, 0x5b, 0xd1, 0xf3, 0x22, 0x20, 0x36, 0x03, 0x2d, 0xbd, 0x04, 0xd3, 0xca, 0xd7, 0x18,
+	0xc6, 0x4f, 0xbd, 0xf4, 0x1a, 0x2c, 0xe4, 0x47, 0x3d, 0x94, 0x9f, 0xfb, 0x7b, 0x06, 0xcc, 0x17,
+	0x58, 0x7a, 0xf6, 0x08, 0x8b, 0x87, 0x60, 0xfb, 0x92, 0x5e, 0xeb, 0x7b, 0xae, 0x92, 0xdf, 0x73,
+	0x72, 0x27, 0x57, 0x95, 0x9d, 0x2c, 0xf6, 0x5a, 0x2d, 0xdb, 0x6b, 0x3a, 0xf3, 0x98, 0xe8, 0x61,
+	0x1e, 0xe5, 0xf7, 0xa2, 0xc6, 0x66, 0xea, 0x79, 0x36, 0xf3, 0x05, 0x03, 0xe6, 0xf4, 0x49, 0x2b,
+	0x1c, 0xd2, 0x78, 0x3a, 0x7d, 0x86, 0x49, 0x61, 0x49, 0x14, 0x78, 0x1e, 0x8e, 0x84, 0x2f, 0x4f,
+	0x81, 0x98, 0xff, 0x62, 0xc0, 0x42, 0x16, 0x0c, 0x20, 0x92, 0xc4, 0xc7, 0x15, 0x65, 0xa8, 0xda,
+	0x3f, 0x06, 0xa5, 0x87, 0xe7, 0xfa, 0xa0, 0xd8, 0x42, 0x6e, 0xe6, 0x6c, 0x21, 0xcf, 0x0d, 0x49,
+	0x49, 0xb7, 0x8b, 0xfc, 0xb7, 0x01, 0xa7, 0xf2, 0x8f, 0xac, 0x7a, 0x36, 0xe9, 0x8c, 0x69, 0xd4,
+	0x37, 0xb4, 0x51, 0xbf, 0x30, 0x5c, 0x5f, 0x59, 0x47, 0x94, 0xa1, 0xbf, 0x91, 0x1b, 0xfa, 0x4b,
+	0xa3, 0x90, 0xd3, 0xc7, 0xff, 0x07, 0x06, 0x7c, 0xa0, 0xf0, 0xb9, 0xf1, 0x2b, 0xc3, 0x1b, 0xba,
+	0x32, 0xfc, 0xb1, 0x11, 0x3a, 0x2f, 0xb5, 0xe3, 0xcf, 0x55, 0xfa, 0xf4, 0x9a, 0x29, 0x70, 0x67,
+	0x61, 0xda, 0x76, 0x1c, 0x1c, 0xc7, 0xb7, 0x02, 0x37, 0x4d, 0x60, 0x52, 0x41, 0x7a, 0xbe, 0x5d,
+	0x65, 0x1c, 0xf9, 0x76, 0x67, 0x00, 0xb8, 0xc8, 0xbb, 0x99, 0x6d, 0x52, 0x05, 0x82, 0x5a, 0xec,
+	0x9c, 0xe7, 0x66, 0xfd, 0xda, 0xc0, 0x75, 0xab, 0x7d, 0x49, 0xd5, 0x47, 0x60, 0xa5, 0x54, 0xcc,
+	0x6f, 0x55, 0xe0, 0x83, 0x47, 0xcc, 0x70, 0xb1, 0x51, 0x33, 0xff, 0x6d, 0x2a, 0xbd, 0xdf, 0xc6,
+	0x51, 0xf4, 0x4d, 0xee, 0xf3, 0xbd, 0x36, 0xf2, 0x32, 0xeb, 0xa7, 0x80, 0xbe, 0x8f, 0xea, 0x80,
+	0xf9, 0xff, 0xe0, 0xc3, 0x85, 0x3d, 0xcc, 0x47, 0xfc, 0x38, 0x14, 0xa8, 0x04, 0x3a, 0x65, 0x00,
+	0xcd, 0xf2, 0x5f, 0xc9, 0x59, 0xfe, 0xdf, 0x35, 0x60, 0x31, 0x4f, 0x7f, 0xfc, 0x7b, 0x67, 0x4d,
+	0xdf, 0x3b, 0xcb, 0xc3, 0xcd, 0x88, 0xdc, 0x36, 0xef, 0x02, 0x9c, 0xee, 0xe1, 0x87, 0xfc, 0x03,
+	0x10, 0x38, 0xd1, 0x66, 0xd2, 0x92, 0x12, 0x07, 0x26, 0xba, 0x3d, 0x20, 0xbc, 0xed, 0xc8, 0xf0,
+	0x31, 0xab, 0x97, 0x2a, 0x8a, 0x60, 0xd1, 0x7e, 0x10, 0xf7, 0x94, 0x86, 0x11, 0xf3, 0xfc, 0xda,
+	0x00, 0x3d, 0x73, 0x40, 0x51, 0x19, 0xab, 0x90, 0x36, 0xda, 0x14, 0x39, 0x87, 0xf4, 0x04, 0x2e,
+	0x15, 0x20, 0x58, 0x14, 0xb9, 0x63, 0xa5, 0x34, 0xd0, 0x1b, 0xd0, 0x68, 0xcb, 0xd0, 0x31, 0xb1,
+	0x9f, 0x07, 0xf0, 0xb3, 0xc2, 0x48, 0x33, 0x2b, 0xa3, 0x82, 0x2e, 0x43, 0xd5, 0xdf, 0x89, 0x45,
+	0x44, 0xef, 0x20, 0x57, 0x8d, 0xee, 0xc6, 0xb2, 0x28, 0x26, 0x25, 0x10, 0x6d, 0xbb, 0xc2, 0x7e,
+	0x31, 0x80, 0x80, 0x75, 0x65, 0x4d, 0x27, 0x10, 0x6d, 0xbb, 0x68, 0x1d, 0x26, 0x58, 0x40, 0x90,
+	0x30, 0x56, 0x0c, 0x88, 0xbe, 0xee, 0x09, 0x57, 0xb2, 0x38, 0x36, 0xba, 0x0e, 0x93, 0x0e, 0xab,
+	0x71, 0x21, 0xf4, 0x89, 0x41, 0xd5, 0x1a, 0x7a, 0xea, 0x61, 0x58, 0x02, 0x9f, 0x51, 0xc2, 0xe1,
+	0xee, 0x4e, 0x2c, 0xd4, 0x87, 0x41, 0x94, 0x7a, 0x2a, 0x88, 0x58, 0x02, 0x1f, 0x7d, 0x02, 0x2a,
+	0x3b, 0x8e, 0x48, 0x5a, 0x1e, 0x20, 0x40, 0xeb, 0x61, 0xb0, 0x56, 0x65, 0xc7, 0x41, 0x37, 0xa0,
+	0xbe, 0xc3, 0xc3, 0x2b, 0x45, 0xae, 0xf2, 0xc5, 0x41, 0x11, 0x9f, 0x3d, 0xb1, 0x98, 0x96, 0xa4,
+	0x80, 0x36, 0x01, 0x76, 0xd2, 0x88, 0x50, 0x91, 0xb3, 0xbc, 0x3c, 0x5c, 0x04, 0xa9, 0xa5, 0x50,
+	0xa0, 0x4b, 0xd1, 0x96, 0xd5, 0x67, 0x58, 0xba, 0xf2, 0xc0, 0xa5, 0x58, 0x58, 0xac, 0xc6, 0xca,
+	0xa8, 0xa0, 0x6d, 0x98, 0xdd, 0x8f, 0xc3, 0x5d, 0x2c, 0xb7, 0x16, 0x4b, 0x6a, 0x9e, 0xbe, 0xf4,
+	0x89, 0x01, 0xd9, 0xe3, 0x02, 0x85, 0x44, 0x49, 0xd7, 0xf6, 0x7a, 0x38, 0x81, 0x4e, 0x92, 0x7e,
+	0xd3, 0xb7, 0xbb, 0xc1, 0xf6, 0x61, 0x82, 0x45, 0x22, 0xf4, 0x80, 0x6f, 0xfa, 0x06, 0x7f, 0x58,
+	0xff, 0xa6, 0x82, 0x42, 0xfa, 0x0d, 0x18, 0xd7, 0x5a, 0x28, 0xfd, 0x0d, 0x7a, 0xfa, 0x98, 0x51,
+	0x31, 0x3f, 0x5b, 0xeb, 0xe5, 0xeb, 0x4c, 0xba, 0x78, 0xab, 0xc7, 0x1e, 0xfb, 0xfa, 0xf0, 0xb2,
+	0x6c, 0x5f, 0xcb, 0xac, 0x07, 0xa7, 0xc3, 0x42, 0x0e, 0x2d, 0xd8, 0xe3, 0xb0, 0xd2, 0x2e, 0x1f,
+	0x57, 0x1f, 0x9a, 0x79, 0x69, 0xa0, 0xda, 0x2b, 0x0d, 0x6c, 0xc0, 0x14, 0x3b, 0x07, 0xb3, 0xa4,
+	0x8c, 0x21, 0xb3, 0x1d, 0x52, 0x74, 0xb4, 0x06, 0x1f, 0xca, 0x77, 0xc3, 0xc2, 0xec, 0xae, 0x48,
+	0x9d, 0xe7, 0xea, 0xca, 0xd1, 0x0f, 0xbd, 0x9f, 0x92, 0xc3, 0x8f, 0x15, 0x9c, 0x96, 0x47, 0xc9,
+	0x56, 0x7d, 0xf3, 0x70, 0xfb, 0xa5, 0x78, 0x98, 0xdf, 0x35, 0xa0, 0xda, 0x0a, 0xdc, 0x31, 0xe9,
+	0x1a, 0x2f, 0x69, 0xba, 0xc6, 0xe3, 0x03, 0x8b, 0x85, 0x29, 0x9a, 0xc5, 0xe5, 0x9c, 0x66, 0xf1,
+	0xd1, 0xc1, 0xc8, 0xba, 0x1e, 0xf1, 0xdd, 0x0a, 0x4c, 0x2b, 0x05, 0xcd, 0xd0, 0x57, 0x46, 0xf1,
+	0x10, 0x57, 0xcb, 0xd5, 0x38, 0x13, 0xef, 0x60, 0x4e, 0xaa, 0x1f, 0x19, 0x27, 0xf1, 0x7d, 0x4c,
+	0xda, 0xbb, 0x09, 0x76, 0xf3, 0x1d, 0x1c, 0xda, 0x49, 0xfc, 0x7b, 0x06, 0xcc, 0xe7, 0x88, 0xa0,
+	0x4f, 0x17, 0xc5, 0x0f, 0x8d, 0xaa, 0x42, 0xe4, 0xa2, 0x8e, 0xce, 0x00, 0xa4, 0xa6, 0x11, 0xa9,
+	0x10, 0x28, 0x10, 0xca, 0x23, 0x92, 0x20, 0x0c, 0xbc, 0xa0, 0x7d, 0x78, 0x03, 0xcb, 0x28, 0x7a,
+	0x15, 0x64, 0xfe, 0x45, 0x85, 0xf7, 0x58, 0x29, 0x35, 0xf7, 0xbf, 0xf3, 0x3f, 0xf2, 0xfc, 0xff,
+	0xb4, 0x01, 0x0b, 0x94, 0x08, 0xf3, 0x9c, 0x48, 0xd7, 0x6f, 0x5a, 0xe5, 0xc3, 0x50, 0xab, 0x7c,
+	0xb0, 0x48, 0x01, 0x37, 0xe8, 0xca, 0x5c, 0x1e, 0xd1, 0x12, 0x70, 0x1c, 0x45, 0x22, 0x4e, 0x49,
+	0xb4, 0x64, 0xdd, 0x8f, 0x5a, 0x5a, 0xf7, 0x83, 0xe7, 0x23, 0x09, 0xab, 0xbf, 0xe0, 0xbf, 0x19,
+	0xc0, 0xfc, 0xd5, 0x0a, 0xcc, 0xb4, 0x02, 0x77, 0xb4, 0x70, 0x05, 0x91, 0x0c, 0xc6, 0xea, 0xb4,
+	0x8c, 0x1a, 0xaa, 0xa0, 0x53, 0xf8, 0x51, 0x0b, 0x53, 0xf8, 0x86, 0x01, 0x73, 0xad, 0xc0, 0xa5,
+	0x53, 0xf7, 0x50, 0xe7, 0x49, 0xcd, 0x0a, 0x9b, 0xd4, 0xb3, 0xc2, 0xbe, 0x68, 0x40, 0xbd, 0x15,
+	0xb8, 0xe3, 0x57, 0x48, 0x5f, 0xd0, 0x15, 0xd2, 0x0f, 0x0f, 0xdc, 0xb5, 0x52, 0x07, 0xfd, 0xdd,
+	0x0a, 0xcc, 0xd2, 0x1e, 0x05, 0x6d, 0xf9, 0xcd, 0xb4, 0xb1, 0x19, 0xf9, 0xb1, 0x9d, 0x86, 0xc9,
+	0x9d, 0xc0, 0xf3, 0x82, 0x07, 0xf2, 0xdb, 0xf1, 0x16, 0xcf, 0x11, 0xc7, 0xfb, 0x24, 0xe8, 0xca,
+	0x9a, 0x06, 0x69, 0x1b, 0x99, 0x30, 0x13, 0x13, 0xdf, 0xc1, 0xd2, 0x31, 0x50, 0x63, 0x8e, 0x01,
+	0x0d, 0xc6, 0xea, 0x83, 0xd0, 0x36, 0x5b, 0x42, 0x23, 0xd5, 0x07, 0x91, 0xd8, 0x2c, 0x53, 0x4e,
+	0xba, 0x28, 0x62, 0x69, 0x54, 0xcd, 0x20, 0x74, 0x80, 0x89, 0x4d, 0xbc, 0x9b, 0xc4, 0xc7, 0xb1,
+	0x70, 0xc5, 0x64, 0x00, 0x8a, 0xcd, 0xc2, 0x59, 0x79, 0x4d, 0x9d, 0x29, 0xee, 0xa9, 0xc9, 0x20,
+	0xe6, 0xe3, 0x8c, 0xb9, 0x0e, 0x0c, 0x04, 0xf9, 0x4f, 0x03, 0x50, 0x8b, 0x79, 0x3a, 0xb4, 0xf2,
+	0x40, 0x77, 0x60, 0x2e, 0xc6, 0x37, 0x89, 0xdf, 0x3d, 0x10, 0xc8, 0xe5, 0x42, 0x66, 0xb6, 0xd6,
+	0x55, 0x1c, 0x2b, 0x47, 0x83, 0x8e, 0x28, 0xea, 0xfa, 0x2b, 0xf1, 0xdd, 0x18, 0x47, 0xb2, 0x0c,
+	0x50, 0x0a, 0x60, 0x75, 0x3a, 0x68, 0x63, 0x33, 0xf0, 0xad, 0x20, 0x48, 0xc4, 0xf4, 0x68, 0x30,
+	0xb4, 0x0c, 0x28, 0xee, 0x86, 0xa1, 0xc7, 0x2c, 0x69, 0xb6, 0x77, 0x2d, 0x0a, 0xba, 0x21, 0x0f,
+	0x0b, 0xa8, 0x5a, 0x05, 0x77, 0xe8, 0x12, 0xdf, 0x89, 0xd9, 0xb5, 0x08, 0x57, 0x95, 0x4d, 0x73,
+	0x9b, 0xf1, 0xa8, 0x2d, 0xd2, 0xf6, 0xed, 0xa4, 0x1b, 0x61, 0x64, 0xc1, 0x6c, 0xc8, 0x78, 0x96,
+	0xb4, 0x72, 0x97, 0x1a, 0x70, 0xce, 0x6d, 0xa2, 0x93, 0x30, 0x7f, 0xbf, 0xce, 0xb6, 0x11, 0x93,
+	0xff, 0x5f, 0x83, 0xba, 0x70, 0x6e, 0x8b, 0x13, 0xeb, 0xb1, 0x32, 0x45, 0xb5, 0x2c, 0x89, 0x84,
+	0xae, 0x71, 0x13, 0x3c, 0x5b, 0xdd, 0xe5, 0x6b, 0xc2, 0x09, 0xc7, 0xac, 0x82, 0x8a, 0x1e, 0x83,
+	0x59, 0x51, 0xfa, 0x44, 0xc8, 0xcf, 0xfc, 0x68, 0xd6, 0x81, 0x54, 0xea, 0x56, 0x8a, 0x57, 0x15,
+	0x78, 0xcd, 0xf8, 0xe6, 0x38, 0xfa, 0x21, 0xf4, 0x1c, 0x9c, 0xb2, 0x9d, 0x84, 0xec, 0xe3, 0x35,
+	0x6c, 0xbb, 0x1e, 0xf1, 0xb1, 0x1e, 0x3b, 0x5c, 0x7c, 0x93, 0xa5, 0xdf, 0xf9, 0xb1, 0xe8, 0xdd,
+	0xa4, 0x48, 0xbf, 0x93, 0x00, 0xf4, 0x26, 0xaf, 0xc1, 0x9b, 0xca, 0x34, 0xbc, 0x6a, 0xda, 0x0b,
+	0xa5, 0xc4, 0x56, 0x2d, 0xb6, 0x87, 0xeb, 0x50, 0x1a, 0x31, 0xb6, 0xbe, 0x70, 0xb4, 0x4f, 0x1c,
+	0xbc, 0xe2, 0xb0, 0x9c, 0x61, 0x66, 0xd9, 0xe3, 0xde, 0xe8, 0x82, 0x3b, 0xe8, 0x09, 0xba, 0x4f,
+	0x54, 0xa8, 0x70, 0x47, 0xe7, 0xa0, 0x5a, 0xb9, 0x0b, 0xd0, 0xcb, 0x5d, 0x50, 0x49, 0x69, 0x37,
+	0x88, 0x93, 0x4d, 0x9c, 0x3c, 0x08, 0xa2, 0x3d, 0x66, 0x2a, 0x98, 0xb2, 0x54, 0x10, 0x5d, 0xc5,
+	0xcc, 0x84, 0xb4, 0xb1, 0xc6, 0x14, 0xff, 0x29, 0x4b, 0x36, 0xe5, 0x9d, 0x8d, 0xd6, 0x2a, 0xd3,
+	0xe1, 0xc5, 0x9d, 0x8d, 0xd6, 0x2a, 0xfa, 0x74, 0x6f, 0xe5, 0xb0, 0xb9, 0x32, 0xd6, 0x90, 0x5e,
+	0x66, 0xd0, 0x5b, 0x3c, 0xec, 0xff, 0xc3, 0x42, 0x5a, 0xa8, 0x8c, 0x67, 0xd3, 0xc7, 0xcd, 0xf9,
+	0x32, 0xe5, 0x7b, 0x0b, 0xf3, 0x67, 0x7b, 0x68, 0x69, 0xc1, 0xe1, 0x0b, 0xb9, 0xc2, 0x21, 0x8f,
+	0x42, 0x23, 0xee, 0x6e, 0xbb, 0x41, 0xc7, 0x26, 0x3e, 0x2b, 0x51, 0xd6, 0xb0, 0x32, 0xc0, 0xd2,
+	0x65, 0x38, 0xd1, 0x33, 0xc5, 0x43, 0xb9, 0x0a, 0xff, 0xa3, 0x02, 0x8d, 0x54, 0x4d, 0xe9, 0xa3,
+	0xb0, 0x7d, 0xb2, 0xa0, 0xb6, 0xe8, 0xf9, 0x81, 0x5f, 0xb5, 0x38, 0x24, 0xa9, 0x7f, 0xc5, 0xd4,
+	0x4c, 0xb0, 0xa8, 0x69, 0x82, 0x45, 0x9f, 0x4a, 0x65, 0xac, 0xaf, 0x81, 0xbb, 0xd1, 0x92, 0x25,
+	0x8c, 0x58, 0x23, 0xad, 0x67, 0xc5, 0xce, 0xab, 0xfa, 0xa8, 0xf5, 0xac, 0x84, 0x18, 0x75, 0xc2,
+	0xd1, 0x8b, 0x42, 0xa5, 0x81, 0x45, 0xcf, 0x0c, 0x51, 0xb1, 0xa9, 0x1b, 0x5b, 0xbd, 0x74, 0xcc,
+	0xaf, 0x71, 0xf5, 0x45, 0x3c, 0x80, 0xe3, 0xae, 0x97, 0x8c, 0x2d, 0x1e, 0x5e, 0x15, 0x34, 0x47,
+	0xd0, 0x51, 0x7f, 0xdd, 0x60, 0x3a, 0xea, 0x1d, 0xdc, 0x09, 0x3d, 0x3b, 0x19, 0x97, 0x5f, 0x73,
+	0x03, 0xa6, 0x12, 0x41, 0xb1, 0x5c, 0x3d, 0x08, 0xa5, 0x0b, 0x4c, 0x03, 0x4f, 0xd1, 0xcd, 0xaf,
+	0xf3, 0x6f, 0x27, 0xef, 0x8e, 0x5f, 0x6a, 0xbb, 0xac, 0x4b, 0x6d, 0x4f, 0x96, 0xee, 0xa8, 0x94,
+	0xde, 0xbe, 0xac, 0xf7, 0x50, 0xe4, 0xf2, 0x3c, 0x5c, 0xe3, 0x85, 0xf9, 0x61, 0x98, 0xd5, 0xca,
+	0x60, 0x49, 0xbf, 0xb8, 0x91, 0xfa, 0xc5, 0xcd, 0x7f, 0x32, 0x60, 0xb1, 0xa8, 0xe4, 0x38, 0xda,
+	0x84, 0x99, 0x50, 0x91, 0x1e, 0xca, 0x85, 0xa9, 0xab, 0xf2, 0x86, 0xa5, 0xe1, 0xa3, 0xdb, 0x30,
+	0x83, 0xf7, 0x89, 0x93, 0x2a, 0x27, 0x95, 0xe1, 0x77, 0xaa, 0x46, 0x60, 0xf8, 0xea, 0x20, 0xe6,
+	0xe7, 0x0c, 0x78, 0xa4, 0x4f, 0xc8, 0x3a, 0xa5, 0xf6, 0x80, 0x29, 0xaa, 0xa2, 0x78, 0x99, 0x68,
+	0xa1, 0x4d, 0x00, 0xae, 0xa7, 0xb2, 0x02, 0xb2, 0x95, 0x32, 0x46, 0xe9, 0x9e, 0x78, 0x61, 0x85,
+	0x82, 0xf9, 0x8d, 0x0a, 0x4c, 0xf0, 0x0a, 0x9d, 0x97, 0xa1, 0xbe, 0xcb, 0x13, 0x6b, 0x87, 0x4b,
+	0xe4, 0x95, 0x58, 0xe8, 0x59, 0x38, 0x49, 0xb5, 0x69, 0x62, 0x7b, 0x6b, 0xd8, 0xb3, 0x0f, 0xa5,
+	0xe0, 0xc1, 0xeb, 0x4e, 0x14, 0xdd, 0x2a, 0xc8, 0x70, 0xe2, 0x99, 0xc6, 0x39, 0x28, 0x15, 0xa0,
+	0xc2, 0x1e, 0x51, 0x68, 0xc2, 0xd2, 0x81, 0xe8, 0x3c, 0x2c, 0xc4, 0x5d, 0x66, 0x11, 0xbd, 0xb3,
+	0x1b, 0xe1, 0x78, 0x37, 0xf0, 0x5c, 0x51, 0x79, 0xae, 0x07, 0x4e, 0x9f, 0xdd, 0xb1, 0x89, 0xd7,
+	0x8d, 0x70, 0xf6, 0xec, 0x24, 0x7f, 0x36, 0x0f, 0xa7, 0xaa, 0xd9, 0xc9, 0x02, 0xa3, 0x36, 0x77,
+	0x36, 0xb6, 0x49, 0x9c, 0xa4, 0xd5, 0x0e, 0xd2, 0x36, 0x0b, 0x9b, 0xe6, 0x16, 0x79, 0xa1, 0x6b,
+	0xf3, 0xd6, 0x51, 0xa9, 0x49, 0x69, 0x51, 0xf4, 0x9a, 0x52, 0x14, 0x7d, 0x11, 0x26, 0xda, 0xa9,
+	0x2c, 0xdd, 0xb0, 0x78, 0xc3, 0xfc, 0xd9, 0x0a, 0xcc, 0xe7, 0x1c, 0x43, 0x47, 0x96, 0x60, 0x2f,
+	0x2e, 0xca, 0xdb, 0xaf, 0x0a, 0x08, 0x2b, 0xf4, 0x95, 0x16, 0xec, 0x64, 0xd7, 0x69, 0xdf, 0x26,
+	0x94, 0xbe, 0x35, 0xa1, 0xbe, 0x87, 0x0f, 0x23, 0xe2, 0xb7, 0xa5, 0xbe, 0x2d, 0x9a, 0x7a, 0x99,
+	0x8f, 0xfa, 0xb8, 0xcb, 0x7c, 0x4c, 0xe5, 0x1c, 0xbb, 0x9f, 0x33, 0x60, 0x9e, 0xa5, 0x1c, 0x8a,
+	0x60, 0x52, 0x12, 0xf8, 0x63, 0x62, 0x75, 0x8b, 0x30, 0x11, 0x51, 0xc2, 0xf2, 0xbb, 0xb1, 0x06,
+	0xab, 0x8b, 0x4f, 0xe9, 0xd2, 0xaf, 0x36, 0xc3, 0xab, 0x6c, 0xb3, 0xe8, 0x14, 0x0b, 0x87, 0x1e,
+	0xe1, 0xef, 0xcf, 0x34, 0x92, 0x87, 0x11, 0x9d, 0x52, 0xd8, 0x91, 0xd1, 0xa3, 0x53, 0x8a, 0xc9,
+	0xf5, 0x46, 0xa7, 0x14, 0x3e, 0xf7, 0xb0, 0xa3, 0x53, 0x0a, 0x3b, 0x25, 0x0f, 0xc9, 0xdf, 0xac,
+	0xf4, 0xe9, 0x35, 0x3b, 0x2e, 0xd9, 0x9a, 0x63, 0x37, 0x63, 0x59, 0xfe, 0x54, 0xb6, 0x91, 0xad,
+	0x44, 0x89, 0xf0, 0x7e, 0xac, 0x8f, 0x38, 0x27, 0xcb, 0xba, 0x72, 0x94, 0x92, 0xd5, 0xc4, 0x95,
+	0xea, 0x7b, 0x12, 0x57, 0x96, 0x5e, 0x81, 0xd9, 0xd1, 0xe5, 0xf3, 0xef, 0x18, 0xf0, 0xc1, 0x23,
+	0x96, 0xc0, 0x91, 0x9f, 0xe9, 0x12, 0x2c, 0xee, 0x74, 0x3d, 0xef, 0x90, 0xd9, 0xb5, 0xb1, 0x6b,
+	0xc9, 0xe7, 0xf8, 0x99, 0x50, 0x78, 0x8f, 0x2a, 0x84, 0xc1, 0x36, 0xcb, 0xee, 0x74, 0xaf, 0x65,
+	0x81, 0xb1, 0x55, 0x5e, 0x8e, 0xb3, 0xf7, 0x0e, 0xd7, 0xae, 0x6d, 0xf7, 0x30, 0x25, 0x2e, 0x0e,
+	0x07, 0x0d, 0x68, 0xfe, 0x06, 0xdb, 0xa0, 0x05, 0x15, 0xd4, 0xb4, 0x4a, 0xc6, 0x4a, 0x54, 0x89,
+	0x0e, 0xe4, 0xa3, 0x8c, 0x33, 0x07, 0x1f, 0x63, 0xf6, 0xa2, 0x44, 0xd7, 0x55, 0xa8, 0xbb, 0x64,
+	0x9f, 0xc4, 0x41, 0x54, 0xa2, 0x9c, 0x6a, 0xaf, 0x23, 0x4b, 0x22, 0x9b, 0xff, 0x60, 0xc0, 0xac,
+	0xec, 0xe3, 0x1b, 0xdd, 0x80, 0x45, 0x93, 0x8c, 0x83, 0x79, 0xac, 0x6a, 0xcc, 0xe3, 0x42, 0xb9,
+	0xf8, 0x29, 0xd6, 0x01, 0x85, 0x69, 0x6c, 0xe4, 0x98, 0xc6, 0xc5, 0x61, 0xc8, 0xe8, 0xcc, 0xe2,
+	0x9b, 0x06, 0x9c, 0xd0, 0xee, 0x3f, 0xb4, 0xd4, 0xf0, 0xa2, 0xce, 0x4a, 0xe6, 0xf0, 0x77, 0xf9,
+	0x5e, 0x32, 0xa6, 0x70, 0x0b, 0x6a, 0xbb, 0x76, 0xe4, 0x0a, 0x8b, 0xd2, 0x4b, 0x43, 0x7e, 0xcb,
+	0xe5, 0xeb, 0x76, 0xe4, 0x8a, 0xbf, 0x33, 0x50, 0x32, 0xbc, 0xe8, 0x4f, 0x10, 0xa6, 0xfe, 0x1c,
+	0xd1, 0x5a, 0xc2, 0xd0, 0x48, 0x1f, 0x3d, 0x46, 0xc7, 0xe9, 0x4f, 0x55, 0xe1, 0x64, 0xc1, 0x4c,
+	0xa1, 0xdb, 0xda, 0x28, 0x5f, 0x19, 0x7a, 0xaa, 0x7b, 0xc6, 0x79, 0x9b, 0xc9, 0x0f, 0xae, 0x98,
+	0x8e, 0x11, 0x08, 0xde, 0x8d, 0xb1, 0x24, 0x48, 0x09, 0xbd, 0x4f, 0x1f, 0x88, 0xbe, 0x26, 0x7d,
+	0xf3, 0x31, 0xce, 0xc3, 0x37, 0xaa, 0xb0, 0x58, 0x14, 0xb8, 0x88, 0xee, 0xe5, 0xca, 0x2f, 0xbc,
+	0x36, 0x7c, 0xf0, 0x23, 0xaf, 0xc9, 0x90, 0x46, 0xc4, 0xb3, 0x06, 0x7a, 0x8b, 0xb2, 0x33, 0x56,
+	0xf7, 0x42, 0x6e, 0x91, 0xd7, 0x47, 0xa0, 0x2c, 0x4a, 0x67, 0x08, 0xda, 0x29, 0xc5, 0xa5, 0x36,
+	0x4c, 0x2b, 0x2f, 0x3d, 0xc6, 0xe9, 0x21, 0x94, 0x61, 0x2a, 0x7d, 0x38, 0xc6, 0x29, 0xda, 0x86,
+	0x39, 0xdd, 0xd6, 0x9e, 0xca, 0xc4, 0x86, 0x22, 0x13, 0x23, 0xa8, 0x45, 0x81, 0x27, 0x8f, 0x08,
+	0x76, 0x9d, 0xfa, 0xe2, 0xaa, 0x8a, 0x2f, 0x6e, 0x11, 0x26, 0x3c, 0xbc, 0x8f, 0xa5, 0x90, 0xcd,
+	0x1b, 0xe6, 0xbf, 0x57, 0x60, 0x92, 0x5b, 0xe4, 0xc6, 0xc4, 0xf9, 0xaf, 0x68, 0xff, 0x90, 0x59,
+	0x2e, 0x53, 0xa5, 0x33, 0xff, 0x03, 0x99, 0xc2, 0xee, 0xdf, 0x01, 0x88, 0x59, 0x3d, 0x33, 0xfa,
+	0xb0, 0xc8, 0x11, 0x7c, 0xae, 0x14, 0xf5, 0xad, 0x14, 0x8d, 0xbf, 0x43, 0xa1, 0x33, 0xd4, 0xaf,
+	0x6a, 0x66, 0xd4, 0x65, 0xf0, 0x2a, 0xcc, 0xe7, 0xe8, 0x0e, 0x25, 0xe1, 0xfc, 0x9c, 0x01, 0x27,
+	0x7a, 0x4a, 0x94, 0x3e, 0xc4, 0xdf, 0xdc, 0x7c, 0xc5, 0x00, 0xe0, 0xfd, 0x19, 0xff, 0xc1, 0xf8,
+	0xb2, 0x7e, 0x30, 0x3e, 0x56, 0x66, 0xd2, 0xe4, 0x89, 0xf8, 0x15, 0x03, 0x10, 0x87, 0x0c, 0xf5,
+	0xf3, 0xb4, 0x63, 0xff, 0x2b, 0xcd, 0xf7, 0x2a, 0x30, 0x9f, 0x77, 0xa7, 0x6d, 0xc2, 0x8c, 0xa3,
+	0xfc, 0xde, 0xac, 0x9c, 0xb9, 0x48, 0xfd, 0x21, 0x9a, 0xa5, 0xe1, 0xf3, 0x8c, 0x61, 0xb2, 0x4f,
+	0x3c, 0xdc, 0x66, 0xc7, 0x18, 0x73, 0x1d, 0x66, 0x90, 0x02, 0xf7, 0x5d, 0x75, 0xdc, 0xee, 0xbb,
+	0xda, 0x20, 0xf7, 0xdd, 0x44, 0x81, 0xfb, 0xee, 0x79, 0x38, 0x2d, 0x15, 0x65, 0xda, 0xbe, 0x4a,
+	0x3c, 0xcc, 0x53, 0x18, 0x85, 0xfb, 0xb3, 0xcf, 0x5d, 0x73, 0x1b, 0x4e, 0x6e, 0xe1, 0x88, 0xb0,
+	0x64, 0x23, 0x37, 0x5b, 0xac, 0x37, 0xa0, 0x11, 0xe5, 0x76, 0xc2, 0xb0, 0xd5, 0xca, 0x33, 0xdb,
+	0xd3, 0x5f, 0x19, 0x50, 0xdf, 0xe2, 0x5e, 0x9b, 0x31, 0xf1, 0xbb, 0x57, 0x35, 0x49, 0xf7, 0xc9,
+	0x41, 0x8b, 0x9b, 0xbd, 0x5a, 0x91, 0x71, 0x57, 0x73, 0x32, 0xee, 0x53, 0xe5, 0x08, 0xe8, 0xd2,
+	0xed, 0x0f, 0x0d, 0x98, 0xdb, 0xd2, 0x7d, 0x51, 0xe3, 0x19, 0xdc, 0x35, 0xa8, 0xc7, 0xc2, 0xf5,
+	0x53, 0xaa, 0xcc, 0x79, 0xfe, 0xcb, 0x4b, 0xec, 0x42, 0x67, 0x52, 0x75, 0x7c, 0xce, 0x24, 0xf3,
+	0x5b, 0x8c, 0x4f, 0xa8, 0x5f, 0x60, 0xfc, 0x7c, 0xec, 0x8a, 0xce, 0x54, 0x9e, 0x2e, 0x35, 0x53,
+	0xa2, 0x37, 0x92, 0x9f, 0xfd, 0x92, 0x01, 0xd3, 0xe2, 0xce, 0xf8, 0x3b, 0xf8, 0x8a, 0xde, 0xc1,
+	0xc7, 0x4b, 0x75, 0x50, 0xf6, 0xec, 0x8f, 0xb3, 0x9e, 0x1d, 0xf5, 0x77, 0x9e, 0xb4, 0xf6, 0x7e,
+	0x25, 0xf7, 0x6f, 0x1d, 0x59, 0xab, 0xbf, 0xaa, 0xd4, 0xea, 0xdf, 0x94, 0x65, 0x82, 0xd9, 0x2f,
+	0x31, 0x6a, 0x23, 0x55, 0x2f, 0x55, 0x28, 0x48, 0x07, 0x2b, 0xa3, 0xc6, 0xcd, 0xac, 0x69, 0xdb,
+	0x7c, 0x92, 0x71, 0x0f, 0xd6, 0xfd, 0x41, 0xe1, 0x10, 0x5f, 0xab, 0xa5, 0x43, 0xdd, 0xe2, 0x01,
+	0x8e, 0xa2, 0xf2, 0xbe, 0x51, 0xc6, 0xf3, 0xa1, 0x7c, 0x24, 0xf9, 0x6b, 0xaf, 0xad, 0x1e, 0xd3,
+	0xcc, 0x0b, 0xa5, 0xf9, 0x40, 0x5f, 0x63, 0x0c, 0x4b, 0x3b, 0x61, 0x09, 0x00, 0x1b, 0x2d, 0x99,
+	0x1b, 0x9c, 0x02, 0x52, 0x11, 0xa9, 0xa6, 0x88, 0x48, 0x67, 0x61, 0x3a, 0x2d, 0x38, 0xd1, 0xe2,
+	0xb5, 0x0f, 0x1a, 0x96, 0x0a, 0x42, 0xcf, 0xc2, 0x49, 0x17, 0x87, 0x11, 0x76, 0xec, 0x04, 0xbb,
+	0xad, 0xee, 0xb6, 0x47, 0x1c, 0xfa, 0x24, 0x0f, 0x0c, 0x2a, 0xba, 0x85, 0xce, 0xc1, 0x7c, 0xcc,
+	0x2b, 0x61, 0xa4, 0xff, 0x9b, 0xe5, 0x59, 0x8a, 0x79, 0x30, 0x7a, 0x02, 0xe6, 0x3c, 0xb5, 0x1a,
+	0x57, 0x4b, 0x78, 0xd4, 0x73, 0x50, 0xf4, 0x32, 0x34, 0x55, 0x88, 0x88, 0x42, 0xb6, 0xfd, 0x36,
+	0x8e, 0x45, 0xd5, 0x81, 0xbe, 0xf7, 0xe9, 0xf1, 0x23, 0x87, 0xa3, 0x78, 0xd9, 0x35, 0xd8, 0x7b,
+	0xb3, 0x3c, 0x61, 0x8a, 0xac, 0xb0, 0x58, 0x74, 0x07, 0x66, 0xd4, 0xde, 0x88, 0x4d, 0xfa, 0x6c,
+	0xf9, 0xaa, 0x64, 0x82, 0x55, 0x6b, 0x54, 0xcc, 0xbb, 0x30, 0x9f, 0x2b, 0x0e, 0x9b, 0xd6, 0xf8,
+	0x35, 0x46, 0xaf, 0xf1, 0x6b, 0x5e, 0x83, 0x89, 0x3b, 0x36, 0x29, 0x2c, 0xb8, 0x52, 0xfc, 0x0f,
+	0x83, 0xd3, 0x30, 0x89, 0x77, 0x76, 0xb0, 0x23, 0xcb, 0x02, 0x8b, 0x96, 0xb9, 0x0b, 0x70, 0x27,
+	0xf0, 0xa4, 0xb9, 0x6b, 0xb8, 0xf2, 0x2d, 0xe9, 0x9b, 0xaa, 0xc5, 0x6f, 0xaa, 0x69, 0x6f, 0xf2,
+	0x60, 0xf2, 0x88, 0xdf, 0x0d, 0x6f, 0xca, 0xaa, 0x14, 0x5a, 0x9c, 0xfb, 0xf9, 0x32, 0x41, 0x35,
+	0x62, 0xdd, 0x68, 0xf8, 0x66, 0x17, 0xa6, 0x95, 0xff, 0xd8, 0xf5, 0xe3, 0x71, 0xfd, 0xf2, 0xb9,
+	0x58, 0xf1, 0x06, 0x8a, 0x98, 0xa6, 0x0a, 0x35, 0xac, 0x0c, 0x80, 0x9a, 0xec, 0x57, 0x19, 0xec,
+	0x9e, 0xf0, 0xba, 0x89, 0xa6, 0xf9, 0xee, 0x1c, 0xcc, 0x68, 0xf2, 0xab, 0x9a, 0x72, 0x64, 0x8c,
+	0x21, 0xe5, 0x68, 0x13, 0xa6, 0xb0, 0xf8, 0x4b, 0x4c, 0xb9, 0x94, 0xc5, 0xa2, 0x7f, 0xca, 0x58,
+	0x29, 0x8d, 0xe2, 0x8c, 0xaf, 0xea, 0xfb, 0x9a, 0xf1, 0x55, 0x3b, 0xc6, 0x8c, 0xaf, 0x1b, 0x50,
+	0x6f, 0xf3, 0x6a, 0xe2, 0x22, 0xba, 0x6f, 0x80, 0x65, 0xb1, 0xa0, 0xf4, 0xb8, 0x25, 0x29, 0xa0,
+	0xeb, 0x30, 0xc9, 0xa5, 0x1c, 0x91, 0x5d, 0xf5, 0x6c, 0x19, 0xfd, 0x46, 0x4f, 0x44, 0xe2, 0xf8,
+	0x32, 0xcb, 0xab, 0x3e, 0x72, 0x96, 0x57, 0x9a, 0xa4, 0x35, 0xf5, 0x9e, 0x92, 0xb4, 0xb4, 0x04,
+	0xb6, 0xc6, 0x58, 0x12, 0xd8, 0xba, 0x70, 0x2a, 0x2c, 0x4a, 0xb4, 0x14, 0x69, 0x57, 0x97, 0x47,
+	0xc8, 0x22, 0xd5, 0x5e, 0x55, 0x4c, 0x5d, 0xa6, 0xbd, 0x4d, 0x8f, 0x9c, 0xf6, 0x36, 0xee, 0x84,
+	0xac, 0x2c, 0xff, 0x6d, 0x76, 0x6c, 0xf9, 0x6f, 0x73, 0xef, 0x31, 0xff, 0x4d, 0xc9, 0x60, 0x9b,
+	0x7f, 0xcf, 0x19, 0x6c, 0xf7, 0x61, 0xda, 0xcd, 0xfe, 0x78, 0x25, 0xf2, 0xad, 0x3e, 0x3e, 0xe4,
+	0x2f, 0xb2, 0x04, 0x51, 0x95, 0x92, 0xc8, 0xd2, 0x3b, 0x31, 0x62, 0x96, 0x9e, 0x96, 0x08, 0x87,
+	0xc6, 0x92, 0x08, 0xf7, 0x06, 0x0b, 0x4d, 0xe6, 0x7f, 0xaa, 0x69, 0x9e, 0x2c, 0xf9, 0x53, 0xc7,
+	0xde, 0x3f, 0xf5, 0x5a, 0x19, 0x95, 0xde, 0xdc, 0xba, 0xc5, 0x63, 0xcd, 0xad, 0x3b, 0x35, 0xde,
+	0xdc, 0xba, 0xd3, 0x63, 0xc9, 0xad, 0xfb, 0xbf, 0x70, 0xe6, 0xe8, 0x01, 0x65, 0xe9, 0xf4, 0xad,
+	0x4c, 0xb0, 0x57, 0x20, 0xfd, 0xfe, 0x3e, 0x61, 0x7e, 0xc1, 0x80, 0x47, 0xfa, 0x64, 0x62, 0xf4,
+	0x8d, 0x7d, 0xb9, 0x0f, 0xf3, 0xa1, 0xfe, 0x68, 0xe9, 0x38, 0x2e, 0x2d, 0xd3, 0x23, 0x4f, 0xe5,
+	0xca, 0xe2, 0x9f, 0xfd, 0xe0, 0x8c, 0xf1, 0x97, 0x3f, 0x38, 0x63, 0x7c, 0xff, 0x07, 0x67, 0x8c,
+	0xaf, 0xfd, 0xfd, 0x99, 0xff, 0xf3, 0xe9, 0xca, 0xfe, 0xc5, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff,
+	0xc9, 0x58, 0x4b, 0xa5, 0x34, 0x84, 0x00, 0x00,
 }
