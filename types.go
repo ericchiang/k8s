@@ -193,10 +193,10 @@ func (c *CoreV1) GetComponentStatus(ctx context.Context, name string) (*apiv1.Co
 	return resp, nil
 }
 
-func (c *CoreV1) ListComponentStatuses(ctx context.Context) (*apiv1.ComponentStatusList, error) {
+func (c *CoreV1) ListComponentStatuses(ctx context.Context, options ...Option) (*apiv1.ComponentStatusList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("", "v1", ns, "componentstatuses", "")
+	url := c.client.urlFor("", "v1", ns, "componentstatuses", "", options...)
 	resp := new(apiv1.ComponentStatusList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -286,10 +286,10 @@ func (c *CoreV1) GetConfigMap(ctx context.Context, name, namespace string) (*api
 	return resp, nil
 }
 
-func (c *CoreV1) ListConfigMaps(ctx context.Context, namespace string) (*apiv1.ConfigMapList, error) {
+func (c *CoreV1) ListConfigMaps(ctx context.Context, namespace string, options ...Option) (*apiv1.ConfigMapList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "configmaps", "")
+	url := c.client.urlFor("", "v1", ns, "configmaps", "", options...)
 	resp := new(apiv1.ConfigMapList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -379,10 +379,10 @@ func (c *CoreV1) GetEndpoints(ctx context.Context, name, namespace string) (*api
 	return resp, nil
 }
 
-func (c *CoreV1) ListEndpointses(ctx context.Context, namespace string) (*apiv1.EndpointsList, error) {
+func (c *CoreV1) ListEndpointses(ctx context.Context, namespace string, options ...Option) (*apiv1.EndpointsList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "endpointses", "")
+	url := c.client.urlFor("", "v1", ns, "endpointses", "", options...)
 	resp := new(apiv1.EndpointsList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -472,10 +472,10 @@ func (c *CoreV1) GetEvent(ctx context.Context, name, namespace string) (*apiv1.E
 	return resp, nil
 }
 
-func (c *CoreV1) ListEvents(ctx context.Context, namespace string) (*apiv1.EventList, error) {
+func (c *CoreV1) ListEvents(ctx context.Context, namespace string, options ...Option) (*apiv1.EventList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "events", "")
+	url := c.client.urlFor("", "v1", ns, "events", "", options...)
 	resp := new(apiv1.EventList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -565,10 +565,10 @@ func (c *CoreV1) GetLimitRange(ctx context.Context, name, namespace string) (*ap
 	return resp, nil
 }
 
-func (c *CoreV1) ListLimitRanges(ctx context.Context, namespace string) (*apiv1.LimitRangeList, error) {
+func (c *CoreV1) ListLimitRanges(ctx context.Context, namespace string, options ...Option) (*apiv1.LimitRangeList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "limitranges", "")
+	url := c.client.urlFor("", "v1", ns, "limitranges", "", options...)
 	resp := new(apiv1.LimitRangeList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -658,10 +658,10 @@ func (c *CoreV1) GetNamespace(ctx context.Context, name string) (*apiv1.Namespac
 	return resp, nil
 }
 
-func (c *CoreV1) ListNamespaces(ctx context.Context) (*apiv1.NamespaceList, error) {
+func (c *CoreV1) ListNamespaces(ctx context.Context, options ...Option) (*apiv1.NamespaceList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("", "v1", ns, "namespaces", "")
+	url := c.client.urlFor("", "v1", ns, "namespaces", "", options...)
 	resp := new(apiv1.NamespaceList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -751,10 +751,10 @@ func (c *CoreV1) GetNode(ctx context.Context, name string) (*apiv1.Node, error) 
 	return resp, nil
 }
 
-func (c *CoreV1) ListNodes(ctx context.Context) (*apiv1.NodeList, error) {
+func (c *CoreV1) ListNodes(ctx context.Context, options ...Option) (*apiv1.NodeList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("", "v1", ns, "nodes", "")
+	url := c.client.urlFor("", "v1", ns, "nodes", "", options...)
 	resp := new(apiv1.NodeList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -844,10 +844,10 @@ func (c *CoreV1) GetPersistentVolume(ctx context.Context, name string) (*apiv1.P
 	return resp, nil
 }
 
-func (c *CoreV1) ListPersistentVolumes(ctx context.Context) (*apiv1.PersistentVolumeList, error) {
+func (c *CoreV1) ListPersistentVolumes(ctx context.Context, options ...Option) (*apiv1.PersistentVolumeList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("", "v1", ns, "persistentvolumes", "")
+	url := c.client.urlFor("", "v1", ns, "persistentvolumes", "", options...)
 	resp := new(apiv1.PersistentVolumeList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -937,10 +937,10 @@ func (c *CoreV1) GetPersistentVolumeClaim(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-func (c *CoreV1) ListPersistentVolumeClaims(ctx context.Context, namespace string) (*apiv1.PersistentVolumeClaimList, error) {
+func (c *CoreV1) ListPersistentVolumeClaims(ctx context.Context, namespace string, options ...Option) (*apiv1.PersistentVolumeClaimList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "persistentvolumeclaims", "")
+	url := c.client.urlFor("", "v1", ns, "persistentvolumeclaims", "", options...)
 	resp := new(apiv1.PersistentVolumeClaimList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1030,10 +1030,10 @@ func (c *CoreV1) GetPod(ctx context.Context, name, namespace string) (*apiv1.Pod
 	return resp, nil
 }
 
-func (c *CoreV1) ListPods(ctx context.Context, namespace string) (*apiv1.PodList, error) {
+func (c *CoreV1) ListPods(ctx context.Context, namespace string, options ...Option) (*apiv1.PodList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "pods", "")
+	url := c.client.urlFor("", "v1", ns, "pods", "", options...)
 	resp := new(apiv1.PodList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1205,10 +1205,10 @@ func (c *CoreV1) GetPodTemplate(ctx context.Context, name, namespace string) (*a
 	return resp, nil
 }
 
-func (c *CoreV1) ListPodTemplates(ctx context.Context, namespace string) (*apiv1.PodTemplateList, error) {
+func (c *CoreV1) ListPodTemplates(ctx context.Context, namespace string, options ...Option) (*apiv1.PodTemplateList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "podtemplates", "")
+	url := c.client.urlFor("", "v1", ns, "podtemplates", "", options...)
 	resp := new(apiv1.PodTemplateList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1462,10 +1462,10 @@ func (c *CoreV1) GetReplicationController(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-func (c *CoreV1) ListReplicationControllers(ctx context.Context, namespace string) (*apiv1.ReplicationControllerList, error) {
+func (c *CoreV1) ListReplicationControllers(ctx context.Context, namespace string, options ...Option) (*apiv1.ReplicationControllerList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "replicationcontrollers", "")
+	url := c.client.urlFor("", "v1", ns, "replicationcontrollers", "", options...)
 	resp := new(apiv1.ReplicationControllerList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1555,10 +1555,10 @@ func (c *CoreV1) GetResourceQuota(ctx context.Context, name, namespace string) (
 	return resp, nil
 }
 
-func (c *CoreV1) ListResourceQuotas(ctx context.Context, namespace string) (*apiv1.ResourceQuotaList, error) {
+func (c *CoreV1) ListResourceQuotas(ctx context.Context, namespace string, options ...Option) (*apiv1.ResourceQuotaList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "resourcequotas", "")
+	url := c.client.urlFor("", "v1", ns, "resourcequotas", "", options...)
 	resp := new(apiv1.ResourceQuotaList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1648,10 +1648,10 @@ func (c *CoreV1) GetSecret(ctx context.Context, name, namespace string) (*apiv1.
 	return resp, nil
 }
 
-func (c *CoreV1) ListSecrets(ctx context.Context, namespace string) (*apiv1.SecretList, error) {
+func (c *CoreV1) ListSecrets(ctx context.Context, namespace string, options ...Option) (*apiv1.SecretList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "secrets", "")
+	url := c.client.urlFor("", "v1", ns, "secrets", "", options...)
 	resp := new(apiv1.SecretList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1741,10 +1741,10 @@ func (c *CoreV1) GetService(ctx context.Context, name, namespace string) (*apiv1
 	return resp, nil
 }
 
-func (c *CoreV1) ListServices(ctx context.Context, namespace string) (*apiv1.ServiceList, error) {
+func (c *CoreV1) ListServices(ctx context.Context, namespace string, options ...Option) (*apiv1.ServiceList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "services", "")
+	url := c.client.urlFor("", "v1", ns, "services", "", options...)
 	resp := new(apiv1.ServiceList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1834,10 +1834,10 @@ func (c *CoreV1) GetServiceAccount(ctx context.Context, name, namespace string) 
 	return resp, nil
 }
 
-func (c *CoreV1) ListServiceAccounts(ctx context.Context, namespace string) (*apiv1.ServiceAccountList, error) {
+func (c *CoreV1) ListServiceAccounts(ctx context.Context, namespace string, options ...Option) (*apiv1.ServiceAccountList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("", "v1", ns, "serviceaccounts", "")
+	url := c.client.urlFor("", "v1", ns, "serviceaccounts", "", options...)
 	resp := new(apiv1.ServiceAccountList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -1938,10 +1938,10 @@ func (c *AppsV1Alpha1) GetPetSet(ctx context.Context, name, namespace string) (*
 	return resp, nil
 }
 
-func (c *AppsV1Alpha1) ListPetSets(ctx context.Context, namespace string) (*appsv1alpha1.PetSetList, error) {
+func (c *AppsV1Alpha1) ListPetSets(ctx context.Context, namespace string, options ...Option) (*appsv1alpha1.PetSetList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", "")
+	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", "", options...)
 	resp := new(appsv1alpha1.PetSetList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -2392,10 +2392,10 @@ func (c *AutoscalingV1) GetHorizontalPodAutoscaler(ctx context.Context, name, na
 	return resp, nil
 }
 
-func (c *AutoscalingV1) ListHorizontalPodAutoscalers(ctx context.Context, namespace string) (*autoscalingv1.HorizontalPodAutoscalerList, error) {
+func (c *AutoscalingV1) ListHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*autoscalingv1.HorizontalPodAutoscalerList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("autoscaling", "v1", ns, "horizontalpodautoscalers", "")
+	url := c.client.urlFor("autoscaling", "v1", ns, "horizontalpodautoscalers", "", options...)
 	resp := new(autoscalingv1.HorizontalPodAutoscalerList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -2578,10 +2578,10 @@ func (c *BatchV1) GetJob(ctx context.Context, name, namespace string) (*batchv1.
 	return resp, nil
 }
 
-func (c *BatchV1) ListJobs(ctx context.Context, namespace string) (*batchv1.JobList, error) {
+func (c *BatchV1) ListJobs(ctx context.Context, namespace string, options ...Option) (*batchv1.JobList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("batch", "v1", ns, "jobs", "")
+	url := c.client.urlFor("batch", "v1", ns, "jobs", "", options...)
 	resp := new(batchv1.JobList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -2682,10 +2682,10 @@ func (c *BatchV2Alpha1) GetJob(ctx context.Context, name, namespace string) (*ba
 	return resp, nil
 }
 
-func (c *BatchV2Alpha1) ListJobs(ctx context.Context, namespace string) (*batchv2alpha1.JobList, error) {
+func (c *BatchV2Alpha1) ListJobs(ctx context.Context, namespace string, options ...Option) (*batchv2alpha1.JobList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("batch", "v2alpha1", ns, "jobs", "")
+	url := c.client.urlFor("batch", "v2alpha1", ns, "jobs", "", options...)
 	resp := new(batchv2alpha1.JobList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -2857,10 +2857,10 @@ func (c *BatchV2Alpha1) GetScheduledJob(ctx context.Context, name, namespace str
 	return resp, nil
 }
 
-func (c *BatchV2Alpha1) ListScheduledJobs(ctx context.Context, namespace string) (*batchv2alpha1.ScheduledJobList, error) {
+func (c *BatchV2Alpha1) ListScheduledJobs(ctx context.Context, namespace string, options ...Option) (*batchv2alpha1.ScheduledJobList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", "")
+	url := c.client.urlFor("batch", "v2alpha1", ns, "scheduledjobs", "", options...)
 	resp := new(batchv2alpha1.ScheduledJobList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -2961,10 +2961,10 @@ func (c *CertificatesV1Alpha1) GetCertificateSigningRequest(ctx context.Context,
 	return resp, nil
 }
 
-func (c *CertificatesV1Alpha1) ListCertificateSigningRequests(ctx context.Context) (*certificatesv1alpha1.CertificateSigningRequestList, error) {
+func (c *CertificatesV1Alpha1) ListCertificateSigningRequests(ctx context.Context, options ...Option) (*certificatesv1alpha1.CertificateSigningRequestList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", ns, "certificatesigningrequests", "")
+	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", ns, "certificatesigningrequests", "", options...)
 	resp := new(certificatesv1alpha1.CertificateSigningRequestList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3065,10 +3065,10 @@ func (c *ExtensionsV1Beta1) GetDaemonSet(ctx context.Context, name, namespace st
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListDaemonSets(ctx context.Context, namespace string) (*extensionsv1beta1.DaemonSetList, error) {
+func (c *ExtensionsV1Beta1) ListDaemonSets(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.DaemonSetList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "daemonsets", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "daemonsets", "", options...)
 	resp := new(extensionsv1beta1.DaemonSetList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3158,10 +3158,10 @@ func (c *ExtensionsV1Beta1) GetDeployment(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListDeployments(ctx context.Context, namespace string) (*extensionsv1beta1.DeploymentList, error) {
+func (c *ExtensionsV1Beta1) ListDeployments(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.DeploymentList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "deployments", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "deployments", "", options...)
 	resp := new(extensionsv1beta1.DeploymentList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3251,10 +3251,10 @@ func (c *ExtensionsV1Beta1) GetHorizontalPodAutoscaler(ctx context.Context, name
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListHorizontalPodAutoscalers(ctx context.Context, namespace string) (*extensionsv1beta1.HorizontalPodAutoscalerList, error) {
+func (c *ExtensionsV1Beta1) ListHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.HorizontalPodAutoscalerList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "horizontalpodautoscalers", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "horizontalpodautoscalers", "", options...)
 	resp := new(extensionsv1beta1.HorizontalPodAutoscalerList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3344,10 +3344,10 @@ func (c *ExtensionsV1Beta1) GetIngress(ctx context.Context, name, namespace stri
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListIngresses(ctx context.Context, namespace string) (*extensionsv1beta1.IngressList, error) {
+func (c *ExtensionsV1Beta1) ListIngresses(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.IngressList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "ingresses", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "ingresses", "", options...)
 	resp := new(extensionsv1beta1.IngressList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3437,10 +3437,10 @@ func (c *ExtensionsV1Beta1) GetJob(ctx context.Context, name, namespace string) 
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListJobs(ctx context.Context, namespace string) (*extensionsv1beta1.JobList, error) {
+func (c *ExtensionsV1Beta1) ListJobs(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.JobList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "jobs", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "jobs", "", options...)
 	resp := new(extensionsv1beta1.JobList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3530,10 +3530,10 @@ func (c *ExtensionsV1Beta1) GetNetworkPolicy(ctx context.Context, name, namespac
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListNetworkPolicies(ctx context.Context, namespace string) (*extensionsv1beta1.NetworkPolicyList, error) {
+func (c *ExtensionsV1Beta1) ListNetworkPolicies(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.NetworkPolicyList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "networkpolicies", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "networkpolicies", "", options...)
 	resp := new(extensionsv1beta1.NetworkPolicyList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3623,10 +3623,10 @@ func (c *ExtensionsV1Beta1) GetPodSecurityPolicy(ctx context.Context, name strin
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListPodSecurityPolicies(ctx context.Context) (*extensionsv1beta1.PodSecurityPolicyList, error) {
+func (c *ExtensionsV1Beta1) ListPodSecurityPolicies(ctx context.Context, options ...Option) (*extensionsv1beta1.PodSecurityPolicyList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "podsecuritypolicies", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "podsecuritypolicies", "", options...)
 	resp := new(extensionsv1beta1.PodSecurityPolicyList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3716,10 +3716,10 @@ func (c *ExtensionsV1Beta1) GetReplicaSet(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListReplicaSets(ctx context.Context, namespace string) (*extensionsv1beta1.ReplicaSetList, error) {
+func (c *ExtensionsV1Beta1) ListReplicaSets(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.ReplicaSetList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "replicasets", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "replicasets", "", options...)
 	resp := new(extensionsv1beta1.ReplicaSetList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3891,10 +3891,10 @@ func (c *ExtensionsV1Beta1) GetThirdPartyResource(ctx context.Context, name stri
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListThirdPartyResources(ctx context.Context) (*extensionsv1beta1.ThirdPartyResourceList, error) {
+func (c *ExtensionsV1Beta1) ListThirdPartyResources(ctx context.Context, options ...Option) (*extensionsv1beta1.ThirdPartyResourceList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresources", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresources", "", options...)
 	resp := new(extensionsv1beta1.ThirdPartyResourceList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -3984,10 +3984,10 @@ func (c *ExtensionsV1Beta1) GetThirdPartyResourceData(ctx context.Context, name,
 	return resp, nil
 }
 
-func (c *ExtensionsV1Beta1) ListThirdPartyResourceDatas(ctx context.Context, namespace string) (*extensionsv1beta1.ThirdPartyResourceDataList, error) {
+func (c *ExtensionsV1Beta1) ListThirdPartyResourceDatas(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.ThirdPartyResourceDataList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresourcedatas", "")
+	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresourcedatas", "", options...)
 	resp := new(extensionsv1beta1.ThirdPartyResourceDataList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -4263,10 +4263,10 @@ func (c *PolicyV1Alpha1) GetPodDisruptionBudget(ctx context.Context, name, names
 	return resp, nil
 }
 
-func (c *PolicyV1Alpha1) ListPodDisruptionBudgets(ctx context.Context, namespace string) (*policyv1alpha1.PodDisruptionBudgetList, error) {
+func (c *PolicyV1Alpha1) ListPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*policyv1alpha1.PodDisruptionBudgetList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", "")
+	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", "", options...)
 	resp := new(policyv1alpha1.PodDisruptionBudgetList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -4367,10 +4367,10 @@ func (c *RBACV1Alpha1) GetClusterRole(ctx context.Context, name string) (*rbacv1
 	return resp, nil
 }
 
-func (c *RBACV1Alpha1) ListClusterRoles(ctx context.Context) (*rbacv1alpha1.ClusterRoleList, error) {
+func (c *RBACV1Alpha1) ListClusterRoles(ctx context.Context, options ...Option) (*rbacv1alpha1.ClusterRoleList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterroles", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterroles", "", options...)
 	resp := new(rbacv1alpha1.ClusterRoleList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -4460,10 +4460,10 @@ func (c *RBACV1Alpha1) GetClusterRoleBinding(ctx context.Context, name string) (
 	return resp, nil
 }
 
-func (c *RBACV1Alpha1) ListClusterRoleBindings(ctx context.Context) (*rbacv1alpha1.ClusterRoleBindingList, error) {
+func (c *RBACV1Alpha1) ListClusterRoleBindings(ctx context.Context, options ...Option) (*rbacv1alpha1.ClusterRoleBindingList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterrolebindings", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterrolebindings", "", options...)
 	resp := new(rbacv1alpha1.ClusterRoleBindingList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -4553,10 +4553,10 @@ func (c *RBACV1Alpha1) GetRole(ctx context.Context, name, namespace string) (*rb
 	return resp, nil
 }
 
-func (c *RBACV1Alpha1) ListRoles(ctx context.Context, namespace string) (*rbacv1alpha1.RoleList, error) {
+func (c *RBACV1Alpha1) ListRoles(ctx context.Context, namespace string, options ...Option) (*rbacv1alpha1.RoleList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "roles", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "roles", "", options...)
 	resp := new(rbacv1alpha1.RoleList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -4646,10 +4646,10 @@ func (c *RBACV1Alpha1) GetRoleBinding(ctx context.Context, name, namespace strin
 	return resp, nil
 }
 
-func (c *RBACV1Alpha1) ListRoleBindings(ctx context.Context, namespace string) (*rbacv1alpha1.RoleBindingList, error) {
+func (c *RBACV1Alpha1) ListRoleBindings(ctx context.Context, namespace string, options ...Option) (*rbacv1alpha1.RoleBindingList, error) {
 	ns := c.client.namespaceFor(namespace)
 	
-	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "rolebindings", "")
+	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "rolebindings", "", options...)
 	resp := new(rbacv1alpha1.RoleBindingList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -4750,10 +4750,10 @@ func (c *StorageV1Beta1) GetStorageClass(ctx context.Context, name string) (*sto
 	return resp, nil
 }
 
-func (c *StorageV1Beta1) ListStorageClasses(ctx context.Context) (*storagev1beta1.StorageClassList, error) {
+func (c *StorageV1Beta1) ListStorageClasses(ctx context.Context, options ...Option) (*storagev1beta1.StorageClassList, error) {
 	ns := ""
 	
-	url := c.client.urlFor("storage.k8s.io", "v1beta1", ns, "storageclasses", "")
+	url := c.client.urlFor("storage.k8s.io", "v1beta1", ns, "storageclasses", "", options...)
 	resp := new(storagev1beta1.StorageClassList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
