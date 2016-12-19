@@ -76,7 +76,7 @@ pods, err := client.CoreV1().ListPods(ctx, "", l.Selector())
 
 Use the generated API types directly to create resources.
 
-```
+```go
 import (
     "context"
 
