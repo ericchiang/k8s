@@ -58,7 +58,7 @@ This can be overridden by explicitly passing a namespace.
 pods, err := client.ListPods(ctx, "custom-namespace") // Pods from the "custom-namespace"
 ```
 
-Out-of-cluster clients can be constructed by either creating an `http.Client` manually or parsing a kubeconfig object. The following is an example of creating a client from a kubeconfig:
+Out-of-cluster clients can be constructed by either creating an `http.Client` manually or parsing a [`Config`][config] object. The following is an example of creating a client from a kubeconfig:
 
 ```go
 package main
@@ -135,3 +135,4 @@ return nil
 [protobuf]: https://developers.google.com/protocol-buffers/
 [unversioned-status]: https://godoc.org/github.com/ericchiang/k8s/api/unversioned#Status
 [k8s-error]: https://godoc.org/github.com/ericchiang/k8s#APIError
+[config]: https://godoc.org/github.com/ericchiang/k8s#Config
