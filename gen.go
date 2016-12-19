@@ -99,18 +99,25 @@ type {{ .Name }} struct {
 {{ range $i, $r := .Resources }}
 func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.ImportName }}.{{ $r.Name }}) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !{{ $r.Namespaced }} && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !{{ $r.Namespaced }} && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 	
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if {{ $r.Namespaced }} && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if {{ $r.Namespaced }} {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", "")
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "")
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -121,18 +128,25 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 
 func (c *{{ $.Name }}) Update{{ $r.Name }}(ctx context.Context, obj *{{ $.ImportName }}.{{ $r.Name }}) (*{{ $.ImportName }}.{{ $r.Name }}, error) {
 	md := obj.GetMetadata()
-	if md.Name == "" {
+	if md.Name != nil && *md.Name == "" {
 		return nil, fmt.Errorf("no name for given object")
 	}
-	if !{{ $r.Namespaced }} && md.Namespace != "" {
+
+	ns := ""
+	if md.Namespace != nil {
+		ns = *md.Namespace
+	}
+	if !{{ $r.Namespaced }} && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
-	md.Namespace = c.client.namespaceFor(md.Namespace)
-	if {{ $r.Namespaced }} && md.Namespace == "" {
-		return nil, fmt.Errorf("no resource namespace provided")
+	if {{ $r.Namespaced }} {
+		if ns = c.client.namespaceFor(ns); ns == "" {
+			return nil, fmt.Errorf("no resource namespace provided")
+		}
+		md.Namespace = &ns
 	}
-	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", md.Namespace, "{{ $r.Pluralized }}", md.Name)
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", *md.Namespace, "{{ $r.Pluralized }}", *md.Name)
 	resp := new({{ $.ImportName }}.{{ $r.Name }})
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {

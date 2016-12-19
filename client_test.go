@@ -8,6 +8,8 @@ import (
 	"io"
 	"os/exec"
 	"testing"
+
+	"github.com/ericchiang/k8s/api/v1"
 )
 
 func newTestClient(t *testing.T) *Client {
@@ -57,4 +59,26 @@ func TestConfigMaps(t *testing.T) {
 		t.Fatal("failed to list configmaps: %v", err)
 	}
 	_ = configMaps
+	cm := &v1.ConfigMap{
+		Metadata: &v1.ObjectMeta{
+			Name:      String(newName()),
+			Namespace: String("default"),
+		},
+		Data: map[string]string{
+			"foo": "bar",
+		},
+	}
+	got, err := client.CreateConfigMap(ctx, cm)
+	if err != nil {
+		t.Fatalf("create config map: %v", err)
+	}
+	got.Data["zam"] = "spam"
+	_, err = client.UpdateConfigMap(ctx, got)
+	if err != nil {
+		t.Fatalf("update config map: %v", err)
+	}
+	if err := client.DeleteConfigMap(ctx, *cm.Metadata.Name, *cm.Metadata.Namespace); err != nil {
+		t.Fatalf("delete config map: %v", err)
+	}
+
 }

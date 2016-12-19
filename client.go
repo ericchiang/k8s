@@ -21,6 +21,23 @@ import (
 	"github.com/ericchiang/k8s/api/unversioned"
 )
 
+// String returns a pointer to a string. Useful for creating API objects
+// that take pointers instead of literals.
+//
+//		cm := &v1.ConfigMap{
+//			Metadata: &v1.ObjectMeta{
+//				Name:      k8s.String("myconfigmap"),
+//				Namespace: k8s.String("default"),
+//			},
+//			Data: map[string]string{
+//				"foo": "bar",
+//			},
+//		}
+//
+func String(s string) *string { return &s }
+func Int(i int) *int          { return &i }
+func Bool(b bool) *bool       { return &b }
+
 // Client is a Kuberntes client.
 type Client struct {
 	// The URL of the API server.
@@ -246,10 +263,10 @@ type APIError struct {
 	Status *unversioned.Status
 }
 
-func (e *APIError) Error() string { return "kubernetes api: " + e.Status.Message }
+func (e *APIError) Error() string { return fmt.Sprintf("kubernetes api: %s", e.Status.Message) }
 
-func checkStatusCode(c *codec, statusCode, gotStatusCode int, body []byte) error {
-	if statusCode == gotStatusCode {
+func checkStatusCode(c *codec, statusCode int, body []byte) error {
+	if statusCode/100 == 2 {
 		return nil
 	}
 
@@ -271,11 +288,7 @@ func (c *Client) namespaceFor(namespace string) string {
 	if namespace != "" {
 		return namespace
 	}
-
-	if c.Namespace != "" {
-		return c.Namespace
-	}
-	return ""
+	return c.Namespace
 }
 
 // The following methods hold the logic for interacting with the Kubernetes API. Generated
@@ -328,7 +341,7 @@ func (c *Client) create(ctx context.Context, codec *codec, verb, url string, req
 		return fmt.Errorf("read body: %v", err)
 	}
 
-	if err := checkStatusCode(codec, re.StatusCode, http.StatusCreated, respBody); err != nil {
+	if err := checkStatusCode(codec, re.StatusCode, respBody); err != nil {
 		return err
 	}
 	return codec.unmarshal(respBody, resp)
@@ -351,7 +364,7 @@ func (c *Client) delete(ctx context.Context, codec *codec, url string) error {
 		return fmt.Errorf("read body: %v", err)
 	}
 
-	if err := checkStatusCode(codec, re.StatusCode, http.StatusOK, respBody); err != nil {
+	if err := checkStatusCode(codec, re.StatusCode, respBody); err != nil {
 		return err
 	}
 	return nil
@@ -375,7 +388,7 @@ func (c *Client) get(ctx context.Context, codec *codec, url string, resp interfa
 		return fmt.Errorf("read body: %v", err)
 	}
 
-	if err := checkStatusCode(codec, re.StatusCode, http.StatusOK, respBody); err != nil {
+	if err := checkStatusCode(codec, re.StatusCode, respBody); err != nil {
 		return err
 	}
 	return codec.unmarshal(respBody, resp)

@@ -21,7 +21,7 @@ cd assets
 protobuf=$( find k8s.io/kubernetes/pkg/{api,apis,util,runtime} -name '*.proto' )
 for file in $protobuf; do
     echo $file
-    protoc --gogoslick_out=$PKG $file
+    protoc --gofast_out=$PKG $file
 done
 
 cd -
@@ -36,6 +36,6 @@ sed -i 's|package v1|package k8s|g' config.go
 sed -i 's|"k8s.io/kubernetes/pkg|"github.com/ericchiang/k8s|g' $( find {api,apis,config.go,util,runtime} -name '*.go' )
 sed -i 's|"k8s.io.kubernetes.pkg.|"github.com/ericchiang.k8s.|g' $( find {api,apis,config.go,util,runtime} -name '*.go' )
 
-# rm -rf assets
+rm -rf assets
 
 go run gen.go
