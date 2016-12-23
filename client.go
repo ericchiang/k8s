@@ -20,8 +20,10 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -61,7 +63,33 @@ type Client struct {
 	// their object metadata.
 	Namespace string
 
+	// SetHeaders provides a hook for modifying the HTTP headers of all requests.
+	//
+	//		client, err := k8s.NewClient(config)
+	//		if err != nil {
+	//			// handle error
+	//		}
+	//		client.SetHeaders = func(h http.Header) error {
+	//			h.Set("Authorization", "Bearer "+mytoken)
+	//			return nil
+	//		}
+	//
+	SetHeaders func(h http.Header) error
+
 	Client *http.Client
+}
+
+func (c *Client) newRequest(verb, url string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest(verb, url, body)
+	if err != nil {
+		return nil, err
+	}
+	if c.SetHeaders != nil {
+		if err := c.SetHeaders(req.Header); err != nil {
+			return nil, err
+		}
+	}
+	return req, nil
 }
 
 // Option represents optional call parameters, such as label selectors.
@@ -239,65 +267,40 @@ func newClient(cluster Cluster, user AuthInfo, namespace string) (*Client, error
 		token = string(data)
 	}
 
-	var transport http.RoundTripper = &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			Timeout:   30 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).DialContext,
-		TLSClientConfig:       tlsConfig,
-		MaxIdleConns:          100,
-		IdleConnTimeout:       90 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
+	client := &Client{
+		Endpoint:  cluster.Server,
+		Namespace: namespace,
+		Client: &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyFromEnvironment,
+				DialContext: (&net.Dialer{
+					Timeout:   30 * time.Second,
+					KeepAlive: 30 * time.Second,
+				}).DialContext,
+				TLSClientConfig:       tlsConfig,
+				MaxIdleConns:          100,
+				IdleConnTimeout:       90 * time.Second,
+				TLSHandshakeTimeout:   10 * time.Second,
+				ExpectContinueTimeout: 1 * time.Second,
+			},
+		},
 	}
 
 	if token != "" {
-		transport = &bearerTokenTransport{transport, token}
+		client.SetHeaders = func(h http.Header) error {
+			h.Set("Authorization", "Bearer "+token)
+			return nil
+		}
 	}
 	if user.Username != "" && user.Password != "" {
-		transport = &basicAuthTransport{transport, user.Username, user.Password}
+		auth := user.Username + ":" + user.Password
+		auth = "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
+		client.SetHeaders = func(h http.Header) error {
+			h.Set("Authorization", auth)
+			return nil
+		}
 	}
-
-	return &Client{
-		Endpoint:  cluster.Server,
-		Namespace: namespace,
-		Client:    &http.Client{Transport: transport},
-	}, nil
-}
-
-// copyReq creates a shallow copy of an http.Request while.
-func copyReq(req *http.Request) *http.Request {
-	r := new(http.Request)
-	*r = *req
-	r.Header = make(http.Header, len(req.Header)+1) // assume that a header will be added.
-	for k, s := range req.Header {
-		r.Header[k] = append([]string(nil), s...)
-	}
-	return r
-}
-
-type bearerTokenTransport struct {
-	base  http.RoundTripper
-	token string
-}
-
-func (t *bearerTokenTransport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
-	r := copyReq(req)
-	r.Header.Set("Authorization", "Bearer "+t.token)
-	return t.base.RoundTrip(r)
-}
-
-type basicAuthTransport struct {
-	base     http.RoundTripper
-	username string
-	password string
-}
-
-func (t *basicAuthTransport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
-	r := copyReq(req)
-	r.SetBasicAuth(t.username, t.password)
-	return t.base.RoundTrip(r)
+	return client, nil
 }
 
 // APIError is an error from a unexpected status code.
@@ -378,7 +381,7 @@ func (c *Client) create(ctx context.Context, codec *codec, verb, url string, req
 		return err
 	}
 
-	r, err := http.NewRequest(verb, url, bytes.NewReader(body))
+	r, err := c.newRequest(verb, url, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}
@@ -403,11 +406,12 @@ func (c *Client) create(ctx context.Context, codec *codec, verb, url string, req
 }
 
 func (c *Client) delete(ctx context.Context, codec *codec, url string) error {
-	r, err := http.NewRequest("DELETE", url, nil)
+	r, err := c.newRequest("DELETE", url, nil)
 	if err != nil {
 		return err
 	}
 	r.Header.Set("Accept", codec.contentType)
+
 	re, err := c.client().Do(r)
 	if err != nil {
 		return err
@@ -427,7 +431,7 @@ func (c *Client) delete(ctx context.Context, codec *codec, url string) error {
 
 // get can be used to either get or list a given resource.
 func (c *Client) get(ctx context.Context, codec *codec, url string, resp interface{}) error {
-	r, err := http.NewRequest("GET", url, nil)
+	r, err := c.newRequest("GET", url, nil)
 	if err != nil {
 		return err
 	}
