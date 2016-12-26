@@ -7,6 +7,77 @@ import (
 	"github.com/ericchiang/k8s/api/v1"
 )
 
+// ThirdPartyResources is a client used for interacting with user
+// defined API groups. It uses JSON encoding instead of protobufs
+// which are unsupported for these APIs.
+//
+// Users are expected to define their own third party resources.
+//
+//		const metricsResource = "metrics"
+//
+//		// First, define a third party resources with TypeMeta
+//		// and ObjectMeta fields.
+//		type Metric struct {
+//			*unversioned.TypeMeta   `json:",inline"`
+//			*v1.ObjectMeta          `json:"metadata,omitempty"`
+//
+//			Timestamp time.Time `json:"timestamp"`
+//			Value     []byte    `json:"value"`
+//		}
+//
+//		// Define a list wrapper.
+//		type MetricsList struct {
+//			*unversioned.TypeMeta `json:",inline"`
+//			*unversioned.ListMeta `json:"metadata,omitempty"`
+//
+//			Items []Metric `json:"items"`
+//		}
+//
+// Register the new resource by creating a ThirdPartyResource type.
+//
+//		// Create a ThirdPartyResource
+//		tpr := &v1beta1.ThirdPartyResource{
+//			Metadata: &v1.ObjectMeta{
+//				Name: k8s.String("metric.metrics.example.com"),
+//			},
+//			Description: k8s.String("A custom third party resource"),
+//			Versions:    []*v1beta1.APIVersions{
+//				{Name: k8s.String("v1")},
+//			},
+//		}
+//		_, err := client.ExtensionsV1Beta1().CreateThirdPartyResource(ctx, trp)
+//		if err != nil {
+//			// handle error
+//		}
+//
+// After creating the resource type, create a ThirdPartyResources client then
+// use interact with it like any other API group. For example to create a third
+// party resource:
+//
+//		metricsClient := client.ThirdPartyResources("metrics.example.com", "v1")
+//
+//		metric := &Metric{
+//			ObjectMeta: &v1.ObjectMeta{
+//				Name: k8s.String("foo"),
+//			},
+//			Timestamp: time.Now(),
+//			Value:     42,
+//		}
+//
+//		err = metricsClient.Create(ctx, metricsResource, client.Namespace, metric, metric)
+//		if err != nil {
+//			// handle error
+//		}
+//
+// List a set of third party resources:
+//
+//		var metrics MetricsList
+//		metricsClient.List(ctx, metricsResource, &metrics)
+//
+// Or delete:
+//
+//		tprClient.Delete(ctx, metricsResource, client.Namespace, *metric.Name)
+//
 type ThirdPartyResources struct {
 	c *Client
 
