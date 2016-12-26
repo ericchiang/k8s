@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/ericchiang/k8s?status.svg)](https://godoc.org/github.com/ericchiang/k8s)
 
-This package holds a slimmed down Kubernetes client. It imports a [single external dependency][gogo-proto], compiles much faster than either of the offical clients, and won't bloat `vendor` directories.
+This package holds a slimmed down Kubernetes client. It imports a [single external dependency][go-proto], compiles much faster than either of the offical clients, and won't bloat `vendor` directories.
 
 The client uses Kubernetes' new support for [protobuf][protobuf] serialization. Are types are generated from canonical `.proto` files in the Kubernetes repo, and this package understands the custom wire format used to talk to the API server. However, the package API looks similar to the official client:
 
@@ -177,7 +177,7 @@ if err != nil {
 return nil
 ```
 
-[gogo-proto]: https://godoc.org/github.com/gogo/protobuf/proto
+[go-proto]: https://godoc.org/github.com/golang/protobuf/proto
 [protobuf]: https://developers.google.com/protocol-buffers/
 [unversioned-status]: https://godoc.org/github.com/ericchiang/k8s/api/unversioned#Status
 [k8s-error]: https://godoc.org/github.com/ericchiang/k8s#APIError

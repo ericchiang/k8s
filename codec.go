@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/ericchiang/k8s/runtime"
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 type codec struct {
