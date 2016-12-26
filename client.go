@@ -307,9 +307,17 @@ func newClient(cluster Cluster, user AuthInfo, namespace string) (*Client, error
 type APIError struct {
 	// The status object returned by the Kubernetes API,
 	Status *unversioned.Status
+
+	// Status code returned by the HTTP request.
+	Code int
 }
 
-func (e *APIError) Error() string { return fmt.Sprintf("kubernetes api: %s", e.Status.Message) }
+func (e *APIError) Error() string {
+	if e.Status != nil && e.Status.Message != nil && e.Status.Status != nil {
+		return fmt.Sprintf("kubernetes api: %s %d %s", *e.Status.Status, e.Code, *e.Status.Message)
+	}
+	return fmt.Sprintf("%#v", e)
+}
 
 func checkStatusCode(c *codec, statusCode int, body []byte) error {
 	if statusCode/100 == 2 {
@@ -320,7 +328,7 @@ func checkStatusCode(c *codec, statusCode int, body []byte) error {
 	if err := c.unmarshal(body, status); err != nil {
 		return fmt.Errorf("decode error status: %v", err)
 	}
-	return &APIError{status}
+	return &APIError{status, statusCode}
 }
 
 func (c *Client) client() *http.Client {
