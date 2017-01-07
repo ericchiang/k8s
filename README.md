@@ -44,6 +44,12 @@ Until this package becomes more mature use Kubernetes' Go client instead: https:
 * Go 1.7+ (this package uses "context" features added in 1.7)
 * Kubernetes 1.3+ (protobuf support was added in 1.3)
 
+## Versioned clients?
+
+This client grabs `.proto` files from multiple versions of the Kubernetes codebase. This means that it supports every API group version present in Kubernetes since 1.3.
+
+This client currently doesn't support the discovery API for determining what version of the API your client is talking to. Progress for that feature can be found [here](https://github.com/ericchiang/k8s/issues/3).
+
 ## Configuration
 
 ### Namespaces
