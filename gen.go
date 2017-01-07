@@ -110,7 +110,7 @@ func (c *{{ $.Name }}) Create{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 	if !{{ $r.Namespaced }} && ns != ""{
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
-	
+
 	if {{ $r.Namespaced }} {
 		if ns = c.client.namespaceFor(ns); ns == "" {
 			return nil, fmt.Errorf("no resource namespace provided")
