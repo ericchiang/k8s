@@ -40,10 +40,12 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // ImageReview checks if the set of images in a pod are allowed.
 type ImageReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the pod being evaluated
 	Spec *ImageReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the backend and indicates whether the pod should be allowed.
+	// +optional
 	Status           *ImageReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte             `json:"-"`
 }
@@ -77,6 +79,7 @@ func (m *ImageReview) GetStatus() *ImageReviewStatus {
 // ImageReviewContainerSpec is a description of a container within the pod creation request.
 type ImageReviewContainerSpec struct {
 	// This can be in the form image:tag or image@SHA:012345679abcdef.
+	// +optional
 	Image            *string `protobuf:"bytes,1,opt,name=image" json:"image,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -98,12 +101,15 @@ func (m *ImageReviewContainerSpec) GetImage() string {
 // ImageReviewSpec is a description of the pod creation request.
 type ImageReviewSpec struct {
 	// Containers is a list of a subset of the information in each container of the Pod being created.
+	// +optional
 	Containers []*ImageReviewContainerSpec `protobuf:"bytes,1,rep,name=containers" json:"containers,omitempty"`
 	// Annotations is a list of key-value pairs extracted from the Pod's annotations.
 	// It only includes keys which match the pattern `*.image-policy.k8s.io/*`.
 	// It is up to each webhook backend to determine how to interpret these annotations, if at all.
+	// +optional
 	Annotations map[string]string `protobuf:"bytes,2,rep,name=annotations" json:"annotations,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Namespace is the namespace the pod is being created in.
+	// +optional
 	Namespace        *string `protobuf:"bytes,3,opt,name=namespace" json:"namespace,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -141,6 +147,7 @@ type ImageReviewStatus struct {
 	// Reason should be empty unless Allowed is false in which case it
 	// may contain a short description of what is wrong.  Kubernetes
 	// may truncate excessively long errors when displaying to the user.
+	// +optional
 	Reason           *string `protobuf:"bytes,2,opt,name=reason" json:"reason,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }

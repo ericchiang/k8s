@@ -63,10 +63,12 @@ func (m *ExtraValue) GetItems() []string {
 // Note: TokenReview requests may be cached by the webhook token authenticator
 // plugin in the kube-apiserver.
 type TokenReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the request being evaluated
 	Spec *TokenReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request can be authenticated.
+	// +optional
 	Status           *TokenReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte             `json:"-"`
 }
@@ -100,6 +102,7 @@ func (m *TokenReview) GetStatus() *TokenReviewStatus {
 // TokenReviewSpec is a description of the token authentication request.
 type TokenReviewSpec struct {
 	// Token is the opaque bearer token.
+	// +optional
 	Token            *string `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -119,10 +122,13 @@ func (m *TokenReviewSpec) GetToken() string {
 // TokenReviewStatus is the result of the token authentication request.
 type TokenReviewStatus struct {
 	// Authenticated indicates that the token was associated with a known user.
+	// +optional
 	Authenticated *bool `protobuf:"varint,1,opt,name=authenticated" json:"authenticated,omitempty"`
 	// User is the UserInfo associated with the provided token.
+	// +optional
 	User *UserInfo `protobuf:"bytes,2,opt,name=user" json:"user,omitempty"`
 	// Error indicates that the token couldn't be checked
+	// +optional
 	Error            *string `protobuf:"bytes,3,opt,name=error" json:"error,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -157,14 +163,18 @@ func (m *TokenReviewStatus) GetError() string {
 // user.Info interface.
 type UserInfo struct {
 	// The name that uniquely identifies this user among all active users.
+	// +optional
 	Username *string `protobuf:"bytes,1,opt,name=username" json:"username,omitempty"`
 	// A unique value that identifies this user across time. If this user is
 	// deleted and another user by the same name is added, they will have
 	// different UIDs.
+	// +optional
 	Uid *string `protobuf:"bytes,2,opt,name=uid" json:"uid,omitempty"`
 	// The names of groups this user is a part of.
+	// +optional
 	Groups []string `protobuf:"bytes,3,rep,name=groups" json:"groups,omitempty"`
 	// Any additional information provided by the authenticator.
+	// +optional
 	Extra            map[string]*ExtraValue `protobuf:"bytes,4,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	XXX_unrecognized []byte                 `json:"-"`
 }

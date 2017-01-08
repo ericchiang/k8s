@@ -44,11 +44,12 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // CrossVersionObjectReference contains enough information to let you identify the referred resource.
 type CrossVersionObjectReference struct {
-	// Kind of the referent; More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#types-kinds"
+	// Kind of the referent; More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#types-kinds"
 	Kind *string `protobuf:"bytes,1,opt,name=kind" json:"kind,omitempty"`
-	// Name of the referent; More info: http://releases.k8s.io/release-1.4/docs/user-guide/identifiers.md#names
+	// Name of the referent; More info: http://kubernetes.io/docs/user-guide/identifiers#names
 	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
 	// API version of the referent
+	// +optional
 	ApiVersion       *string `protobuf:"bytes,3,opt,name=apiVersion" json:"apiVersion,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -83,11 +84,14 @@ func (m *CrossVersionObjectReference) GetApiVersion() string {
 
 // configuration of a horizontal pod autoscaler.
 type HorizontalPodAutoscaler struct {
-	// Standard object metadata. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata
+	// Standard object metadata. More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// behaviour of autoscaler. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status.
+	// behaviour of autoscaler. More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status.
+	// +optional
 	Spec *HorizontalPodAutoscalerSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// current information about the autoscaler.
+	// +optional
 	Status           *HorizontalPodAutoscalerStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte                         `json:"-"`
 }
@@ -121,6 +125,7 @@ func (m *HorizontalPodAutoscaler) GetStatus() *HorizontalPodAutoscalerStatus {
 // list of horizontal pod autoscaler objects.
 type HorizontalPodAutoscalerList struct {
 	// Standard list metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// list of horizontal pod autoscaler objects.
 	Items            []*HorizontalPodAutoscaler `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
@@ -154,11 +159,13 @@ type HorizontalPodAutoscalerSpec struct {
 	// and will set the desired number of pods by using its Scale subresource.
 	ScaleTargetRef *CrossVersionObjectReference `protobuf:"bytes,1,opt,name=scaleTargetRef" json:"scaleTargetRef,omitempty"`
 	// lower limit for the number of pods that can be set by the autoscaler, default 1.
+	// +optional
 	MinReplicas *int32 `protobuf:"varint,2,opt,name=minReplicas" json:"minReplicas,omitempty"`
 	// upper limit for the number of pods that can be set by the autoscaler; cannot be smaller than MinReplicas.
 	MaxReplicas *int32 `protobuf:"varint,3,opt,name=maxReplicas" json:"maxReplicas,omitempty"`
 	// target average CPU utilization (represented as a percentage of requested CPU) over all the pods;
 	// if not specified the default autoscaling policy will be used.
+	// +optional
 	TargetCPUUtilizationPercentage *int32 `protobuf:"varint,4,opt,name=targetCPUUtilizationPercentage" json:"targetCPUUtilizationPercentage,omitempty"`
 	XXX_unrecognized               []byte `json:"-"`
 }
@@ -201,9 +208,11 @@ func (m *HorizontalPodAutoscalerSpec) GetTargetCPUUtilizationPercentage() int32 
 // current status of a horizontal pod autoscaler
 type HorizontalPodAutoscalerStatus struct {
 	// most recent generation observed by this autoscaler.
+	// +optional
 	ObservedGeneration *int64 `protobuf:"varint,1,opt,name=observedGeneration" json:"observedGeneration,omitempty"`
 	// last time the HorizontalPodAutoscaler scaled the number of pods;
 	// used by the autoscaler to control how often the number of pods is changed.
+	// +optional
 	LastScaleTime *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,2,opt,name=lastScaleTime" json:"lastScaleTime,omitempty"`
 	// current number of replicas of pods managed by this autoscaler.
 	CurrentReplicas *int32 `protobuf:"varint,3,opt,name=currentReplicas" json:"currentReplicas,omitempty"`
@@ -211,6 +220,7 @@ type HorizontalPodAutoscalerStatus struct {
 	DesiredReplicas *int32 `protobuf:"varint,4,opt,name=desiredReplicas" json:"desiredReplicas,omitempty"`
 	// current average CPU utilization over all pods, represented as a percentage of requested CPU,
 	// e.g. 70 means that an average pod is using now 70% of its requested CPU.
+	// +optional
 	CurrentCPUUtilizationPercentage *int32 `protobuf:"varint,5,opt,name=currentCPUUtilizationPercentage" json:"currentCPUUtilizationPercentage,omitempty"`
 	XXX_unrecognized                []byte `json:"-"`
 }
@@ -259,11 +269,14 @@ func (m *HorizontalPodAutoscalerStatus) GetCurrentCPUUtilizationPercentage() int
 
 // Scale represents a scaling request for a resource.
 type Scale struct {
-	// Standard object metadata; More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#metadata.
+	// Standard object metadata; More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata.
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// defines the behavior of the scale. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status.
+	// defines the behavior of the scale. More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status.
+	// +optional
 	Spec *ScaleSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
-	// current status of the scale. More info: http://releases.k8s.io/release-1.4/docs/devel/api-conventions.md#spec-and-status. Read-only.
+	// current status of the scale. More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status. Read-only.
+	// +optional
 	Status           *ScaleStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte       `json:"-"`
 }
@@ -297,6 +310,7 @@ func (m *Scale) GetStatus() *ScaleStatus {
 // ScaleSpec describes the attributes of a scale subresource.
 type ScaleSpec struct {
 	// desired number of instances for the scaled object.
+	// +optional
 	Replicas         *int32 `protobuf:"varint,1,opt,name=replicas" json:"replicas,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
@@ -320,7 +334,8 @@ type ScaleStatus struct {
 	// label query over pods that should match the replicas count. This is same
 	// as the label selector but in the string format to avoid introspection
 	// by clients. The string will be in the same format as the query-param syntax.
-	// More info about label selectors: http://releases.k8s.io/release-1.4/docs/user-guide/labels.md#label-selectors
+	// More info about label selectors: http://kubernetes.io/docs/user-guide/labels#label-selectors
+	// +optional
 	Selector         *string `protobuf:"bytes,2,opt,name=selector" json:"selector,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
