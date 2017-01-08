@@ -44,11 +44,13 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 type StorageClass struct {
 	// Standard object's metadata.
 	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Provisioner indicates the type of the provisioner.
 	Provisioner *string `protobuf:"bytes,2,opt,name=provisioner" json:"provisioner,omitempty"`
 	// Parameters holds the parameters for the provisioner that should
 	// create volumes of this storage class.
+	// +optional
 	Parameters       map[string]string `protobuf:"bytes,3,rep,name=parameters" json:"parameters,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	XXX_unrecognized []byte            `json:"-"`
 }
@@ -83,6 +85,7 @@ func (m *StorageClass) GetParameters() map[string]string {
 type StorageClassList struct {
 	// Standard list metadata
 	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of StorageClasses
 	Items            []*StorageClass `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`

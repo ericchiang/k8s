@@ -67,11 +67,13 @@ func (m *ExtraValue) GetItems() []string {
 // Having a namespace scoped resource makes it much easier to grant namespace scoped policy that includes permissions
 // checking.
 type LocalSubjectAccessReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the request being evaluated.  spec.namespace must be equal to the namespace
 	// you made the request against.  If empty, it is defaulted.
 	Spec *SubjectAccessReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request is allowed or not
+	// +optional
 	Status           *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte                     `json:"-"`
 }
@@ -107,8 +109,10 @@ func (m *LocalSubjectAccessReview) GetStatus() *SubjectAccessReviewStatus {
 // NonResourceAttributes includes the authorization attributes available for non-resource requests to the Authorizer interface
 type NonResourceAttributes struct {
 	// Path is the URL path of the request
+	// +optional
 	Path *string `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
 	// Verb is the standard HTTP verb
+	// +optional
 	Verb             *string `protobuf:"bytes,2,opt,name=verb" json:"verb,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -138,18 +142,25 @@ type ResourceAttributes struct {
 	// "" (empty) is defaulted for LocalSubjectAccessReviews
 	// "" (empty) is empty for cluster-scoped resources
 	// "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview
+	// +optional
 	Namespace *string `protobuf:"bytes,1,opt,name=namespace" json:"namespace,omitempty"`
 	// Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.  "*" means all.
+	// +optional
 	Verb *string `protobuf:"bytes,2,opt,name=verb" json:"verb,omitempty"`
 	// Group is the API Group of the Resource.  "*" means all.
+	// +optional
 	Group *string `protobuf:"bytes,3,opt,name=group" json:"group,omitempty"`
 	// Version is the API Version of the Resource.  "*" means all.
+	// +optional
 	Version *string `protobuf:"bytes,4,opt,name=version" json:"version,omitempty"`
 	// Resource is one of the existing resource types.  "*" means all.
+	// +optional
 	Resource *string `protobuf:"bytes,5,opt,name=resource" json:"resource,omitempty"`
 	// Subresource is one of the existing resource types.  "" means none.
+	// +optional
 	Subresource *string `protobuf:"bytes,6,opt,name=subresource" json:"subresource,omitempty"`
 	// Name is the name of the resource being requested for a "get" or deleted for a "delete". "" (empty) means all.
+	// +optional
 	Name             *string `protobuf:"bytes,7,opt,name=name" json:"name,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
@@ -212,10 +223,12 @@ func (m *ResourceAttributes) GetName() string {
 // spec.namespace means "in all namespaces".  Self is a special case, because users should always be able
 // to check whether they can perform an action
 type SelfSubjectAccessReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the request being evaluated.  user and groups must be empty
 	Spec *SelfSubjectAccessReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request is allowed or not
+	// +optional
 	Status           *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte                     `json:"-"`
 }
@@ -250,8 +263,10 @@ func (m *SelfSubjectAccessReview) GetStatus() *SubjectAccessReviewStatus {
 // and NonResourceAuthorizationAttributes must be set
 type SelfSubjectAccessReviewSpec struct {
 	// ResourceAuthorizationAttributes describes information for a resource access request
+	// +optional
 	ResourceAttributes *ResourceAttributes `protobuf:"bytes,1,opt,name=resourceAttributes" json:"resourceAttributes,omitempty"`
 	// NonResourceAttributes describes information for a non-resource access request
+	// +optional
 	NonResourceAttributes *NonResourceAttributes `protobuf:"bytes,2,opt,name=nonResourceAttributes" json:"nonResourceAttributes,omitempty"`
 	XXX_unrecognized      []byte                 `json:"-"`
 }
@@ -279,10 +294,12 @@ func (m *SelfSubjectAccessReviewSpec) GetNonResourceAttributes() *NonResourceAtt
 
 // SubjectAccessReview checks whether or not a user or group can perform an action.
 type SubjectAccessReview struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec holds information about the request being evaluated
 	Spec *SubjectAccessReviewSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is filled in by the server and indicates whether the request is allowed or not
+	// +optional
 	Status           *SubjectAccessReviewStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte                     `json:"-"`
 }
@@ -317,16 +334,21 @@ func (m *SubjectAccessReview) GetStatus() *SubjectAccessReviewStatus {
 // and NonResourceAuthorizationAttributes must be set
 type SubjectAccessReviewSpec struct {
 	// ResourceAuthorizationAttributes describes information for a resource access request
+	// +optional
 	ResourceAttributes *ResourceAttributes `protobuf:"bytes,1,opt,name=resourceAttributes" json:"resourceAttributes,omitempty"`
 	// NonResourceAttributes describes information for a non-resource access request
+	// +optional
 	NonResourceAttributes *NonResourceAttributes `protobuf:"bytes,2,opt,name=nonResourceAttributes" json:"nonResourceAttributes,omitempty"`
 	// User is the user you're testing for.
 	// If you specify "User" but not "Group", then is it interpreted as "What if User were not a member of any groups
+	// +optional
 	Verb *string `protobuf:"bytes,3,opt,name=verb" json:"verb,omitempty"`
 	// Groups is the groups you're testing for.
+	// +optional
 	Group []string `protobuf:"bytes,4,rep,name=group" json:"group,omitempty"`
 	// Extra corresponds to the user.Info.GetExtra() method from the authenticator.  Since that is input to the authorizer
 	// it needs a reflection here.
+	// +optional
 	Extra            map[string]*ExtraValue `protobuf:"bytes,5,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	XXX_unrecognized []byte                 `json:"-"`
 }
@@ -376,10 +398,12 @@ type SubjectAccessReviewStatus struct {
 	// Allowed is required.  True if the action would be allowed, false otherwise.
 	Allowed *bool `protobuf:"varint,1,opt,name=allowed" json:"allowed,omitempty"`
 	// Reason is optional.  It indicates why a request was allowed or denied.
+	// +optional
 	Reason *string `protobuf:"bytes,2,opt,name=reason" json:"reason,omitempty"`
 	// EvaluationError is an indication that some error occurred during the authorization check.
 	// It is entirely possible to get an error and be able to continue determine authorization status in spite of it.
 	// For instance, RBAC can be missing a role, but enough roles are still present and bound to reason about the request.
+	// +optional
 	EvaluationError  *string `protobuf:"bytes,3,opt,name=evaluationError" json:"evaluationError,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }

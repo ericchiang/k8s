@@ -41,10 +41,13 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Describes a certificate signing request
 type CertificateSigningRequest struct {
+	// +optional
 	Metadata *k8s_io_kubernetes_pkg_api_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// The certificate request itself and any additional information.
+	// +optional
 	Spec *CertificateSigningRequestSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Derived information about the request.
+	// +optional
 	Status           *CertificateSigningRequestStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte                           `json:"-"`
 }
@@ -81,10 +84,13 @@ type CertificateSigningRequestCondition struct {
 	// request approval state, currently Approved or Denied.
 	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
 	// brief reason for the request state
+	// +optional
 	Reason *string `protobuf:"bytes,2,opt,name=reason" json:"reason,omitempty"`
 	// human readable message with details about the request state
+	// +optional
 	Message *string `protobuf:"bytes,3,opt,name=message" json:"message,omitempty"`
 	// timestamp for the last update to this condition
+	// +optional
 	LastUpdateTime   *k8s_io_kubernetes_pkg_api_unversioned.Time `protobuf:"bytes,4,opt,name=lastUpdateTime" json:"lastUpdateTime,omitempty"`
 	XXX_unrecognized []byte                                      `json:"-"`
 }
@@ -125,6 +131,7 @@ func (m *CertificateSigningRequestCondition) GetLastUpdateTime() *k8s_io_kuberne
 }
 
 type CertificateSigningRequestList struct {
+	// +optional
 	Metadata         *k8s_io_kubernetes_pkg_api_unversioned.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	Items            []*CertificateSigningRequest                    `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
 	XXX_unrecognized []byte                                          `json:"-"`
@@ -159,8 +166,11 @@ type CertificateSigningRequestSpec struct {
 	Request []byte `protobuf:"bytes,1,opt,name=request" json:"request,omitempty"`
 	// Information about the requesting user (if relevant)
 	// See user.Info interface for details
-	Username         *string  `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
-	Uid              *string  `protobuf:"bytes,3,opt,name=uid" json:"uid,omitempty"`
+	// +optional
+	Username *string `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
+	// +optional
+	Uid *string `protobuf:"bytes,3,opt,name=uid" json:"uid,omitempty"`
+	// +optional
 	Groups           []string `protobuf:"bytes,4,rep,name=groups" json:"groups,omitempty"`
 	XXX_unrecognized []byte   `json:"-"`
 }
@@ -202,8 +212,10 @@ func (m *CertificateSigningRequestSpec) GetGroups() []string {
 
 type CertificateSigningRequestStatus struct {
 	// Conditions applied to the request, such as approval or denial.
+	// +optional
 	Conditions []*CertificateSigningRequestCondition `protobuf:"bytes,1,rep,name=conditions" json:"conditions,omitempty"`
 	// If request was approved, the controller will place the issued certificate here.
+	// +optional
 	Certificate      []byte `protobuf:"bytes,2,opt,name=certificate" json:"certificate,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
