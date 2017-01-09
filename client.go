@@ -21,6 +21,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
@@ -35,6 +36,9 @@ import (
 	"time"
 
 	"github.com/ericchiang/k8s/api/unversioned"
+	"github.com/ericchiang/k8s/runtime"
+	"github.com/ericchiang/k8s/watch/versioned"
+	"github.com/golang/protobuf/proto"
 )
 
 // String returns a pointer to a string. Useful for creating API objects
@@ -53,6 +57,14 @@ import (
 func String(s string) *string { return &s }
 func Int(i int) *int          { return &i }
 func Bool(b bool) *bool       { return &b }
+
+const (
+	// Types for watch events.
+	EventAdded    = "ADDED"
+	EventDeleted  = "DELETED"
+	EventModified = "MODIFIED"
+	EventError    = "ERROR"
+)
 
 // Client is a Kuberntes client.
 type Client struct {
@@ -324,6 +336,10 @@ func checkStatusCode(c *codec, statusCode int, body []byte) error {
 		return nil
 	}
 
+	return newAPIError(c, statusCode, body)
+}
+
+func newAPIError(c *codec, statusCode int, body []byte) error {
 	status := new(unversioned.Status)
 	if err := c.unmarshal(body, status); err != nil {
 		return fmt.Errorf("decode error status: %v", err)
@@ -459,4 +475,91 @@ func (c *Client) get(ctx context.Context, codec *codec, url string, resp interfa
 		return err
 	}
 	return codec.unmarshal(respBody, resp)
+}
+
+var unknownPrefix = []byte{0x6b, 0x38, 0x73, 0x00}
+
+func parseUnknown(b []byte) (*runtime.Unknown, error) {
+	if !bytes.HasPrefix(b, unknownPrefix) {
+		return nil, errors.New("bytes did not start with expected prefix")
+	}
+
+	var u runtime.Unknown
+	if err := proto.Unmarshal(b[len(unknownPrefix):], &u); err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+type event struct {
+	event   *versioned.Event
+	unknown *runtime.Unknown
+}
+
+type watcher struct {
+	r io.ReadCloser
+}
+
+func (w *watcher) Close() error {
+	return w.r.Close()
+}
+
+// Decode the next event from a watch stream.
+//
+// See: https://github.com/kubernetes/community/blob/master/contributors/design-proposals/protobuf.md#streaming-wire-format
+func (w *watcher) next() (*versioned.Event, *runtime.Unknown, error) {
+	length := make([]byte, 4)
+	if _, err := io.ReadFull(w.r, length); err != nil {
+		return nil, nil, err
+	}
+
+	body := make([]byte, int(binary.BigEndian.Uint32(length)))
+	if _, err := io.ReadFull(w.r, body); err != nil {
+		return nil, nil, fmt.Errorf("read frame body: %v", err)
+	}
+
+	var event versioned.Event
+	if err := proto.Unmarshal(body, &event); err != nil {
+		return nil, nil, err
+	}
+
+	if event.Object == nil {
+		return nil, nil, fmt.Errorf("event had no underlying object")
+	}
+
+	unknown, err := parseUnknown(event.Object.Raw)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return &event, unknown, nil
+}
+
+func (c *Client) watch(ctx context.Context, url string) (*watcher, error) {
+	if strings.Contains(url, "?") {
+		url = url + "&watch=true"
+	} else {
+		url = url + "?watch=true"
+	}
+	r, err := c.newRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	r.Header.Set("Accept", "application/vnd.kubernetes.protobuf;type=watch")
+	resp, err := c.client().Do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode/100 != 2 {
+		body, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			return nil, err
+		}
+		return nil, newAPIError(pbCodec, resp.StatusCode, body)
+	}
+
+	w := &watcher{resp.Body}
+	return w, nil
 }

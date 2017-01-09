@@ -187,12 +187,45 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name{{ if $r.Namesp
 
 {{- if $r.HasList }}
 
+type {{ $.ImportName }}{{ $r.Name }}Watcher struct {
+	*watcher
+}
+
+func (w *{{ $.ImportName }}{{ $r.Name }}Watcher) Next() (*versioned.Event, *{{ $.ImportName }}.{{ $r.Name }}, error) {
+	event, unknown, err := w.watcher.next()
+	if err != nil {
+		return nil, nil, err
+	}
+	resp := new({{ $.ImportName }}.{{ $r.Name }})
+	if err := proto.Unmarshal(unknown.Raw, resp); err != nil {
+		return nil, nil, err
+	}
+	return event, resp, nil
+}
+
+func (c *{{ $.Name }}) Watch{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (interface{
+	Next() (*versioned.Event, *{{ $.ImportName }}.{{ $r.Name }}, error)
+	Close() error
+}, error){
+	{{ if $r.Namespaced -}}
+	ns := c.client.namespaceFor(namespace)
+	{{ else -}}
+	ns := ""
+	{{- end }}
+	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "", options...)
+	watcher, err := c.client.watch(ctx, url)
+	if err != nil {
+		return nil, err
+	}
+	return &{{ $.ImportName }}{{ $r.Name }}Watcher{watcher}, nil
+}
+
 func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {
 	{{ if $r.Namespaced -}}
 	ns := c.client.namespaceFor(namespace)
 	{{ else -}}
 	ns := ""
-	{{ end }}
+	{{- end }}
 	url := c.client.urlFor("{{ $.APIGroup }}", "{{ $.APIVersion }}", ns, "{{ $r.Pluralized }}", "", options...)
 	resp := new({{ $.ImportName }}.{{ $r.Name }}List)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
@@ -330,6 +363,8 @@ func load() error {
 		}
 		fmt.Fprintf(buff, "\t%s \"%s\"\n", pkg.ImportName, pkg.ImportPath)
 	}
+	fmt.Fprintf(buff, "\t%q\n", "github.com/ericchiang/k8s/watch/versioned")
+	fmt.Fprintf(buff, "\t%q\n", "github.com/golang/protobuf/proto")
 	buff.WriteString(")\n")
 
 	for _, pkg := range pkgs {
