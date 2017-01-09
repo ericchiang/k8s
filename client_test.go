@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"reflect"
 	"testing"
 
 	"github.com/ericchiang/k8s/api/v1"
@@ -126,4 +127,105 @@ func TestConfigMaps(t *testing.T) {
 		t.Fatalf("delete config map: %v", err)
 	}
 
+}
+
+func TestWatch(t *testing.T) {
+	client := newTestClient(t).CoreV1()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	w, err := client.WatchConfigMaps(ctx, "default")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+
+	name := newName()
+	labelVal := newName()
+
+	cm := &v1.ConfigMap{
+		Metadata: &v1.ObjectMeta{
+			Name:      String(name),
+			Namespace: String("default"),
+			Labels: map[string]string{
+				"testLabel": labelVal,
+			},
+		},
+		Data: map[string]string{
+			"foo": "bar",
+		},
+	}
+	got, err := client.CreateConfigMap(ctx, cm)
+	if err != nil {
+		t.Fatalf("create config map: %v", err)
+	}
+
+	if event, gotFromWatch, err := w.Next(); err != nil {
+		t.Errorf("failed to get next watch: %v", err)
+	} else {
+		if *event.Type != EventAdded {
+			t.Errorf("expected event type %q got %q", EventAdded, *event.Type)
+		}
+		if !reflect.DeepEqual(got, gotFromWatch) {
+			t.Errorf("object from add event did not match expected value")
+		}
+	}
+
+	got.Data["zam"] = "spam"
+	got, err = client.UpdateConfigMap(ctx, got)
+	if err != nil {
+		t.Fatalf("update config map: %v", err)
+	}
+
+	if event, gotFromWatch, err := w.Next(); err != nil {
+		t.Errorf("failed to get next watch: %v", err)
+	} else {
+		if *event.Type != EventModified {
+			t.Errorf("expected event type %q got %q", EventModified, *event.Type)
+		}
+		if !reflect.DeepEqual(got, gotFromWatch) {
+			t.Errorf("object from modified event did not match expected value")
+		}
+	}
+
+	tests := []struct {
+		labelVal string
+		expNum   int
+	}{
+		{labelVal, 1},
+		{newName(), 0},
+	}
+	for _, test := range tests {
+		l := new(LabelSelector)
+		l.Eq("testLabel", test.labelVal)
+
+		configMaps, err := client.ListConfigMaps(ctx, "default", l.Selector())
+		if err != nil {
+			t.Errorf("failed to list configmaps: %v", err)
+			continue
+		}
+		got := len(configMaps.Items)
+		if got != test.expNum {
+			t.Errorf("expected selector to return %d items got %d", test.expNum, got)
+		}
+	}
+
+	if err := client.DeleteConfigMap(ctx, *cm.Metadata.Name, *cm.Metadata.Namespace); err != nil {
+		t.Fatalf("delete config map: %v", err)
+	}
+	if event, gotFromWatch, err := w.Next(); err != nil {
+		t.Errorf("failed to get next watch: %v", err)
+	} else {
+		if *event.Type != EventDeleted {
+			t.Errorf("expected event type %q got %q", EventDeleted, *event.Type)
+		}
+
+		// Resource version will be different after a delete
+		got.Metadata.ResourceVersion = String("")
+		gotFromWatch.Metadata.ResourceVersion = String("")
+
+		if !reflect.DeepEqual(got, gotFromWatch) {
+			t.Errorf("object from deleted event did not match expected value")
+		}
+	}
 }

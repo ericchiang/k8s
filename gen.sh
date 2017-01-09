@@ -20,13 +20,13 @@ for VERSION in ${VERSIONS[@]}; do
 done
 
 # Remove any existing generated code.
-rm -rf api apis config.go runtime util types.go
+rm -rf api apis config.go runtime util types.go watch
 
 # Generate Go code from proto definitions.
 PKG=$PWD
 cd assets
 
-protobuf=$( find k8s.io/kubernetes/pkg/{api,apis,util,runtime} -name '*.proto' )
+protobuf=$( find k8s.io/kubernetes/pkg/{api,apis,util,runtime,watch} -name '*.proto' )
 for file in $protobuf; do
     echo $file
     # Generate protoc definitions at the base of this repo.
@@ -44,8 +44,8 @@ cp assets/k8s.io/kubernetes/pkg/${client_dir}/types.go config.go
 sed -i 's|package v1|package k8s|g' config.go
 
 # Rewrite imports for the generated fiels.
-sed -i 's|"k8s.io/kubernetes/pkg|"github.com/ericchiang/k8s|g' $( find {api,apis,config.go,util,runtime} -name '*.go' )
-sed -i 's|"k8s.io.kubernetes.pkg.|"github.com/ericchiang.k8s.|g' $( find {api,apis,config.go,util,runtime} -name '*.go' )
+sed -i 's|"k8s.io/kubernetes/pkg|"github.com/ericchiang/k8s|g' $( find {api,apis,config.go,util,runtime,watch} -name '*.go' )
+sed -i 's|"k8s.io.kubernetes.pkg.|"github.com/ericchiang.k8s.|g' $( find {api,apis,config.go,util,runtime,watch} -name '*.go' )
 
 # Clean up assets.
 rm -rf assets/k8s.io
