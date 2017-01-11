@@ -187,11 +187,11 @@ func (c *{{ $.Name }}) Get{{ $r.Name }}(ctx context.Context, name{{ if $r.Namesp
 
 {{- if $r.HasList }}
 
-type {{ $.ImportName }}{{ $r.Name }}Watcher struct {
-	*watcher
+type {{ $.Name }}{{ $r.Name }}Watcher struct {
+	watcher *watcher
 }
 
-func (w *{{ $.ImportName }}{{ $r.Name }}Watcher) Next() (*versioned.Event, *{{ $.ImportName }}.{{ $r.Name }}, error) {
+func (w *{{ $.Name }}{{ $r.Name }}Watcher) Next() (*versioned.Event, *{{ $.ImportName }}.{{ $r.Name }}, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -203,10 +203,11 @@ func (w *{{ $.ImportName }}{{ $r.Name }}Watcher) Next() (*versioned.Event, *{{ $
 	return event, resp, nil
 }
 
-func (c *{{ $.Name }}) Watch{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (interface{
-	Next() (*versioned.Event, *{{ $.ImportName }}.{{ $r.Name }}, error)
-	Close() error
-}, error){
+func (w *{{ $.Name }}{{ $r.Name }}Watcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *{{ $.Name }}) Watch{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (*{{ $.Name }}{{ $r.Name }}Watcher, error){
 	{{ if $r.Namespaced -}}
 	ns := c.client.namespaceFor(namespace)
 	{{ else -}}
@@ -217,7 +218,7 @@ func (c *{{ $.Name }}) Watch{{ $r.Name | pluralize }}(ctx context.Context{{ if $
 	if err != nil {
 		return nil, err
 	}
-	return &{{ $.ImportName }}{{ $r.Name }}Watcher{watcher}, nil
+	return &{{ $.Name }}{{ $r.Name }}Watcher{watcher}, nil
 }
 
 func (c *{{ $.Name }}) List{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (*{{ $.ImportName }}.{{ $r.Name }}List, error) {

@@ -197,11 +197,11 @@ func (c *CoreV1) GetComponentStatus(ctx context.Context, name string) (*apiv1.Co
 	return resp, nil
 }
 
-type apiv1ComponentStatusWatcher struct {
-	*watcher
+type CoreV1ComponentStatusWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1ComponentStatusWatcher) Next() (*versioned.Event, *apiv1.ComponentStatus, error) {
+func (w *CoreV1ComponentStatusWatcher) Next() (*versioned.Event, *apiv1.ComponentStatus, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -213,17 +213,18 @@ func (w *apiv1ComponentStatusWatcher) Next() (*versioned.Event, *apiv1.Component
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchComponentStatuses(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.ComponentStatus, error)
-	Close() error
-}, error){
+func (w *CoreV1ComponentStatusWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchComponentStatuses(ctx context.Context, options ...Option) (*CoreV1ComponentStatusWatcher, error){
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "componentstatuses", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1ComponentStatusWatcher{watcher}, nil
+	return &CoreV1ComponentStatusWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListComponentStatuses(ctx context.Context, options ...Option) (*apiv1.ComponentStatusList, error) {
@@ -318,11 +319,11 @@ func (c *CoreV1) GetConfigMap(ctx context.Context, name, namespace string) (*api
 	return resp, nil
 }
 
-type apiv1ConfigMapWatcher struct {
-	*watcher
+type CoreV1ConfigMapWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1ConfigMapWatcher) Next() (*versioned.Event, *apiv1.ConfigMap, error) {
+func (w *CoreV1ConfigMapWatcher) Next() (*versioned.Event, *apiv1.ConfigMap, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -334,10 +335,11 @@ func (w *apiv1ConfigMapWatcher) Next() (*versioned.Event, *apiv1.ConfigMap, erro
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchConfigMaps(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.ConfigMap, error)
-	Close() error
-}, error){
+func (w *CoreV1ConfigMapWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchConfigMaps(ctx context.Context, namespace string, options ...Option) (*CoreV1ConfigMapWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "configmaps", "", options...)
@@ -345,7 +347,7 @@ func (c *CoreV1) WatchConfigMaps(ctx context.Context, namespace string, options 
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1ConfigMapWatcher{watcher}, nil
+	return &CoreV1ConfigMapWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListConfigMaps(ctx context.Context, namespace string, options ...Option) (*apiv1.ConfigMapList, error) {
@@ -441,11 +443,11 @@ func (c *CoreV1) GetEndpoints(ctx context.Context, name, namespace string) (*api
 	return resp, nil
 }
 
-type apiv1EndpointsWatcher struct {
-	*watcher
+type CoreV1EndpointsWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1EndpointsWatcher) Next() (*versioned.Event, *apiv1.Endpoints, error) {
+func (w *CoreV1EndpointsWatcher) Next() (*versioned.Event, *apiv1.Endpoints, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -457,10 +459,11 @@ func (w *apiv1EndpointsWatcher) Next() (*versioned.Event, *apiv1.Endpoints, erro
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchEndpointses(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.Endpoints, error)
-	Close() error
-}, error){
+func (w *CoreV1EndpointsWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchEndpointses(ctx context.Context, namespace string, options ...Option) (*CoreV1EndpointsWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "endpointses", "", options...)
@@ -468,7 +471,7 @@ func (c *CoreV1) WatchEndpointses(ctx context.Context, namespace string, options
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1EndpointsWatcher{watcher}, nil
+	return &CoreV1EndpointsWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListEndpointses(ctx context.Context, namespace string, options ...Option) (*apiv1.EndpointsList, error) {
@@ -564,11 +567,11 @@ func (c *CoreV1) GetEvent(ctx context.Context, name, namespace string) (*apiv1.E
 	return resp, nil
 }
 
-type apiv1EventWatcher struct {
-	*watcher
+type CoreV1EventWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1EventWatcher) Next() (*versioned.Event, *apiv1.Event, error) {
+func (w *CoreV1EventWatcher) Next() (*versioned.Event, *apiv1.Event, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -580,10 +583,11 @@ func (w *apiv1EventWatcher) Next() (*versioned.Event, *apiv1.Event, error) {
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchEvents(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.Event, error)
-	Close() error
-}, error){
+func (w *CoreV1EventWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchEvents(ctx context.Context, namespace string, options ...Option) (*CoreV1EventWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "events", "", options...)
@@ -591,7 +595,7 @@ func (c *CoreV1) WatchEvents(ctx context.Context, namespace string, options ...O
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1EventWatcher{watcher}, nil
+	return &CoreV1EventWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListEvents(ctx context.Context, namespace string, options ...Option) (*apiv1.EventList, error) {
@@ -687,11 +691,11 @@ func (c *CoreV1) GetLimitRange(ctx context.Context, name, namespace string) (*ap
 	return resp, nil
 }
 
-type apiv1LimitRangeWatcher struct {
-	*watcher
+type CoreV1LimitRangeWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1LimitRangeWatcher) Next() (*versioned.Event, *apiv1.LimitRange, error) {
+func (w *CoreV1LimitRangeWatcher) Next() (*versioned.Event, *apiv1.LimitRange, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -703,10 +707,11 @@ func (w *apiv1LimitRangeWatcher) Next() (*versioned.Event, *apiv1.LimitRange, er
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchLimitRanges(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.LimitRange, error)
-	Close() error
-}, error){
+func (w *CoreV1LimitRangeWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchLimitRanges(ctx context.Context, namespace string, options ...Option) (*CoreV1LimitRangeWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "limitranges", "", options...)
@@ -714,7 +719,7 @@ func (c *CoreV1) WatchLimitRanges(ctx context.Context, namespace string, options
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1LimitRangeWatcher{watcher}, nil
+	return &CoreV1LimitRangeWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListLimitRanges(ctx context.Context, namespace string, options ...Option) (*apiv1.LimitRangeList, error) {
@@ -810,11 +815,11 @@ func (c *CoreV1) GetNamespace(ctx context.Context, name string) (*apiv1.Namespac
 	return resp, nil
 }
 
-type apiv1NamespaceWatcher struct {
-	*watcher
+type CoreV1NamespaceWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1NamespaceWatcher) Next() (*versioned.Event, *apiv1.Namespace, error) {
+func (w *CoreV1NamespaceWatcher) Next() (*versioned.Event, *apiv1.Namespace, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -826,17 +831,18 @@ func (w *apiv1NamespaceWatcher) Next() (*versioned.Event, *apiv1.Namespace, erro
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchNamespaces(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.Namespace, error)
-	Close() error
-}, error){
+func (w *CoreV1NamespaceWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchNamespaces(ctx context.Context, options ...Option) (*CoreV1NamespaceWatcher, error){
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "namespaces", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1NamespaceWatcher{watcher}, nil
+	return &CoreV1NamespaceWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListNamespaces(ctx context.Context, options ...Option) (*apiv1.NamespaceList, error) {
@@ -931,11 +937,11 @@ func (c *CoreV1) GetNode(ctx context.Context, name string) (*apiv1.Node, error) 
 	return resp, nil
 }
 
-type apiv1NodeWatcher struct {
-	*watcher
+type CoreV1NodeWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1NodeWatcher) Next() (*versioned.Event, *apiv1.Node, error) {
+func (w *CoreV1NodeWatcher) Next() (*versioned.Event, *apiv1.Node, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -947,17 +953,18 @@ func (w *apiv1NodeWatcher) Next() (*versioned.Event, *apiv1.Node, error) {
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchNodes(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.Node, error)
-	Close() error
-}, error){
+func (w *CoreV1NodeWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchNodes(ctx context.Context, options ...Option) (*CoreV1NodeWatcher, error){
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "nodes", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1NodeWatcher{watcher}, nil
+	return &CoreV1NodeWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListNodes(ctx context.Context, options ...Option) (*apiv1.NodeList, error) {
@@ -1052,11 +1059,11 @@ func (c *CoreV1) GetPersistentVolume(ctx context.Context, name string) (*apiv1.P
 	return resp, nil
 }
 
-type apiv1PersistentVolumeWatcher struct {
-	*watcher
+type CoreV1PersistentVolumeWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1PersistentVolumeWatcher) Next() (*versioned.Event, *apiv1.PersistentVolume, error) {
+func (w *CoreV1PersistentVolumeWatcher) Next() (*versioned.Event, *apiv1.PersistentVolume, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -1068,17 +1075,18 @@ func (w *apiv1PersistentVolumeWatcher) Next() (*versioned.Event, *apiv1.Persiste
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchPersistentVolumes(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.PersistentVolume, error)
-	Close() error
-}, error){
+func (w *CoreV1PersistentVolumeWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchPersistentVolumes(ctx context.Context, options ...Option) (*CoreV1PersistentVolumeWatcher, error){
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "persistentvolumes", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1PersistentVolumeWatcher{watcher}, nil
+	return &CoreV1PersistentVolumeWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListPersistentVolumes(ctx context.Context, options ...Option) (*apiv1.PersistentVolumeList, error) {
@@ -1173,11 +1181,11 @@ func (c *CoreV1) GetPersistentVolumeClaim(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-type apiv1PersistentVolumeClaimWatcher struct {
-	*watcher
+type CoreV1PersistentVolumeClaimWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1PersistentVolumeClaimWatcher) Next() (*versioned.Event, *apiv1.PersistentVolumeClaim, error) {
+func (w *CoreV1PersistentVolumeClaimWatcher) Next() (*versioned.Event, *apiv1.PersistentVolumeClaim, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -1189,10 +1197,11 @@ func (w *apiv1PersistentVolumeClaimWatcher) Next() (*versioned.Event, *apiv1.Per
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchPersistentVolumeClaims(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.PersistentVolumeClaim, error)
-	Close() error
-}, error){
+func (w *CoreV1PersistentVolumeClaimWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchPersistentVolumeClaims(ctx context.Context, namespace string, options ...Option) (*CoreV1PersistentVolumeClaimWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "persistentvolumeclaims", "", options...)
@@ -1200,7 +1209,7 @@ func (c *CoreV1) WatchPersistentVolumeClaims(ctx context.Context, namespace stri
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1PersistentVolumeClaimWatcher{watcher}, nil
+	return &CoreV1PersistentVolumeClaimWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListPersistentVolumeClaims(ctx context.Context, namespace string, options ...Option) (*apiv1.PersistentVolumeClaimList, error) {
@@ -1296,11 +1305,11 @@ func (c *CoreV1) GetPod(ctx context.Context, name, namespace string) (*apiv1.Pod
 	return resp, nil
 }
 
-type apiv1PodWatcher struct {
-	*watcher
+type CoreV1PodWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1PodWatcher) Next() (*versioned.Event, *apiv1.Pod, error) {
+func (w *CoreV1PodWatcher) Next() (*versioned.Event, *apiv1.Pod, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -1312,10 +1321,11 @@ func (w *apiv1PodWatcher) Next() (*versioned.Event, *apiv1.Pod, error) {
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchPods(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.Pod, error)
-	Close() error
-}, error){
+func (w *CoreV1PodWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchPods(ctx context.Context, namespace string, options ...Option) (*CoreV1PodWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "pods", "", options...)
@@ -1323,7 +1333,7 @@ func (c *CoreV1) WatchPods(ctx context.Context, namespace string, options ...Opt
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1PodWatcher{watcher}, nil
+	return &CoreV1PodWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListPods(ctx context.Context, namespace string, options ...Option) (*apiv1.PodList, error) {
@@ -1501,11 +1511,11 @@ func (c *CoreV1) GetPodTemplate(ctx context.Context, name, namespace string) (*a
 	return resp, nil
 }
 
-type apiv1PodTemplateWatcher struct {
-	*watcher
+type CoreV1PodTemplateWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1PodTemplateWatcher) Next() (*versioned.Event, *apiv1.PodTemplate, error) {
+func (w *CoreV1PodTemplateWatcher) Next() (*versioned.Event, *apiv1.PodTemplate, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -1517,10 +1527,11 @@ func (w *apiv1PodTemplateWatcher) Next() (*versioned.Event, *apiv1.PodTemplate, 
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchPodTemplates(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.PodTemplate, error)
-	Close() error
-}, error){
+func (w *CoreV1PodTemplateWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchPodTemplates(ctx context.Context, namespace string, options ...Option) (*CoreV1PodTemplateWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "podtemplates", "", options...)
@@ -1528,7 +1539,7 @@ func (c *CoreV1) WatchPodTemplates(ctx context.Context, namespace string, option
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1PodTemplateWatcher{watcher}, nil
+	return &CoreV1PodTemplateWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListPodTemplates(ctx context.Context, namespace string, options ...Option) (*apiv1.PodTemplateList, error) {
@@ -1788,11 +1799,11 @@ func (c *CoreV1) GetReplicationController(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-type apiv1ReplicationControllerWatcher struct {
-	*watcher
+type CoreV1ReplicationControllerWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1ReplicationControllerWatcher) Next() (*versioned.Event, *apiv1.ReplicationController, error) {
+func (w *CoreV1ReplicationControllerWatcher) Next() (*versioned.Event, *apiv1.ReplicationController, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -1804,10 +1815,11 @@ func (w *apiv1ReplicationControllerWatcher) Next() (*versioned.Event, *apiv1.Rep
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchReplicationControllers(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.ReplicationController, error)
-	Close() error
-}, error){
+func (w *CoreV1ReplicationControllerWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchReplicationControllers(ctx context.Context, namespace string, options ...Option) (*CoreV1ReplicationControllerWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "replicationcontrollers", "", options...)
@@ -1815,7 +1827,7 @@ func (c *CoreV1) WatchReplicationControllers(ctx context.Context, namespace stri
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1ReplicationControllerWatcher{watcher}, nil
+	return &CoreV1ReplicationControllerWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListReplicationControllers(ctx context.Context, namespace string, options ...Option) (*apiv1.ReplicationControllerList, error) {
@@ -1911,11 +1923,11 @@ func (c *CoreV1) GetResourceQuota(ctx context.Context, name, namespace string) (
 	return resp, nil
 }
 
-type apiv1ResourceQuotaWatcher struct {
-	*watcher
+type CoreV1ResourceQuotaWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1ResourceQuotaWatcher) Next() (*versioned.Event, *apiv1.ResourceQuota, error) {
+func (w *CoreV1ResourceQuotaWatcher) Next() (*versioned.Event, *apiv1.ResourceQuota, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -1927,10 +1939,11 @@ func (w *apiv1ResourceQuotaWatcher) Next() (*versioned.Event, *apiv1.ResourceQuo
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchResourceQuotas(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.ResourceQuota, error)
-	Close() error
-}, error){
+func (w *CoreV1ResourceQuotaWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchResourceQuotas(ctx context.Context, namespace string, options ...Option) (*CoreV1ResourceQuotaWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "resourcequotas", "", options...)
@@ -1938,7 +1951,7 @@ func (c *CoreV1) WatchResourceQuotas(ctx context.Context, namespace string, opti
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1ResourceQuotaWatcher{watcher}, nil
+	return &CoreV1ResourceQuotaWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListResourceQuotas(ctx context.Context, namespace string, options ...Option) (*apiv1.ResourceQuotaList, error) {
@@ -2034,11 +2047,11 @@ func (c *CoreV1) GetSecret(ctx context.Context, name, namespace string) (*apiv1.
 	return resp, nil
 }
 
-type apiv1SecretWatcher struct {
-	*watcher
+type CoreV1SecretWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1SecretWatcher) Next() (*versioned.Event, *apiv1.Secret, error) {
+func (w *CoreV1SecretWatcher) Next() (*versioned.Event, *apiv1.Secret, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -2050,10 +2063,11 @@ func (w *apiv1SecretWatcher) Next() (*versioned.Event, *apiv1.Secret, error) {
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchSecrets(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.Secret, error)
-	Close() error
-}, error){
+func (w *CoreV1SecretWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchSecrets(ctx context.Context, namespace string, options ...Option) (*CoreV1SecretWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "secrets", "", options...)
@@ -2061,7 +2075,7 @@ func (c *CoreV1) WatchSecrets(ctx context.Context, namespace string, options ...
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1SecretWatcher{watcher}, nil
+	return &CoreV1SecretWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListSecrets(ctx context.Context, namespace string, options ...Option) (*apiv1.SecretList, error) {
@@ -2157,11 +2171,11 @@ func (c *CoreV1) GetService(ctx context.Context, name, namespace string) (*apiv1
 	return resp, nil
 }
 
-type apiv1ServiceWatcher struct {
-	*watcher
+type CoreV1ServiceWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1ServiceWatcher) Next() (*versioned.Event, *apiv1.Service, error) {
+func (w *CoreV1ServiceWatcher) Next() (*versioned.Event, *apiv1.Service, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -2173,10 +2187,11 @@ func (w *apiv1ServiceWatcher) Next() (*versioned.Event, *apiv1.Service, error) {
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchServices(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.Service, error)
-	Close() error
-}, error){
+func (w *CoreV1ServiceWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchServices(ctx context.Context, namespace string, options ...Option) (*CoreV1ServiceWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "services", "", options...)
@@ -2184,7 +2199,7 @@ func (c *CoreV1) WatchServices(ctx context.Context, namespace string, options ..
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1ServiceWatcher{watcher}, nil
+	return &CoreV1ServiceWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListServices(ctx context.Context, namespace string, options ...Option) (*apiv1.ServiceList, error) {
@@ -2280,11 +2295,11 @@ func (c *CoreV1) GetServiceAccount(ctx context.Context, name, namespace string) 
 	return resp, nil
 }
 
-type apiv1ServiceAccountWatcher struct {
-	*watcher
+type CoreV1ServiceAccountWatcher struct {
+	watcher *watcher
 }
 
-func (w *apiv1ServiceAccountWatcher) Next() (*versioned.Event, *apiv1.ServiceAccount, error) {
+func (w *CoreV1ServiceAccountWatcher) Next() (*versioned.Event, *apiv1.ServiceAccount, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -2296,10 +2311,11 @@ func (w *apiv1ServiceAccountWatcher) Next() (*versioned.Event, *apiv1.ServiceAcc
 	return event, resp, nil
 }
 
-func (c *CoreV1) WatchServiceAccounts(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *apiv1.ServiceAccount, error)
-	Close() error
-}, error){
+func (w *CoreV1ServiceAccountWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CoreV1) WatchServiceAccounts(ctx context.Context, namespace string, options ...Option) (*CoreV1ServiceAccountWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "serviceaccounts", "", options...)
@@ -2307,7 +2323,7 @@ func (c *CoreV1) WatchServiceAccounts(ctx context.Context, namespace string, opt
 	if err != nil {
 		return nil, err
 	}
-	return &apiv1ServiceAccountWatcher{watcher}, nil
+	return &CoreV1ServiceAccountWatcher{watcher}, nil
 }
 
 func (c *CoreV1) ListServiceAccounts(ctx context.Context, namespace string, options ...Option) (*apiv1.ServiceAccountList, error) {
@@ -2414,11 +2430,11 @@ func (c *AppsV1Alpha1) GetPetSet(ctx context.Context, name, namespace string) (*
 	return resp, nil
 }
 
-type appsv1alpha1PetSetWatcher struct {
-	*watcher
+type AppsV1Alpha1PetSetWatcher struct {
+	watcher *watcher
 }
 
-func (w *appsv1alpha1PetSetWatcher) Next() (*versioned.Event, *appsv1alpha1.PetSet, error) {
+func (w *AppsV1Alpha1PetSetWatcher) Next() (*versioned.Event, *appsv1alpha1.PetSet, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -2430,10 +2446,11 @@ func (w *appsv1alpha1PetSetWatcher) Next() (*versioned.Event, *appsv1alpha1.PetS
 	return event, resp, nil
 }
 
-func (c *AppsV1Alpha1) WatchPetSets(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *appsv1alpha1.PetSet, error)
-	Close() error
-}, error){
+func (w *AppsV1Alpha1PetSetWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *AppsV1Alpha1) WatchPetSets(ctx context.Context, namespace string, options ...Option) (*AppsV1Alpha1PetSetWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", "", options...)
@@ -2441,7 +2458,7 @@ func (c *AppsV1Alpha1) WatchPetSets(ctx context.Context, namespace string, optio
 	if err != nil {
 		return nil, err
 	}
-	return &appsv1alpha1PetSetWatcher{watcher}, nil
+	return &AppsV1Alpha1PetSetWatcher{watcher}, nil
 }
 
 func (c *AppsV1Alpha1) ListPetSets(ctx context.Context, namespace string, options ...Option) (*appsv1alpha1.PetSetList, error) {
@@ -2548,11 +2565,11 @@ func (c *AppsV1Beta1) GetStatefulSet(ctx context.Context, name, namespace string
 	return resp, nil
 }
 
-type appsv1beta1StatefulSetWatcher struct {
-	*watcher
+type AppsV1Beta1StatefulSetWatcher struct {
+	watcher *watcher
 }
 
-func (w *appsv1beta1StatefulSetWatcher) Next() (*versioned.Event, *appsv1beta1.StatefulSet, error) {
+func (w *AppsV1Beta1StatefulSetWatcher) Next() (*versioned.Event, *appsv1beta1.StatefulSet, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -2564,10 +2581,11 @@ func (w *appsv1beta1StatefulSetWatcher) Next() (*versioned.Event, *appsv1beta1.S
 	return event, resp, nil
 }
 
-func (c *AppsV1Beta1) WatchStatefulSets(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *appsv1beta1.StatefulSet, error)
-	Close() error
-}, error){
+func (w *AppsV1Beta1StatefulSetWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *AppsV1Beta1) WatchStatefulSets(ctx context.Context, namespace string, options ...Option) (*AppsV1Beta1StatefulSetWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("apps", "v1beta1", ns, "statefulsets", "", options...)
@@ -2575,7 +2593,7 @@ func (c *AppsV1Beta1) WatchStatefulSets(ctx context.Context, namespace string, o
 	if err != nil {
 		return nil, err
 	}
-	return &appsv1beta1StatefulSetWatcher{watcher}, nil
+	return &AppsV1Beta1StatefulSetWatcher{watcher}, nil
 }
 
 func (c *AppsV1Beta1) ListStatefulSets(ctx context.Context, namespace string, options ...Option) (*appsv1beta1.StatefulSetList, error) {
@@ -3032,11 +3050,11 @@ func (c *AutoscalingV1) GetHorizontalPodAutoscaler(ctx context.Context, name, na
 	return resp, nil
 }
 
-type autoscalingv1HorizontalPodAutoscalerWatcher struct {
-	*watcher
+type AutoscalingV1HorizontalPodAutoscalerWatcher struct {
+	watcher *watcher
 }
 
-func (w *autoscalingv1HorizontalPodAutoscalerWatcher) Next() (*versioned.Event, *autoscalingv1.HorizontalPodAutoscaler, error) {
+func (w *AutoscalingV1HorizontalPodAutoscalerWatcher) Next() (*versioned.Event, *autoscalingv1.HorizontalPodAutoscaler, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -3048,10 +3066,11 @@ func (w *autoscalingv1HorizontalPodAutoscalerWatcher) Next() (*versioned.Event, 
 	return event, resp, nil
 }
 
-func (c *AutoscalingV1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *autoscalingv1.HorizontalPodAutoscaler, error)
-	Close() error
-}, error){
+func (w *AutoscalingV1HorizontalPodAutoscalerWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *AutoscalingV1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*AutoscalingV1HorizontalPodAutoscalerWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("autoscaling", "v1", ns, "horizontalpodautoscalers", "", options...)
@@ -3059,7 +3078,7 @@ func (c *AutoscalingV1) WatchHorizontalPodAutoscalers(ctx context.Context, names
 	if err != nil {
 		return nil, err
 	}
-	return &autoscalingv1HorizontalPodAutoscalerWatcher{watcher}, nil
+	return &AutoscalingV1HorizontalPodAutoscalerWatcher{watcher}, nil
 }
 
 func (c *AutoscalingV1) ListHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*autoscalingv1.HorizontalPodAutoscalerList, error) {
@@ -3248,11 +3267,11 @@ func (c *BatchV1) GetJob(ctx context.Context, name, namespace string) (*batchv1.
 	return resp, nil
 }
 
-type batchv1JobWatcher struct {
-	*watcher
+type BatchV1JobWatcher struct {
+	watcher *watcher
 }
 
-func (w *batchv1JobWatcher) Next() (*versioned.Event, *batchv1.Job, error) {
+func (w *BatchV1JobWatcher) Next() (*versioned.Event, *batchv1.Job, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -3264,10 +3283,11 @@ func (w *batchv1JobWatcher) Next() (*versioned.Event, *batchv1.Job, error) {
 	return event, resp, nil
 }
 
-func (c *BatchV1) WatchJobs(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *batchv1.Job, error)
-	Close() error
-}, error){
+func (w *BatchV1JobWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *BatchV1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*BatchV1JobWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("batch", "v1", ns, "jobs", "", options...)
@@ -3275,7 +3295,7 @@ func (c *BatchV1) WatchJobs(ctx context.Context, namespace string, options ...Op
 	if err != nil {
 		return nil, err
 	}
-	return &batchv1JobWatcher{watcher}, nil
+	return &BatchV1JobWatcher{watcher}, nil
 }
 
 func (c *BatchV1) ListJobs(ctx context.Context, namespace string, options ...Option) (*batchv1.JobList, error) {
@@ -3382,11 +3402,11 @@ func (c *BatchV2Alpha1) GetCronJob(ctx context.Context, name, namespace string) 
 	return resp, nil
 }
 
-type batchv2alpha1CronJobWatcher struct {
-	*watcher
+type BatchV2Alpha1CronJobWatcher struct {
+	watcher *watcher
 }
 
-func (w *batchv2alpha1CronJobWatcher) Next() (*versioned.Event, *batchv2alpha1.CronJob, error) {
+func (w *BatchV2Alpha1CronJobWatcher) Next() (*versioned.Event, *batchv2alpha1.CronJob, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -3398,10 +3418,11 @@ func (w *batchv2alpha1CronJobWatcher) Next() (*versioned.Event, *batchv2alpha1.C
 	return event, resp, nil
 }
 
-func (c *BatchV2Alpha1) WatchCronJobs(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *batchv2alpha1.CronJob, error)
-	Close() error
-}, error){
+func (w *BatchV2Alpha1CronJobWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *BatchV2Alpha1) WatchCronJobs(ctx context.Context, namespace string, options ...Option) (*BatchV2Alpha1CronJobWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("batch", "v2alpha1", ns, "cronjobs", "", options...)
@@ -3409,7 +3430,7 @@ func (c *BatchV2Alpha1) WatchCronJobs(ctx context.Context, namespace string, opt
 	if err != nil {
 		return nil, err
 	}
-	return &batchv2alpha1CronJobWatcher{watcher}, nil
+	return &BatchV2Alpha1CronJobWatcher{watcher}, nil
 }
 
 func (c *BatchV2Alpha1) ListCronJobs(ctx context.Context, namespace string, options ...Option) (*batchv2alpha1.CronJobList, error) {
@@ -3505,11 +3526,11 @@ func (c *BatchV2Alpha1) GetJob(ctx context.Context, name, namespace string) (*ba
 	return resp, nil
 }
 
-type batchv2alpha1JobWatcher struct {
-	*watcher
+type BatchV2Alpha1JobWatcher struct {
+	watcher *watcher
 }
 
-func (w *batchv2alpha1JobWatcher) Next() (*versioned.Event, *batchv2alpha1.Job, error) {
+func (w *BatchV2Alpha1JobWatcher) Next() (*versioned.Event, *batchv2alpha1.Job, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -3521,10 +3542,11 @@ func (w *batchv2alpha1JobWatcher) Next() (*versioned.Event, *batchv2alpha1.Job, 
 	return event, resp, nil
 }
 
-func (c *BatchV2Alpha1) WatchJobs(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *batchv2alpha1.Job, error)
-	Close() error
-}, error){
+func (w *BatchV2Alpha1JobWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *BatchV2Alpha1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*BatchV2Alpha1JobWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("batch", "v2alpha1", ns, "jobs", "", options...)
@@ -3532,7 +3554,7 @@ func (c *BatchV2Alpha1) WatchJobs(ctx context.Context, namespace string, options
 	if err != nil {
 		return nil, err
 	}
-	return &batchv2alpha1JobWatcher{watcher}, nil
+	return &BatchV2Alpha1JobWatcher{watcher}, nil
 }
 
 func (c *BatchV2Alpha1) ListJobs(ctx context.Context, namespace string, options ...Option) (*batchv2alpha1.JobList, error) {
@@ -3721,11 +3743,11 @@ func (c *CertificatesV1Alpha1) GetCertificateSigningRequest(ctx context.Context,
 	return resp, nil
 }
 
-type certificatesv1alpha1CertificateSigningRequestWatcher struct {
-	*watcher
+type CertificatesV1Alpha1CertificateSigningRequestWatcher struct {
+	watcher *watcher
 }
 
-func (w *certificatesv1alpha1CertificateSigningRequestWatcher) Next() (*versioned.Event, *certificatesv1alpha1.CertificateSigningRequest, error) {
+func (w *CertificatesV1Alpha1CertificateSigningRequestWatcher) Next() (*versioned.Event, *certificatesv1alpha1.CertificateSigningRequest, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -3737,17 +3759,18 @@ func (w *certificatesv1alpha1CertificateSigningRequestWatcher) Next() (*versione
 	return event, resp, nil
 }
 
-func (c *CertificatesV1Alpha1) WatchCertificateSigningRequests(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *certificatesv1alpha1.CertificateSigningRequest, error)
-	Close() error
-}, error){
+func (w *CertificatesV1Alpha1CertificateSigningRequestWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *CertificatesV1Alpha1) WatchCertificateSigningRequests(ctx context.Context, options ...Option) (*CertificatesV1Alpha1CertificateSigningRequestWatcher, error){
 	ns := ""
 	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", ns, "certificatesigningrequests", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &certificatesv1alpha1CertificateSigningRequestWatcher{watcher}, nil
+	return &CertificatesV1Alpha1CertificateSigningRequestWatcher{watcher}, nil
 }
 
 func (c *CertificatesV1Alpha1) ListCertificateSigningRequests(ctx context.Context, options ...Option) (*certificatesv1alpha1.CertificateSigningRequestList, error) {
@@ -3853,11 +3876,11 @@ func (c *ExtensionsV1Beta1) GetDaemonSet(ctx context.Context, name, namespace st
 	return resp, nil
 }
 
-type extensionsv1beta1DaemonSetWatcher struct {
-	*watcher
+type ExtensionsV1Beta1DaemonSetWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1DaemonSetWatcher) Next() (*versioned.Event, *extensionsv1beta1.DaemonSet, error) {
+func (w *ExtensionsV1Beta1DaemonSetWatcher) Next() (*versioned.Event, *extensionsv1beta1.DaemonSet, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -3869,10 +3892,11 @@ func (w *extensionsv1beta1DaemonSetWatcher) Next() (*versioned.Event, *extension
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchDaemonSets(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.DaemonSet, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1DaemonSetWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchDaemonSets(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1DaemonSetWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "daemonsets", "", options...)
@@ -3880,7 +3904,7 @@ func (c *ExtensionsV1Beta1) WatchDaemonSets(ctx context.Context, namespace strin
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1DaemonSetWatcher{watcher}, nil
+	return &ExtensionsV1Beta1DaemonSetWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListDaemonSets(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.DaemonSetList, error) {
@@ -3976,11 +4000,11 @@ func (c *ExtensionsV1Beta1) GetDeployment(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-type extensionsv1beta1DeploymentWatcher struct {
-	*watcher
+type ExtensionsV1Beta1DeploymentWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1DeploymentWatcher) Next() (*versioned.Event, *extensionsv1beta1.Deployment, error) {
+func (w *ExtensionsV1Beta1DeploymentWatcher) Next() (*versioned.Event, *extensionsv1beta1.Deployment, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -3992,10 +4016,11 @@ func (w *extensionsv1beta1DeploymentWatcher) Next() (*versioned.Event, *extensio
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchDeployments(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.Deployment, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1DeploymentWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchDeployments(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1DeploymentWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "deployments", "", options...)
@@ -4003,7 +4028,7 @@ func (c *ExtensionsV1Beta1) WatchDeployments(ctx context.Context, namespace stri
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1DeploymentWatcher{watcher}, nil
+	return &ExtensionsV1Beta1DeploymentWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListDeployments(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.DeploymentList, error) {
@@ -4099,11 +4124,11 @@ func (c *ExtensionsV1Beta1) GetHorizontalPodAutoscaler(ctx context.Context, name
 	return resp, nil
 }
 
-type extensionsv1beta1HorizontalPodAutoscalerWatcher struct {
-	*watcher
+type ExtensionsV1Beta1HorizontalPodAutoscalerWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1HorizontalPodAutoscalerWatcher) Next() (*versioned.Event, *extensionsv1beta1.HorizontalPodAutoscaler, error) {
+func (w *ExtensionsV1Beta1HorizontalPodAutoscalerWatcher) Next() (*versioned.Event, *extensionsv1beta1.HorizontalPodAutoscaler, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -4115,10 +4140,11 @@ func (w *extensionsv1beta1HorizontalPodAutoscalerWatcher) Next() (*versioned.Eve
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.HorizontalPodAutoscaler, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1HorizontalPodAutoscalerWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1HorizontalPodAutoscalerWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "horizontalpodautoscalers", "", options...)
@@ -4126,7 +4152,7 @@ func (c *ExtensionsV1Beta1) WatchHorizontalPodAutoscalers(ctx context.Context, n
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1HorizontalPodAutoscalerWatcher{watcher}, nil
+	return &ExtensionsV1Beta1HorizontalPodAutoscalerWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.HorizontalPodAutoscalerList, error) {
@@ -4222,11 +4248,11 @@ func (c *ExtensionsV1Beta1) GetIngress(ctx context.Context, name, namespace stri
 	return resp, nil
 }
 
-type extensionsv1beta1IngressWatcher struct {
-	*watcher
+type ExtensionsV1Beta1IngressWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1IngressWatcher) Next() (*versioned.Event, *extensionsv1beta1.Ingress, error) {
+func (w *ExtensionsV1Beta1IngressWatcher) Next() (*versioned.Event, *extensionsv1beta1.Ingress, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -4238,10 +4264,11 @@ func (w *extensionsv1beta1IngressWatcher) Next() (*versioned.Event, *extensionsv
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchIngresses(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.Ingress, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1IngressWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchIngresses(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1IngressWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "ingresses", "", options...)
@@ -4249,7 +4276,7 @@ func (c *ExtensionsV1Beta1) WatchIngresses(ctx context.Context, namespace string
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1IngressWatcher{watcher}, nil
+	return &ExtensionsV1Beta1IngressWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListIngresses(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.IngressList, error) {
@@ -4345,11 +4372,11 @@ func (c *ExtensionsV1Beta1) GetJob(ctx context.Context, name, namespace string) 
 	return resp, nil
 }
 
-type extensionsv1beta1JobWatcher struct {
-	*watcher
+type ExtensionsV1Beta1JobWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1JobWatcher) Next() (*versioned.Event, *extensionsv1beta1.Job, error) {
+func (w *ExtensionsV1Beta1JobWatcher) Next() (*versioned.Event, *extensionsv1beta1.Job, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -4361,10 +4388,11 @@ func (w *extensionsv1beta1JobWatcher) Next() (*versioned.Event, *extensionsv1bet
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchJobs(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.Job, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1JobWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1JobWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "jobs", "", options...)
@@ -4372,7 +4400,7 @@ func (c *ExtensionsV1Beta1) WatchJobs(ctx context.Context, namespace string, opt
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1JobWatcher{watcher}, nil
+	return &ExtensionsV1Beta1JobWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListJobs(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.JobList, error) {
@@ -4468,11 +4496,11 @@ func (c *ExtensionsV1Beta1) GetNetworkPolicy(ctx context.Context, name, namespac
 	return resp, nil
 }
 
-type extensionsv1beta1NetworkPolicyWatcher struct {
-	*watcher
+type ExtensionsV1Beta1NetworkPolicyWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1NetworkPolicyWatcher) Next() (*versioned.Event, *extensionsv1beta1.NetworkPolicy, error) {
+func (w *ExtensionsV1Beta1NetworkPolicyWatcher) Next() (*versioned.Event, *extensionsv1beta1.NetworkPolicy, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -4484,10 +4512,11 @@ func (w *extensionsv1beta1NetworkPolicyWatcher) Next() (*versioned.Event, *exten
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchNetworkPolicies(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.NetworkPolicy, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1NetworkPolicyWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchNetworkPolicies(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1NetworkPolicyWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "networkpolicies", "", options...)
@@ -4495,7 +4524,7 @@ func (c *ExtensionsV1Beta1) WatchNetworkPolicies(ctx context.Context, namespace 
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1NetworkPolicyWatcher{watcher}, nil
+	return &ExtensionsV1Beta1NetworkPolicyWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListNetworkPolicies(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.NetworkPolicyList, error) {
@@ -4591,11 +4620,11 @@ func (c *ExtensionsV1Beta1) GetPodSecurityPolicy(ctx context.Context, name strin
 	return resp, nil
 }
 
-type extensionsv1beta1PodSecurityPolicyWatcher struct {
-	*watcher
+type ExtensionsV1Beta1PodSecurityPolicyWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1PodSecurityPolicyWatcher) Next() (*versioned.Event, *extensionsv1beta1.PodSecurityPolicy, error) {
+func (w *ExtensionsV1Beta1PodSecurityPolicyWatcher) Next() (*versioned.Event, *extensionsv1beta1.PodSecurityPolicy, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -4607,17 +4636,18 @@ func (w *extensionsv1beta1PodSecurityPolicyWatcher) Next() (*versioned.Event, *e
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchPodSecurityPolicies(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.PodSecurityPolicy, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1PodSecurityPolicyWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchPodSecurityPolicies(ctx context.Context, options ...Option) (*ExtensionsV1Beta1PodSecurityPolicyWatcher, error){
 	ns := ""
 	url := c.client.urlFor("extensions", "v1beta1", ns, "podsecuritypolicies", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1PodSecurityPolicyWatcher{watcher}, nil
+	return &ExtensionsV1Beta1PodSecurityPolicyWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListPodSecurityPolicies(ctx context.Context, options ...Option) (*extensionsv1beta1.PodSecurityPolicyList, error) {
@@ -4712,11 +4742,11 @@ func (c *ExtensionsV1Beta1) GetReplicaSet(ctx context.Context, name, namespace s
 	return resp, nil
 }
 
-type extensionsv1beta1ReplicaSetWatcher struct {
-	*watcher
+type ExtensionsV1Beta1ReplicaSetWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1ReplicaSetWatcher) Next() (*versioned.Event, *extensionsv1beta1.ReplicaSet, error) {
+func (w *ExtensionsV1Beta1ReplicaSetWatcher) Next() (*versioned.Event, *extensionsv1beta1.ReplicaSet, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -4728,10 +4758,11 @@ func (w *extensionsv1beta1ReplicaSetWatcher) Next() (*versioned.Event, *extensio
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchReplicaSets(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.ReplicaSet, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1ReplicaSetWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchReplicaSets(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1ReplicaSetWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "replicasets", "", options...)
@@ -4739,7 +4770,7 @@ func (c *ExtensionsV1Beta1) WatchReplicaSets(ctx context.Context, namespace stri
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1ReplicaSetWatcher{watcher}, nil
+	return &ExtensionsV1Beta1ReplicaSetWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListReplicaSets(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.ReplicaSetList, error) {
@@ -4917,11 +4948,11 @@ func (c *ExtensionsV1Beta1) GetThirdPartyResource(ctx context.Context, name stri
 	return resp, nil
 }
 
-type extensionsv1beta1ThirdPartyResourceWatcher struct {
-	*watcher
+type ExtensionsV1Beta1ThirdPartyResourceWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1ThirdPartyResourceWatcher) Next() (*versioned.Event, *extensionsv1beta1.ThirdPartyResource, error) {
+func (w *ExtensionsV1Beta1ThirdPartyResourceWatcher) Next() (*versioned.Event, *extensionsv1beta1.ThirdPartyResource, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -4933,17 +4964,18 @@ func (w *extensionsv1beta1ThirdPartyResourceWatcher) Next() (*versioned.Event, *
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchThirdPartyResources(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.ThirdPartyResource, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1ThirdPartyResourceWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchThirdPartyResources(ctx context.Context, options ...Option) (*ExtensionsV1Beta1ThirdPartyResourceWatcher, error){
 	ns := ""
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresources", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1ThirdPartyResourceWatcher{watcher}, nil
+	return &ExtensionsV1Beta1ThirdPartyResourceWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListThirdPartyResources(ctx context.Context, options ...Option) (*extensionsv1beta1.ThirdPartyResourceList, error) {
@@ -5038,11 +5070,11 @@ func (c *ExtensionsV1Beta1) GetThirdPartyResourceData(ctx context.Context, name,
 	return resp, nil
 }
 
-type extensionsv1beta1ThirdPartyResourceDataWatcher struct {
-	*watcher
+type ExtensionsV1Beta1ThirdPartyResourceDataWatcher struct {
+	watcher *watcher
 }
 
-func (w *extensionsv1beta1ThirdPartyResourceDataWatcher) Next() (*versioned.Event, *extensionsv1beta1.ThirdPartyResourceData, error) {
+func (w *ExtensionsV1Beta1ThirdPartyResourceDataWatcher) Next() (*versioned.Event, *extensionsv1beta1.ThirdPartyResourceData, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -5054,10 +5086,11 @@ func (w *extensionsv1beta1ThirdPartyResourceDataWatcher) Next() (*versioned.Even
 	return event, resp, nil
 }
 
-func (c *ExtensionsV1Beta1) WatchThirdPartyResourceDatas(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *extensionsv1beta1.ThirdPartyResourceData, error)
-	Close() error
-}, error){
+func (w *ExtensionsV1Beta1ThirdPartyResourceDataWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *ExtensionsV1Beta1) WatchThirdPartyResourceDatas(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1ThirdPartyResourceDataWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresourcedatas", "", options...)
@@ -5065,7 +5098,7 @@ func (c *ExtensionsV1Beta1) WatchThirdPartyResourceDatas(ctx context.Context, na
 	if err != nil {
 		return nil, err
 	}
-	return &extensionsv1beta1ThirdPartyResourceDataWatcher{watcher}, nil
+	return &ExtensionsV1Beta1ThirdPartyResourceDataWatcher{watcher}, nil
 }
 
 func (c *ExtensionsV1Beta1) ListThirdPartyResourceDatas(ctx context.Context, namespace string, options ...Option) (*extensionsv1beta1.ThirdPartyResourceDataList, error) {
@@ -5347,11 +5380,11 @@ func (c *PolicyV1Alpha1) GetPodDisruptionBudget(ctx context.Context, name, names
 	return resp, nil
 }
 
-type policyv1alpha1PodDisruptionBudgetWatcher struct {
-	*watcher
+type PolicyV1Alpha1PodDisruptionBudgetWatcher struct {
+	watcher *watcher
 }
 
-func (w *policyv1alpha1PodDisruptionBudgetWatcher) Next() (*versioned.Event, *policyv1alpha1.PodDisruptionBudget, error) {
+func (w *PolicyV1Alpha1PodDisruptionBudgetWatcher) Next() (*versioned.Event, *policyv1alpha1.PodDisruptionBudget, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -5363,10 +5396,11 @@ func (w *policyv1alpha1PodDisruptionBudgetWatcher) Next() (*versioned.Event, *po
 	return event, resp, nil
 }
 
-func (c *PolicyV1Alpha1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *policyv1alpha1.PodDisruptionBudget, error)
-	Close() error
-}, error){
+func (w *PolicyV1Alpha1PodDisruptionBudgetWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *PolicyV1Alpha1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*PolicyV1Alpha1PodDisruptionBudgetWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", "", options...)
@@ -5374,7 +5408,7 @@ func (c *PolicyV1Alpha1) WatchPodDisruptionBudgets(ctx context.Context, namespac
 	if err != nil {
 		return nil, err
 	}
-	return &policyv1alpha1PodDisruptionBudgetWatcher{watcher}, nil
+	return &PolicyV1Alpha1PodDisruptionBudgetWatcher{watcher}, nil
 }
 
 func (c *PolicyV1Alpha1) ListPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*policyv1alpha1.PodDisruptionBudgetList, error) {
@@ -5563,11 +5597,11 @@ func (c *PolicyV1Beta1) GetPodDisruptionBudget(ctx context.Context, name, namesp
 	return resp, nil
 }
 
-type policyv1beta1PodDisruptionBudgetWatcher struct {
-	*watcher
+type PolicyV1Beta1PodDisruptionBudgetWatcher struct {
+	watcher *watcher
 }
 
-func (w *policyv1beta1PodDisruptionBudgetWatcher) Next() (*versioned.Event, *policyv1beta1.PodDisruptionBudget, error) {
+func (w *PolicyV1Beta1PodDisruptionBudgetWatcher) Next() (*versioned.Event, *policyv1beta1.PodDisruptionBudget, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -5579,10 +5613,11 @@ func (w *policyv1beta1PodDisruptionBudgetWatcher) Next() (*versioned.Event, *pol
 	return event, resp, nil
 }
 
-func (c *PolicyV1Beta1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *policyv1beta1.PodDisruptionBudget, error)
-	Close() error
-}, error){
+func (w *PolicyV1Beta1PodDisruptionBudgetWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *PolicyV1Beta1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*PolicyV1Beta1PodDisruptionBudgetWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("policy", "v1beta1", ns, "poddisruptionbudgets", "", options...)
@@ -5590,7 +5625,7 @@ func (c *PolicyV1Beta1) WatchPodDisruptionBudgets(ctx context.Context, namespace
 	if err != nil {
 		return nil, err
 	}
-	return &policyv1beta1PodDisruptionBudgetWatcher{watcher}, nil
+	return &PolicyV1Beta1PodDisruptionBudgetWatcher{watcher}, nil
 }
 
 func (c *PolicyV1Beta1) ListPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*policyv1beta1.PodDisruptionBudgetList, error) {
@@ -5697,11 +5732,11 @@ func (c *RBACV1Alpha1) GetClusterRole(ctx context.Context, name string) (*rbacv1
 	return resp, nil
 }
 
-type rbacv1alpha1ClusterRoleWatcher struct {
-	*watcher
+type RBACV1Alpha1ClusterRoleWatcher struct {
+	watcher *watcher
 }
 
-func (w *rbacv1alpha1ClusterRoleWatcher) Next() (*versioned.Event, *rbacv1alpha1.ClusterRole, error) {
+func (w *RBACV1Alpha1ClusterRoleWatcher) Next() (*versioned.Event, *rbacv1alpha1.ClusterRole, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -5713,17 +5748,18 @@ func (w *rbacv1alpha1ClusterRoleWatcher) Next() (*versioned.Event, *rbacv1alpha1
 	return event, resp, nil
 }
 
-func (c *RBACV1Alpha1) WatchClusterRoles(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *rbacv1alpha1.ClusterRole, error)
-	Close() error
-}, error){
+func (w *RBACV1Alpha1ClusterRoleWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *RBACV1Alpha1) WatchClusterRoles(ctx context.Context, options ...Option) (*RBACV1Alpha1ClusterRoleWatcher, error){
 	ns := ""
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterroles", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &rbacv1alpha1ClusterRoleWatcher{watcher}, nil
+	return &RBACV1Alpha1ClusterRoleWatcher{watcher}, nil
 }
 
 func (c *RBACV1Alpha1) ListClusterRoles(ctx context.Context, options ...Option) (*rbacv1alpha1.ClusterRoleList, error) {
@@ -5818,11 +5854,11 @@ func (c *RBACV1Alpha1) GetClusterRoleBinding(ctx context.Context, name string) (
 	return resp, nil
 }
 
-type rbacv1alpha1ClusterRoleBindingWatcher struct {
-	*watcher
+type RBACV1Alpha1ClusterRoleBindingWatcher struct {
+	watcher *watcher
 }
 
-func (w *rbacv1alpha1ClusterRoleBindingWatcher) Next() (*versioned.Event, *rbacv1alpha1.ClusterRoleBinding, error) {
+func (w *RBACV1Alpha1ClusterRoleBindingWatcher) Next() (*versioned.Event, *rbacv1alpha1.ClusterRoleBinding, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -5834,17 +5870,18 @@ func (w *rbacv1alpha1ClusterRoleBindingWatcher) Next() (*versioned.Event, *rbacv
 	return event, resp, nil
 }
 
-func (c *RBACV1Alpha1) WatchClusterRoleBindings(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *rbacv1alpha1.ClusterRoleBinding, error)
-	Close() error
-}, error){
+func (w *RBACV1Alpha1ClusterRoleBindingWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *RBACV1Alpha1) WatchClusterRoleBindings(ctx context.Context, options ...Option) (*RBACV1Alpha1ClusterRoleBindingWatcher, error){
 	ns := ""
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterrolebindings", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &rbacv1alpha1ClusterRoleBindingWatcher{watcher}, nil
+	return &RBACV1Alpha1ClusterRoleBindingWatcher{watcher}, nil
 }
 
 func (c *RBACV1Alpha1) ListClusterRoleBindings(ctx context.Context, options ...Option) (*rbacv1alpha1.ClusterRoleBindingList, error) {
@@ -5939,11 +5976,11 @@ func (c *RBACV1Alpha1) GetRole(ctx context.Context, name, namespace string) (*rb
 	return resp, nil
 }
 
-type rbacv1alpha1RoleWatcher struct {
-	*watcher
+type RBACV1Alpha1RoleWatcher struct {
+	watcher *watcher
 }
 
-func (w *rbacv1alpha1RoleWatcher) Next() (*versioned.Event, *rbacv1alpha1.Role, error) {
+func (w *RBACV1Alpha1RoleWatcher) Next() (*versioned.Event, *rbacv1alpha1.Role, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -5955,10 +5992,11 @@ func (w *rbacv1alpha1RoleWatcher) Next() (*versioned.Event, *rbacv1alpha1.Role, 
 	return event, resp, nil
 }
 
-func (c *RBACV1Alpha1) WatchRoles(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *rbacv1alpha1.Role, error)
-	Close() error
-}, error){
+func (w *RBACV1Alpha1RoleWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *RBACV1Alpha1) WatchRoles(ctx context.Context, namespace string, options ...Option) (*RBACV1Alpha1RoleWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "roles", "", options...)
@@ -5966,7 +6004,7 @@ func (c *RBACV1Alpha1) WatchRoles(ctx context.Context, namespace string, options
 	if err != nil {
 		return nil, err
 	}
-	return &rbacv1alpha1RoleWatcher{watcher}, nil
+	return &RBACV1Alpha1RoleWatcher{watcher}, nil
 }
 
 func (c *RBACV1Alpha1) ListRoles(ctx context.Context, namespace string, options ...Option) (*rbacv1alpha1.RoleList, error) {
@@ -6062,11 +6100,11 @@ func (c *RBACV1Alpha1) GetRoleBinding(ctx context.Context, name, namespace strin
 	return resp, nil
 }
 
-type rbacv1alpha1RoleBindingWatcher struct {
-	*watcher
+type RBACV1Alpha1RoleBindingWatcher struct {
+	watcher *watcher
 }
 
-func (w *rbacv1alpha1RoleBindingWatcher) Next() (*versioned.Event, *rbacv1alpha1.RoleBinding, error) {
+func (w *RBACV1Alpha1RoleBindingWatcher) Next() (*versioned.Event, *rbacv1alpha1.RoleBinding, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -6078,10 +6116,11 @@ func (w *rbacv1alpha1RoleBindingWatcher) Next() (*versioned.Event, *rbacv1alpha1
 	return event, resp, nil
 }
 
-func (c *RBACV1Alpha1) WatchRoleBindings(ctx context.Context, namespace string, options ...Option) (interface{
-	Next() (*versioned.Event, *rbacv1alpha1.RoleBinding, error)
-	Close() error
-}, error){
+func (w *RBACV1Alpha1RoleBindingWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *RBACV1Alpha1) WatchRoleBindings(ctx context.Context, namespace string, options ...Option) (*RBACV1Alpha1RoleBindingWatcher, error){
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "rolebindings", "", options...)
@@ -6089,7 +6128,7 @@ func (c *RBACV1Alpha1) WatchRoleBindings(ctx context.Context, namespace string, 
 	if err != nil {
 		return nil, err
 	}
-	return &rbacv1alpha1RoleBindingWatcher{watcher}, nil
+	return &RBACV1Alpha1RoleBindingWatcher{watcher}, nil
 }
 
 func (c *RBACV1Alpha1) ListRoleBindings(ctx context.Context, namespace string, options ...Option) (*rbacv1alpha1.RoleBindingList, error) {
@@ -6196,11 +6235,11 @@ func (c *StorageV1Beta1) GetStorageClass(ctx context.Context, name string) (*sto
 	return resp, nil
 }
 
-type storagev1beta1StorageClassWatcher struct {
-	*watcher
+type StorageV1Beta1StorageClassWatcher struct {
+	watcher *watcher
 }
 
-func (w *storagev1beta1StorageClassWatcher) Next() (*versioned.Event, *storagev1beta1.StorageClass, error) {
+func (w *StorageV1Beta1StorageClassWatcher) Next() (*versioned.Event, *storagev1beta1.StorageClass, error) {
 	event, unknown, err := w.watcher.next()
 	if err != nil {
 		return nil, nil, err
@@ -6212,17 +6251,18 @@ func (w *storagev1beta1StorageClassWatcher) Next() (*versioned.Event, *storagev1
 	return event, resp, nil
 }
 
-func (c *StorageV1Beta1) WatchStorageClasses(ctx context.Context, options ...Option) (interface{
-	Next() (*versioned.Event, *storagev1beta1.StorageClass, error)
-	Close() error
-}, error){
+func (w *StorageV1Beta1StorageClassWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (c *StorageV1Beta1) WatchStorageClasses(ctx context.Context, options ...Option) (*StorageV1Beta1StorageClassWatcher, error){
 	ns := ""
 	url := c.client.urlFor("storage.k8s.io", "v1beta1", ns, "storageclasses", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	return &storagev1beta1StorageClassWatcher{watcher}, nil
+	return &StorageV1Beta1StorageClassWatcher{watcher}, nil
 }
 
 func (c *StorageV1Beta1) ListStorageClasses(ctx context.Context, options ...Option) (*storagev1beta1.StorageClassList, error) {
