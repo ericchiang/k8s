@@ -399,6 +399,16 @@ func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string, 
 	return endpoint + "?" + v.Encode()
 }
 
+func (c *Client) urlForPath(path string) string {
+	if strings.HasPrefix(path, "/") {
+		path = path[1:]
+	}
+	if strings.HasSuffix(c.Endpoint, "/") {
+		return c.Endpoint + path
+	}
+	return c.Endpoint + "/" + path
+}
+
 func (c *Client) create(ctx context.Context, codec *codec, verb, url string, req, resp interface{}) error {
 	body, err := codec.marshal(req)
 	if err != nil {
