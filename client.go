@@ -376,7 +376,7 @@ func (c *Client) namespaceFor(namespace string) string {
 //
 //   https://github.com/kubernetes/kubernetes/blob/master/docs/devel/api-conventions.md
 
-func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string, options ...Option) string {
+func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name, subresource string, options ...Option) string {
 	basePath := "apis/"
 	if apiGroup == "" {
 		basePath = "api/"
@@ -384,9 +384,9 @@ func (c *Client) urlFor(apiGroup, apiVersion, namespace, resource, name string, 
 
 	var p string
 	if namespace != "" {
-		p = path.Join(basePath, apiGroup, apiVersion, "namespaces", namespace, resource, name)
+		p = path.Join(basePath, apiGroup, apiVersion, "namespaces", namespace, resource, name, subresource)
 	} else {
-		p = path.Join(basePath, apiGroup, apiVersion, resource, name)
+		p = path.Join(basePath, apiGroup, apiVersion, resource, name, subresource)
 	}
 	endpoint := ""
 	if strings.HasSuffix(c.Endpoint, "/") {
