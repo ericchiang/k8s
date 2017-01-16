@@ -35,6 +35,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/net/http2"
+
 	"github.com/ericchiang/k8s/api/unversioned"
 	"github.com/ericchiang/k8s/runtime"
 	"github.com/ericchiang/k8s/watch/versioned"
@@ -279,22 +281,27 @@ func newClient(cluster Cluster, user AuthInfo, namespace string) (*Client, error
 		token = string(data)
 	}
 
+	transport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		TLSClientConfig:       tlsConfig,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+	if err := http2.ConfigureTransport(transport); err != nil {
+		return nil, err
+	}
+
 	client := &Client{
 		Endpoint:  cluster.Server,
 		Namespace: namespace,
 		Client: &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyFromEnvironment,
-				DialContext: (&net.Dialer{
-					Timeout:   30 * time.Second,
-					KeepAlive: 30 * time.Second,
-				}).DialContext,
-				TLSClientConfig:       tlsConfig,
-				MaxIdleConns:          100,
-				IdleConnTimeout:       90 * time.Second,
-				TLSHandshakeTimeout:   10 * time.Second,
-				ExpectContinueTimeout: 1 * time.Second,
-			},
+			Transport: transport,
 		},
 	}
 
