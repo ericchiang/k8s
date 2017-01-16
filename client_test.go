@@ -6,9 +6,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/ericchiang/k8s/api/v1"
@@ -62,6 +64,22 @@ func newName() string {
 
 func TestNewTestClient(t *testing.T) {
 	newTestClient(t)
+}
+
+func TestHTTP2(t *testing.T) {
+	client := newTestClient(t)
+	req, err := http.NewRequest("GET", client.urlForPath("/api"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp, err := client.Client.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	if !strings.HasPrefix(resp.Proto, "HTTP/2") {
+		t.Errorf("expected proto=HTTP/2.X, got=", resp.Proto)
+	}
 }
 
 func TestListNodes(t *testing.T) {
