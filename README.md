@@ -2,9 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/ericchiang/k8s?status.svg)](https://godoc.org/github.com/ericchiang/k8s)
 
-This package holds a slimmed down Kubernetes client. It imports a [single external dependency][go-proto], compiles much faster than either of the offical clients, and won't bloat `vendor` directories.
-
-The client uses Kubernetes' new support for [protobuf][protobuf] serialization. Are types are generated from canonical `.proto` files in the Kubernetes repo, and this package understands the custom wire format used to talk to the API server. However, the package API looks similar to the official client:
+A slimmed down Go client generated using Kubernetes' new [protocol buffer][protobuf] support. This package behaves similarly to [official Kubernetes' Go client][client-go], but only imports two external dependencies.
 
 ```go
 import (
@@ -31,26 +29,18 @@ func main() {
 }
 ```
 
-## Project status
-
-__DO NOT USE THIS CODE.__
-
-This package is still in development and may change in unexpected ways. It's an experiment to demonstrate generating a client is possible, though it may evolve into a more mature library.
-
-Until this package becomes more mature use Kubernetes' Go client instead: https://github.com/kubernetes/client-go
-
 ## Requirements
 
 * Go 1.7+ (this package uses "context" features added in 1.7)
 * Kubernetes 1.3+ (protobuf support was added in 1.3)
+* [github.com/golang/protobuf/proto][go-proto] (protobuf serialization)
+* [golang.org/x/net/http2][go-http2] (HTTP/2 support)
 
-## Versioned clients?
+## Versioned supported
 
-This client grabs `.proto` files from multiple versions of the Kubernetes codebase. This means that it supports every API group version present in Kubernetes since 1.3.
+This client supports every API group version present since 1.3.
 
-This client currently doesn't support the discovery API for determining what version of the API your client is talking to. Progress for that feature can be found [here](https://github.com/ericchiang/k8s/issues/3).
-
-## Configuration
+## Usage
 
 ### Namespaces
 
@@ -78,9 +68,9 @@ l.In("app", "database", "frontend")
 pods, err := client.CoreV1().ListPods(ctx, "", l.Selector())
 ```
 
-### Creating resources
+### Working with resources
 
-Use the generated API types directly to create resources.
+Use the generated API types directly to create and modify resources.
 
 ```go
 import (
@@ -110,54 +100,28 @@ API structs use pointers to `int`, `bool`, and `string` types to differentiate b
 Out-of-cluster clients can be constructed by either creating an `http.Client` manually or parsing a [`Config`][config] object. The following is an example of creating a client from a kubeconfig:
 
 ```go
-package main
-
 import (
-    "context"
-    "fmt"
     "io/ioutil"
-    "os"
 
     "github.com/ericchiang/k8s"
     "github.com/ghodss/yaml"
 )
 
-func loadClient() (*k8s.Client, error) {
-    data, err := ioutil.ReadFile(filepath.Join(os.Getenv("HOME"), ".kube/config"))
+func loadClient(kubeconfigPath string) (*k8s.Client, error) {
+    data, err := ioutil.ReadFile(kubeconfigPath)
     if err != nil {
-        return nil, fmt.Errorf("load kubeconfig: %v", err)
+        return nil, fmt.Errorf("read kubeconfig: %v", err)
     }
 
-    // Create a new config and parse it.
-    config := new(k8s.Config)
-    if err := yaml.Unmarshal(data, config); err != nil {
+    var config k8s.Config
+    if err := yaml.Unmarshal(data, &config); err != nil {
         return nil, fmt.Errorf("unmarshal kubeconfig: %v", err)
     }
-
-    // Create client from config.
-    return k8s.NewClient(config)
-}
-
-func main() {
-    client, err := loadClient()
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "load client: %v\n", err)
-        os.Exit(2)
-    }
-
-    nodes, err := client.CoreV1().ListNodes(context.Background())
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "list nodes: %v\n", err)
-        os.Exit(2)
-    }
-
-    for _, node := range nodes {
-        fmt.Println(node.Name)
-    }
+    return k8s.NewClient(&config)
 }
 ```
 
-## Errors
+### Errors
 
 Errors returned by the Kubernetes API are formatted as [`unversioned.Status`][unversioned-status] objects and surfaced by clients as [`*k8s.APIError`][k8s-error]s. Programs that need to inspect error codes or failure details can use a type cast to access this information.
 
@@ -183,7 +147,9 @@ if err != nil {
 return nil
 ```
 
+[client-go]: https://github.com/kubernetes/client-go
 [go-proto]: https://godoc.org/github.com/golang/protobuf/proto
+[go-http2]: https://godoc.org/golang.org/x/net/http2
 [protobuf]: https://developers.google.com/protocol-buffers/
 [unversioned-status]: https://godoc.org/github.com/ericchiang/k8s/api/unversioned#Status
 [k8s-error]: https://godoc.org/github.com/ericchiang/k8s#APIError
