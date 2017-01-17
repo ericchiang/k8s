@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-    client, err := k8s.InClusterClient()
+    client, err := k8s.NewInClusterClient()
     if err != nil {
         log.Fatal(err)
     }
