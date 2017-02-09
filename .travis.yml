@@ -1,0 +1,18 @@
+language: go
+
+go:
+  - 1.7.5
+
+env:
+  # Maybe run minikube later?
+  - K8S_CLIENT_TEST=0 
+ 
+install:
+  - go get -v ./...
+
+script:
+  - go test -v ./...
+
+
+notifications:
+  email: false
