@@ -75,6 +75,9 @@ func (r byGroup) Less(i, j int) bool {
 // Incorrect but this is basically what Kubernetes does.
 func pluralize(s string) string {
 	switch {
+	case strings.HasSuffix(s, "points"):
+		// NOTE: the k8s "endpoints" resource is already pluralized
+		return s
 	case strings.HasSuffix(s, "s"):
 		return s + "es"
 	case strings.HasSuffix(s, "y"):
