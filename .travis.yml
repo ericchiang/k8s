@@ -9,9 +9,11 @@ env:
  
 install:
   - go get -v ./...
+  - go get -v github.com/ghodss/yaml # Required for examples.
 
 script:
-  - go test -v ./...
+  - make test
+  - make test-examples
 
 
 notifications:

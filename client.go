@@ -57,8 +57,12 @@ import (
 //		}
 //
 func String(s string) *string { return &s }
-func Int(i int) *int          { return &i }
-func Bool(b bool) *bool       { return &b }
+
+// Int is a convinence for converting an int literal to a pointer to an int.
+func Int(i int) *int { return &i }
+
+// Bool is a convinence for converting a bool literal to a pointer to a bool.
+func Bool(b bool) *bool { return &b }
 
 const (
 	// Types for watch events.
@@ -328,6 +332,10 @@ type APIError struct {
 	Status *unversioned.Status
 
 	// Status code returned by the HTTP request.
+	//
+	// NOTE: For some reason the value set in Status.Code
+	// doesn't correspond to the HTTP status code. Possibly
+	// a bug?
 	Code int
 }
 
