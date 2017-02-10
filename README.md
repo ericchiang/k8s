@@ -5,6 +5,8 @@
 A slimmed down Go client generated using Kubernetes' new [protocol buffer][protobuf] support. This package behaves similarly to [official Kubernetes' Go client][client-go], but only imports two external dependencies.
 
 ```go
+package main
+
 import (
     "context"
     "fmt"
@@ -24,7 +26,7 @@ func main() {
         log.Fatal(err)
     }
     for _, node := range nodes.Items {
-        fmt.Printf("name=%q schedulable=%t\n", node.Metadata.Name, !node.Spec.Unschedulable)
+        fmt.Printf("name=%q schedulable=%t\n", node.Metadata.Name, !*node.Spec.Unschedulable)
     }
 }
 ```
@@ -84,11 +86,12 @@ func createConfigMap(client *k8s.Client, name string, values map[string]string) 
     cm := &v1.ConfigMap{
         Metadata: &v1.ObjectMeta{
             Name:      &name,
+            Namespace: &client.Namespace,
         },
         Data: values,
     }
     // Will return the created configmap as well.
-    _, err := client.CoreV1().Create(context.TODO(), cm, client.Namespace)
+    _, err := client.CoreV1().CreateConfigMap(context.TODO(), cm)
     return err
 }
 ```
@@ -104,15 +107,19 @@ import (
     "io/ioutil"
 
     "github.com/ericchiang/k8s"
+
     "github.com/ghodss/yaml"
 )
 
+// loadClient parses a kubeconfig from a file and returns a Kubernetes
+// client. It does not support extensions or client auth providers.
 func loadClient(kubeconfigPath string) (*k8s.Client, error) {
     data, err := ioutil.ReadFile(kubeconfigPath)
     if err != nil {
         return nil, fmt.Errorf("read kubeconfig: %v", err)
     }
 
+    // Unmarshal YAML into a Kubernetes config object.
     var config k8s.Config
     if err := yaml.Unmarshal(data, &config); err != nil {
         return nil, fmt.Errorf("unmarshal kubeconfig: %v", err)
@@ -126,25 +133,30 @@ func loadClient(kubeconfigPath string) (*k8s.Client, error) {
 Errors returned by the Kubernetes API are formatted as [`unversioned.Status`][unversioned-status] objects and surfaced by clients as [`*k8s.APIError`][k8s-error]s. Programs that need to inspect error codes or failure details can use a type cast to access this information.
 
 ```go
-configMap := &v1.ConfigMap{
-    Metadata: &v1.ObjectMeta{
-        Name:      "test",
-        Namespace: "default",
-    },
-    Data: map[string]string{"foo": "bar"},
-}
+// createConfigMap creates a configmap in the client's default namespace
+// but does not return an error if a configmap of the same name already
+// exists.
+func createConfigMap(client *k8s.Client, name string, values map[string]string) error {
+    cm := &v1.ConfigMap{
+        Metadata: &v1.ObjectMeta{
+            Name:      &name,
+            Namespace: &client.Namespace,
+        },
+        Data: values,
+    }
 
-_, err := client.CoreV1().CreateConfigMap(ctx, configMap)
-if err != nil {
+    _, err := client.CoreV1().CreateConfigMap(context.TODO(), cm)
+
+    // If an HTTP error was returned by the API server, it will be of type
+    // *k8s.APIError. This can be used to inspect the status code.
     if apiErr, ok := err.(*k8s.APIError); ok {
         // Resource already exists. Carry on.
-        if apiErr.Status.Code == http.StatusConflict {
+        if apiErr.Code == http.StatusConflict {
             return nil
         }
     }
     return fmt.Errorf("create configmap: %v", err)
 }
-return nil
 ```
 
 [client-go]: https://github.com/kubernetes/client-go
