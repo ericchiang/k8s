@@ -381,7 +381,7 @@ func (c *CoreV1) CreateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*ap
 		}
 		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", ns, "endpointses", "")
+	url := c.client.urlFor("", "v1", ns, "endpoints", "")
 	resp := new(apiv1.Endpoints)
 	err := c.client.create(ctx, pbCodec, "POST", url, obj, resp)
 	if err != nil {
@@ -410,7 +410,7 @@ func (c *CoreV1) UpdateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*ap
 		}
 		md.Namespace = &ns
 	}
-	url := c.client.urlFor("", "v1", *md.Namespace, "endpointses", *md.Name)
+	url := c.client.urlFor("", "v1", *md.Namespace, "endpoints", *md.Name)
 	resp := new(apiv1.Endpoints)
 	err := c.client.create(ctx, pbCodec, "PUT", url, obj, resp)
 	if err != nil {
@@ -424,8 +424,8 @@ func (c *CoreV1) DeleteEndpoints(ctx context.Context, name string, namespace str
 		return fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace)
-	
-	url := c.client.urlFor("", "v1", ns, "endpointses", name)
+
+	url := c.client.urlFor("", "v1", ns, "endpoints", name)
 	return c.client.delete(ctx, pbCodec, url)
 }
 
@@ -434,8 +434,8 @@ func (c *CoreV1) GetEndpoints(ctx context.Context, name, namespace string) (*api
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace)
-	
-	url := c.client.urlFor("", "v1", ns, "endpointses", name)
+
+	url := c.client.urlFor("", "v1", ns, "endpoints", name)
 	resp := new(apiv1.Endpoints)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
@@ -463,10 +463,10 @@ func (w *CoreV1EndpointsWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchEndpointses(ctx context.Context, namespace string, options ...Option) (*CoreV1EndpointsWatcher, error){
+func (c *CoreV1) WatchEndpoints(ctx context.Context, namespace string, options ...Option) (*CoreV1EndpointsWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
-	
-	url := c.client.urlFor("", "v1", ns, "endpointses", "", options...)
+
+	url := c.client.urlFor("", "v1", ns, "endpoints", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
 		return nil, err
@@ -474,10 +474,10 @@ func (c *CoreV1) WatchEndpointses(ctx context.Context, namespace string, options
 	return &CoreV1EndpointsWatcher{watcher}, nil
 }
 
-func (c *CoreV1) ListEndpointses(ctx context.Context, namespace string, options ...Option) (*apiv1.EndpointsList, error) {
+func (c *CoreV1) ListEndpoints(ctx context.Context, namespace string, options ...Option) (*apiv1.EndpointsList, error) {
 	ns := c.client.namespaceFor(namespace)
-	
-	url := c.client.urlFor("", "v1", ns, "endpointses", "", options...)
+
+	url := c.client.urlFor("", "v1", ns, "endpoints", "", options...)
 	resp := new(apiv1.EndpointsList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
 		return nil, err
