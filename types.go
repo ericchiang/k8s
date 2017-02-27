@@ -72,7 +72,7 @@ func (c *CoreV1) UpdateBinding(ctx context.Context, obj *apiv1.Binding) (*apiv1.
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -154,7 +154,7 @@ func (c *CoreV1) UpdateComponentStatus(ctx context.Context, obj *apiv1.Component
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -217,7 +217,7 @@ func (w *CoreV1ComponentStatusWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchComponentStatuses(ctx context.Context, options ...Option) (*CoreV1ComponentStatusWatcher, error){
+func (c *CoreV1) WatchComponentStatuses(ctx context.Context, options ...Option) (*CoreV1ComponentStatusWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "componentstatuses", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -276,7 +276,7 @@ func (c *CoreV1) UpdateConfigMap(ctx context.Context, obj *apiv1.ConfigMap) (*ap
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -339,7 +339,7 @@ func (w *CoreV1ConfigMapWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchConfigMaps(ctx context.Context, namespace string, options ...Option) (*CoreV1ConfigMapWatcher, error){
+func (c *CoreV1) WatchConfigMaps(ctx context.Context, namespace string, options ...Option) (*CoreV1ConfigMapWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "configmaps", "", options...)
@@ -400,7 +400,7 @@ func (c *CoreV1) UpdateEndpoints(ctx context.Context, obj *apiv1.Endpoints) (*ap
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -424,7 +424,7 @@ func (c *CoreV1) DeleteEndpoints(ctx context.Context, name string, namespace str
 		return fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace)
-
+	
 	url := c.client.urlFor("", "v1", ns, "endpoints", name)
 	return c.client.delete(ctx, pbCodec, url)
 }
@@ -434,7 +434,7 @@ func (c *CoreV1) GetEndpoints(ctx context.Context, name, namespace string) (*api
 		return nil, fmt.Errorf("create: no name for given object")
 	}
 	ns := c.client.namespaceFor(namespace)
-
+	
 	url := c.client.urlFor("", "v1", ns, "endpoints", name)
 	resp := new(apiv1.Endpoints)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
@@ -465,7 +465,7 @@ func (w *CoreV1EndpointsWatcher) Close() error {
 
 func (c *CoreV1) WatchEndpoints(ctx context.Context, namespace string, options ...Option) (*CoreV1EndpointsWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
-
+	
 	url := c.client.urlFor("", "v1", ns, "endpoints", "", options...)
 	watcher, err := c.client.watch(ctx, url)
 	if err != nil {
@@ -476,7 +476,7 @@ func (c *CoreV1) WatchEndpoints(ctx context.Context, namespace string, options .
 
 func (c *CoreV1) ListEndpoints(ctx context.Context, namespace string, options ...Option) (*apiv1.EndpointsList, error) {
 	ns := c.client.namespaceFor(namespace)
-
+	
 	url := c.client.urlFor("", "v1", ns, "endpoints", "", options...)
 	resp := new(apiv1.EndpointsList)
 	if err := c.client.get(ctx, pbCodec, url, resp); err != nil {
@@ -524,7 +524,7 @@ func (c *CoreV1) UpdateEvent(ctx context.Context, obj *apiv1.Event) (*apiv1.Even
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -587,7 +587,7 @@ func (w *CoreV1EventWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchEvents(ctx context.Context, namespace string, options ...Option) (*CoreV1EventWatcher, error){
+func (c *CoreV1) WatchEvents(ctx context.Context, namespace string, options ...Option) (*CoreV1EventWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "events", "", options...)
@@ -648,7 +648,7 @@ func (c *CoreV1) UpdateLimitRange(ctx context.Context, obj *apiv1.LimitRange) (*
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -711,7 +711,7 @@ func (w *CoreV1LimitRangeWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchLimitRanges(ctx context.Context, namespace string, options ...Option) (*CoreV1LimitRangeWatcher, error){
+func (c *CoreV1) WatchLimitRanges(ctx context.Context, namespace string, options ...Option) (*CoreV1LimitRangeWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "limitranges", "", options...)
@@ -772,7 +772,7 @@ func (c *CoreV1) UpdateNamespace(ctx context.Context, obj *apiv1.Namespace) (*ap
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -835,7 +835,7 @@ func (w *CoreV1NamespaceWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchNamespaces(ctx context.Context, options ...Option) (*CoreV1NamespaceWatcher, error){
+func (c *CoreV1) WatchNamespaces(ctx context.Context, options ...Option) (*CoreV1NamespaceWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "namespaces", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -894,7 +894,7 @@ func (c *CoreV1) UpdateNode(ctx context.Context, obj *apiv1.Node) (*apiv1.Node, 
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -957,7 +957,7 @@ func (w *CoreV1NodeWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchNodes(ctx context.Context, options ...Option) (*CoreV1NodeWatcher, error){
+func (c *CoreV1) WatchNodes(ctx context.Context, options ...Option) (*CoreV1NodeWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "nodes", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -1016,7 +1016,7 @@ func (c *CoreV1) UpdatePersistentVolume(ctx context.Context, obj *apiv1.Persiste
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1079,7 +1079,7 @@ func (w *CoreV1PersistentVolumeWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchPersistentVolumes(ctx context.Context, options ...Option) (*CoreV1PersistentVolumeWatcher, error){
+func (c *CoreV1) WatchPersistentVolumes(ctx context.Context, options ...Option) (*CoreV1PersistentVolumeWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("", "v1", ns, "persistentvolumes", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -1138,7 +1138,7 @@ func (c *CoreV1) UpdatePersistentVolumeClaim(ctx context.Context, obj *apiv1.Per
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1201,7 +1201,7 @@ func (w *CoreV1PersistentVolumeClaimWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchPersistentVolumeClaims(ctx context.Context, namespace string, options ...Option) (*CoreV1PersistentVolumeClaimWatcher, error){
+func (c *CoreV1) WatchPersistentVolumeClaims(ctx context.Context, namespace string, options ...Option) (*CoreV1PersistentVolumeClaimWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "persistentvolumeclaims", "", options...)
@@ -1262,7 +1262,7 @@ func (c *CoreV1) UpdatePod(ctx context.Context, obj *apiv1.Pod) (*apiv1.Pod, err
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1325,7 +1325,7 @@ func (w *CoreV1PodWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchPods(ctx context.Context, namespace string, options ...Option) (*CoreV1PodWatcher, error){
+func (c *CoreV1) WatchPods(ctx context.Context, namespace string, options ...Option) (*CoreV1PodWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "pods", "", options...)
@@ -1386,7 +1386,7 @@ func (c *CoreV1) UpdatePodStatusResult(ctx context.Context, obj *apiv1.PodStatus
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1468,7 +1468,7 @@ func (c *CoreV1) UpdatePodTemplate(ctx context.Context, obj *apiv1.PodTemplate) 
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1531,7 +1531,7 @@ func (w *CoreV1PodTemplateWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchPodTemplates(ctx context.Context, namespace string, options ...Option) (*CoreV1PodTemplateWatcher, error){
+func (c *CoreV1) WatchPodTemplates(ctx context.Context, namespace string, options ...Option) (*CoreV1PodTemplateWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "podtemplates", "", options...)
@@ -1592,7 +1592,7 @@ func (c *CoreV1) UpdatePodTemplateSpec(ctx context.Context, obj *apiv1.PodTempla
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1674,7 +1674,7 @@ func (c *CoreV1) UpdateRangeAllocation(ctx context.Context, obj *apiv1.RangeAllo
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1756,7 +1756,7 @@ func (c *CoreV1) UpdateReplicationController(ctx context.Context, obj *apiv1.Rep
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1819,7 +1819,7 @@ func (w *CoreV1ReplicationControllerWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchReplicationControllers(ctx context.Context, namespace string, options ...Option) (*CoreV1ReplicationControllerWatcher, error){
+func (c *CoreV1) WatchReplicationControllers(ctx context.Context, namespace string, options ...Option) (*CoreV1ReplicationControllerWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "replicationcontrollers", "", options...)
@@ -1880,7 +1880,7 @@ func (c *CoreV1) UpdateResourceQuota(ctx context.Context, obj *apiv1.ResourceQuo
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -1943,7 +1943,7 @@ func (w *CoreV1ResourceQuotaWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchResourceQuotas(ctx context.Context, namespace string, options ...Option) (*CoreV1ResourceQuotaWatcher, error){
+func (c *CoreV1) WatchResourceQuotas(ctx context.Context, namespace string, options ...Option) (*CoreV1ResourceQuotaWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "resourcequotas", "", options...)
@@ -2004,7 +2004,7 @@ func (c *CoreV1) UpdateSecret(ctx context.Context, obj *apiv1.Secret) (*apiv1.Se
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2067,7 +2067,7 @@ func (w *CoreV1SecretWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchSecrets(ctx context.Context, namespace string, options ...Option) (*CoreV1SecretWatcher, error){
+func (c *CoreV1) WatchSecrets(ctx context.Context, namespace string, options ...Option) (*CoreV1SecretWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "secrets", "", options...)
@@ -2128,7 +2128,7 @@ func (c *CoreV1) UpdateService(ctx context.Context, obj *apiv1.Service) (*apiv1.
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2191,7 +2191,7 @@ func (w *CoreV1ServiceWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchServices(ctx context.Context, namespace string, options ...Option) (*CoreV1ServiceWatcher, error){
+func (c *CoreV1) WatchServices(ctx context.Context, namespace string, options ...Option) (*CoreV1ServiceWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "services", "", options...)
@@ -2252,7 +2252,7 @@ func (c *CoreV1) UpdateServiceAccount(ctx context.Context, obj *apiv1.ServiceAcc
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2315,7 +2315,7 @@ func (w *CoreV1ServiceAccountWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CoreV1) WatchServiceAccounts(ctx context.Context, namespace string, options ...Option) (*CoreV1ServiceAccountWatcher, error){
+func (c *CoreV1) WatchServiceAccounts(ctx context.Context, namespace string, options ...Option) (*CoreV1ServiceAccountWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("", "v1", ns, "serviceaccounts", "", options...)
@@ -2387,7 +2387,7 @@ func (c *AppsV1Alpha1) UpdatePetSet(ctx context.Context, obj *appsv1alpha1.PetSe
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2450,7 +2450,7 @@ func (w *AppsV1Alpha1PetSetWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *AppsV1Alpha1) WatchPetSets(ctx context.Context, namespace string, options ...Option) (*AppsV1Alpha1PetSetWatcher, error){
+func (c *AppsV1Alpha1) WatchPetSets(ctx context.Context, namespace string, options ...Option) (*AppsV1Alpha1PetSetWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("apps", "v1alpha1", ns, "petsets", "", options...)
@@ -2522,7 +2522,7 @@ func (c *AppsV1Beta1) UpdateStatefulSet(ctx context.Context, obj *appsv1beta1.St
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2585,7 +2585,7 @@ func (w *AppsV1Beta1StatefulSetWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *AppsV1Beta1) WatchStatefulSets(ctx context.Context, namespace string, options ...Option) (*AppsV1Beta1StatefulSetWatcher, error){
+func (c *AppsV1Beta1) WatchStatefulSets(ctx context.Context, namespace string, options ...Option) (*AppsV1Beta1StatefulSetWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("apps", "v1beta1", ns, "statefulsets", "", options...)
@@ -2657,7 +2657,7 @@ func (c *AuthenticationV1Beta1) UpdateTokenReview(ctx context.Context, obj *auth
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2750,7 +2750,7 @@ func (c *AuthorizationV1Beta1) UpdateLocalSubjectAccessReview(ctx context.Contex
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2832,7 +2832,7 @@ func (c *AuthorizationV1Beta1) UpdateSelfSubjectAccessReview(ctx context.Context
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -2914,7 +2914,7 @@ func (c *AuthorizationV1Beta1) UpdateSubjectAccessReview(ctx context.Context, ob
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3007,7 +3007,7 @@ func (c *AutoscalingV1) UpdateHorizontalPodAutoscaler(ctx context.Context, obj *
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3070,7 +3070,7 @@ func (w *AutoscalingV1HorizontalPodAutoscalerWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *AutoscalingV1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*AutoscalingV1HorizontalPodAutoscalerWatcher, error){
+func (c *AutoscalingV1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*AutoscalingV1HorizontalPodAutoscalerWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("autoscaling", "v1", ns, "horizontalpodautoscalers", "", options...)
@@ -3131,7 +3131,7 @@ func (c *AutoscalingV1) UpdateScale(ctx context.Context, obj *autoscalingv1.Scal
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3224,7 +3224,7 @@ func (c *BatchV1) UpdateJob(ctx context.Context, obj *batchv1.Job) (*batchv1.Job
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3287,7 +3287,7 @@ func (w *BatchV1JobWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *BatchV1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*BatchV1JobWatcher, error){
+func (c *BatchV1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*BatchV1JobWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("batch", "v1", ns, "jobs", "", options...)
@@ -3359,7 +3359,7 @@ func (c *BatchV2Alpha1) UpdateCronJob(ctx context.Context, obj *batchv2alpha1.Cr
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3422,7 +3422,7 @@ func (w *BatchV2Alpha1CronJobWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *BatchV2Alpha1) WatchCronJobs(ctx context.Context, namespace string, options ...Option) (*BatchV2Alpha1CronJobWatcher, error){
+func (c *BatchV2Alpha1) WatchCronJobs(ctx context.Context, namespace string, options ...Option) (*BatchV2Alpha1CronJobWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("batch", "v2alpha1", ns, "cronjobs", "", options...)
@@ -3483,7 +3483,7 @@ func (c *BatchV2Alpha1) UpdateJob(ctx context.Context, obj *batchv2alpha1.Job) (
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3546,7 +3546,7 @@ func (w *BatchV2Alpha1JobWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *BatchV2Alpha1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*BatchV2Alpha1JobWatcher, error){
+func (c *BatchV2Alpha1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*BatchV2Alpha1JobWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("batch", "v2alpha1", ns, "jobs", "", options...)
@@ -3607,7 +3607,7 @@ func (c *BatchV2Alpha1) UpdateJobTemplate(ctx context.Context, obj *batchv2alpha
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3700,7 +3700,7 @@ func (c *CertificatesV1Alpha1) UpdateCertificateSigningRequest(ctx context.Conte
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3763,7 +3763,7 @@ func (w *CertificatesV1Alpha1CertificateSigningRequestWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *CertificatesV1Alpha1) WatchCertificateSigningRequests(ctx context.Context, options ...Option) (*CertificatesV1Alpha1CertificateSigningRequestWatcher, error){
+func (c *CertificatesV1Alpha1) WatchCertificateSigningRequests(ctx context.Context, options ...Option) (*CertificatesV1Alpha1CertificateSigningRequestWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("certificates.k8s.io", "v1alpha1", ns, "certificatesigningrequests", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -3833,7 +3833,7 @@ func (c *ExtensionsV1Beta1) UpdateDaemonSet(ctx context.Context, obj *extensions
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -3896,7 +3896,7 @@ func (w *ExtensionsV1Beta1DaemonSetWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchDaemonSets(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1DaemonSetWatcher, error){
+func (c *ExtensionsV1Beta1) WatchDaemonSets(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1DaemonSetWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "daemonsets", "", options...)
@@ -3957,7 +3957,7 @@ func (c *ExtensionsV1Beta1) UpdateDeployment(ctx context.Context, obj *extension
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4020,7 +4020,7 @@ func (w *ExtensionsV1Beta1DeploymentWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchDeployments(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1DeploymentWatcher, error){
+func (c *ExtensionsV1Beta1) WatchDeployments(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1DeploymentWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "deployments", "", options...)
@@ -4081,7 +4081,7 @@ func (c *ExtensionsV1Beta1) UpdateHorizontalPodAutoscaler(ctx context.Context, o
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4144,7 +4144,7 @@ func (w *ExtensionsV1Beta1HorizontalPodAutoscalerWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1HorizontalPodAutoscalerWatcher, error){
+func (c *ExtensionsV1Beta1) WatchHorizontalPodAutoscalers(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1HorizontalPodAutoscalerWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "horizontalpodautoscalers", "", options...)
@@ -4205,7 +4205,7 @@ func (c *ExtensionsV1Beta1) UpdateIngress(ctx context.Context, obj *extensionsv1
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4268,7 +4268,7 @@ func (w *ExtensionsV1Beta1IngressWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchIngresses(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1IngressWatcher, error){
+func (c *ExtensionsV1Beta1) WatchIngresses(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1IngressWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "ingresses", "", options...)
@@ -4329,7 +4329,7 @@ func (c *ExtensionsV1Beta1) UpdateJob(ctx context.Context, obj *extensionsv1beta
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4392,7 +4392,7 @@ func (w *ExtensionsV1Beta1JobWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1JobWatcher, error){
+func (c *ExtensionsV1Beta1) WatchJobs(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1JobWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "jobs", "", options...)
@@ -4453,7 +4453,7 @@ func (c *ExtensionsV1Beta1) UpdateNetworkPolicy(ctx context.Context, obj *extens
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4516,7 +4516,7 @@ func (w *ExtensionsV1Beta1NetworkPolicyWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchNetworkPolicies(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1NetworkPolicyWatcher, error){
+func (c *ExtensionsV1Beta1) WatchNetworkPolicies(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1NetworkPolicyWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "networkpolicies", "", options...)
@@ -4577,7 +4577,7 @@ func (c *ExtensionsV1Beta1) UpdatePodSecurityPolicy(ctx context.Context, obj *ex
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4640,7 +4640,7 @@ func (w *ExtensionsV1Beta1PodSecurityPolicyWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchPodSecurityPolicies(ctx context.Context, options ...Option) (*ExtensionsV1Beta1PodSecurityPolicyWatcher, error){
+func (c *ExtensionsV1Beta1) WatchPodSecurityPolicies(ctx context.Context, options ...Option) (*ExtensionsV1Beta1PodSecurityPolicyWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("extensions", "v1beta1", ns, "podsecuritypolicies", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -4699,7 +4699,7 @@ func (c *ExtensionsV1Beta1) UpdateReplicaSet(ctx context.Context, obj *extension
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4762,7 +4762,7 @@ func (w *ExtensionsV1Beta1ReplicaSetWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchReplicaSets(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1ReplicaSetWatcher, error){
+func (c *ExtensionsV1Beta1) WatchReplicaSets(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1ReplicaSetWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "replicasets", "", options...)
@@ -4823,7 +4823,7 @@ func (c *ExtensionsV1Beta1) UpdateScale(ctx context.Context, obj *extensionsv1be
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4905,7 +4905,7 @@ func (c *ExtensionsV1Beta1) UpdateThirdPartyResource(ctx context.Context, obj *e
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -4968,7 +4968,7 @@ func (w *ExtensionsV1Beta1ThirdPartyResourceWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchThirdPartyResources(ctx context.Context, options ...Option) (*ExtensionsV1Beta1ThirdPartyResourceWatcher, error){
+func (c *ExtensionsV1Beta1) WatchThirdPartyResources(ctx context.Context, options ...Option) (*ExtensionsV1Beta1ThirdPartyResourceWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresources", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -5027,7 +5027,7 @@ func (c *ExtensionsV1Beta1) UpdateThirdPartyResourceData(ctx context.Context, ob
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5090,7 +5090,7 @@ func (w *ExtensionsV1Beta1ThirdPartyResourceDataWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *ExtensionsV1Beta1) WatchThirdPartyResourceDatas(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1ThirdPartyResourceDataWatcher, error){
+func (c *ExtensionsV1Beta1) WatchThirdPartyResourceDatas(ctx context.Context, namespace string, options ...Option) (*ExtensionsV1Beta1ThirdPartyResourceDataWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("extensions", "v1beta1", ns, "thirdpartyresourcedatas", "", options...)
@@ -5162,7 +5162,7 @@ func (c *ImagepolicyV1Alpha1) UpdateImageReview(ctx context.Context, obj *imagep
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5255,7 +5255,7 @@ func (c *PolicyV1Alpha1) UpdateEviction(ctx context.Context, obj *policyv1alpha1
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5337,7 +5337,7 @@ func (c *PolicyV1Alpha1) UpdatePodDisruptionBudget(ctx context.Context, obj *pol
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5400,7 +5400,7 @@ func (w *PolicyV1Alpha1PodDisruptionBudgetWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *PolicyV1Alpha1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*PolicyV1Alpha1PodDisruptionBudgetWatcher, error){
+func (c *PolicyV1Alpha1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*PolicyV1Alpha1PodDisruptionBudgetWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("policy", "v1alpha1", ns, "poddisruptionbudgets", "", options...)
@@ -5472,7 +5472,7 @@ func (c *PolicyV1Beta1) UpdateEviction(ctx context.Context, obj *policyv1beta1.E
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5554,7 +5554,7 @@ func (c *PolicyV1Beta1) UpdatePodDisruptionBudget(ctx context.Context, obj *poli
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5617,7 +5617,7 @@ func (w *PolicyV1Beta1PodDisruptionBudgetWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *PolicyV1Beta1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*PolicyV1Beta1PodDisruptionBudgetWatcher, error){
+func (c *PolicyV1Beta1) WatchPodDisruptionBudgets(ctx context.Context, namespace string, options ...Option) (*PolicyV1Beta1PodDisruptionBudgetWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("policy", "v1beta1", ns, "poddisruptionbudgets", "", options...)
@@ -5689,7 +5689,7 @@ func (c *RBACV1Alpha1) UpdateClusterRole(ctx context.Context, obj *rbacv1alpha1.
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5752,7 +5752,7 @@ func (w *RBACV1Alpha1ClusterRoleWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *RBACV1Alpha1) WatchClusterRoles(ctx context.Context, options ...Option) (*RBACV1Alpha1ClusterRoleWatcher, error){
+func (c *RBACV1Alpha1) WatchClusterRoles(ctx context.Context, options ...Option) (*RBACV1Alpha1ClusterRoleWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterroles", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -5811,7 +5811,7 @@ func (c *RBACV1Alpha1) UpdateClusterRoleBinding(ctx context.Context, obj *rbacv1
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5874,7 +5874,7 @@ func (w *RBACV1Alpha1ClusterRoleBindingWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *RBACV1Alpha1) WatchClusterRoleBindings(ctx context.Context, options ...Option) (*RBACV1Alpha1ClusterRoleBindingWatcher, error){
+func (c *RBACV1Alpha1) WatchClusterRoleBindings(ctx context.Context, options ...Option) (*RBACV1Alpha1ClusterRoleBindingWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "clusterrolebindings", "", options...)
 	watcher, err := c.client.watch(ctx, url)
@@ -5933,7 +5933,7 @@ func (c *RBACV1Alpha1) UpdateRole(ctx context.Context, obj *rbacv1alpha1.Role) (
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -5996,7 +5996,7 @@ func (w *RBACV1Alpha1RoleWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *RBACV1Alpha1) WatchRoles(ctx context.Context, namespace string, options ...Option) (*RBACV1Alpha1RoleWatcher, error){
+func (c *RBACV1Alpha1) WatchRoles(ctx context.Context, namespace string, options ...Option) (*RBACV1Alpha1RoleWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "roles", "", options...)
@@ -6057,7 +6057,7 @@ func (c *RBACV1Alpha1) UpdateRoleBinding(ctx context.Context, obj *rbacv1alpha1.
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !true && ns != ""{
+	if !true && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -6120,7 +6120,7 @@ func (w *RBACV1Alpha1RoleBindingWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *RBACV1Alpha1) WatchRoleBindings(ctx context.Context, namespace string, options ...Option) (*RBACV1Alpha1RoleBindingWatcher, error){
+func (c *RBACV1Alpha1) WatchRoleBindings(ctx context.Context, namespace string, options ...Option) (*RBACV1Alpha1RoleBindingWatcher, error) {
 	ns := c.client.namespaceFor(namespace)
 	
 	url := c.client.urlFor("rbac.authorization.k8s.io", "v1alpha1", ns, "rolebindings", "", options...)
@@ -6192,7 +6192,7 @@ func (c *StorageV1Beta1) UpdateStorageClass(ctx context.Context, obj *storagev1b
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !false && ns != ""{
+	if !false && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -6255,7 +6255,7 @@ func (w *StorageV1Beta1StorageClassWatcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *StorageV1Beta1) WatchStorageClasses(ctx context.Context, options ...Option) (*StorageV1Beta1StorageClassWatcher, error){
+func (c *StorageV1Beta1) WatchStorageClasses(ctx context.Context, options ...Option) (*StorageV1Beta1StorageClassWatcher, error) {
 	ns := ""
 	url := c.client.urlFor("storage.k8s.io", "v1beta1", ns, "storageclasses", "", options...)
 	watcher, err := c.client.watch(ctx, url)
