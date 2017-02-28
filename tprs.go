@@ -115,46 +115,41 @@ type object interface {
 }
 
 func (t *ThirdPartyResources) Create(ctx context.Context, resource, namespace string, req, resp interface{}) error {
-	ns := t.c.namespaceFor(namespace)
-	if err := checkResource(t.apiGroup, t.apiVersion, resource, ns, "not required"); err != nil {
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, namespace, "not required"); err != nil {
 		return err
 	}
-	url := t.c.urlFor(t.apiGroup, t.apiVersion, ns, resource, "")
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, "")
 	return t.c.create(ctx, jsonCodec, "POST", url, req, resp)
 }
 
 func (t *ThirdPartyResources) Update(ctx context.Context, resource, namespace, name string, req, resp interface{}) error {
-	ns := t.c.namespaceFor(namespace)
-	if err := checkResource(t.apiGroup, t.apiVersion, resource, ns, "not required"); err != nil {
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, namespace, "not required"); err != nil {
 		return err
 	}
-	url := t.c.urlFor(t.apiGroup, t.apiVersion, ns, resource, name)
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, name)
 	return t.c.create(ctx, jsonCodec, "PUT", url, req, resp)
 }
 
 func (t *ThirdPartyResources) Get(ctx context.Context, resource, namespace, name string, resp interface{}) error {
-	ns := t.c.namespaceFor(namespace)
-	if err := checkResource(t.apiGroup, t.apiVersion, resource, ns, name); err != nil {
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, namespace, name); err != nil {
 		return err
 	}
-	url := t.c.urlFor(t.apiGroup, t.apiVersion, ns, resource, name)
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, name)
 	return t.c.get(ctx, jsonCodec, url, resp)
 }
 
 func (t *ThirdPartyResources) Delete(ctx context.Context, resource, namespace, name string) error {
-	ns := t.c.namespaceFor(namespace)
-	if err := checkResource(t.apiGroup, t.apiVersion, resource, ns, name); err != nil {
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, namespace, name); err != nil {
 		return err
 	}
-	url := t.c.urlFor(t.apiGroup, t.apiVersion, ns, resource, name)
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, name)
 	return t.c.delete(ctx, jsonCodec, url)
 }
 
 func (t *ThirdPartyResources) List(ctx context.Context, resource, namespace string, resp interface{}) error {
-	ns := t.c.namespaceFor(namespace)
-	if err := checkResource(t.apiGroup, t.apiVersion, resource, ns, "name not required"); err != nil {
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, namespace, "name not required"); err != nil {
 		return err
 	}
-	url := t.c.urlFor(t.apiGroup, t.apiVersion, ns, resource, "")
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, "")
 	return t.c.get(ctx, jsonCodec, url, resp)
 }

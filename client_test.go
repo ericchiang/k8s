@@ -17,7 +17,7 @@ import (
 )
 
 const skipMsg = `
-warning: this package's test run using the default context of your "kubeclt" command,
+warning: this package's test run using the default context of your "kubectl" command,
 and will create resources on your cluster (mostly configmaps).
 
 If you wish to continue set the following environment variable:
@@ -245,5 +245,135 @@ func TestWatch(t *testing.T) {
 		if !reflect.DeepEqual(got, gotFromWatch) {
 			t.Errorf("object from deleted event did not match expected value")
 		}
+	}
+}
+
+// TestWatchNamespace ensures that creating a configmap in a non-default namespace is not returned while watching the default namespace
+func TestWatchNamespace(t *testing.T) {
+	client := newTestClient(t).CoreV1()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	defaultWatch, err := client.WatchConfigMaps(ctx, "default")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer defaultWatch.Close()
+
+	allWatch, err := client.WatchConfigMaps(ctx, AllNamespaces)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer allWatch.Close()
+
+	nonDefaultNamespaceName := newName()
+	defaultName := newName()
+	name := newName()
+	labelVal := newName()
+
+	// Create a configmap in the default namespace so the "default" watch has something to return
+	defaultCM := &v1.ConfigMap{
+		Metadata: &v1.ObjectMeta{
+			Name:      String(defaultName),
+			Namespace: String("default"),
+			Labels: map[string]string{
+				"testLabel": labelVal,
+			},
+		},
+		Data: map[string]string{
+			"foo": "bar",
+		},
+	}
+	defaultGot, err := client.CreateConfigMap(ctx, defaultCM)
+	if err != nil {
+		t.Fatalf("create config map: %v", err)
+	}
+
+	// Create a non-default Namespace
+	ns := &v1.Namespace{
+		Metadata: &v1.ObjectMeta{
+			Name: String(nonDefaultNamespaceName),
+		},
+	}
+	if _, err := client.CreateNamespace(ctx, ns); err != nil {
+		t.Fatalf("create non-default-namespace: %v", err)
+	}
+
+	// Create a configmap in the non-default namespace
+	nonDefaultCM := &v1.ConfigMap{
+		Metadata: &v1.ObjectMeta{
+			Name:      String(name),
+			Namespace: String(nonDefaultNamespaceName),
+			Labels: map[string]string{
+				"testLabel": labelVal,
+			},
+		},
+		Data: map[string]string{
+			"foo": "bar",
+		},
+	}
+	nonDefaultGot, err := client.CreateConfigMap(ctx, nonDefaultCM)
+	if err != nil {
+		t.Fatalf("create config map: %v", err)
+	}
+
+	// Watching the default namespace should not return the non-default namespace configmap,
+	// and instead return the previously created configmap in the default namespace
+	if _, gotFromWatch, err := defaultWatch.Next(); err != nil {
+		t.Errorf("failed to get next watch: %v", err)
+	} else {
+		if reflect.DeepEqual(nonDefaultGot, gotFromWatch) {
+			t.Errorf("config map in non-default namespace returned while watching default namespace")
+		}
+		if !reflect.DeepEqual(defaultGot, gotFromWatch) {
+			t.Errorf("object from add event did not match expected value")
+		}
+	}
+
+	// However, watching all-namespaces should contain both the default and non-default namespaced configmaps
+	if _, gotFromWatch, err := allWatch.Next(); err != nil {
+		t.Errorf("failed to get next watch: %v", err)
+	} else {
+		if !reflect.DeepEqual(defaultGot, gotFromWatch) {
+			t.Errorf("watching all namespaces did not return the expected configmap")
+		}
+	}
+
+	if _, gotFromWatch, err := allWatch.Next(); err != nil {
+		t.Errorf("failed to get next watch: %v", err)
+	} else {
+		if !reflect.DeepEqual(nonDefaultGot, gotFromWatch) {
+			t.Errorf("watching all namespaces did not return the expected configmap")
+		}
+	}
+
+	// Delete the config map in the default namespace first, then delete the non-default namespace config map.
+	// Only the former should be noticed by the default-watch.
+
+	if err := client.DeleteConfigMap(ctx, *defaultCM.Metadata.Name, *defaultCM.Metadata.Namespace); err != nil {
+		t.Fatalf("delete config map: %v", err)
+	}
+	if err := client.DeleteConfigMap(ctx, *nonDefaultCM.Metadata.Name, *nonDefaultCM.Metadata.Namespace); err != nil {
+		t.Fatalf("delete config map: %v", err)
+	}
+
+	if event, gotFromWatch, err := defaultWatch.Next(); err != nil {
+		t.Errorf("failed to get next watch: %v", err)
+	} else {
+		if *event.Type != EventDeleted {
+			t.Errorf("expected event type %q got %q", EventDeleted, *event.Type)
+		}
+
+		// Resource version will be different after a delete
+		nonDefaultGot.Metadata.ResourceVersion = String("")
+		gotFromWatch.Metadata.ResourceVersion = String("")
+
+		if reflect.DeepEqual(nonDefaultGot, gotFromWatch) {
+			t.Errorf("should not have received event from non-default namespace while watching default namespace")
+		}
+	}
+
+	if err := client.DeleteNamespace(ctx, nonDefaultNamespaceName); err != nil {
+		t.Fatalf("delete namespace: %v", err)
 	}
 }

@@ -46,13 +46,9 @@ This client supports every API group version present since 1.3.
 
 ### Namespaces
 
-Clients are initialized with a default namespace. For in-cluster clients, this is the namespace the pod was deployed in.
-
 ```go
-pods, err := client.ListPods(ctx, "") // Pods in the current namespace.
+pods, err := client.ListPods(ctx, k8s.AllNamespaces) // Pods in all namespaces.
 ```
-
-This can be overridden by explicitly passing a namespace.
 
 ```go
 pods, err := client.ListPods(ctx, "custom-namespace") // Pods from the "custom-namespace"
