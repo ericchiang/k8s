@@ -139,7 +139,7 @@ func (c *{{ $.Name }}) Update{{ $r.Name }}(ctx context.Context, obj *{{ $.Import
 	if md.Namespace != nil {
 		ns = *md.Namespace
 	}
-	if !{{ $r.Namespaced }} && ns != ""{
+	if !{{ $r.Namespaced }} && ns != "" {
 		return nil, fmt.Errorf("resource isn't namespaced")
 	}
 
@@ -210,7 +210,7 @@ func (w *{{ $.Name }}{{ $r.Name }}Watcher) Close() error {
 	return w.watcher.Close()
 }
 
-func (c *{{ $.Name }}) Watch{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (*{{ $.Name }}{{ $r.Name }}Watcher, error){
+func (c *{{ $.Name }}) Watch{{ $r.Name | pluralize }}(ctx context.Context{{ if $r.Namespaced }}, namespace string{{ end }}, options ...Option) (*{{ $.Name }}{{ $r.Name }}Watcher, error) {
 	{{ if $r.Namespaced -}}
 	ns := c.client.namespaceFor(namespace)
 	{{ else -}}
