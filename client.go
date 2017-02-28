@@ -43,6 +43,14 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
+const (
+	// AllNamespaces is given to list and watch operations to signify that the code should
+	// list or watch resources in all namespaces.
+	AllNamespaces = allNamespaces
+	// Actual definition is private in case we want to change it later.
+	allNamespaces = ""
+)
+
 // String returns a pointer to a string. Useful for creating API objects
 // that take pointers instead of literals.
 //
@@ -367,13 +375,6 @@ func (c *Client) client() *http.Client {
 		return http.DefaultClient
 	}
 	return c.Client
-}
-
-func (c *Client) namespaceFor(namespace string) string {
-	if namespace != "" {
-		return namespace
-	}
-	return c.Namespace
 }
 
 // The following methods hold the logic for interacting with the Kubernetes API. Generated
