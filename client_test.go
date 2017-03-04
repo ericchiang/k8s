@@ -377,3 +377,28 @@ func TestWatchNamespace(t *testing.T) {
 		t.Fatalf("delete namespace: %v", err)
 	}
 }
+
+func TestDefaultNamespace(t *testing.T) {
+	c := &Config{
+		Clusters: []NamedCluster{
+			{
+				Name: "local",
+				Cluster: Cluster{
+					Server: "http://localhost:8080",
+				},
+			},
+		},
+		AuthInfos: []NamedAuthInfo{
+			{
+				Name: "local",
+			},
+		},
+	}
+	cli, err := NewClient(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cli.Namespace != "default" {
+		t.Errorf("expected namespace=%q got=%q", "default", cli.Namespace)
+	}
+}
