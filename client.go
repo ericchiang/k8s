@@ -49,6 +49,8 @@ const (
 	AllNamespaces = allNamespaces
 	// Actual definition is private in case we want to change it later.
 	allNamespaces = ""
+
+	namespaceDefault = "default"
 )
 
 // String returns a pointer to a string. Useful for creating API objects
@@ -165,7 +167,7 @@ func NewClient(config *Config) (*Client, error) {
 			return nil, errors.New("multiple users but no current context")
 		}
 
-		return newClient(config.Clusters[0].Cluster, config.AuthInfos[0].AuthInfo, "")
+		return newClient(config.Clusters[0].Cluster, config.AuthInfos[0].AuthInfo, namespaceDefault)
 	}
 
 	var ctx Context
@@ -216,7 +218,12 @@ userFound:
 	return nil, fmt.Errorf("no cluster named %q", ctx.Cluster)
 clusterFound:
 
-	return newClient(cluster, user, ctx.Namespace)
+	namespace := ctx.Namespace
+	if namespace == "" {
+		namespace = namespaceDefault
+	}
+
+	return newClient(cluster, user, namespace)
 }
 
 // NewInClusterClient returns a client that uses the service account bearer token mounted
