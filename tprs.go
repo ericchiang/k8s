@@ -41,7 +41,7 @@ import (
 //				Name: k8s.String("metric.metrics.example.com"),
 //			},
 //			Description: k8s.String("A custom third party resource"),
-//			Versions:    []*v1beta1.APIVersions{
+//			Versions:    []*v1beta1.APIVersion{
 //				{Name: k8s.String("v1")},
 //			},
 //		}
