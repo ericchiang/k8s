@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/ericchiang/k8s/api/v1"
+	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
 )
 
 // ThirdPartyResources is a client used for interacting with user
@@ -110,8 +111,18 @@ func checkResource(apiGroup, apiVersion, resource, namespace, name string) error
 	return nil
 }
 
+// object and after16Object are used by go/types to detect types that are likely
+// to be Kubernetes resources. Types that implement this resources are likely
+// resource.
+//
+// They're defined here but only used in gen.go.
 type object interface {
 	GetMetadata() *v1.ObjectMeta
+}
+
+// after16Object uses the new ObjectMeta's home.
+type after16Object interface {
+	GetMetadata() *metav1.ObjectMeta
 }
 
 func (t *ThirdPartyResources) Create(ctx context.Context, resource, namespace string, req, resp interface{}) error {
