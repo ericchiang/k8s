@@ -285,13 +285,25 @@ func load() error {
 	if !ok {
 		return errors.New("could not find this package")
 	}
-	obj := thisPkg.Pkg.Scope().Lookup("object")
-	if obj == nil {
-		return errors.New("failed to lookup object interface")
-	}
-	intr, ok := isInterface(obj)
-	if !ok {
-		return errors.New("failed to convert to interface")
+
+	// Types defined in tpr.go. It's hacky, but to "load" interfaces as their
+	// go/types equilvalent, we either have to:
+	//
+	//   * Define them in code somewhere (what we're doing here).
+	//   * Manually construct them using go/types (blah).
+	//   * Parse them from an inlined string (doesn't work in combination with other pkgs).
+	//
+	var interfaces []*types.Interface
+	for _, s := range []string{"object", "after16Object"} {
+		obj := thisPkg.Pkg.Scope().Lookup(s)
+		if obj == nil {
+			return errors.New("failed to lookup object interface")
+		}
+		intr, ok := isInterface(obj)
+		if !ok {
+			return errors.New("failed to convert to interface")
+		}
+		interfaces = append(interfaces, intr)
 	}
 
 	var pkgs []Package
@@ -317,7 +329,11 @@ func load() error {
 			if !ok {
 				continue
 			}
-			if !types.Implements(types.NewPointer(tn.Type()), intr) {
+			impl := false
+			for _, intr := range interfaces {
+				impl = impl || types.Implements(types.NewPointer(tn.Type()), intr)
+			}
+			if !impl {
 				continue
 			}
 			if tn.Name() == "JobTemplateSpec" {
