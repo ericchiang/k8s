@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/ericchiang/k8s/api/v1"
+	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
 )
 
 const skipMsg = `
@@ -98,7 +99,7 @@ func TestConfigMaps(t *testing.T) {
 	labelVal := newName()
 
 	cm := &v1.ConfigMap{
-		Metadata: &v1.ObjectMeta{
+		Metadata: &metav1.ObjectMeta{
 			Name:      String(name),
 			Namespace: String("default"),
 			Labels: map[string]string{
@@ -162,7 +163,7 @@ func TestWatch(t *testing.T) {
 	labelVal := newName()
 
 	cm := &v1.ConfigMap{
-		Metadata: &v1.ObjectMeta{
+		Metadata: &metav1.ObjectMeta{
 			Name:      String(name),
 			Namespace: String("default"),
 			Labels: map[string]string{
@@ -273,7 +274,7 @@ func TestWatchNamespace(t *testing.T) {
 
 	// Create a configmap in the default namespace so the "default" watch has something to return
 	defaultCM := &v1.ConfigMap{
-		Metadata: &v1.ObjectMeta{
+		Metadata: &metav1.ObjectMeta{
 			Name:      String(defaultName),
 			Namespace: String("default"),
 			Labels: map[string]string{
@@ -291,7 +292,7 @@ func TestWatchNamespace(t *testing.T) {
 
 	// Create a non-default Namespace
 	ns := &v1.Namespace{
-		Metadata: &v1.ObjectMeta{
+		Metadata: &metav1.ObjectMeta{
 			Name: String(nonDefaultNamespaceName),
 		},
 	}
@@ -301,7 +302,7 @@ func TestWatchNamespace(t *testing.T) {
 
 	// Create a configmap in the non-default namespace
 	nonDefaultCM := &v1.ConfigMap{
-		Metadata: &v1.ObjectMeta{
+		Metadata: &metav1.ObjectMeta{
 			Name:      String(name),
 			Namespace: String(nonDefaultNamespaceName),
 			Labels: map[string]string{

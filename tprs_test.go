@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/ericchiang/k8s/api/unversioned"
-	"github.com/ericchiang/k8s/api/v1"
 	"github.com/ericchiang/k8s/apis/extensions/v1beta1"
+	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
 )
 
 func TestTPRs(t *testing.T) {
@@ -19,7 +19,7 @@ func TestTPRs(t *testing.T) {
 
 	type Metric struct {
 		*unversioned.TypeMeta `json:",inline"`
-		*v1.ObjectMeta        `json:"metadata,omitempty"`
+		*metav1.ObjectMeta    `json:"metadata,omitempty"`
 
 		Timestamp time.Time `json:"timestamp"`
 		Value     int64     `json:"value"`
@@ -34,7 +34,7 @@ func TestTPRs(t *testing.T) {
 
 	// Create a ThirdPartyResource
 	tpr := &v1beta1.ThirdPartyResource{
-		Metadata: &v1.ObjectMeta{
+		Metadata: &metav1.ObjectMeta{
 			Name: String("metric.example.com"),
 		},
 		Description: String("A value and a timestamp"),
@@ -50,7 +50,7 @@ func TestTPRs(t *testing.T) {
 	}
 
 	metric := &Metric{
-		ObjectMeta: &v1.ObjectMeta{
+		ObjectMeta: &metav1.ObjectMeta{
 			Name: String("foo"),
 		},
 		Timestamp: time.Now(),
