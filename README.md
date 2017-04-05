@@ -26,7 +26,7 @@ func main() {
         log.Fatal(err)
     }
     for _, node := range nodes.Items {
-        fmt.Printf("name=%q schedulable=%t\n", node.Metadata.Name, !*node.Spec.Unschedulable)
+        fmt.Printf("name=%q schedulable=%t\n", *node.Metadata.Name, !*node.Spec.Unschedulable)
     }
 }
 ```
