@@ -15,6 +15,12 @@ func TestLabelSelector(t *testing.T) {
 		},
 		{
 			f: func(l *LabelSelector) {
+				l.Eq("kubernetes.io/role", "master")
+			},
+			want: "kubernetes.io/role=master",
+		},
+		{
+			f: func(l *LabelSelector) {
 				l.In("type", "prod", "staging")
 				l.Eq("component", "frontend")
 			},
