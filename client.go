@@ -125,6 +125,23 @@ type Option interface {
 	queryParam() (key, val string)
 }
 
+type queryParam struct {
+	paramName  string
+	paramValue string
+}
+
+func (o queryParam) queryParam() (string, string) {
+	return o.paramName, o.paramValue
+}
+
+// QueryParam can be used to manually set a URL query parameter by name.
+func QueryParam(name, value string) Option {
+	return queryParam{
+		paramName:  name,
+		paramValue: value,
+	}
+}
+
 type resourceVersionOption string
 
 func (r resourceVersionOption) queryParam() (string, string) {
