@@ -292,7 +292,10 @@ func newClient(cluster Cluster, user AuthInfo, namespace string) (*Client, error
 	}
 
 	// See https://github.com/gtank/cryptopasta
-	tlsConfig := &tls.Config{MinVersion: tls.VersionTLS12}
+	tlsConfig := &tls.Config{
+		MinVersion:         tls.VersionTLS12,
+		InsecureSkipVerify: cluster.InsecureSkipTLSVerify,
+	}
 
 	if len(ca) != 0 {
 		tlsConfig.RootCAs = x509.NewCertPool()
