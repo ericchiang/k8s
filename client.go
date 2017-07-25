@@ -68,10 +68,13 @@ const (
 //
 func String(s string) *string { return &s }
 
-// Int is a convinence for converting an int literal to a pointer to an int.
+// Int is a convenience for converting an int literal to a pointer to an int.
 func Int(i int) *int { return &i }
 
-// Bool is a convinence for converting a bool literal to a pointer to a bool.
+// Int32 is a convenience for converting an int32 literal to a pointer to an int32.
+func Int32(i int32) *int32 { return &i }
+
+// Bool is a convenience for converting a bool literal to a pointer to a bool.
 func Bool(b bool) *bool { return &b }
 
 const (
