@@ -395,7 +395,7 @@ func checkStatusCode(c *codec, statusCode int, body []byte) error {
 func newAPIError(c *codec, statusCode int, body []byte) error {
 	status := new(unversioned.Status)
 	if err := c.unmarshal(body, status); err != nil {
-		return fmt.Errorf("decode error status: %v", err)
+		return fmt.Errorf("decode error status %d: %v", statusCode, err)
 	}
 	return &APIError{status, statusCode}
 }
