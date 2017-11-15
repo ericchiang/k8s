@@ -2,10 +2,12 @@ package k8s
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/ericchiang/k8s/api/v1"
 	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
+	"github.com/ericchiang/k8s/watch/versioned"
 )
 
 // ThirdPartyResources is a client used for interacting with user
@@ -163,4 +165,35 @@ func (t *ThirdPartyResources) List(ctx context.Context, resource, namespace stri
 	}
 	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, "")
 	return t.c.get(ctx, jsonCodec, url, resp)
+}
+
+type ThirdPartyResourcesWatcher struct {
+	watcher *watcher
+}
+
+func (w *ThirdPartyResourcesWatcher) Next(resp interface{}) (*versioned.Event, error) {
+	event, unknown, err := w.watcher.next()
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(unknown.Raw, resp); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
+func (w *ThirdPartyResourcesWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (t *ThirdPartyResources) Watch(ctx context.Context, resource, namespace string, options ...Option) (*ThirdPartyResourcesWatcher, error) {
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, namespace, "name not required"); err != nil {
+		return nil, err
+	}
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, "", options...)
+	watcher, err := t.c.watch(ctx, jsonCodec, url)
+	if err != nil {
+		return nil, err
+	}
+	return &ThirdPartyResourcesWatcher{watcher}, nil
 }

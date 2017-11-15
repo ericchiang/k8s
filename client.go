@@ -554,6 +554,7 @@ type event struct {
 
 type watcher struct {
 	r io.ReadCloser
+	c *codec
 }
 
 func (w *watcher) Close() error {
@@ -575,7 +576,7 @@ func (w *watcher) next() (*versioned.Event, *runtime.Unknown, error) {
 	}
 
 	var event versioned.Event
-	if err := proto.Unmarshal(body, &event); err != nil {
+	if err := w.c.unmarshal(body, &event); err != nil {
 		return nil, nil, err
 	}
 
@@ -591,7 +592,7 @@ func (w *watcher) next() (*versioned.Event, *runtime.Unknown, error) {
 	return &event, unknown, nil
 }
 
-func (c *Client) watch(ctx context.Context, url string) (*watcher, error) {
+func (c *Client) watch(ctx context.Context, codec *codec, url string) (*watcher, error) {
 	if strings.Contains(url, "?") {
 		url = url + "&watch=true"
 	} else {
@@ -601,7 +602,7 @@ func (c *Client) watch(ctx context.Context, url string) (*watcher, error) {
 	if err != nil {
 		return nil, err
 	}
-	r.Header.Set("Accept", "application/vnd.kubernetes.protobuf;type=watch")
+	r.Header.Set("Accept", fmt.Sprintf("%v;type=watch", codec.contentType))
 	resp, err := c.client().Do(r)
 	if err != nil {
 		return nil, err
@@ -616,6 +617,6 @@ func (c *Client) watch(ctx context.Context, url string) (*watcher, error) {
 		return nil, newAPIError(pbCodec, resp.StatusCode, body)
 	}
 
-	w := &watcher{resp.Body}
+	w := &watcher{resp.Body, codec}
 	return w, nil
 }
