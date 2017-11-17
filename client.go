@@ -614,7 +614,7 @@ func (c *Client) watch(ctx context.Context, codec *codec, url string) (*watcher,
 		if err != nil {
 			return nil, err
 		}
-		return nil, newAPIError(pbCodec, resp.StatusCode, body)
+		return nil, newAPIError(codec, resp.StatusCode, body)
 	}
 
 	w := &watcher{resp.Body, codec}
