@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/ericchiang/k8s/api/v1"
@@ -163,4 +164,43 @@ func (t *ThirdPartyResources) List(ctx context.Context, resource, namespace stri
 	}
 	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, "")
 	return t.c.get(ctx, jsonCodec, url, resp)
+}
+
+type ThirdPartyResourcesWatcher struct {
+	watcher *jsonWatcher
+}
+
+func (w *ThirdPartyResourcesWatcher) Next(resp interface{}) (*JSONEvent, error) {
+	event, err := w.watcher.nextJSON(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := json.Marshal(event.Object)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(data, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
+}
+
+func (w *ThirdPartyResourcesWatcher) Close() error {
+	return w.watcher.Close()
+}
+
+func (t *ThirdPartyResources) Watch(ctx context.Context, resource, namespace string, options ...Option) (*ThirdPartyResourcesWatcher, error) {
+	if err := checkResource(t.apiGroup, t.apiVersion, resource, namespace, "name not required"); err != nil {
+		return nil, err
+	}
+	url := t.c.urlFor(t.apiGroup, t.apiVersion, namespace, resource, "", options...)
+	watcher, err := t.c.watchJSON(ctx, url)
+	if err != nil {
+		return nil, err
+	}
+	return &ThirdPartyResourcesWatcher{watcher}, nil
 }
