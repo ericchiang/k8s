@@ -636,9 +636,7 @@ func (w *jsonWatcher) Close() error {
 	return w.r.Close()
 }
 
-// Decode the next event from a watch stream.
-//
-// See: https://github.com/kubernetes/community/blob/master/contributors/design-proposals/protobuf.md#streaming-wire-format
+// Decode the next event from a watch stream of type application/json.
 func (w *jsonWatcher) nextJSON(object interface{}) (*JSONEvent, error) {
 
 	var event JSONEvent
