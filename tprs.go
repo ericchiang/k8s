@@ -102,9 +102,6 @@ func checkResource(apiGroup, apiVersion, resource, namespace, name string) error
 	if resource == "" {
 		return errors.New("no resource version provided")
 	}
-	if namespace == "" {
-		return errors.New("no namespace provided")
-	}
 	if name == "" {
 		return errors.New("no resource name provided")
 	}
