@@ -79,14 +79,14 @@ func TestHTTP2(t *testing.T) {
 	}
 	defer resp.Body.Close()
 	if !strings.HasPrefix(resp.Proto, "HTTP/2") {
-		t.Errorf("expected proto=HTTP/2.X, got=", resp.Proto)
+		t.Errorf("expected proto=HTTP/2.X, got=%s", resp.Proto)
 	}
 }
 
 func TestListNodes(t *testing.T) {
 	client := newTestClient(t)
 	if _, err := client.CoreV1().ListNodes(context.Background()); err != nil {
-		t.Fatal("failed to list nodes: %v", err)
+		t.Fatalf("failed to list nodes: %v", err)
 	}
 }
 
@@ -261,12 +261,6 @@ func TestWatchNamespace(t *testing.T) {
 	}
 	defer defaultWatch.Close()
 
-	allWatch, err := client.WatchConfigMaps(ctx, AllNamespaces)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer allWatch.Close()
-
 	nonDefaultNamespaceName := newName()
 	defaultName := newName()
 	name := newName()
@@ -328,23 +322,6 @@ func TestWatchNamespace(t *testing.T) {
 		}
 		if !reflect.DeepEqual(defaultGot, gotFromWatch) {
 			t.Errorf("object from add event did not match expected value")
-		}
-	}
-
-	// However, watching all-namespaces should contain both the default and non-default namespaced configmaps
-	if _, gotFromWatch, err := allWatch.Next(); err != nil {
-		t.Errorf("failed to get next watch: %v", err)
-	} else {
-		if !reflect.DeepEqual(defaultGot, gotFromWatch) {
-			t.Errorf("watching all namespaces did not return the expected configmap")
-		}
-	}
-
-	if _, gotFromWatch, err := allWatch.Next(); err != nil {
-		t.Errorf("failed to get next watch: %v", err)
-	} else {
-		if !reflect.DeepEqual(nonDefaultGot, gotFromWatch) {
-			t.Errorf("watching all namespaces did not return the expected configmap")
 		}
 	}
 
