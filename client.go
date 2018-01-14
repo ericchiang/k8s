@@ -22,6 +22,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -617,5 +618,60 @@ func (c *Client) watch(ctx context.Context, url string) (*watcher, error) {
 	}
 
 	w := &watcher{resp.Body}
+	return w, nil
+}
+
+// JSONEvent is an event for ThirdPartyResources that do not support protobuf over the wire, only json
+type JSONEvent struct {
+	Type   string      `json:"type,omitempty"`
+	Object interface{} `json:"object,omitempty"`
+}
+
+type jsonWatcher struct {
+	r io.ReadCloser
+	d *json.Decoder
+}
+
+func (w *jsonWatcher) Close() error {
+	return w.r.Close()
+}
+
+// Decode the next event from a watch stream of type application/json.
+func (w *jsonWatcher) nextJSON(object interface{}) (*JSONEvent, error) {
+
+	var event JSONEvent
+	if err := w.d.Decode(&event); err != nil {
+		return nil, err
+	}
+
+	return &event, nil
+}
+
+func (c *Client) watchJSON(ctx context.Context, url string) (*jsonWatcher, error) {
+	if strings.Contains(url, "?") {
+		url = url + "&watch=true"
+	} else {
+		url = url + "?watch=true"
+	}
+	r, err := c.newRequest(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	r.Header.Set("Accept", "application/json")
+	resp, err := c.client().Do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode/100 != 2 {
+		body, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			return nil, err
+		}
+		return nil, newAPIError(jsonCodec, resp.StatusCode, body)
+	}
+
+	w := &jsonWatcher{resp.Body, json.NewDecoder(resp.Body)}
 	return w, nil
 }
