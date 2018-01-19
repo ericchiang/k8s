@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
@@ -83,6 +84,27 @@ func withNamespace(t *testing.T, test func(client *k8s.Client, namespace string)
 
 func TestNewTestClient(t *testing.T) {
 	newTestClient(t)
+}
+
+func TestListNodes(t *testing.T) {
+	client := newTestClient(t)
+	var nodes corev1.NodeList
+	if err := client.List(context.TODO(), "", &nodes); err != nil {
+		t.Fatal(err)
+	}
+	for _, node := range nodes.Items {
+		if node.Metadata.Annotations == nil {
+			node.Metadata.Annotations = map[string]string{}
+		}
+		node.Metadata.Annotations["foo"] = "bar"
+		if err := client.Update(context.TODO(), node); err != nil {
+			t.Fatal(err)
+		}
+		delete(node.Metadata.Annotations, "foo")
+		if err := client.Update(context.TODO(), node); err != nil {
+			t.Fatal(err)
+		}
+	}
 }
 
 func TestWithNamespace(t *testing.T) {
@@ -184,6 +206,81 @@ func Test404(t *testing.T) {
 		}
 		if apiErr.Code != 404 {
 			t.Errorf("expected 404 error code, got %d", apiErr.Code)
+		}
+	})
+}
+
+func TestLabelSelector(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		for i := 0; i < 5; i++ {
+			cm := &corev1.ConfigMap{
+				Metadata: &metav1.ObjectMeta{
+					Name:      k8s.String(fmt.Sprintf("my-configmap-%d", i)),
+					Namespace: &namespace,
+					Labels: map[string]string{
+						"configmap": "true",
+						"n":         strconv.Itoa(i),
+						"m":         strconv.Itoa(i % 2),
+					},
+				},
+			}
+			if err := client.Create(context.TODO(), cm); err != nil {
+				t.Errorf("create configmap: %v", err)
+				return
+			}
+		}
+
+		tests := []struct {
+			setup func(l *k8s.LabelSelector)
+			want  int
+		}{
+			{
+				func(l *k8s.LabelSelector) {
+					l.Eq("configmap", "true")
+				},
+				5,
+			},
+			{
+				func(l *k8s.LabelSelector) {
+					l.Eq("configmap", "true")
+					l.NotEq("n", "4")
+				},
+				4,
+			},
+			{
+				func(l *k8s.LabelSelector) {
+					l.Eq("configmap", "false")
+				},
+				0,
+			},
+			{
+				func(l *k8s.LabelSelector) {
+					l.Eq("configmap", "true")
+					l.Eq("n", "4")
+				},
+				1,
+			},
+			{
+				func(l *k8s.LabelSelector) {
+					l.Eq("configmap", "true")
+					l.Eq("m", "0")
+				},
+				3,
+			},
+		}
+
+		for _, test := range tests {
+			var configmaps corev1.ConfigMapList
+			l := new(k8s.LabelSelector)
+			test.setup(l)
+			ctx := context.TODO()
+			if err := client.List(ctx, namespace, &configmaps, l.Selector()); err != nil {
+				t.Fatalf("list configmaps: %v", err)
+			}
+			if len(configmaps.Items) != test.want {
+				t.Errorf("label selector %s expected %d items, got %d",
+					l, test.want, len(configmaps.Items))
+			}
 		}
 	})
 }
