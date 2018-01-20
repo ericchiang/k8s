@@ -262,7 +262,7 @@ func createConfigMap(client *k8s.Client, name string, values map[string]string) 
         Data: values,
     }
 
-    _, err := client.CoreV1().CreateConfigMap(context.TODO(), cm)
+    err := client.Create(context.TODO(), cm)
 
     // If an HTTP error was returned by the API server, it will be of type
     // *k8s.APIError. This can be used to inspect the status code.
