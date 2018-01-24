@@ -27,6 +27,7 @@ func init() {
 	k8s.RegisterList("", "v1", "persistentvolumeclaims", true, &PersistentVolumeClaimList{})
 	k8s.RegisterList("", "v1", "persistentvolumes", false, &PersistentVolumeList{})
 	k8s.RegisterList("", "v1", "pods", true, &PodList{})
+	k8s.RegisterList("", "v1", "events", true, &EventList{})
 	k8s.RegisterList("", "v1", "replicationcontrollers", true, &ReplicationControllerList{})
 	k8s.RegisterList("", "v1", "resourcequotas", true, &ResourceQuotaList{})
 	k8s.RegisterList("", "v1", "secrets", true, &SecretList{})
