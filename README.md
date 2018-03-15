@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/ericchiang/k8s?status.svg)](https://godoc.org/github.com/ericchiang/k8s)
 
-A slimmed down Go client generated using Kubernetes' new [protocol buffer][protobuf] support. This package behaves similarly to [official Kubernetes' Go client][client-go], but only imports two external dependencies.
+A slimmed down Go client generated using Kubernetes' [protocol buffer][protobuf] support. This package behaves similarly to [official Kubernetes' Go client][client-go], but only imports two external dependencies.
 
 ```go
 package main
@@ -31,14 +31,6 @@ func main() {
     }
 }
 ```
-
-## Should I use this or client-go?
-
-client-go is a framework for building production ready controllers, components that regularly watch API resources and push the system towards a desired state. If you're writing a program that watches several resources in a loop for long durations, client-go's informers framework is a battle tested solution which will scale with the size of the cluster.		
-
-This client should be used by programs that just need to talk to the Kubernetes API without prescriptive solutions for caching, reconciliation on failures, or work queues. This often includes components are relatively Kubernetes agnostic, but use the Kubernetes API for small tasks when running in Kubernetes. For example, performing leader election or persisting small amounts of state in annotations or configmaps.		
-
-TL;DR - Use client-go if you're writing a controller.
 
 ## Requirements
 
@@ -177,7 +169,7 @@ func init() {
 
 Once registered, the library can use the custom resources like any other.
 
-```
+```go
 func do(ctx context.Context, client *k8s.Client, namespace string) error {
     r := &MyResource{
         Metadata: &metav1.ObjectMeta{
