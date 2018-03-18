@@ -15,7 +15,7 @@ test-examples:
 generate: _output/kubernetes _output/bin/protoc _output/bin/gomvpkg _output/bin/protoc-gen-gofast _output/src/github.com/golang/protobuf
 	./scripts/generate.sh
 	go run scripts/register.go
-	cp scripts/time.go.partial apis/meta/v1/time.go
+	cp scripts/json.go.partial apis/meta/v1/json.go
 
 .PHONY: verify-generate
 verify-generate: generate
