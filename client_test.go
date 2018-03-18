@@ -210,6 +210,26 @@ func Test404(t *testing.T) {
 	})
 }
 
+func Test404JSON(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		// Use a JSON object to ensure JSON payload errors deserialize correctly.
+		var configMap configMapJSON
+		err := client.Get(context.TODO(), namespace, "i-dont-exist", &configMap)
+		if err == nil {
+			t.Errorf("expected 404 error")
+			return
+		}
+		apiErr, ok := err.(*k8s.APIError)
+		if !ok {
+			t.Errorf("error was not of type APIError: %T %v", err, err)
+			return
+		}
+		if apiErr.Code != 404 {
+			t.Errorf("expected 404 error code, got %d", apiErr.Code)
+		}
+	})
+}
+
 func TestLabelSelector(t *testing.T) {
 	withNamespace(t, func(client *k8s.Client, namespace string) {
 		for i := 0; i < 5; i++ {

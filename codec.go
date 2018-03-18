@@ -48,7 +48,7 @@ func unmarshal(data []byte, contentType string, i interface{}) error {
 		// only decode into JSON of a protobuf message if the type
 		// explicitly implements json.Unmarshaler
 		if _, ok := i.(json.Unmarshaler); !ok {
-			return errors.New("cannot decode json payload into protobuf object")
+			return fmt.Errorf("cannot decode json payload into protobuf object %T", i)
 		}
 	}
 	if err := json.Unmarshal(data, i); err != nil {
