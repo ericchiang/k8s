@@ -204,7 +204,16 @@ l := new(k8s.LabelSelector)
 l.Eq("tier", "production")
 l.In("app", "database", "frontend")
 
-pods, err := client.CoreV1().ListPods(ctx, client.Namespace, l.Selector())
+var pods corev1.PodList
+err := client.List(ctx, "custom-namespace", &pods, l.Selector())
+```
+
+### Subresources
+
+Access subresources using the `Subresource` option.
+
+```go
+err := client.Update(ctx, &pod, k8s.Subresource("status"))
 ```
 
 ### Creating out-of-cluster clients

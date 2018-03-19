@@ -28,14 +28,8 @@ type LabelSelector struct {
 	stmts []string
 }
 
-type labelSelectorOption string
-
-func (l labelSelectorOption) queryParam() (string, string) {
-	return "labelSelector", string(l)
-}
-
 func (l *LabelSelector) Selector() Option {
-	return labelSelectorOption(l.String())
+	return queryParam{"labelSelector", l.String()}
 }
 
 func (l *LabelSelector) String() string {
