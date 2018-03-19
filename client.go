@@ -37,7 +37,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"golang.org/x/net/http2"
@@ -112,52 +111,6 @@ func (c *Client) newRequest(ctx context.Context, verb, url string, body io.Reade
 		}
 	}
 	return req.WithContext(ctx), nil
-}
-
-// Option represents optional call parameters, such as label selectors.
-type Option interface {
-	queryParam() (key, val string)
-}
-
-type queryParam struct {
-	paramName  string
-	paramValue string
-}
-
-func (o queryParam) queryParam() (string, string) {
-	return o.paramName, o.paramValue
-}
-
-// QueryParam can be used to manually set a URL query parameter by name.
-func QueryParam(name, value string) Option {
-	return queryParam{
-		paramName:  name,
-		paramValue: value,
-	}
-}
-
-type resourceVersionOption string
-
-func (r resourceVersionOption) queryParam() (string, string) {
-	return "resourceVersion", string(r)
-}
-
-// ResourceVersion causes watch operations to only show changes since
-// a particular version of a resource.
-func ResourceVersion(resourceVersion string) Option {
-	return resourceVersionOption(resourceVersion)
-}
-
-type timeoutSeconds string
-
-func (t timeoutSeconds) queryParam() (string, string) {
-	return "timeoutSeconds", string(t)
-}
-
-// Timeout declares the timeout for list and watch operations. Timeout
-// is only accurate to the second.
-func Timeout(d time.Duration) Option {
-	return timeoutSeconds(strconv.FormatInt(int64(d/time.Second), 10))
 }
 
 // NewClient initializes a client from a client config.

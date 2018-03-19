@@ -92,6 +92,10 @@ func TestListNodes(t *testing.T) {
 	if err := client.List(context.TODO(), "", &nodes); err != nil {
 		t.Fatal(err)
 	}
+	if len(nodes.Items) == 0 {
+		t.Skip("no nodes in cluster")
+	}
+
 	for _, node := range nodes.Items {
 		if node.Metadata.Annotations == nil {
 			node.Metadata.Annotations = map[string]string{}
@@ -109,6 +113,24 @@ func TestListNodes(t *testing.T) {
 
 func TestWithNamespace(t *testing.T) {
 	withNamespace(t, func(client *k8s.Client, namespace string) {})
+}
+
+func TestUpdateNamespaceStatus(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		var ns corev1.Namespace
+		if err := client.Get(context.TODO(), "", namespace, &ns); err != nil {
+			t.Errorf("get namespace: %v", err)
+			return
+		}
+
+		if err := client.Update(context.TODO(), &ns, k8s.Subresource("status")); err != nil {
+			t.Errorf("update namespace status subresource: %v", err)
+		}
+
+		if err := client.Update(context.TODO(), &ns, k8s.Subresource("idontexist")); err == nil {
+			t.Errorf("updated invalid subresource")
+		}
+	})
 }
 
 func TestCreateConfigMap(t *testing.T) {

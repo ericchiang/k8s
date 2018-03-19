@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"testing"
+	"time"
 
 	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
 )
@@ -96,6 +97,49 @@ func TestResourceURL(t *testing.T) {
 			},
 			withName: true,
 			want:     "https://example.com/apis/apps/v1beta2/namespaces/my-namespace/deployments/my-deployment",
+		},
+		{
+			name:     "deployment-with-subresource",
+			endpoint: "https://example.com",
+			resource: &Deployment{
+				Metadata: &metav1.ObjectMeta{
+					Namespace: String("my-namespace"),
+					Name:      String("my-deployment"),
+				},
+			},
+			withName: true,
+			options: []Option{
+				Subresource("status"),
+			},
+			want: "https://example.com/apis/apps/v1beta2/namespaces/my-namespace/deployments/my-deployment/status",
+		},
+		{
+			name:     "pod-with-timeout",
+			endpoint: "https://example.com",
+			resource: &Pod{
+				Metadata: &metav1.ObjectMeta{
+					Namespace: String("my-namespace"),
+					Name:      String("my-pod"),
+				},
+			},
+			options: []Option{
+				Timeout(time.Minute),
+			},
+			want: "https://example.com/api/v1/namespaces/my-namespace/pods?timeoutSeconds=60",
+		},
+		{
+			name:     "pod-with-resource-version",
+			endpoint: "https://example.com",
+			resource: &Pod{
+				Metadata: &metav1.ObjectMeta{
+					Namespace: String("my-namespace"),
+					Name:      String("my-pod"),
+				},
+			},
+			options: []Option{
+				ResourceVersion("foo"),
+			},
+			want: "https://example.com/api/v1/namespaces/my-namespace/pods?resourceVersion=foo",
 		},
 	}
 

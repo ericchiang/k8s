@@ -6,10 +6,69 @@ import (
 	"net/url"
 	"path"
 	"reflect"
+	"strconv"
 	"strings"
+	"time"
 
 	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
 )
+
+// Option represents optional call parameters, such as label selectors.
+type Option interface {
+	updateURL(base string, v url.Values) string
+}
+
+type queryParam struct {
+	paramName  string
+	paramValue string
+}
+
+func (o queryParam) updateURL(base string, v url.Values) string {
+	v.Set(o.paramName, o.paramValue)
+	return base
+}
+
+// QueryParam can be used to manually set a URL query parameter by name.
+func QueryParam(name, value string) Option {
+	return queryParam{
+		paramName:  name,
+		paramValue: value,
+	}
+}
+
+// ResourceVersion causes watch operations to only show changes since
+// a particular version of a resource.
+func ResourceVersion(resourceVersion string) Option {
+	return queryParam{"resourceVersion", resourceVersion}
+}
+
+// Timeout declares the timeout for list and watch operations. Timeout
+// is only accurate to the second.
+func Timeout(d time.Duration) Option {
+	return queryParam{
+		"timeoutSeconds",
+		strconv.FormatInt(int64(d/time.Second), 10),
+	}
+}
+
+// Subresource is a way to interact with a part of an API object without needing
+// permissions on the entire resource. For example, a node isn't able to modify
+// a pod object, but can update the "pods/status" subresource.
+//
+// Common subresources are "status" and "scale".
+//
+// See https://kubernetes.io/docs/reference/api-concepts/
+func Subresource(name string) Option {
+	return subresource{name}
+}
+
+type subresource struct {
+	name string
+}
+
+func (s subresource) updateURL(base string, v url.Values) string {
+	return base + "/" + s.name
+}
 
 type resourceType struct {
 	apiGroup   string
@@ -74,8 +133,10 @@ func urlFor(endpoint, apiGroup, apiVersion, namespace, resource, name string, op
 
 	v := url.Values{}
 	for _, option := range options {
-		key, val := option.queryParam()
-		v.Set(key, val)
+		e = option.updateURL(e, v)
+	}
+	if len(v) == 0 {
+		return e
 	}
 	return e + "?" + v.Encode()
 }
