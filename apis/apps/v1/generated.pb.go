@@ -1181,7 +1181,7 @@ type RollingUpdateDeployment struct {
 	// the rolling update starts, such that the total number of old and new pods do not exceed
 	// 130% of desired pods. Once old pods have been killed,
 	// new RC can be scaled up further, ensuring that total number of pods running
-	// at any time during the update is atmost 130% of desired pods.
+	// at any time during the update is at most 130% of desired pods.
 	// +optional
 	MaxSurge         *k8s_io_apimachinery_pkg_util_intstr.IntOrString `protobuf:"bytes,2,opt,name=maxSurge" json:"maxSurge,omitempty"`
 	XXX_unrecognized []byte                                           `json:"-"`

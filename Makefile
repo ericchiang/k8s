@@ -1,4 +1,4 @@
-KUBE_VERSION=1.9.1
+KUBE_VERSION=1.10.1
 
 build:
 	go build -v ./...

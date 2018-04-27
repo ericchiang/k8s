@@ -69,6 +69,18 @@ var apiGroups = []APIGroup{
 		},
 	},
 	{
+		Package: "apiregistration",
+		Group:   "apiregistration.k8s.io",
+		Versions: map[string][]Resource{
+			"v1": []Resource{
+				{"APIService", "", NotNamespaced},
+			},
+			"v1beta1": []Resource{
+				{"APIService", "", NotNamespaced},
+			},
+		},
+	},
+	{
 		Package: "apps",
 		Group:   "apps",
 		Versions: map[string][]Resource{
@@ -99,6 +111,7 @@ var apiGroups = []APIGroup{
 		Versions: map[string][]Resource{
 			"v1": []Resource{
 				{"TokenReview", "", NotNamespaced | NoList},
+				{"TokenRequest", "", NotNamespaced | NoList},
 			},
 			"v1beta1": []Resource{
 				{"TokenReview", "", NotNamespaced | NoList},
@@ -219,6 +232,7 @@ var apiGroups = []APIGroup{
 		Versions: map[string][]Resource{
 			"v1beta1": []Resource{
 				{"PodDisruptionBudget", "", 0},
+				{"PodSecurityPolicy", "", NotNamespaced},
 			},
 		},
 	},
