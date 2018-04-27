@@ -885,6 +885,7 @@ type ListOptions struct {
 	// +optional
 	ResourceVersion *string `protobuf:"bytes,4,opt,name=resourceVersion" json:"resourceVersion,omitempty"`
 	// Timeout for the list/watch call.
+	// This limits the duration of the call, regardless of any activity or inactivity.
 	// +optional
 	TimeoutSeconds *int64 `protobuf:"varint,5,opt,name=timeoutSeconds" json:"timeoutSeconds,omitempty"`
 	// limit is a maximum number of responses to return for a list call. If more items exist, the

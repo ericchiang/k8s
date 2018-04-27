@@ -38,7 +38,7 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 // integer value. The value can be any valid integer.
 type PriorityClass struct {
 	// Standard object's metadata.
-	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// The value of this priority class. This is the actual priority that pods
@@ -46,6 +46,9 @@ type PriorityClass struct {
 	Value *int32 `protobuf:"varint,2,opt,name=value" json:"value,omitempty"`
 	// globalDefault specifies whether this PriorityClass should be considered as
 	// the default priority for pods that do not have any priority class.
+	// Only one PriorityClass can be marked as `globalDefault`. However, if more than
+	// one PriorityClasses exists with their `globalDefault` field set to true,
+	// the smallest value of such global default PriorityClasses will be used as the default priority.
 	// +optional
 	GlobalDefault *bool `protobuf:"varint,3,opt,name=globalDefault" json:"globalDefault,omitempty"`
 	// description is an arbitrary string that usually provides guidelines on
@@ -91,7 +94,7 @@ func (m *PriorityClass) GetDescription() string {
 // PriorityClassList is a collection of priority classes.
 type PriorityClassList struct {
 	// Standard list metadata
-	// More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// items is the list of PriorityClasses
