@@ -232,7 +232,7 @@ var apiGroups = []APIGroup{
 		Versions: map[string][]Resource{
 			"v1beta1": []Resource{
 				{"PodDisruptionBudget", "", 0},
-				{"PodSecurityPolicy", "", NotNamespaced},
+				{"PodSecurityPolicy", "podsecuritypolicies", NotNamespaced},
 			},
 		},
 	},
@@ -265,7 +265,7 @@ var apiGroups = []APIGroup{
 		Group:   "scheduling.k8s.io",
 		Versions: map[string][]Resource{
 			"v1alpha1": []Resource{
-				{"PriorityClass", "", NotNamespaced},
+				{"PriorityClass", "priorityclasses", NotNamespaced},
 			},
 		},
 	},
@@ -283,10 +283,10 @@ var apiGroups = []APIGroup{
 		Group:   "storage.k8s.io",
 		Versions: map[string][]Resource{
 			"v1": []Resource{
-				{"StorageClass", "", NotNamespaced},
+				{"StorageClass", "storageclasses", NotNamespaced},
 			},
 			"v1beta1": []Resource{
-				{"StorageClass", "", NotNamespaced},
+				{"StorageClass", "storageclasses", NotNamespaced},
 			},
 			"v1alpha1": []Resource{
 				{"VolumeAttachment", "", NotNamespaced},
