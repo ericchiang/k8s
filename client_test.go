@@ -213,6 +213,117 @@ func TestDefaultNamespace(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		cm := &corev1.ConfigMap{
+			Metadata: &metav1.ObjectMeta{
+				Name:      k8s.String("my-configmap"),
+				Namespace: &namespace,
+			},
+		}
+		if err := client.Create(context.TODO(), cm); err != nil {
+			t.Errorf("create configmap: %v", err)
+			return
+		}
+
+		cm2 := &corev1.ConfigMap{
+			Metadata: &metav1.ObjectMeta{
+				Name:      k8s.String("my-configmap-2"),
+				Namespace: &namespace,
+				OwnerReferences: []*metav1.OwnerReference{
+					{
+						ApiVersion:         k8s.String("v1"),
+						Kind:               k8s.String("ConfigMap"),
+						Name:               cm.Metadata.Name,
+						Uid:                cm.Metadata.Uid,
+						BlockOwnerDeletion: k8s.Bool(true),
+					},
+				},
+			},
+		}
+		if err := client.Create(context.TODO(), cm2); err != nil {
+			t.Errorf("create configmap: %v", err)
+			return
+		}
+
+		if err := client.Delete(context.TODO(), cm, k8s.DeletePropagationForeground()); err != nil {
+			t.Fatalf("delete configmap: %v", err)
+		}
+
+		var err error
+		for i := 0; i < 50; i++ {
+			err = func() error {
+				err := client.Get(context.TODO(), namespace, *cm2.Metadata.Name, cm2)
+				if err == nil {
+					return fmt.Errorf("expected 404 error")
+				}
+				apiErr, ok := err.(*k8s.APIError)
+				if !ok {
+					return fmt.Errorf("error was not of type APIError: %T %v", err, err)
+				}
+				if apiErr.Code != 404 {
+					return fmt.Errorf("expected 404 error code, got %d", apiErr.Code)
+				}
+				return nil
+			}()
+			if err == nil {
+				break
+			}
+			time.Sleep(100 * time.Millisecond)
+		}
+		if err != nil {
+			t.Errorf("getting parent configmap: %v", err)
+		}
+	})
+}
+
+func TestDeleteOrphan(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		cm := &corev1.ConfigMap{
+			Metadata: &metav1.ObjectMeta{
+				Name:      k8s.String("my-configmap"),
+				Namespace: &namespace,
+			},
+		}
+		if err := client.Create(context.TODO(), cm); err != nil {
+			t.Errorf("create configmap: %v", err)
+			return
+		}
+
+		cm2 := &corev1.ConfigMap{
+			Metadata: &metav1.ObjectMeta{
+				Name:      k8s.String("my-configmap-2"),
+				Namespace: &namespace,
+				OwnerReferences: []*metav1.OwnerReference{
+					{
+						ApiVersion: k8s.String("v1"),
+						Kind:       k8s.String("ConfigMap"),
+						Name:       cm.Metadata.Name,
+						Uid:        cm.Metadata.Uid,
+					},
+				},
+			},
+		}
+		if err := client.Create(context.TODO(), cm2); err != nil {
+			t.Errorf("create configmap: %v", err)
+			return
+		}
+
+		if err := client.Delete(context.TODO(), cm, k8s.DeletePropagationOrphan()); err != nil {
+			t.Fatalf("delete configmap: %v", err)
+		}
+
+		// We're attempting to affirm a negative, that this won't eventually be deleted.
+		// Since there's no explicit even for us to wait for
+		time.Sleep(time.Second)
+
+		err := client.Get(context.TODO(), namespace, *cm2.Metadata.Name, cm2)
+		if err != nil {
+			t.Errorf("failed to get configmap: %v", err)
+		}
+	})
+}
+
 func Test404(t *testing.T) {
 	withNamespace(t, func(client *k8s.Client, namespace string) {
 		var configMap corev1.ConfigMap

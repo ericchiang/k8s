@@ -383,7 +383,16 @@ func (c *Client) Delete(ctx context.Context, req Resource, options ...Option) er
 	if err != nil {
 		return err
 	}
-	return c.do(ctx, "DELETE", url, nil, nil)
+	o := &deleteOptions{
+		Kind:              "DeleteOptions",
+		APIVersion:        "v1",
+		PropagationPolicy: "Background",
+	}
+	for _, option := range options {
+		option.updateDelete(req, o)
+	}
+
+	return c.do(ctx, "DELETE", url, o, nil)
 }
 
 func (c *Client) Update(ctx context.Context, req Resource, options ...Option) error {

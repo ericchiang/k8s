@@ -16,39 +16,90 @@ import (
 // Option represents optional call parameters, such as label selectors.
 type Option interface {
 	updateURL(base string, v url.Values) string
+	updateDelete(r Resource, d *deleteOptions)
 }
 
-type queryParam struct {
-	paramName  string
-	paramValue string
-}
+type optionFunc func(base string, v url.Values) string
 
-func (o queryParam) updateURL(base string, v url.Values) string {
-	v.Set(o.paramName, o.paramValue)
-	return base
+func (f optionFunc) updateDelete(r Resource, d *deleteOptions)  {}
+func (f optionFunc) updateURL(base string, v url.Values) string { return f(base, v) }
+
+type deleteOptions struct {
+	Kind       string `json:"kind"`
+	APIVersion string `json:"apiVersion"`
+
+	GracePeriod   *int64 `json:"gracePeriodSeconds,omitempty"`
+	Preconditions struct {
+		UID string `json:"uid,omitempty"`
+	} `json:"preconditions"`
+	PropagationPolicy string `json:"propagationPolicy"`
 }
 
 // QueryParam can be used to manually set a URL query parameter by name.
 func QueryParam(name, value string) Option {
-	return queryParam{
-		paramName:  name,
-		paramValue: value,
-	}
+	return optionFunc(func(base string, v url.Values) string {
+		v.Set(name, value)
+		return base
+	})
+}
+
+type deleteOptionFunc func(r Resource, d *deleteOptions)
+
+func (f deleteOptionFunc) updateDelete(r Resource, d *deleteOptions)  { f(r, d) }
+func (f deleteOptionFunc) updateURL(base string, v url.Values) string { return base }
+
+func DeleteAtomic() Option {
+	return deleteOptionFunc(func(r Resource, d *deleteOptions) {
+		d.Preconditions.UID = *r.GetMetadata().Uid
+	})
+}
+
+// DeletePropagationOrphan orphans the dependent resources during a delete.
+func DeletePropagationOrphan() Option {
+	return deleteOptionFunc(func(r Resource, d *deleteOptions) {
+		d.PropagationPolicy = "Orphan"
+	})
+}
+
+// DeletePropagationBackground deletes the resources and causes the garbage
+// collector to delete dependent resources in the background.
+func DeletePropagationBackground() Option {
+	return deleteOptionFunc(func(r Resource, d *deleteOptions) {
+		d.PropagationPolicy = "Background"
+	})
+}
+
+// DeletePropagationForeground deletes the resources and causes the garbage
+// collector to delete dependent resources and wait for all dependents whose
+// ownerReference.blockOwnerDeletion=true.  API sever will put the "foregroundDeletion"
+// finalizer on the object, and sets its deletionTimestamp.  This policy is
+// cascading, i.e., the dependents will be deleted with Foreground.
+func DeletePropagationForeground() Option {
+	return deleteOptionFunc(func(r Resource, d *deleteOptions) {
+		d.PropagationPolicy = "Foreground"
+	})
+}
+
+func DeleteGracePeriod(d time.Duration) Option {
+	seconds := int64(d / time.Second)
+	return deleteOptionFunc(func(r Resource, d *deleteOptions) {
+		d.GracePeriod = &seconds
+	})
 }
 
 // ResourceVersion causes watch operations to only show changes since
 // a particular version of a resource.
 func ResourceVersion(resourceVersion string) Option {
-	return queryParam{"resourceVersion", resourceVersion}
+	return QueryParam("resourceVersion", resourceVersion)
 }
 
 // Timeout declares the timeout for list and watch operations. Timeout
 // is only accurate to the second.
 func Timeout(d time.Duration) Option {
-	return queryParam{
+	return QueryParam(
 		"timeoutSeconds",
 		strconv.FormatInt(int64(d/time.Second), 10),
-	}
+	)
 }
 
 // Subresource is a way to interact with a part of an API object without needing
@@ -59,15 +110,9 @@ func Timeout(d time.Duration) Option {
 //
 // See https://kubernetes.io/docs/reference/api-concepts/
 func Subresource(name string) Option {
-	return subresource{name}
-}
-
-type subresource struct {
-	name string
-}
-
-func (s subresource) updateURL(base string, v url.Values) string {
-	return base + "/" + s.name
+	return optionFunc(func(base string, v url.Values) string {
+		return base + "/" + name
+	})
 }
 
 type resourceType struct {
