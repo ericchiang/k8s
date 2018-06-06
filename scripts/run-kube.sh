@@ -14,7 +14,7 @@ docker run \
     -d \
     -v $TEMPDIR:/var/run/kube-test:ro \
     --net=host \
-    gcr.io/google_containers/kube-apiserver-amd64:v1.7.4 \
+    gcr.io/google_containers/kube-apiserver-amd64:v1.10.4 \
     kube-apiserver \
     --etcd-servers=http://localhost:2379 \
     --service-cluster-ip-range=10.0.0.1/16 \
