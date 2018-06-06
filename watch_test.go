@@ -42,8 +42,12 @@ func testWatch(t *testing.T, client *k8s.Client, namespace string, newCM func() 
 		if eT != eventType {
 			t.Errorf("expected event type %q got %q", eventType, eT)
 		}
+		cm.GetMetadata().ResourceVersion = k8s.String("")
+		got.GetMetadata().ResourceVersion = k8s.String("")
 		if !reflect.DeepEqual(got, cm) {
-			t.Errorf("configmaps did not match\nwant=%#v\ngot=%#v", cm, got)
+			t.Errorf("configmaps didn't match")
+			t.Errorf("want: %#v", cm)
+			t.Errorf(" got: %#v", got)
 		}
 	}
 
