@@ -214,6 +214,8 @@ func TestDefaultNamespace(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+    t.Skip("this test requires a controller manager to run, see issue #95")
+
 	withNamespace(t, func(client *k8s.Client, namespace string) {
 		cm := &corev1.ConfigMap{
 			Metadata: &metav1.ObjectMeta{
