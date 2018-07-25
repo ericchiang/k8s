@@ -1,6 +1,7 @@
 # A simple Go client for Kubernetes
 
 [![GoDoc](https://godoc.org/github.com/ericchiang/k8s?status.svg)](https://godoc.org/github.com/ericchiang/k8s)
+[![Build Status](https://travis-ci.org/ericchiang/k8s.svg?branch=master)](https://travis-ci.org/ericchiang/k8s)
 
 A slimmed down Go client generated using Kubernetes' [protocol buffer][protobuf] support. This package behaves similarly to [official Kubernetes' Go client][client-go], but only imports two external dependencies.
 
