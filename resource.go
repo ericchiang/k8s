@@ -151,7 +151,7 @@ func urlForPath(endpoint, path string) string {
 	return endpoint + "/" + path
 }
 
-func resourceURL(endpoint string, r Resource, withName bool, options ...Option) (string, error) {
+func resourceURL(endpoint, defaultNS string, r Resource, withName bool, options ...Option) (string, error) {
 	t, ok := resources[reflect.TypeOf(r)]
 	if !ok {
 		return "", fmt.Errorf("unregistered type %T", r)
@@ -160,27 +160,37 @@ func resourceURL(endpoint string, r Resource, withName bool, options ...Option) 
 	if meta == nil {
 		return "", errors.New("resource has no object meta")
 	}
-	switch {
-	case t.namespaced && (meta.Namespace == nil || *meta.Namespace == ""):
-		return "", errors.New("no resource namespace provided")
-	case !t.namespaced && (meta.Namespace != nil && *meta.Namespace != ""):
+
+	if !t.namespaced && (meta.Namespace != nil && *meta.Namespace != "") {
 		return "", errors.New("resource not namespaced")
-	case withName && (meta.Name == nil || *meta.Name == ""):
+	}
+
+	namespace := ""
+	if t.namespaced {
+		if meta.Namespace != nil {
+			namespace = *meta.Namespace
+		}
+		if namespace == "" {
+			namespace = defaultNS
+		}
+		if namespace == "" {
+			return "", errors.New("no resource namespace provided and no default specified")
+		}
+	}
+
+	if withName && (meta.Name == nil || *meta.Name == "") {
 		return "", errors.New("no resource name provided")
 	}
+
 	name := ""
 	if withName {
 		name = *meta.Name
-	}
-	namespace := ""
-	if t.namespaced {
-		namespace = *meta.Namespace
 	}
 
 	return urlFor(endpoint, t.apiGroup, t.apiVersion, namespace, t.name, name, options...), nil
 }
 
-func resourceGetURL(endpoint, namespace, name string, r Resource, options ...Option) (string, error) {
+func resourceGetURL(endpoint, defaultNS, namespace, name string, r Resource, options ...Option) (string, error) {
 	t, ok := resources[reflect.TypeOf(r)]
 	if !ok {
 		return "", fmt.Errorf("unregistered type %T", r)
@@ -190,20 +200,26 @@ func resourceGetURL(endpoint, namespace, name string, r Resource, options ...Opt
 		return "", fmt.Errorf("type not namespaced")
 	}
 	if t.namespaced && namespace == "" {
-		return "", fmt.Errorf("no namespace provided")
+		if defaultNS == "" {
+			return "", fmt.Errorf("no namespace provided")
+		}
+		namespace = defaultNS
 	}
 
 	return urlFor(endpoint, t.apiGroup, t.apiVersion, namespace, t.name, name, options...), nil
 }
 
-func resourceListURL(endpoint, namespace string, r ResourceList, options ...Option) (string, error) {
+func resourceListURL(endpoint, defaultNS, namespace string, r ResourceList, options ...Option) (string, error) {
 	t, ok := resourceLists[reflect.TypeOf(r)]
 	if !ok {
 		return "", fmt.Errorf("unregistered type %T", r)
 	}
 
 	if !t.namespaced && namespace != "" {
-		return "", fmt.Errorf("type not namespaced")
+		if defaultNS == "" {
+			return "", fmt.Errorf("type not namespaced")
+		}
+		namespace = defaultNS
 	}
 
 	return urlFor(endpoint, t.apiGroup, t.apiVersion, namespace, t.name, "", options...), nil

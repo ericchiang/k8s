@@ -188,6 +188,62 @@ func TestListConfigMap(t *testing.T) {
 	})
 }
 
+func TestListConfigMapDefaultNamespace(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		client.Namespace = namespace
+		for i := 0; i < 5; i++ {
+			cm := &corev1.ConfigMap{
+				Metadata: &metav1.ObjectMeta{
+					Name: k8s.String(fmt.Sprintf("my-configmap-%d", i)),
+				},
+			}
+			if err := client.Create(context.TODO(), cm); err != nil {
+				t.Errorf("create configmap: %v", err)
+				return
+			}
+		}
+
+		var configMapList corev1.ConfigMapList
+		if err := client.List(context.TODO(), "", &configMapList); err != nil {
+			t.Errorf("list configmaps: %v", err)
+			return
+		}
+
+		if n := len(configMapList.Items); n != 5 {
+			t.Errorf("expected 5 configmaps, got %d", n)
+		}
+	})
+}
+
+func TestCreateConfigMapDefaultNamespace(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		client.Namespace = namespace
+		cm := &corev1.ConfigMap{
+			Metadata: &metav1.ObjectMeta{
+				Name: k8s.String("my-configmap"),
+			},
+		}
+		if err := client.Create(context.TODO(), cm); err != nil {
+			t.Errorf("create configmap: %v", err)
+			return
+		}
+		got := new(corev1.ConfigMap)
+		if err := client.Get(context.TODO(), "", *cm.Metadata.Name, got); err != nil {
+			t.Errorf("get configmap: %v", err)
+			return
+		}
+		if !reflect.DeepEqual(cm, got) {
+			t.Errorf("expected configmap %#v, got=%#v", cm, got)
+		}
+
+		got.Metadata.Namespace = nil
+		if err := client.Delete(context.TODO(), cm); err != nil {
+			t.Errorf("delete configmap: %v", err)
+			return
+		}
+	})
+}
+
 func TestDefaultNamespace(t *testing.T) {
 	c := &k8s.Config{
 		Clusters: []k8s.NamedCluster{
