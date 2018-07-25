@@ -29,7 +29,7 @@ type LabelSelector struct {
 }
 
 func (l *LabelSelector) Selector() Option {
-	return queryParam{"labelSelector", l.String()}
+	return QueryParam("labelSelector", l.String())
 }
 
 func (l *LabelSelector) String() string {
