@@ -371,7 +371,7 @@ func (c *Client) client() *http.Client {
 //		fmt.Println(conifgMap.Metaata.GetCreationTimestamp())
 //
 func (c *Client) Create(ctx context.Context, req Resource, options ...Option) error {
-	url, err := resourceURL(c.Endpoint, req, false, options...)
+	url, err := resourceURL(c.Endpoint, c.Namespace, req, false, options...)
 	if err != nil {
 		return err
 	}
@@ -379,7 +379,7 @@ func (c *Client) Create(ctx context.Context, req Resource, options ...Option) er
 }
 
 func (c *Client) Delete(ctx context.Context, req Resource, options ...Option) error {
-	url, err := resourceURL(c.Endpoint, req, true, options...)
+	url, err := resourceURL(c.Endpoint, c.Namespace, req, true, options...)
 	if err != nil {
 		return err
 	}
@@ -396,7 +396,7 @@ func (c *Client) Delete(ctx context.Context, req Resource, options ...Option) er
 }
 
 func (c *Client) Update(ctx context.Context, req Resource, options ...Option) error {
-	url, err := resourceURL(c.Endpoint, req, true, options...)
+	url, err := resourceURL(c.Endpoint, c.Namespace, req, true, options...)
 	if err != nil {
 		return err
 	}
@@ -404,7 +404,7 @@ func (c *Client) Update(ctx context.Context, req Resource, options ...Option) er
 }
 
 func (c *Client) Get(ctx context.Context, namespace, name string, resp Resource, options ...Option) error {
-	url, err := resourceGetURL(c.Endpoint, namespace, name, resp, options...)
+	url, err := resourceGetURL(c.Endpoint, c.Namespace, namespace, name, resp, options...)
 	if err != nil {
 		return err
 	}
@@ -412,7 +412,7 @@ func (c *Client) Get(ctx context.Context, namespace, name string, resp Resource,
 }
 
 func (c *Client) List(ctx context.Context, namespace string, resp ResourceList, options ...Option) error {
-	url, err := resourceListURL(c.Endpoint, namespace, resp, options...)
+	url, err := resourceListURL(c.Endpoint, c.Namespace, namespace, resp, options...)
 	if err != nil {
 		return err
 	}

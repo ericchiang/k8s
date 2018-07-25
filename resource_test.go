@@ -56,13 +56,14 @@ func init() {
 
 func TestResourceURL(t *testing.T) {
 	tests := []struct {
-		name     string
-		endpoint string
-		resource Resource
-		withName bool
-		options  []Option
-		want     string
-		wantErr  bool
+		name      string
+		endpoint  string
+		defaultNS string
+		resource  Resource
+		withName  bool
+		options   []Option
+		want      string
+		wantErr   bool
 	}{
 		{
 			name:     "pod",
@@ -141,11 +142,54 @@ func TestResourceURL(t *testing.T) {
 			},
 			want: "https://example.com/api/v1/namespaces/my-namespace/pods?resourceVersion=foo",
 		},
+		{
+			name:     "pod-with-default-namespace",
+			endpoint: "https://example.com",
+			resource: &Pod{
+				Metadata: &metav1.ObjectMeta{
+					Name: String("my-pod"),
+				},
+			},
+			defaultNS: "my-namespace",
+			want:      "https://example.com/api/v1/namespaces/my-namespace/pods",
+		},
+		{
+			name:     "cluster-role",
+			endpoint: "https://example.com",
+			resource: &ClusterRole{
+				Metadata: &metav1.ObjectMeta{
+					Name: String("my-cluster-role"),
+				},
+			},
+			want: "https://example.com/apis/rbac.authorization.k8s.io/v1/clusterroles",
+		},
+		{
+			name:     "cluster-role-with-namespace",
+			endpoint: "https://example.com",
+			resource: &ClusterRole{
+				Metadata: &metav1.ObjectMeta{
+					Namespace: String("my-namespace"),
+					Name:      String("my-cluster-role"),
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name:     "cluster-role-with-default-namespace",
+			endpoint: "https://example.com",
+			resource: &ClusterRole{
+				Metadata: &metav1.ObjectMeta{
+					Name: String("my-cluster-role"),
+				},
+			},
+			defaultNS: "my-namespace",
+			want:      "https://example.com/apis/rbac.authorization.k8s.io/v1/clusterroles",
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			got, err := resourceURL(test.endpoint, test.resource, test.withName, test.options...)
+			got, err := resourceURL(test.endpoint, test.defaultNS, test.resource, test.withName, test.options...)
 			if err != nil {
 				if test.wantErr {
 					return
