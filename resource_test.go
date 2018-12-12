@@ -161,3 +161,113 @@ func TestResourceURL(t *testing.T) {
 		})
 	}
 }
+
+func TestResourceWatchURL(t *testing.T) {
+	tests := []struct {
+		name      string
+		endpoint  string
+		namespace string
+		resource  Resource
+		options   []Option
+		want      string
+		wantErr   bool
+	}{
+		{
+			name:      "watch_pods",
+			namespace: "my-namespace",
+			endpoint:  "https://k8s.example.com/foo/",
+			resource:  &Pod{},
+			want:      "https://k8s.example.com/foo/api/v1/namespaces/my-namespace/pods?watch=true",
+		},
+		{
+			name:     "watch_all_pods",
+			endpoint: "https://k8s.example.com/foo/",
+			resource: &Pod{},
+			want:     "https://k8s.example.com/foo/api/v1/pods?watch=true",
+		},
+		{
+			name:      "watch_deployments",
+			namespace: "my-namespace",
+			endpoint:  "https://k8s.example.com/foo/",
+			resource:  &Deployment{},
+			want:      "https://k8s.example.com/foo/apis/apps/v1beta2/namespaces/my-namespace/deployments?watch=true",
+		},
+		{
+			name:      "watch_with_options",
+			namespace: "my-namespace",
+			endpoint:  "https://k8s.example.com/foo/",
+			resource:  &Deployment{},
+			options: []Option{
+				Timeout(time.Minute),
+			},
+			want: "https://k8s.example.com/foo/apis/apps/v1beta2/namespaces/my-namespace/deployments?timeoutSeconds=60&watch=true",
+		},
+		{
+			name:     "watch_non_namespaced",
+			endpoint: "https://k8s.example.com/foo/",
+			resource: &ClusterRole{},
+			want:     "https://k8s.example.com/foo/apis/rbac.authorization.k8s.io/v1/clusterroles?watch=true",
+		},
+		{
+			name:      "watch_non_namespaced_with_namespace",
+			namespace: "my-namespace",
+			endpoint:  "https://k8s.example.com/foo/",
+			resource:  &ClusterRole{},
+			wantErr:   true, // can't provide a namespace for a non-namespaced resource
+		},
+		{
+			name:     "watch_deployment",
+			endpoint: "https://k8s.example.com/foo/",
+			resource: &Deployment{
+				Metadata: &metav1.ObjectMeta{
+					Namespace: String("my-namespace"),
+					Name:      String("my-deployment"),
+				},
+			},
+			want: "https://k8s.example.com/foo/apis/apps/v1beta2/namespaces/my-namespace/deployments/my-deployment?watch=true",
+		},
+		{
+			name:      "watch_deployment_ns_in_call",
+			endpoint:  "https://k8s.example.com/foo/",
+			namespace: "my-namespace",
+			resource: &Deployment{
+				Metadata: &metav1.ObjectMeta{
+					Name: String("my-deployment"),
+				},
+			},
+			want: "https://k8s.example.com/foo/apis/apps/v1beta2/namespaces/my-namespace/deployments/my-deployment?watch=true",
+		},
+		{
+			name:      "watch_deployment_mismatched_ns",
+			endpoint:  "https://k8s.example.com/foo/",
+			namespace: "my-other-namespace",
+			resource: &Deployment{
+				Metadata: &metav1.ObjectMeta{
+					Namespace: String("my-namespace"),
+					Name:      String("my-deployment"),
+				},
+			},
+			wantErr: true,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got, err := resourceWatchURL(
+				test.endpoint,
+				test.namespace,
+				test.resource,
+				test.options...,
+			)
+			if err != nil {
+				if !test.wantErr {
+					t.Fatalf("resourceWatchURL: %v", err)
+				}
+				return
+			}
+			if got != test.want {
+				t.Errorf("want: %q", test.want)
+				t.Errorf("got : %q", got)
+			}
+		})
+	}
+}

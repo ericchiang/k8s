@@ -24,38 +24,48 @@ func init() {
 	k8s.Register("", "v1", "configmaps", true, &configMapJSON{})
 }
 
-func testWatch(t *testing.T, client *k8s.Client, namespace string, newCM func() k8s.Resource, update func(cm k8s.Resource)) {
-	w, err := client.Watch(context.TODO(), namespace, newCM())
+func wantEvent(t *testing.T, w *k8s.Watcher, eventType string, got, want k8s.Resource) {
+	t.Helper()
+	eT, err := w.Next(got)
 	if err != nil {
-		t.Errorf("watch configmaps: %v", err)
+		t.Errorf("decode watch event: %v", err)
+		return
+	}
+	if eT != eventType {
+		t.Errorf("expected event type %q got %q", eventType, eT)
+	}
+	want.GetMetadata().ResourceVersion = k8s.String("")
+	got.GetMetadata().ResourceVersion = k8s.String("")
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("configmaps didn't match")
+		t.Errorf("want: %#v", want)
+		t.Errorf(" got: %#v", got)
+	}
+}
+
+func testWatch(t *testing.T, client *k8s.Client, namespace string, r k8s.Resource, newCM func() k8s.Resource, update func(cm k8s.Resource)) {
+	cm := newCM()
+
+	if r.GetMetadata() != nil {
+		// Individual watch must created beforehand
+		if err := client.Create(context.TODO(), cm); err != nil {
+			t.Errorf("create configmap: %v", err)
+			return
+		}
+	}
+	w, err := client.Watch(context.TODO(), namespace, r)
+	if err != nil {
+		t.Fatalf("watch configmaps: %v", err)
 	}
 	defer w.Close()
 
-	cm := newCM()
-	want := func(eventType string) {
-		got := newCM()
-		eT, err := w.Next(got)
-		if err != nil {
-			t.Errorf("decode watch event: %v", err)
+	if r.GetMetadata() == nil {
+		if err := client.Create(context.TODO(), cm); err != nil {
+			t.Errorf("create configmap: %v", err)
 			return
 		}
-		if eT != eventType {
-			t.Errorf("expected event type %q got %q", eventType, eT)
-		}
-		cm.GetMetadata().ResourceVersion = k8s.String("")
-		got.GetMetadata().ResourceVersion = k8s.String("")
-		if !reflect.DeepEqual(got, cm) {
-			t.Errorf("configmaps didn't match")
-			t.Errorf("want: %#v", cm)
-			t.Errorf(" got: %#v", got)
-		}
+		wantEvent(t, w, k8s.EventAdded, newCM(), cm)
 	}
-
-	if err := client.Create(context.TODO(), cm); err != nil {
-		t.Errorf("create configmap: %v", err)
-		return
-	}
-	want(k8s.EventAdded)
 
 	update(cm)
 
@@ -63,13 +73,13 @@ func testWatch(t *testing.T, client *k8s.Client, namespace string, newCM func() 
 		t.Errorf("update configmap: %v", err)
 		return
 	}
-	want(k8s.EventModified)
+	wantEvent(t, w, k8s.EventModified, newCM(), cm)
 
 	if err := client.Delete(context.TODO(), cm); err != nil {
 		t.Errorf("Delete configmap: %v", err)
 		return
 	}
-	want(k8s.EventDeleted)
+	wantEvent(t, w, k8s.EventDeleted, newCM(), cm)
 }
 
 func TestWatchConfigMapJSON(t *testing.T) {
@@ -86,7 +96,7 @@ func TestWatchConfigMapJSON(t *testing.T) {
 		updateCM := func(cm k8s.Resource) {
 			(cm.(*configMapJSON)).Data = map[string]string{"hello": "world"}
 		}
-		testWatch(t, client, namespace, newCM, updateCM)
+		testWatch(t, client, namespace, &configMapJSON{}, newCM, updateCM)
 	})
 }
 
@@ -104,6 +114,24 @@ func TestWatchConfigMapProto(t *testing.T) {
 		updateCM := func(cm k8s.Resource) {
 			(cm.(*corev1.ConfigMap)).Data = map[string]string{"hello": "world"}
 		}
-		testWatch(t, client, namespace, newCM, updateCM)
+		testWatch(t, client, namespace, &corev1.ConfigMap{}, newCM, updateCM)
+	})
+}
+
+func TestWatchIndividualConfigMap(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		newCM := func() k8s.Resource {
+			return &corev1.ConfigMap{
+				Metadata: &metav1.ObjectMeta{
+					Name:      k8s.String("my-configmap"),
+					Namespace: &namespace,
+				},
+			}
+		}
+
+		updateCM := func(cm k8s.Resource) {
+			(cm.(*corev1.ConfigMap)).Data = map[string]string{"hello": "world"}
+		}
+		testWatch(t, client, namespace, newCM(), newCM, updateCM)
 	})
 }

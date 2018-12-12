@@ -160,6 +160,22 @@ func parseUnknown(b []byte) (*runtime.Unknown, error) {
 //			fmt.Println(eventType, *cm.Metadata.Name)
 //		}
 //
+// To watch an individual resource, provide a resource with pre-populated
+// metadata:
+//
+// 		// Watch "my-configmap" in "my-namespace"
+//		configMap := corev1.ConfigMap{
+//			Metadata: &metav1.ObjectMeta{
+//				Namespace: String("my-namespace"),
+//				Name:      String("my-configmap"),
+//			},
+//		}
+//		watcher, err := client.Watch(ctx, "", &configMap)
+//		if err != nil {
+//			// handle error
+//		}
+//		defer watcher.Close() // Always close the returned watcher.
+//
 func (c *Client) Watch(ctx context.Context, namespace string, r Resource, options ...Option) (*Watcher, error) {
 	url, err := resourceWatchURL(c.Endpoint, namespace, r, options...)
 	if err != nil {
