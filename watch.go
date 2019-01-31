@@ -10,8 +10,8 @@ import (
 	"io"
 	"io/ioutil"
 
+	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
 	"github.com/ericchiang/k8s/runtime"
-	"github.com/ericchiang/k8s/watch/versioned"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -95,7 +95,7 @@ func (w *watcherPB) Close() error {
 	return w.r.Close()
 }
 
-func (w *watcherPB) next() (*versioned.Event, *runtime.Unknown, error) {
+func (w *watcherPB) next() (*metav1.WatchEvent, *runtime.Unknown, error) {
 	length := make([]byte, 4)
 	if _, err := io.ReadFull(w.r, length); err != nil {
 		return nil, nil, err
@@ -106,7 +106,7 @@ func (w *watcherPB) next() (*versioned.Event, *runtime.Unknown, error) {
 		return nil, nil, fmt.Errorf("read frame body: %v", err)
 	}
 
-	var event versioned.Event
+	var event metav1.WatchEvent
 	if err := proto.Unmarshal(body, &event); err != nil {
 		return nil, nil, err
 	}
