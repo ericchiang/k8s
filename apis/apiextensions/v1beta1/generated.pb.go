@@ -8,12 +8,18 @@
 		k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1/generated.proto
 
 	It has these top-level messages:
+		ConversionRequest
+		ConversionResponse
+		ConversionReview
+		CustomResourceColumnDefinition
+		CustomResourceConversion
 		CustomResourceDefinition
 		CustomResourceDefinitionCondition
 		CustomResourceDefinitionList
 		CustomResourceDefinitionNames
 		CustomResourceDefinitionSpec
 		CustomResourceDefinitionStatus
+		CustomResourceDefinitionVersion
 		CustomResourceSubresourceScale
 		CustomResourceSubresourceStatus
 		CustomResourceSubresources
@@ -24,6 +30,8 @@
 		JSONSchemaPropsOrArray
 		JSONSchemaPropsOrBool
 		JSONSchemaPropsOrStringArray
+		ServiceReference
+		WebhookClientConfig
 */
 package v1beta1
 
@@ -31,9 +39,8 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import k8s_io_apimachinery_pkg_apis_meta_v1 "github.com/ericchiang/k8s/apis/meta/v1"
-import _ "github.com/ericchiang/k8s/runtime"
+import k8s_io_apimachinery_pkg_runtime "github.com/ericchiang/k8s/runtime"
 import _ "github.com/ericchiang/k8s/runtime/schema"
-import _ "github.com/ericchiang/k8s/util/intstr"
 
 import encoding_binary "encoding/binary"
 
@@ -50,6 +57,228 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+// ConversionRequest describes the conversion request parameters.
+type ConversionRequest struct {
+	// `uid` is an identifier for the individual request/response. It allows us to distinguish instances of requests which are
+	// otherwise identical (parallel requests, requests when earlier requests did not modify etc)
+	// The UID is meant to track the round trip (request/response) between the KAS and the WebHook, not the user request.
+	// It is suitable for correlating log entries between the webhook and apiserver, for either auditing or debugging.
+	Uid *string `protobuf:"bytes,1,opt,name=uid" json:"uid,omitempty"`
+	// `desiredAPIVersion` is the version to convert given objects to. e.g. "myapi.example.com/v1"
+	DesiredAPIVersion *string `protobuf:"bytes,2,opt,name=desiredAPIVersion" json:"desiredAPIVersion,omitempty"`
+	// `objects` is the list of CR objects to be converted.
+	Objects          []*k8s_io_apimachinery_pkg_runtime.RawExtension `protobuf:"bytes,3,rep,name=objects" json:"objects,omitempty"`
+	XXX_unrecognized []byte                                          `json:"-"`
+}
+
+func (m *ConversionRequest) Reset()                    { *m = ConversionRequest{} }
+func (m *ConversionRequest) String() string            { return proto.CompactTextString(m) }
+func (*ConversionRequest) ProtoMessage()               {}
+func (*ConversionRequest) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
+
+func (m *ConversionRequest) GetUid() string {
+	if m != nil && m.Uid != nil {
+		return *m.Uid
+	}
+	return ""
+}
+
+func (m *ConversionRequest) GetDesiredAPIVersion() string {
+	if m != nil && m.DesiredAPIVersion != nil {
+		return *m.DesiredAPIVersion
+	}
+	return ""
+}
+
+func (m *ConversionRequest) GetObjects() []*k8s_io_apimachinery_pkg_runtime.RawExtension {
+	if m != nil {
+		return m.Objects
+	}
+	return nil
+}
+
+// ConversionResponse describes a conversion response.
+type ConversionResponse struct {
+	// `uid` is an identifier for the individual request/response.
+	// This should be copied over from the corresponding AdmissionRequest.
+	Uid *string `protobuf:"bytes,1,opt,name=uid" json:"uid,omitempty"`
+	// `convertedObjects` is the list of converted version of `request.objects` if the `result` is successful otherwise empty.
+	// The webhook is expected to set apiVersion of these objects to the ConversionRequest.desiredAPIVersion. The list
+	// must also has the same size as input list with the same objects in the same order(i.e. equal UIDs and object meta)
+	ConvertedObjects []*k8s_io_apimachinery_pkg_runtime.RawExtension `protobuf:"bytes,2,rep,name=convertedObjects" json:"convertedObjects,omitempty"`
+	// `result` contains the result of conversion with extra details if the conversion failed. `result.status` determines if
+	// the conversion failed or succeeded. The `result.status` field is required and represent the success or failure of the
+	// conversion. A successful conversion must set `result.status` to `Success`. A failed conversion must set
+	// `result.status` to `Failure` and provide more details in `result.message` and return http status 200. The `result.message`
+	// will be used to construct an error message for the end user.
+	Result           *k8s_io_apimachinery_pkg_apis_meta_v1.Status `protobuf:"bytes,3,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte                                       `json:"-"`
+}
+
+func (m *ConversionResponse) Reset()                    { *m = ConversionResponse{} }
+func (m *ConversionResponse) String() string            { return proto.CompactTextString(m) }
+func (*ConversionResponse) ProtoMessage()               {}
+func (*ConversionResponse) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
+
+func (m *ConversionResponse) GetUid() string {
+	if m != nil && m.Uid != nil {
+		return *m.Uid
+	}
+	return ""
+}
+
+func (m *ConversionResponse) GetConvertedObjects() []*k8s_io_apimachinery_pkg_runtime.RawExtension {
+	if m != nil {
+		return m.ConvertedObjects
+	}
+	return nil
+}
+
+func (m *ConversionResponse) GetResult() *k8s_io_apimachinery_pkg_apis_meta_v1.Status {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
+// ConversionReview describes a conversion request/response.
+type ConversionReview struct {
+	// `request` describes the attributes for the conversion request.
+	// +optional
+	Request *ConversionRequest `protobuf:"bytes,1,opt,name=request" json:"request,omitempty"`
+	// `response` describes the attributes for the conversion response.
+	// +optional
+	Response         *ConversionResponse `protobuf:"bytes,2,opt,name=response" json:"response,omitempty"`
+	XXX_unrecognized []byte              `json:"-"`
+}
+
+func (m *ConversionReview) Reset()                    { *m = ConversionReview{} }
+func (m *ConversionReview) String() string            { return proto.CompactTextString(m) }
+func (*ConversionReview) ProtoMessage()               {}
+func (*ConversionReview) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
+
+func (m *ConversionReview) GetRequest() *ConversionRequest {
+	if m != nil {
+		return m.Request
+	}
+	return nil
+}
+
+func (m *ConversionReview) GetResponse() *ConversionResponse {
+	if m != nil {
+		return m.Response
+	}
+	return nil
+}
+
+// CustomResourceColumnDefinition specifies a column for server side printing.
+type CustomResourceColumnDefinition struct {
+	// name is a human readable name for the column.
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	// type is an OpenAPI type definition for this column.
+	// See https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types for more.
+	Type *string `protobuf:"bytes,2,opt,name=type" json:"type,omitempty"`
+	// format is an optional OpenAPI type definition for this column. The 'name' format is applied
+	// to the primary identifier column to assist in clients identifying column is the resource name.
+	// See https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types for more.
+	// +optional
+	Format *string `protobuf:"bytes,3,opt,name=format" json:"format,omitempty"`
+	// description is a human readable description of this column.
+	// +optional
+	Description *string `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	// priority is an integer defining the relative importance of this column compared to others. Lower
+	// numbers are considered higher priority. Columns that may be omitted in limited space scenarios
+	// should be given a higher priority.
+	// +optional
+	Priority *int32 `protobuf:"varint,5,opt,name=priority" json:"priority,omitempty"`
+	// JSONPath is a simple JSON path, i.e. with array notation.
+	JSONPath         *string `protobuf:"bytes,6,opt,name=JSONPath" json:"JSONPath,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *CustomResourceColumnDefinition) Reset()         { *m = CustomResourceColumnDefinition{} }
+func (m *CustomResourceColumnDefinition) String() string { return proto.CompactTextString(m) }
+func (*CustomResourceColumnDefinition) ProtoMessage()    {}
+func (*CustomResourceColumnDefinition) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{3}
+}
+
+func (m *CustomResourceColumnDefinition) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *CustomResourceColumnDefinition) GetType() string {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return ""
+}
+
+func (m *CustomResourceColumnDefinition) GetFormat() string {
+	if m != nil && m.Format != nil {
+		return *m.Format
+	}
+	return ""
+}
+
+func (m *CustomResourceColumnDefinition) GetDescription() string {
+	if m != nil && m.Description != nil {
+		return *m.Description
+	}
+	return ""
+}
+
+func (m *CustomResourceColumnDefinition) GetPriority() int32 {
+	if m != nil && m.Priority != nil {
+		return *m.Priority
+	}
+	return 0
+}
+
+func (m *CustomResourceColumnDefinition) GetJSONPath() string {
+	if m != nil && m.JSONPath != nil {
+		return *m.JSONPath
+	}
+	return ""
+}
+
+// CustomResourceConversion describes how to convert different versions of a CR.
+type CustomResourceConversion struct {
+	// `strategy` specifies the conversion strategy. Allowed values are:
+	// - `None`: The converter only change the apiVersion and would not touch any other field in the CR.
+	// - `Webhook`: API Server will call to an external webhook to do the conversion. Additional information is needed for this option.
+	Strategy *string `protobuf:"bytes,1,opt,name=strategy" json:"strategy,omitempty"`
+	// `webhookClientConfig` is the instructions for how to call the webhook if strategy is `Webhook`. This field is
+	// alpha-level and is only honored by servers that enable the CustomResourceWebhookConversion feature.
+	// +optional
+	WebhookClientConfig *WebhookClientConfig `protobuf:"bytes,2,opt,name=webhookClientConfig" json:"webhookClientConfig,omitempty"`
+	XXX_unrecognized    []byte               `json:"-"`
+}
+
+func (m *CustomResourceConversion) Reset()         { *m = CustomResourceConversion{} }
+func (m *CustomResourceConversion) String() string { return proto.CompactTextString(m) }
+func (*CustomResourceConversion) ProtoMessage()    {}
+func (*CustomResourceConversion) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{4}
+}
+
+func (m *CustomResourceConversion) GetStrategy() string {
+	if m != nil && m.Strategy != nil {
+		return *m.Strategy
+	}
+	return ""
+}
+
+func (m *CustomResourceConversion) GetWebhookClientConfig() *WebhookClientConfig {
+	if m != nil {
+		return m.WebhookClientConfig
+	}
+	return nil
+}
+
 // CustomResourceDefinition represents a resource that should be exposed on the API server.  Its name MUST be in the format
 // <.spec.name>.<.spec.group>.
 type CustomResourceDefinition struct {
@@ -57,6 +286,7 @@ type CustomResourceDefinition struct {
 	// Spec describes how the user wants the resources to appear
 	Spec *CustomResourceDefinitionSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status indicates the actual state of the CustomResourceDefinition
+	// +optional
 	Status           *CustomResourceDefinitionStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte                          `json:"-"`
 }
@@ -65,7 +295,7 @@ func (m *CustomResourceDefinition) Reset()         { *m = CustomResourceDefiniti
 func (m *CustomResourceDefinition) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceDefinition) ProtoMessage()    {}
 func (*CustomResourceDefinition) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{0}
+	return fileDescriptorGenerated, []int{5}
 }
 
 func (m *CustomResourceDefinition) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
@@ -112,7 +342,7 @@ func (m *CustomResourceDefinitionCondition) Reset()         { *m = CustomResourc
 func (m *CustomResourceDefinitionCondition) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceDefinitionCondition) ProtoMessage()    {}
 func (*CustomResourceDefinitionCondition) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{1}
+	return fileDescriptorGenerated, []int{6}
 }
 
 func (m *CustomResourceDefinitionCondition) GetType() string {
@@ -162,7 +392,7 @@ func (m *CustomResourceDefinitionList) Reset()         { *m = CustomResourceDefi
 func (m *CustomResourceDefinitionList) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceDefinitionList) ProtoMessage()    {}
 func (*CustomResourceDefinitionList) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{2}
+	return fileDescriptorGenerated, []int{7}
 }
 
 func (m *CustomResourceDefinitionList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
@@ -185,12 +415,15 @@ type CustomResourceDefinitionNames struct {
 	// too: plural.group and it must be all lowercase.
 	Plural *string `protobuf:"bytes,1,opt,name=plural" json:"plural,omitempty"`
 	// Singular is the singular name of the resource.  It must be all lowercase  Defaults to lowercased <kind>
+	// +optional
 	Singular *string `protobuf:"bytes,2,opt,name=singular" json:"singular,omitempty"`
 	// ShortNames are short names for the resource.  It must be all lowercase.
+	// +optional
 	ShortNames []string `protobuf:"bytes,3,rep,name=shortNames" json:"shortNames,omitempty"`
 	// Kind is the serialized kind of the resource.  It is normally CamelCase and singular.
 	Kind *string `protobuf:"bytes,4,opt,name=kind" json:"kind,omitempty"`
 	// ListKind is the serialized kind of the list for this resource.  Defaults to <kind>List.
+	// +optional
 	ListKind *string `protobuf:"bytes,5,opt,name=listKind" json:"listKind,omitempty"`
 	// Categories is a list of grouped resources custom resources belong to (e.g. 'all')
 	// +optional
@@ -202,7 +435,7 @@ func (m *CustomResourceDefinitionNames) Reset()         { *m = CustomResourceDef
 func (m *CustomResourceDefinitionNames) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceDefinitionNames) ProtoMessage()    {}
 func (*CustomResourceDefinitionNames) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{3}
+	return fileDescriptorGenerated, []int{8}
 }
 
 func (m *CustomResourceDefinitionNames) GetPlural() string {
@@ -252,27 +485,54 @@ type CustomResourceDefinitionSpec struct {
 	// Group is the group this resource belongs in
 	Group *string `protobuf:"bytes,1,opt,name=group" json:"group,omitempty"`
 	// Version is the version this resource belongs in
+	// Should be always first item in Versions field if provided.
+	// Optional, but at least one of Version or Versions must be set.
+	// Deprecated: Please use `Versions`.
+	// +optional
 	Version *string `protobuf:"bytes,2,opt,name=version" json:"version,omitempty"`
 	// Names are the names used to describe this custom resource
 	Names *CustomResourceDefinitionNames `protobuf:"bytes,3,opt,name=names" json:"names,omitempty"`
 	// Scope indicates whether this resource is cluster or namespace scoped.  Default is namespaced
 	Scope *string `protobuf:"bytes,4,opt,name=scope" json:"scope,omitempty"`
 	// Validation describes the validation methods for CustomResources
+	// Optional, the global validation schema for all versions.
+	// Top-level and per-version schemas are mutually exclusive.
 	// +optional
 	Validation *CustomResourceValidation `protobuf:"bytes,5,opt,name=validation" json:"validation,omitempty"`
-	// Subresources describes the subresources for CustomResources
-	// This field is alpha-level and should only be sent to servers that enable
-	// subresources via the CustomResourceSubresources feature gate.
+	// Subresources describes the subresources for CustomResource
+	// Optional, the global subresources for all versions.
+	// Top-level and per-version subresources are mutually exclusive.
 	// +optional
-	Subresources     *CustomResourceSubresources `protobuf:"bytes,6,opt,name=subresources" json:"subresources,omitempty"`
-	XXX_unrecognized []byte                      `json:"-"`
+	Subresources *CustomResourceSubresources `protobuf:"bytes,6,opt,name=subresources" json:"subresources,omitempty"`
+	// Versions is the list of all supported versions for this resource.
+	// If Version field is provided, this field is optional.
+	// Validation: All versions must use the same validation schema for now. i.e., top
+	// level Validation field is applied to all of these versions.
+	// Order: The version name will be used to compute the order.
+	// If the version string is "kube-like", it will sort above non "kube-like" version strings, which are ordered
+	// lexicographically. "Kube-like" versions start with a "v", then are followed by a number (the major version),
+	// then optionally the string "alpha" or "beta" and another number (the minor version). These are sorted first
+	// by GA > beta > alpha (where GA is a version with no suffix such as beta or alpha), and then by comparing
+	// major version, then minor version. An example sorted list of versions:
+	// v10, v2, v1, v11beta2, v10beta3, v3beta1, v12alpha1, v11alpha2, foo1, foo10.
+	// +optional
+	Versions []*CustomResourceDefinitionVersion `protobuf:"bytes,7,rep,name=versions" json:"versions,omitempty"`
+	// AdditionalPrinterColumns are additional columns shown e.g. in kubectl next to the name. Defaults to a created-at column.
+	// Optional, the global columns for all versions.
+	// Top-level and per-version columns are mutually exclusive.
+	// +optional
+	AdditionalPrinterColumns []*CustomResourceColumnDefinition `protobuf:"bytes,8,rep,name=additionalPrinterColumns" json:"additionalPrinterColumns,omitempty"`
+	// `conversion` defines conversion settings for the CRD.
+	// +optional
+	Conversion       *CustomResourceConversion `protobuf:"bytes,9,opt,name=conversion" json:"conversion,omitempty"`
+	XXX_unrecognized []byte                    `json:"-"`
 }
 
 func (m *CustomResourceDefinitionSpec) Reset()         { *m = CustomResourceDefinitionSpec{} }
 func (m *CustomResourceDefinitionSpec) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceDefinitionSpec) ProtoMessage()    {}
 func (*CustomResourceDefinitionSpec) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{4}
+	return fileDescriptorGenerated, []int{9}
 }
 
 func (m *CustomResourceDefinitionSpec) GetGroup() string {
@@ -317,21 +577,49 @@ func (m *CustomResourceDefinitionSpec) GetSubresources() *CustomResourceSubresou
 	return nil
 }
 
+func (m *CustomResourceDefinitionSpec) GetVersions() []*CustomResourceDefinitionVersion {
+	if m != nil {
+		return m.Versions
+	}
+	return nil
+}
+
+func (m *CustomResourceDefinitionSpec) GetAdditionalPrinterColumns() []*CustomResourceColumnDefinition {
+	if m != nil {
+		return m.AdditionalPrinterColumns
+	}
+	return nil
+}
+
+func (m *CustomResourceDefinitionSpec) GetConversion() *CustomResourceConversion {
+	if m != nil {
+		return m.Conversion
+	}
+	return nil
+}
+
 // CustomResourceDefinitionStatus indicates the state of the CustomResourceDefinition
 type CustomResourceDefinitionStatus struct {
 	// Conditions indicate state for particular aspects of a CustomResourceDefinition
 	Conditions []*CustomResourceDefinitionCondition `protobuf:"bytes,1,rep,name=conditions" json:"conditions,omitempty"`
 	// AcceptedNames are the names that are actually being used to serve discovery
 	// They may be different than the names in spec.
-	AcceptedNames    *CustomResourceDefinitionNames `protobuf:"bytes,2,opt,name=acceptedNames" json:"acceptedNames,omitempty"`
-	XXX_unrecognized []byte                         `json:"-"`
+	AcceptedNames *CustomResourceDefinitionNames `protobuf:"bytes,2,opt,name=acceptedNames" json:"acceptedNames,omitempty"`
+	// StoredVersions are all versions of CustomResources that were ever persisted. Tracking these
+	// versions allows a migration path for stored versions in etcd. The field is mutable
+	// so the migration controller can first finish a migration to another version (i.e.
+	// that no old objects are left in the storage), and then remove the rest of the
+	// versions from this list.
+	// None of the versions in this list can be removed from the spec.Versions field.
+	StoredVersions   []string `protobuf:"bytes,3,rep,name=storedVersions" json:"storedVersions,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *CustomResourceDefinitionStatus) Reset()         { *m = CustomResourceDefinitionStatus{} }
 func (m *CustomResourceDefinitionStatus) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceDefinitionStatus) ProtoMessage()    {}
 func (*CustomResourceDefinitionStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{5}
+	return fileDescriptorGenerated, []int{10}
 }
 
 func (m *CustomResourceDefinitionStatus) GetConditions() []*CustomResourceDefinitionCondition {
@@ -344,6 +632,95 @@ func (m *CustomResourceDefinitionStatus) GetConditions() []*CustomResourceDefini
 func (m *CustomResourceDefinitionStatus) GetAcceptedNames() *CustomResourceDefinitionNames {
 	if m != nil {
 		return m.AcceptedNames
+	}
+	return nil
+}
+
+func (m *CustomResourceDefinitionStatus) GetStoredVersions() []string {
+	if m != nil {
+		return m.StoredVersions
+	}
+	return nil
+}
+
+// CustomResourceDefinitionVersion describes a version for CRD.
+type CustomResourceDefinitionVersion struct {
+	// Name is the version name, e.g. “v1”, “v2beta1”, etc.
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	// Served is a flag enabling/disabling this version from being served via REST APIs
+	Served *bool `protobuf:"varint,2,opt,name=served" json:"served,omitempty"`
+	// Storage flags the version as storage version. There must be exactly one
+	// flagged as storage version.
+	Storage *bool `protobuf:"varint,3,opt,name=storage" json:"storage,omitempty"`
+	// Schema describes the schema for CustomResource used in validation, pruning, and defaulting.
+	// Top-level and per-version schemas are mutually exclusive.
+	// Per-version schemas must not all be set to identical values (top-level validation schema should be used instead)
+	// This field is alpha-level and is only honored by servers that enable the CustomResourceWebhookConversion feature.
+	// +optional
+	Schema *CustomResourceValidation `protobuf:"bytes,4,opt,name=schema" json:"schema,omitempty"`
+	// Subresources describes the subresources for CustomResource
+	// Top-level and per-version subresources are mutually exclusive.
+	// Per-version subresources must not all be set to identical values (top-level subresources should be used instead)
+	// This field is alpha-level and is only honored by servers that enable the CustomResourceWebhookConversion feature.
+	// +optional
+	Subresources *CustomResourceSubresources `protobuf:"bytes,5,opt,name=subresources" json:"subresources,omitempty"`
+	// AdditionalPrinterColumns are additional columns shown e.g. in kubectl next to the name. Defaults to a created-at column.
+	// Top-level and per-version columns are mutually exclusive.
+	// Per-version columns must not all be set to identical values (top-level columns should be used instead)
+	// This field is alpha-level and is only honored by servers that enable the CustomResourceWebhookConversion feature.
+	// NOTE: CRDs created prior to 1.13 populated the top-level additionalPrinterColumns field by default. To apply an
+	// update that changes to per-version additionalPrinterColumns, the top-level additionalPrinterColumns field must
+	// be explicitly set to null
+	// +optional
+	AdditionalPrinterColumns []*CustomResourceColumnDefinition `protobuf:"bytes,6,rep,name=additionalPrinterColumns" json:"additionalPrinterColumns,omitempty"`
+	XXX_unrecognized         []byte                            `json:"-"`
+}
+
+func (m *CustomResourceDefinitionVersion) Reset()         { *m = CustomResourceDefinitionVersion{} }
+func (m *CustomResourceDefinitionVersion) String() string { return proto.CompactTextString(m) }
+func (*CustomResourceDefinitionVersion) ProtoMessage()    {}
+func (*CustomResourceDefinitionVersion) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{11}
+}
+
+func (m *CustomResourceDefinitionVersion) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *CustomResourceDefinitionVersion) GetServed() bool {
+	if m != nil && m.Served != nil {
+		return *m.Served
+	}
+	return false
+}
+
+func (m *CustomResourceDefinitionVersion) GetStorage() bool {
+	if m != nil && m.Storage != nil {
+		return *m.Storage
+	}
+	return false
+}
+
+func (m *CustomResourceDefinitionVersion) GetSchema() *CustomResourceValidation {
+	if m != nil {
+		return m.Schema
+	}
+	return nil
+}
+
+func (m *CustomResourceDefinitionVersion) GetSubresources() *CustomResourceSubresources {
+	if m != nil {
+		return m.Subresources
+	}
+	return nil
+}
+
+func (m *CustomResourceDefinitionVersion) GetAdditionalPrinterColumns() []*CustomResourceColumnDefinition {
+	if m != nil {
+		return m.AdditionalPrinterColumns
 	}
 	return nil
 }
@@ -376,7 +753,7 @@ func (m *CustomResourceSubresourceScale) Reset()         { *m = CustomResourceSu
 func (m *CustomResourceSubresourceScale) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceSubresourceScale) ProtoMessage()    {}
 func (*CustomResourceSubresourceScale) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{6}
+	return fileDescriptorGenerated, []int{12}
 }
 
 func (m *CustomResourceSubresourceScale) GetSpecReplicasPath() string {
@@ -413,14 +790,16 @@ func (m *CustomResourceSubresourceStatus) Reset()         { *m = CustomResourceS
 func (m *CustomResourceSubresourceStatus) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceSubresourceStatus) ProtoMessage()    {}
 func (*CustomResourceSubresourceStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{7}
+	return fileDescriptorGenerated, []int{13}
 }
 
 // CustomResourceSubresources defines the status and scale subresources for CustomResources.
 type CustomResourceSubresources struct {
 	// Status denotes the status subresource for CustomResources
+	// +optional
 	Status *CustomResourceSubresourceStatus `protobuf:"bytes,1,opt,name=status" json:"status,omitempty"`
 	// Scale denotes the scale subresource for CustomResources
+	// +optional
 	Scale            *CustomResourceSubresourceScale `protobuf:"bytes,2,opt,name=scale" json:"scale,omitempty"`
 	XXX_unrecognized []byte                          `json:"-"`
 }
@@ -429,7 +808,7 @@ func (m *CustomResourceSubresources) Reset()         { *m = CustomResourceSubres
 func (m *CustomResourceSubresources) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceSubresources) ProtoMessage()    {}
 func (*CustomResourceSubresources) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{8}
+	return fileDescriptorGenerated, []int{14}
 }
 
 func (m *CustomResourceSubresources) GetStatus() *CustomResourceSubresourceStatus {
@@ -449,6 +828,7 @@ func (m *CustomResourceSubresources) GetScale() *CustomResourceSubresourceScale 
 // CustomResourceValidation is a list of validation methods for CustomResources.
 type CustomResourceValidation struct {
 	// OpenAPIV3Schema is the OpenAPI v3 schema to be validated against.
+	// +optional
 	OpenAPIV3Schema  *JSONSchemaProps `protobuf:"bytes,1,opt,name=openAPIV3Schema" json:"openAPIV3Schema,omitempty"`
 	XXX_unrecognized []byte           `json:"-"`
 }
@@ -457,7 +837,7 @@ func (m *CustomResourceValidation) Reset()         { *m = CustomResourceValidati
 func (m *CustomResourceValidation) String() string { return proto.CompactTextString(m) }
 func (*CustomResourceValidation) ProtoMessage()    {}
 func (*CustomResourceValidation) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{9}
+	return fileDescriptorGenerated, []int{15}
 }
 
 func (m *CustomResourceValidation) GetOpenAPIV3Schema() *JSONSchemaProps {
@@ -477,7 +857,7 @@ type ExternalDocumentation struct {
 func (m *ExternalDocumentation) Reset()                    { *m = ExternalDocumentation{} }
 func (m *ExternalDocumentation) String() string            { return proto.CompactTextString(m) }
 func (*ExternalDocumentation) ProtoMessage()               {}
-func (*ExternalDocumentation) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{10} }
+func (*ExternalDocumentation) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{16} }
 
 func (m *ExternalDocumentation) GetDescription() string {
 	if m != nil && m.Description != nil {
@@ -503,7 +883,7 @@ type JSON struct {
 func (m *JSON) Reset()                    { *m = JSON{} }
 func (m *JSON) String() string            { return proto.CompactTextString(m) }
 func (*JSON) ProtoMessage()               {}
-func (*JSON) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{11} }
+func (*JSON) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{17} }
 
 func (m *JSON) GetRaw() []byte {
 	if m != nil {
@@ -556,7 +936,7 @@ type JSONSchemaProps struct {
 func (m *JSONSchemaProps) Reset()                    { *m = JSONSchemaProps{} }
 func (m *JSONSchemaProps) String() string            { return proto.CompactTextString(m) }
 func (*JSONSchemaProps) ProtoMessage()               {}
-func (*JSONSchemaProps) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{12} }
+func (*JSONSchemaProps) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{18} }
 
 func (m *JSONSchemaProps) GetId() string {
 	if m != nil && m.Id != nil {
@@ -821,7 +1201,7 @@ type JSONSchemaPropsOrArray struct {
 func (m *JSONSchemaPropsOrArray) Reset()                    { *m = JSONSchemaPropsOrArray{} }
 func (m *JSONSchemaPropsOrArray) String() string            { return proto.CompactTextString(m) }
 func (*JSONSchemaPropsOrArray) ProtoMessage()               {}
-func (*JSONSchemaPropsOrArray) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{13} }
+func (*JSONSchemaPropsOrArray) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{19} }
 
 func (m *JSONSchemaPropsOrArray) GetSchema() *JSONSchemaProps {
 	if m != nil {
@@ -848,7 +1228,7 @@ type JSONSchemaPropsOrBool struct {
 func (m *JSONSchemaPropsOrBool) Reset()                    { *m = JSONSchemaPropsOrBool{} }
 func (m *JSONSchemaPropsOrBool) String() string            { return proto.CompactTextString(m) }
 func (*JSONSchemaPropsOrBool) ProtoMessage()               {}
-func (*JSONSchemaPropsOrBool) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{14} }
+func (*JSONSchemaPropsOrBool) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{20} }
 
 func (m *JSONSchemaPropsOrBool) GetAllows() bool {
 	if m != nil && m.Allows != nil {
@@ -875,7 +1255,7 @@ func (m *JSONSchemaPropsOrStringArray) Reset()         { *m = JSONSchemaPropsOrS
 func (m *JSONSchemaPropsOrStringArray) String() string { return proto.CompactTextString(m) }
 func (*JSONSchemaPropsOrStringArray) ProtoMessage()    {}
 func (*JSONSchemaPropsOrStringArray) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{15}
+	return fileDescriptorGenerated, []int{21}
 }
 
 func (m *JSONSchemaPropsOrStringArray) GetSchema() *JSONSchemaProps {
@@ -892,13 +1272,133 @@ func (m *JSONSchemaPropsOrStringArray) GetProperty() []string {
 	return nil
 }
 
+// ServiceReference holds a reference to Service.legacy.k8s.io
+type ServiceReference struct {
+	// `namespace` is the namespace of the service.
+	// Required
+	Namespace *string `protobuf:"bytes,1,opt,name=namespace" json:"namespace,omitempty"`
+	// `name` is the name of the service.
+	// Required
+	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	// `path` is an optional URL path which will be sent in any request to
+	// this service.
+	// +optional
+	Path             *string `protobuf:"bytes,3,opt,name=path" json:"path,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *ServiceReference) Reset()                    { *m = ServiceReference{} }
+func (m *ServiceReference) String() string            { return proto.CompactTextString(m) }
+func (*ServiceReference) ProtoMessage()               {}
+func (*ServiceReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{22} }
+
+func (m *ServiceReference) GetNamespace() string {
+	if m != nil && m.Namespace != nil {
+		return *m.Namespace
+	}
+	return ""
+}
+
+func (m *ServiceReference) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *ServiceReference) GetPath() string {
+	if m != nil && m.Path != nil {
+		return *m.Path
+	}
+	return ""
+}
+
+// WebhookClientConfig contains the information to make a TLS
+// connection with the webhook. It has the same field as admissionregistration.v1beta1.WebhookClientConfig.
+type WebhookClientConfig struct {
+	// `url` gives the location of the webhook, in standard URL form
+	// (`scheme://host:port/path`). Exactly one of `url` or `service`
+	// must be specified.
+	//
+	// The `host` should not refer to a service running in the cluster; use
+	// the `service` field instead. The host might be resolved via external
+	// DNS in some apiservers (e.g., `kube-apiserver` cannot resolve
+	// in-cluster DNS as that would be a layering violation). `host` may
+	// also be an IP address.
+	//
+	// Please note that using `localhost` or `127.0.0.1` as a `host` is
+	// risky unless you take great care to run this webhook on all hosts
+	// which run an apiserver which might need to make calls to this
+	// webhook. Such installs are likely to be non-portable, i.e., not easy
+	// to turn up in a new cluster.
+	//
+	// The scheme must be "https"; the URL must begin with "https://".
+	//
+	// A path is optional, and if present may be any string permissible in
+	// a URL. You may use the path to pass an arbitrary string to the
+	// webhook, for example, a cluster identifier.
+	//
+	// Attempting to use a user or basic auth e.g. "user:password@" is not
+	// allowed. Fragments ("#...") and query parameters ("?...") are not
+	// allowed, either.
+	//
+	// +optional
+	Url *string `protobuf:"bytes,3,opt,name=url" json:"url,omitempty"`
+	// `service` is a reference to the service for this webhook. Either
+	// `service` or `url` must be specified.
+	//
+	// If the webhook is running within the cluster, then you should use `service`.
+	//
+	// Port 443 will be used if it is open, otherwise it is an error.
+	//
+	// +optional
+	Service *ServiceReference `protobuf:"bytes,1,opt,name=service" json:"service,omitempty"`
+	// `caBundle` is a PEM encoded CA bundle which will be used to validate the webhook's server certificate.
+	// If unspecified, system trust roots on the apiserver are used.
+	// +optional
+	CaBundle         []byte `protobuf:"bytes,2,opt,name=caBundle" json:"caBundle,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *WebhookClientConfig) Reset()                    { *m = WebhookClientConfig{} }
+func (m *WebhookClientConfig) String() string            { return proto.CompactTextString(m) }
+func (*WebhookClientConfig) ProtoMessage()               {}
+func (*WebhookClientConfig) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{23} }
+
+func (m *WebhookClientConfig) GetUrl() string {
+	if m != nil && m.Url != nil {
+		return *m.Url
+	}
+	return ""
+}
+
+func (m *WebhookClientConfig) GetService() *ServiceReference {
+	if m != nil {
+		return m.Service
+	}
+	return nil
+}
+
+func (m *WebhookClientConfig) GetCaBundle() []byte {
+	if m != nil {
+		return m.CaBundle
+	}
+	return nil
+}
+
 func init() {
+	proto.RegisterType((*ConversionRequest)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.ConversionRequest")
+	proto.RegisterType((*ConversionResponse)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.ConversionResponse")
+	proto.RegisterType((*ConversionReview)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.ConversionReview")
+	proto.RegisterType((*CustomResourceColumnDefinition)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceColumnDefinition")
+	proto.RegisterType((*CustomResourceConversion)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceConversion")
 	proto.RegisterType((*CustomResourceDefinition)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinition")
 	proto.RegisterType((*CustomResourceDefinitionCondition)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinitionCondition")
 	proto.RegisterType((*CustomResourceDefinitionList)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinitionList")
 	proto.RegisterType((*CustomResourceDefinitionNames)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinitionNames")
 	proto.RegisterType((*CustomResourceDefinitionSpec)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinitionSpec")
 	proto.RegisterType((*CustomResourceDefinitionStatus)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinitionStatus")
+	proto.RegisterType((*CustomResourceDefinitionVersion)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinitionVersion")
 	proto.RegisterType((*CustomResourceSubresourceScale)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceSubresourceScale")
 	proto.RegisterType((*CustomResourceSubresourceStatus)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceSubresourceStatus")
 	proto.RegisterType((*CustomResourceSubresources)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceSubresources")
@@ -909,7 +1409,237 @@ func init() {
 	proto.RegisterType((*JSONSchemaPropsOrArray)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrArray")
 	proto.RegisterType((*JSONSchemaPropsOrBool)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrBool")
 	proto.RegisterType((*JSONSchemaPropsOrStringArray)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrStringArray")
+	proto.RegisterType((*ServiceReference)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.ServiceReference")
+	proto.RegisterType((*WebhookClientConfig)(nil), "k8s.io.apiextensions_apiserver.pkg.apis.apiextensions.v1beta1.WebhookClientConfig")
 }
+func (m *ConversionRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ConversionRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Uid != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Uid)))
+		i += copy(dAtA[i:], *m.Uid)
+	}
+	if m.DesiredAPIVersion != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.DesiredAPIVersion)))
+		i += copy(dAtA[i:], *m.DesiredAPIVersion)
+	}
+	if len(m.Objects) > 0 {
+		for _, msg := range m.Objects {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *ConversionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ConversionResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Uid != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Uid)))
+		i += copy(dAtA[i:], *m.Uid)
+	}
+	if len(m.ConvertedObjects) > 0 {
+		for _, msg := range m.ConvertedObjects {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.Result != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Result.Size()))
+		n1, err := m.Result.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n1
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *ConversionReview) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ConversionReview) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Request != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Request.Size()))
+		n2, err := m.Request.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	if m.Response != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Response.Size()))
+		n3, err := m.Response.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n3
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CustomResourceColumnDefinition) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CustomResourceColumnDefinition) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Type != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Type)))
+		i += copy(dAtA[i:], *m.Type)
+	}
+	if m.Format != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Format)))
+		i += copy(dAtA[i:], *m.Format)
+	}
+	if m.Description != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Description)))
+		i += copy(dAtA[i:], *m.Description)
+	}
+	if m.Priority != nil {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Priority))
+	}
+	if m.JSONPath != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.JSONPath)))
+		i += copy(dAtA[i:], *m.JSONPath)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CustomResourceConversion) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CustomResourceConversion) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Strategy != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Strategy)))
+		i += copy(dAtA[i:], *m.Strategy)
+	}
+	if m.WebhookClientConfig != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.WebhookClientConfig.Size()))
+		n4, err := m.WebhookClientConfig.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func (m *CustomResourceDefinition) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -929,31 +1659,31 @@ func (m *CustomResourceDefinition) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n1, err := m.Metadata.MarshalTo(dAtA[i:])
+		n5, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n1
+		i += n5
 	}
 	if m.Spec != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
-		n2, err := m.Spec.MarshalTo(dAtA[i:])
+		n6, err := m.Spec.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n2
+		i += n6
 	}
 	if m.Status != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n3, err := m.Status.MarshalTo(dAtA[i:])
+		n7, err := m.Status.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n3
+		i += n7
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -992,11 +1722,11 @@ func (m *CustomResourceDefinitionCondition) MarshalTo(dAtA []byte) (int, error) 
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.LastTransitionTime.Size()))
-		n4, err := m.LastTransitionTime.MarshalTo(dAtA[i:])
+		n8, err := m.LastTransitionTime.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n4
+		i += n8
 	}
 	if m.Reason != nil {
 		dAtA[i] = 0x22
@@ -1035,11 +1765,11 @@ func (m *CustomResourceDefinitionList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n5, err := m.Metadata.MarshalTo(dAtA[i:])
+		n9, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n5
+		i += n9
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -1165,11 +1895,11 @@ func (m *CustomResourceDefinitionSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Names.Size()))
-		n6, err := m.Names.MarshalTo(dAtA[i:])
+		n10, err := m.Names.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n10
 	}
 	if m.Scope != nil {
 		dAtA[i] = 0x22
@@ -1181,21 +1911,55 @@ func (m *CustomResourceDefinitionSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x2a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Validation.Size()))
-		n7, err := m.Validation.MarshalTo(dAtA[i:])
+		n11, err := m.Validation.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n11
 	}
 	if m.Subresources != nil {
 		dAtA[i] = 0x32
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Subresources.Size()))
-		n8, err := m.Subresources.MarshalTo(dAtA[i:])
+		n12, err := m.Subresources.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n8
+		i += n12
+	}
+	if len(m.Versions) > 0 {
+		for _, msg := range m.Versions {
+			dAtA[i] = 0x3a
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if len(m.AdditionalPrinterColumns) > 0 {
+		for _, msg := range m.AdditionalPrinterColumns {
+			dAtA[i] = 0x42
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.Conversion != nil {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Conversion.Size()))
+		n13, err := m.Conversion.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n13
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -1234,11 +1998,105 @@ func (m *CustomResourceDefinitionStatus) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.AcceptedNames.Size()))
-		n9, err := m.AcceptedNames.MarshalTo(dAtA[i:])
+		n14, err := m.AcceptedNames.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n9
+		i += n14
+	}
+	if len(m.StoredVersions) > 0 {
+		for _, s := range m.StoredVersions {
+			dAtA[i] = 0x1a
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CustomResourceDefinitionVersion) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CustomResourceDefinitionVersion) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Served != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.Served {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.Storage != nil {
+		dAtA[i] = 0x18
+		i++
+		if *m.Storage {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.Schema != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Schema.Size()))
+		n15, err := m.Schema.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n15
+	}
+	if m.Subresources != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Subresources.Size()))
+		n16, err := m.Subresources.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n16
+	}
+	if len(m.AdditionalPrinterColumns) > 0 {
+		for _, msg := range m.AdditionalPrinterColumns {
+			dAtA[i] = 0x32
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -1325,21 +2183,21 @@ func (m *CustomResourceSubresources) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n10, err := m.Status.MarshalTo(dAtA[i:])
+		n17, err := m.Status.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n17
 	}
 	if m.Scale != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Scale.Size()))
-		n11, err := m.Scale.MarshalTo(dAtA[i:])
+		n18, err := m.Scale.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n11
+		i += n18
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -1366,11 +2224,11 @@ func (m *CustomResourceValidation) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.OpenAPIV3Schema.Size()))
-		n12, err := m.OpenAPIV3Schema.MarshalTo(dAtA[i:])
+		n19, err := m.OpenAPIV3Schema.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n12
+		i += n19
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -1499,11 +2357,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x42
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Default.Size()))
-		n13, err := m.Default.MarshalTo(dAtA[i:])
+		n20, err := m.Default.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n13
+		i += n20
 	}
 	if m.Maximum != nil {
 		dAtA[i] = 0x49
@@ -1638,11 +2496,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Items.Size()))
-		n14, err := m.Items.MarshalTo(dAtA[i:])
+		n21, err := m.Items.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n14
+		i += n21
 	}
 	if len(m.AllOf) > 0 {
 		for _, msg := range m.AllOf {
@@ -1692,11 +2550,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Not.Size()))
-		n15, err := m.Not.MarshalTo(dAtA[i:])
+		n22, err := m.Not.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n15
+		i += n22
 	}
 	if len(m.Properties) > 0 {
 		for k, _ := range m.Properties {
@@ -1720,11 +2578,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n16, err := v.MarshalTo(dAtA[i:])
+				n23, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n16
+				i += n23
 			}
 		}
 	}
@@ -1734,11 +2592,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.AdditionalProperties.Size()))
-		n17, err := m.AdditionalProperties.MarshalTo(dAtA[i:])
+		n24, err := m.AdditionalProperties.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n17
+		i += n24
 	}
 	if len(m.PatternProperties) > 0 {
 		for k, _ := range m.PatternProperties {
@@ -1762,11 +2620,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n18, err := v.MarshalTo(dAtA[i:])
+				n25, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n18
+				i += n25
 			}
 		}
 	}
@@ -1792,11 +2650,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n19, err := v.MarshalTo(dAtA[i:])
+				n26, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n19
+				i += n26
 			}
 		}
 	}
@@ -1806,11 +2664,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x2
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.AdditionalItems.Size()))
-		n20, err := m.AdditionalItems.MarshalTo(dAtA[i:])
+		n27, err := m.AdditionalItems.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n20
+		i += n27
 	}
 	if len(m.Definitions) > 0 {
 		for k, _ := range m.Definitions {
@@ -1834,11 +2692,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintGenerated(dAtA, i, uint64(v.Size()))
-				n21, err := v.MarshalTo(dAtA[i:])
+				n28, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n21
+				i += n28
 			}
 		}
 	}
@@ -1848,11 +2706,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x2
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.ExternalDocs.Size()))
-		n22, err := m.ExternalDocs.MarshalTo(dAtA[i:])
+		n29, err := m.ExternalDocs.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n22
+		i += n29
 	}
 	if m.Example != nil {
 		dAtA[i] = 0xa2
@@ -1860,11 +2718,11 @@ func (m *JSONSchemaProps) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x2
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Example.Size()))
-		n23, err := m.Example.MarshalTo(dAtA[i:])
+		n30, err := m.Example.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n23
+		i += n30
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -1891,11 +2749,11 @@ func (m *JSONSchemaPropsOrArray) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Schema.Size()))
-		n24, err := m.Schema.MarshalTo(dAtA[i:])
+		n31, err := m.Schema.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n24
+		i += n31
 	}
 	if len(m.JSONSchemas) > 0 {
 		for _, msg := range m.JSONSchemas {
@@ -1944,11 +2802,11 @@ func (m *JSONSchemaPropsOrBool) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Schema.Size()))
-		n25, err := m.Schema.MarshalTo(dAtA[i:])
+		n32, err := m.Schema.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n25
+		i += n32
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -1975,11 +2833,11 @@ func (m *JSONSchemaPropsOrStringArray) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Schema.Size()))
-		n26, err := m.Schema.MarshalTo(dAtA[i:])
+		n33, err := m.Schema.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n26
+		i += n33
 	}
 	if len(m.Property) > 0 {
 		for _, s := range m.Property {
@@ -2002,6 +2860,88 @@ func (m *JSONSchemaPropsOrStringArray) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *ServiceReference) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ServiceReference) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Namespace != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Namespace)))
+		i += copy(dAtA[i:], *m.Namespace)
+	}
+	if m.Name != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.Path != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
+		i += copy(dAtA[i:], *m.Path)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *WebhookClientConfig) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *WebhookClientConfig) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Service != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Service.Size()))
+		n34, err := m.Service.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n34
+	}
+	if m.CaBundle != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(m.CaBundle)))
+		i += copy(dAtA[i:], m.CaBundle)
+	}
+	if m.Url != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Url)))
+		i += copy(dAtA[i:], *m.Url)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func encodeVarintGenerated(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -2011,6 +2951,118 @@ func encodeVarintGenerated(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
+func (m *ConversionRequest) Size() (n int) {
+	var l int
+	_ = l
+	if m.Uid != nil {
+		l = len(*m.Uid)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.DesiredAPIVersion != nil {
+		l = len(*m.DesiredAPIVersion)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.Objects) > 0 {
+		for _, e := range m.Objects {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ConversionResponse) Size() (n int) {
+	var l int
+	_ = l
+	if m.Uid != nil {
+		l = len(*m.Uid)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.ConvertedObjects) > 0 {
+		for _, e := range m.ConvertedObjects {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.Result != nil {
+		l = m.Result.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ConversionReview) Size() (n int) {
+	var l int
+	_ = l
+	if m.Request != nil {
+		l = m.Request.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Response != nil {
+		l = m.Response.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CustomResourceColumnDefinition) Size() (n int) {
+	var l int
+	_ = l
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Type != nil {
+		l = len(*m.Type)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Format != nil {
+		l = len(*m.Format)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Description != nil {
+		l = len(*m.Description)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Priority != nil {
+		n += 1 + sovGenerated(uint64(*m.Priority))
+	}
+	if m.JSONPath != nil {
+		l = len(*m.JSONPath)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CustomResourceConversion) Size() (n int) {
+	var l int
+	_ = l
+	if m.Strategy != nil {
+		l = len(*m.Strategy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.WebhookClientConfig != nil {
+		l = m.WebhookClientConfig.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *CustomResourceDefinition) Size() (n int) {
 	var l int
 	_ = l
@@ -2144,6 +3196,22 @@ func (m *CustomResourceDefinitionSpec) Size() (n int) {
 		l = m.Subresources.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if len(m.Versions) > 0 {
+		for _, e := range m.Versions {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if len(m.AdditionalPrinterColumns) > 0 {
+		for _, e := range m.AdditionalPrinterColumns {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.Conversion != nil {
+		l = m.Conversion.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2162,6 +3230,45 @@ func (m *CustomResourceDefinitionStatus) Size() (n int) {
 	if m.AcceptedNames != nil {
 		l = m.AcceptedNames.Size()
 		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.StoredVersions) > 0 {
+		for _, s := range m.StoredVersions {
+			l = len(s)
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CustomResourceDefinitionVersion) Size() (n int) {
+	var l int
+	_ = l
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Served != nil {
+		n += 2
+	}
+	if m.Storage != nil {
+		n += 2
+	}
+	if m.Schema != nil {
+		l = m.Schema.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Subresources != nil {
+		l = m.Subresources.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.AdditionalPrinterColumns) > 0 {
+		for _, e := range m.AdditionalPrinterColumns {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -2500,6 +3607,48 @@ func (m *JSONSchemaPropsOrStringArray) Size() (n int) {
 	return n
 }
 
+func (m *ServiceReference) Size() (n int) {
+	var l int
+	_ = l
+	if m.Namespace != nil {
+		l = len(*m.Namespace)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Path != nil {
+		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *WebhookClientConfig) Size() (n int) {
+	var l int
+	_ = l
+	if m.Service != nil {
+		l = m.Service.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.CaBundle != nil {
+		l = len(m.CaBundle)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Url != nil {
+		l = len(*m.Url)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func sovGenerated(x uint64) (n int) {
 	for {
 		n++
@@ -2512,6 +3661,745 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *ConversionRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ConversionRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ConversionRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Uid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Uid = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DesiredAPIVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.DesiredAPIVersion = &s
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Objects", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Objects = append(m.Objects, &k8s_io_apimachinery_pkg_runtime.RawExtension{})
+			if err := m.Objects[len(m.Objects)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ConversionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ConversionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ConversionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Uid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Uid = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ConvertedObjects", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ConvertedObjects = append(m.ConvertedObjects, &k8s_io_apimachinery_pkg_runtime.RawExtension{})
+			if err := m.ConvertedObjects[len(m.ConvertedObjects)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Result == nil {
+				m.Result = &k8s_io_apimachinery_pkg_apis_meta_v1.Status{}
+			}
+			if err := m.Result.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ConversionReview) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ConversionReview: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ConversionReview: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Request", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Request == nil {
+				m.Request = &ConversionRequest{}
+			}
+			if err := m.Request.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Response", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Response == nil {
+				m.Response = &ConversionResponse{}
+			}
+			if err := m.Response.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CustomResourceColumnDefinition) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CustomResourceColumnDefinition: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CustomResourceColumnDefinition: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Type = &s
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Format", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Format = &s
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Description = &s
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Priority", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Priority = &v
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field JSONPath", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.JSONPath = &s
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CustomResourceConversion) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CustomResourceConversion: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CustomResourceConversion: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Strategy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Strategy = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field WebhookClientConfig", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.WebhookClientConfig == nil {
+				m.WebhookClientConfig = &WebhookClientConfig{}
+			}
+			if err := m.WebhookClientConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *CustomResourceDefinition) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -3429,6 +5317,101 @@ func (m *CustomResourceDefinitionSpec) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Versions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Versions = append(m.Versions, &CustomResourceDefinitionVersion{})
+			if err := m.Versions[len(m.Versions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdditionalPrinterColumns", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AdditionalPrinterColumns = append(m.AdditionalPrinterColumns, &CustomResourceColumnDefinition{})
+			if err := m.AdditionalPrinterColumns[len(m.AdditionalPrinterColumns)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Conversion", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Conversion == nil {
+				m.Conversion = &CustomResourceConversion{}
+			}
+			if err := m.Conversion.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -3541,6 +5524,255 @@ func (m *CustomResourceDefinitionStatus) Unmarshal(dAtA []byte) error {
 				m.AcceptedNames = &CustomResourceDefinitionNames{}
 			}
 			if err := m.AcceptedNames.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StoredVersions", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.StoredVersions = append(m.StoredVersions, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CustomResourceDefinitionVersion) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CustomResourceDefinitionVersion: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CustomResourceDefinitionVersion: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Served", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			b := bool(v != 0)
+			m.Served = &b
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Storage", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			b := bool(v != 0)
+			m.Storage = &b
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Schema", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Schema == nil {
+				m.Schema = &CustomResourceValidation{}
+			}
+			if err := m.Schema.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subresources", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Subresources == nil {
+				m.Subresources = &CustomResourceSubresources{}
+			}
+			if err := m.Subresources.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdditionalPrinterColumns", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AdditionalPrinterColumns = append(m.AdditionalPrinterColumns, &CustomResourceColumnDefinition{})
+			if err := m.AdditionalPrinterColumns[len(m.AdditionalPrinterColumns)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -5871,6 +8103,292 @@ func (m *JSONSchemaPropsOrStringArray) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *ServiceReference) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ServiceReference: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ServiceReference: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Namespace", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Namespace = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Path = &s
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *WebhookClientConfig) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: WebhookClientConfig: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: WebhookClientConfig: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Service", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Service == nil {
+				m.Service = &ServiceReference{}
+			}
+			if err := m.Service.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CaBundle", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CaBundle = append(m.CaBundle[:0], dAtA[iNdEx:postIndex]...)
+			if m.CaBundle == nil {
+				m.CaBundle = []byte{}
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Url", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Url = &s
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipGenerated(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -5981,102 +8499,132 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 1550 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x58, 0xcb, 0x6f, 0x14, 0x47,
-	0x13, 0xff, 0x66, 0xd7, 0xc6, 0x76, 0xdb, 0x60, 0xbb, 0x3f, 0x30, 0xc3, 0x7e, 0xc6, 0x98, 0xf9,
-	0x38, 0x58, 0x28, 0x59, 0x07, 0x88, 0x22, 0x14, 0x29, 0x07, 0x5e, 0x07, 0x9e, 0x46, 0x63, 0x02,
-	0x0a, 0x84, 0x47, 0x7b, 0xa6, 0x76, 0xdd, 0x78, 0xa6, 0x67, 0xe8, 0xee, 0x59, 0xd6, 0x87, 0xa0,
-	0x24, 0xca, 0x81, 0x1c, 0x92, 0x4b, 0x90, 0x92, 0x43, 0x4e, 0x39, 0x45, 0xf9, 0x37, 0x72, 0xc9,
-	0x91, 0x6b, 0x0e, 0x91, 0x22, 0xf2, 0x1f, 0xe4, 0x2f, 0x88, 0xfa, 0xb1, 0xb3, 0xb3, 0x2f, 0x82,
-	0xc4, 0x2c, 0xdc, 0xa6, 0xba, 0xaa, 0xeb, 0x57, 0x5d, 0x55, 0x5d, 0xfd, 0xdb, 0x45, 0x57, 0x77,
-	0x4e, 0x8b, 0x3a, 0x4d, 0xd6, 0x49, 0x4a, 0xa1, 0x2d, 0x81, 0x09, 0x9a, 0x30, 0xf1, 0x2e, 0x49,
-	0xa9, 0x00, 0xde, 0x02, 0xbe, 0x9e, 0xee, 0x34, 0x95, 0x4e, 0xf4, 0x1a, 0xac, 0xb7, 0x4e, 0x6c,
-	0x81, 0x24, 0x27, 0xd6, 0x9b, 0xc0, 0x80, 0x13, 0x09, 0x61, 0x3d, 0xe5, 0x89, 0x4c, 0xf0, 0x47,
-	0xc6, 0x5d, 0xbd, 0xc7, 0xfa, 0x7e, 0xee, 0xae, 0x9e, 0xee, 0x34, 0x95, 0x4e, 0xf4, 0x1a, 0xd4,
-	0xad, 0xbb, 0xda, 0xfb, 0xdd, 0x68, 0x62, 0x12, 0x6c, 0x53, 0x06, 0x7c, 0xb7, 0x1b, 0x42, 0x0c,
-	0x92, 0xac, 0xb7, 0x06, 0x40, 0x6b, 0xeb, 0xa3, 0x76, 0xf1, 0x8c, 0x49, 0x1a, 0xc3, 0xc0, 0x86,
-	0x0f, 0xfe, 0x6d, 0x83, 0x08, 0xb6, 0x21, 0x26, 0x03, 0xfb, 0x4e, 0x8d, 0xda, 0x97, 0x49, 0x1a,
-	0xad, 0x53, 0x26, 0x85, 0xe4, 0xfd, 0x9b, 0xbc, 0xe7, 0x15, 0xe4, 0x9e, 0xcb, 0x84, 0x4c, 0x62,
-	0x1f, 0x44, 0x92, 0xf1, 0x00, 0xce, 0x43, 0x83, 0x32, 0x2a, 0x69, 0xc2, 0xf0, 0x15, 0x34, 0xad,
-	0x4e, 0x15, 0x12, 0x49, 0x5c, 0x67, 0xd5, 0x59, 0x9b, 0x3d, 0xf9, 0x5e, 0xbd, 0x9b, 0xc2, 0x1c,
-	0xa4, 0x9b, 0x37, 0x65, 0x5d, 0x6f, 0x9d, 0xa8, 0x6f, 0x6c, 0x3d, 0x84, 0x40, 0x5e, 0x05, 0x49,
-	0xfc, 0xdc, 0x03, 0x4e, 0xd0, 0x84, 0x48, 0x21, 0x70, 0x2b, 0xda, 0xd3, 0x9d, 0xfa, 0x6b, 0x15,
-	0xa3, 0x3e, 0x2a, 0xe8, 0xcd, 0x14, 0x02, 0x5f, 0x03, 0xe1, 0x0c, 0xed, 0x11, 0x92, 0xc8, 0x4c,
-	0xb8, 0x55, 0x0d, 0x79, 0x77, 0x5c, 0x90, 0x1a, 0xc4, 0xb7, 0x60, 0xde, 0x1f, 0x0e, 0x3a, 0x3a,
-	0xca, 0xf4, 0x5c, 0xc2, 0x42, 0x93, 0x5b, 0x8c, 0x26, 0xe4, 0x6e, 0x0a, 0x3a, 0xaf, 0x33, 0xbe,
-	0xfe, 0xc6, 0x4b, 0x79, 0xc0, 0x15, 0xbd, 0x6a, 0x25, 0x7c, 0x1b, 0xe1, 0x88, 0x08, 0x79, 0x83,
-	0x13, 0x26, 0xf4, 0xee, 0x1b, 0x34, 0x06, 0x7b, 0xa8, 0xe3, 0xaf, 0x56, 0x11, 0xb5, 0xc3, 0x1f,
-	0xe2, 0x45, 0x61, 0x72, 0x20, 0x22, 0x61, 0xee, 0x84, 0xc1, 0x34, 0x12, 0x76, 0xd1, 0x54, 0x0c,
-	0x42, 0x90, 0x26, 0xb8, 0x93, 0x5a, 0xd1, 0x11, 0xbd, 0xdf, 0x1d, 0xb4, 0x3c, 0xea, 0x7c, 0x57,
-	0xa8, 0x90, 0xf8, 0xd2, 0x40, 0xdb, 0xd4, 0x5f, 0x2d, 0x48, 0xb5, 0xbb, 0xaf, 0x69, 0x62, 0x34,
-	0x49, 0x25, 0xc4, 0x2a, 0x23, 0xd5, 0xb5, 0xd9, 0x93, 0xb7, 0xc6, 0x54, 0x42, 0xdf, 0xa0, 0x78,
-	0xbf, 0x3a, 0xe8, 0xf0, 0x28, 0x9b, 0x6b, 0x24, 0x06, 0xa1, 0xf2, 0x95, 0x46, 0x19, 0x27, 0x91,
-	0xad, 0x9c, 0x95, 0x70, 0x0d, 0x4d, 0x0b, 0xca, 0x9a, 0x59, 0x44, 0xb8, 0xad, 0x5e, 0x2e, 0xe3,
-	0x15, 0x84, 0xc4, 0x76, 0xc2, 0xa5, 0xf6, 0xe0, 0x56, 0x57, 0xab, 0x6b, 0x33, 0x7e, 0x61, 0x45,
-	0xf5, 0xc2, 0x0e, 0x65, 0xa1, 0xad, 0x80, 0xfe, 0x56, 0xfe, 0x22, 0x2a, 0xe4, 0x65, 0xb5, 0x6e,
-	0x0a, 0x90, 0xcb, 0xca, 0x5f, 0x40, 0x24, 0x34, 0x13, 0x4e, 0x41, 0xb8, 0x7b, 0x8c, 0xbf, 0xee,
-	0x8a, 0xf7, 0xbc, 0x3a, 0xba, 0x42, 0xea, 0x7e, 0xe0, 0xfd, 0x68, 0xb2, 0xc9, 0x93, 0x2c, 0xb5,
-	0x67, 0x30, 0x82, 0x2a, 0x79, 0x0b, 0xb8, 0x4a, 0x98, 0x3d, 0x41, 0x47, 0xc4, 0x1c, 0x4d, 0x32,
-	0x1b, 0xbb, 0x2a, 0xe7, 0xa7, 0x63, 0xaa, 0x82, 0xce, 0x86, 0x6f, 0xa0, 0x54, 0x8c, 0x22, 0x48,
-	0x52, 0xb0, 0x59, 0x31, 0x02, 0x7e, 0x8c, 0x50, 0x8b, 0x44, 0x34, 0x24, 0xca, 0x5e, 0x27, 0xa6,
-	0xec, 0xa6, 0xb8, 0x99, 0xbb, 0xf7, 0x0b, 0x50, 0xf8, 0x33, 0x34, 0x27, 0xb2, 0x2d, 0x6e, 0x8d,
-	0x54, 0xd6, 0x15, 0xf4, 0x27, 0xa5, 0x42, 0x6f, 0x16, 0x00, 0xfc, 0x1e, 0x38, 0xef, 0xe7, 0x0a,
-	0x5a, 0x79, 0xf9, 0xfc, 0xc1, 0x9f, 0x3b, 0x08, 0x05, 0x9d, 0xf9, 0x22, 0x5c, 0x47, 0x5f, 0x98,
-	0x07, 0x63, 0x2a, 0x55, 0x3e, 0xc8, 0xfc, 0x02, 0x26, 0xfe, 0xd2, 0x41, 0x7b, 0x49, 0x10, 0x40,
-	0x2a, 0x21, 0x34, 0xcd, 0x5e, 0x79, 0x03, 0x0d, 0xd3, 0x0b, 0xe9, 0xfd, 0xe2, 0xf4, 0xa7, 0xaa,
-	0x90, 0xd7, 0xcd, 0x80, 0x44, 0x80, 0x8f, 0xa3, 0x05, 0xf5, 0x42, 0xf8, 0x90, 0x46, 0x34, 0x20,
-	0xe2, 0x3a, 0x91, 0xdb, 0xf6, 0x2a, 0x0c, 0xac, 0xe3, 0x3a, 0xc2, 0x66, 0x0c, 0xf7, 0x58, 0x9b,
-	0x0b, 0x32, 0x44, 0x83, 0xdf, 0x41, 0x8b, 0x11, 0xd9, 0x82, 0x68, 0x13, 0x22, 0x08, 0x64, 0xc2,
-	0xb5, 0x79, 0x55, 0x9b, 0x0f, 0x2a, 0xbc, 0xa3, 0xe8, 0xc8, 0xe8, 0x58, 0xcd, 0x7b, 0xf2, 0x75,
-	0x05, 0xd5, 0x46, 0xf7, 0x09, 0x6e, 0xe5, 0x8f, 0x86, 0x99, 0xb5, 0xf7, 0xc6, 0xd5, 0x92, 0xbd,
-	0xcf, 0x1c, 0x16, 0xea, 0x7e, 0x92, 0x08, 0x6c, 0x89, 0xef, 0x8e, 0x0d, 0x56, 0x81, 0xf8, 0x06,
-	0xcb, 0x7b, 0xe6, 0xf4, 0xd3, 0x95, 0xee, 0x75, 0xc5, 0x6d, 0x34, 0x9f, 0xa4, 0xc0, 0xce, 0x5c,
-	0xbf, 0x78, 0xf3, 0xd4, 0xa6, 0xe6, 0x48, 0x36, 0x25, 0xd7, 0x5e, 0x33, 0xb6, 0x4b, 0x9b, 0x1b,
-	0xd7, 0x8c, 0xc3, 0xeb, 0x3c, 0x49, 0x85, 0xdf, 0x0f, 0xe3, 0x5d, 0x46, 0x07, 0x2e, 0xb4, 0x25,
-	0x70, 0x46, 0xa2, 0xf3, 0x49, 0x90, 0xc5, 0xc0, 0xa4, 0x09, 0x69, 0x15, 0xcd, 0x86, 0x20, 0x02,
-	0x4e, 0x53, 0x3d, 0xaf, 0x4c, 0x8f, 0x15, 0x97, 0xf0, 0x02, 0xaa, 0x66, 0x3c, 0xb2, 0xfd, 0xa4,
-	0x3e, 0x3d, 0x17, 0x4d, 0x28, 0x40, 0xa5, 0xe1, 0xe4, 0xb1, 0xde, 0x33, 0xe7, 0xab, 0x4f, 0xef,
-	0xe9, 0x41, 0x34, 0xdf, 0x17, 0x0b, 0xde, 0x87, 0x2a, 0x34, 0xb4, 0x8e, 0x2b, 0x34, 0xd4, 0x1c,
-	0xc2, 0x9c, 0xbd, 0xc3, 0x21, 0xb4, 0xa4, 0xbd, 0x41, 0xc3, 0x36, 0xa2, 0xfa, 0xec, 0x8f, 0x6d,
-	0x62, 0x30, 0xb6, 0x0e, 0x47, 0x99, 0xec, 0xe5, 0x28, 0x8d, 0x84, 0xc7, 0x44, 0xea, 0x09, 0x38,
-	0xe3, 0x5b, 0x49, 0x8d, 0x6b, 0x49, 0x65, 0x04, 0xee, 0x94, 0x19, 0xd7, 0x5a, 0xc0, 0x77, 0xd1,
-	0x54, 0x08, 0x0d, 0x92, 0x45, 0xd2, 0x9d, 0xd6, 0xa5, 0x38, 0x57, 0x42, 0x29, 0xfc, 0x8e, 0x4f,
-	0x4d, 0x52, 0x48, 0x9b, 0xc6, 0x59, 0xec, 0xce, 0xac, 0x3a, 0x6b, 0x8e, 0xdf, 0x11, 0xd5, 0x0d,
-	0x87, 0x76, 0x10, 0x65, 0x82, 0xb6, 0xe0, 0xaa, 0x35, 0x41, 0xab, 0xce, 0xda, 0xb4, 0x3f, 0xb0,
-	0xae, 0xbd, 0x50, 0xa6, 0x4d, 0x66, 0xad, 0x17, 0x23, 0xf6, 0x7a, 0xb1, 0x26, 0x73, 0xfd, 0x5e,
-	0xac, 0xed, 0x32, 0x9a, 0x89, 0x49, 0xfb, 0x0a, 0xb0, 0xa6, 0xdc, 0x76, 0xf7, 0xae, 0x3a, 0x6b,
-	0x55, 0xbf, 0xbb, 0xa0, 0xb5, 0x94, 0x59, 0xed, 0x3e, 0xab, 0xed, 0x2c, 0xa8, 0x08, 0x52, 0x22,
-	0x55, 0x03, 0xb9, 0xf3, 0xe6, 0xe5, 0xb5, 0xa2, 0xa2, 0x01, 0x31, 0x69, 0x5f, 0xd4, 0x14, 0x68,
-	0x41, 0x6f, 0xcb, 0x65, 0xad, 0xa3, 0xcc, 0xe8, 0x16, 0xad, 0xce, 0xca, 0xaa, 0xb8, 0x19, 0xa3,
-	0x8f, 0x32, 0x30, 0x6a, 0xac, 0x83, 0x2e, 0x2e, 0x29, 0x12, 0x11, 0x67, 0x91, 0xa4, 0x69, 0x04,
-	0x1b, 0x0d, 0xf7, 0xbf, 0xfa, 0xe0, 0x85, 0x15, 0x7c, 0x0b, 0x4d, 0x00, 0xcb, 0x62, 0x77, 0xbf,
-	0x7e, 0x47, 0x4a, 0xa9, 0x9b, 0x76, 0x88, 0x8f, 0xa1, 0xbd, 0x31, 0x69, 0xab, 0xee, 0x05, 0x2e,
-	0x15, 0x81, 0x39, 0xa0, 0x63, 0xef, 0x5d, 0xd4, 0x56, 0x94, 0x15, 0xac, 0x96, 0xac, 0x55, 0x71,
-	0x51, 0xa5, 0x80, 0xc3, 0xa3, 0x8c, 0x72, 0x08, 0xdd, 0x83, 0x9a, 0x07, 0xe5, 0x32, 0xde, 0xe9,
-	0x50, 0x47, 0x57, 0x77, 0xde, 0xc7, 0xe5, 0x0e, 0x81, 0x0d, 0x7e, 0x86, 0x73, 0xb2, 0x6b, 0x89,
-	0x23, 0x0e, 0xd1, 0x24, 0x89, 0xa2, 0x8d, 0x86, 0x7b, 0x48, 0xa7, 0xab, 0xec, 0x89, 0x63, 0x9c,
-	0x2b, 0x94, 0x84, 0xa9, 0x72, 0xd5, 0xc6, 0x83, 0xa2, 0x9d, 0xeb, 0xb3, 0xb0, 0xdd, 0x8d, 0x86,
-	0xfb, 0xbf, 0x31, 0x9d, 0x45, 0x39, 0xc7, 0x0f, 0x50, 0x95, 0x25, 0xd2, 0x5d, 0x1e, 0xcb, 0x84,
-	0x56, 0xae, 0xf1, 0x13, 0x84, 0xd2, 0x6e, 0xff, 0x1c, 0xd6, 0x87, 0xb9, 0x57, 0x2e, 0x50, 0xbd,
-	0xdb, 0x8b, 0x17, 0x98, 0xe4, 0xbb, 0x7e, 0x01, 0x11, 0x3f, 0x75, 0xd0, 0x7e, 0x12, 0x1a, 0x6e,
-	0x44, 0xa2, 0x42, 0x2b, 0xaf, 0xe8, 0x33, 0xdf, 0x28, 0xbb, 0x21, 0xcf, 0x26, 0x49, 0xe4, 0x0f,
-	0x45, 0xc4, 0xdf, 0x39, 0x68, 0xd1, 0x8e, 0x94, 0x42, 0x1c, 0x47, 0x74, 0x4a, 0xa0, 0xec, 0x94,
-	0xf4, 0xe3, 0x98, 0xcc, 0x0c, 0xe2, 0xe3, 0xaf, 0x1c, 0x34, 0x17, 0x42, 0x0a, 0x2c, 0x04, 0x16,
-	0xa8, 0x80, 0x56, 0x4b, 0xe1, 0xac, 0xfd, 0x01, 0x9d, 0x2f, 0x40, 0x98, 0x58, 0x7a, 0x50, 0xf1,
-	0x13, 0x34, 0xdf, 0x4d, 0x9a, 0x99, 0x97, 0x47, 0xc7, 0x58, 0xa1, 0x7e, 0x30, 0xfc, 0x85, 0xa3,
-	0x5e, 0xe2, 0x0e, 0xa7, 0x15, 0xae, 0xa7, 0xb3, 0x70, 0xbf, 0xf4, 0x2c, 0xe4, 0x08, 0x26, 0x09,
-	0x45, 0x4c, 0xdc, 0x46, 0x73, 0xd0, 0x65, 0x30, 0xc2, 0xfd, 0x7f, 0x29, 0x09, 0x18, 0x4a, 0x8a,
-	0xfc, 0x1e, 0x24, 0x45, 0x11, 0xa0, 0x4d, 0xe2, 0x34, 0x02, 0xf7, 0x58, 0x89, 0x14, 0xc1, 0xfa,
-	0xac, 0x7d, 0xe3, 0xa0, 0xf9, 0xbe, 0x56, 0x54, 0x5c, 0x68, 0x07, 0x76, 0x2d, 0x69, 0x52, 0x9f,
-	0x6a, 0xe4, 0xb5, 0x48, 0x94, 0x75, 0xc8, 0x6c, 0xe9, 0x23, 0x4f, 0x3b, 0xff, 0xb0, 0x72, 0xda,
-	0xa9, 0x3d, 0x73, 0xd0, 0xd2, 0xf0, 0x1b, 0xf2, 0x56, 0xc3, 0xfa, 0xd1, 0x41, 0x8b, 0x03, 0xf7,
-	0x64, 0x48, 0x44, 0x8f, 0x7a, 0x23, 0xba, 0x53, 0xf6, 0x0d, 0xd9, 0x94, 0x9c, 0xb2, 0xa6, 0x7d,
-	0x5a, 0xbb, 0xe1, 0x7d, 0xeb, 0xa0, 0x85, 0xfe, 0x06, 0x7e, 0x9b, 0xf9, 0xf2, 0xfe, 0x76, 0xd0,
-	0xd2, 0x70, 0x46, 0x80, 0x1b, 0x39, 0x03, 0x1f, 0xcf, 0xaf, 0x8f, 0x0e, 0xa3, 0x4f, 0xd1, 0xec,
-	0xc3, 0x5c, 0xd5, 0xf9, 0x83, 0xac, 0x6c, 0xb0, 0x22, 0x84, 0xf7, 0xbd, 0x83, 0x0e, 0x0c, 0x9d,
-	0x69, 0xea, 0x57, 0x01, 0x89, 0xa2, 0xe4, 0xb1, 0xf9, 0x11, 0x3a, 0xed, 0x5b, 0xa9, 0x90, 0x8b,
-	0xca, 0x38, 0x73, 0xe1, 0xfd, 0xe4, 0xa0, 0xe5, 0x97, 0xf5, 0xd2, 0x1b, 0x2b, 0x4a, 0x0d, 0x4d,
-	0x5b, 0x06, 0xb0, 0xab, 0x2b, 0x32, 0xe3, 0xe7, 0xf2, 0xd9, 0x43, 0xbf, 0xbd, 0x58, 0x71, 0x9e,
-	0xbf, 0x58, 0x71, 0xfe, 0x7c, 0xb1, 0xe2, 0xfc, 0xf0, 0xd7, 0xca, 0x7f, 0x6e, 0x4f, 0x59, 0x77,
-	0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0xfd, 0xf0, 0x24, 0x51, 0xe9, 0x18, 0x00, 0x00,
+	// 2022 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x59, 0xcd, 0x8f, 0x1c, 0x47,
+	0x15, 0xa7, 0x67, 0x3c, 0xfb, 0xf1, 0x76, 0x6d, 0xaf, 0xcb, 0x1f, 0xe9, 0x2c, 0xce, 0x66, 0xdd,
+	0x44, 0x68, 0x15, 0x25, 0xb3, 0x78, 0x41, 0x28, 0x42, 0xe2, 0x60, 0xaf, 0x23, 0xe4, 0xc4, 0xf6,
+	0x2e, 0xb5, 0xc6, 0x26, 0x09, 0x4e, 0x52, 0xdb, 0xfd, 0x66, 0xb6, 0xbc, 0xfd, 0xe5, 0xaa, 0xea,
+	0xd9, 0x5d, 0x24, 0x22, 0x40, 0x39, 0x84, 0x03, 0x5c, 0x88, 0x04, 0x48, 0x39, 0x71, 0xe4, 0xc0,
+	0x1f, 0x80, 0xc4, 0x89, 0x03, 0x1c, 0x73, 0xe5, 0x80, 0x04, 0xe6, 0xcc, 0x05, 0xfe, 0x01, 0x54,
+	0x1f, 0xdd, 0xd3, 0xf3, 0xb1, 0x8e, 0x95, 0x9d, 0xb1, 0x6f, 0xf5, 0xea, 0xe3, 0xfd, 0x5e, 0xbd,
+	0xaf, 0x7a, 0xaf, 0x1b, 0x6e, 0xef, 0xbf, 0x21, 0xdb, 0x3c, 0x5b, 0x67, 0x39, 0xc7, 0x43, 0x85,
+	0xa9, 0xe4, 0x59, 0x2a, 0x5f, 0x67, 0x39, 0x97, 0x28, 0x7a, 0x28, 0xd6, 0xf3, 0xfd, 0xae, 0x5e,
+	0x93, 0x83, 0x1b, 0xd6, 0x7b, 0x57, 0x77, 0x51, 0xb1, 0xab, 0xeb, 0x5d, 0x4c, 0x51, 0x30, 0x85,
+	0x51, 0x3b, 0x17, 0x99, 0xca, 0xc8, 0x77, 0x2d, 0xbb, 0xf6, 0xc0, 0xee, 0x0f, 0x2a, 0x76, 0xed,
+	0x7c, 0xbf, 0xab, 0xd7, 0xe4, 0xe0, 0x86, 0xb6, 0x63, 0xb7, 0xfc, 0xad, 0xbe, 0x34, 0x09, 0x0b,
+	0xf7, 0x78, 0x8a, 0xe2, 0xa8, 0x2f, 0x42, 0x82, 0x8a, 0xad, 0xf7, 0x46, 0x40, 0x97, 0xd7, 0x8f,
+	0x3b, 0x25, 0x8a, 0x54, 0xf1, 0x04, 0x47, 0x0e, 0x7c, 0xfb, 0x8b, 0x0e, 0xc8, 0x70, 0x0f, 0x13,
+	0x36, 0x7c, 0x2e, 0xf8, 0xcc, 0x83, 0x73, 0x9b, 0x59, 0xda, 0x43, 0xa1, 0xc5, 0xa6, 0xf8, 0xa8,
+	0x40, 0xa9, 0xc8, 0x12, 0x34, 0x0b, 0x1e, 0xf9, 0xde, 0xaa, 0xb7, 0x36, 0x4f, 0xf5, 0x90, 0xbc,
+	0x06, 0xe7, 0x22, 0x94, 0x5c, 0x60, 0x74, 0x6d, 0xfb, 0xe6, 0x3d, 0xbb, 0xdb, 0x6f, 0x98, 0xf5,
+	0xd1, 0x05, 0xf2, 0x3d, 0x98, 0xcd, 0x76, 0x1f, 0x62, 0xa8, 0xa4, 0xdf, 0x5c, 0x6d, 0xae, 0x2d,
+	0x6c, 0xbc, 0xde, 0xee, 0x6b, 0xb1, 0x92, 0xcf, 0xa8, 0xce, 0xc9, 0xd7, 0xa6, 0xec, 0xe0, 0xcd,
+	0x52, 0x7b, 0xb4, 0x3c, 0x1d, 0xfc, 0xd5, 0x03, 0x52, 0x17, 0x4f, 0xe6, 0x59, 0x2a, 0x71, 0x8c,
+	0x7c, 0xef, 0xc0, 0x52, 0x68, 0xf6, 0x29, 0x8c, 0xb6, 0x1c, 0x74, 0xe3, 0xcb, 0x40, 0x8f, 0xb0,
+	0x21, 0x37, 0x60, 0x46, 0xa0, 0x2c, 0x62, 0xe5, 0x37, 0x57, 0xbd, 0xb5, 0x85, 0x8d, 0xd7, 0x8e,
+	0x65, 0x68, 0xdc, 0x40, 0x9b, 0xb4, 0xdd, 0xbb, 0xda, 0xde, 0x51, 0x4c, 0x15, 0x92, 0xba, 0xb3,
+	0xc1, 0x7f, 0x3c, 0x58, 0xaa, 0xdf, 0xa4, 0xc7, 0xf1, 0x80, 0x3c, 0x84, 0x59, 0x61, 0x55, 0x6e,
+	0xee, 0xb2, 0xb0, 0xb1, 0xdd, 0x3e, 0x91, 0xb7, 0xb5, 0x47, 0x4c, 0x49, 0x4b, 0x00, 0x92, 0xc0,
+	0x9c, 0x70, 0xfa, 0x33, 0x86, 0x5b, 0xd8, 0xf8, 0xfe, 0x04, 0xc1, 0x2c, 0x63, 0x5a, 0x41, 0x04,
+	0x7f, 0xf2, 0x60, 0x65, 0xb3, 0x90, 0x2a, 0x4b, 0x28, 0xca, 0xac, 0x10, 0x21, 0x6e, 0x66, 0x71,
+	0x91, 0xa4, 0x37, 0xb0, 0xc3, 0x53, 0xae, 0xb4, 0x97, 0x10, 0x38, 0x95, 0xb2, 0x04, 0x9d, 0x19,
+	0xcd, 0x58, 0xcf, 0xa9, 0xa3, 0x1c, 0x9d, 0x6b, 0x99, 0x31, 0xb9, 0x04, 0x33, 0x9d, 0x4c, 0x24,
+	0xcc, 0x1a, 0x60, 0x9e, 0x3a, 0x8a, 0xac, 0xc2, 0x42, 0x84, 0x32, 0x14, 0x3c, 0xd7, 0xec, 0xfc,
+	0x53, 0x66, 0xb1, 0x3e, 0x45, 0x96, 0x61, 0x2e, 0x17, 0x3c, 0x13, 0x5c, 0x1d, 0xf9, 0xad, 0x55,
+	0x6f, 0xad, 0x45, 0x2b, 0x5a, 0xaf, 0xbd, 0xb5, 0xb3, 0x75, 0x67, 0x9b, 0xa9, 0x3d, 0x7f, 0xc6,
+	0x1c, 0xad, 0xe8, 0xe0, 0xcf, 0x1e, 0xf8, 0xc3, 0xc2, 0x97, 0x77, 0xd5, 0x07, 0xa5, 0xd2, 0x31,
+	0xd4, 0x3d, 0x72, 0xa2, 0x57, 0x34, 0xf9, 0xd8, 0x83, 0xf3, 0x07, 0xb8, 0xbb, 0x97, 0x65, 0xfb,
+	0x9b, 0x31, 0xc7, 0x54, 0x6d, 0x66, 0x69, 0x87, 0x77, 0x9d, 0xc2, 0xe9, 0x09, 0x15, 0x7e, 0x7f,
+	0x94, 0x33, 0x1d, 0x07, 0x17, 0x7c, 0xde, 0x18, 0x96, 0xbf, 0xa6, 0xf6, 0x5b, 0x30, 0xa7, 0x7d,
+	0x34, 0x62, 0x8a, 0x39, 0xaf, 0xfb, 0xc6, 0xd3, 0x79, 0xb4, 0x0d, 0x88, 0xdb, 0xa8, 0x18, 0xad,
+	0x38, 0x90, 0x0c, 0x4e, 0xc9, 0x1c, 0x43, 0x77, 0xc3, 0xf7, 0x4e, 0xea, 0x52, 0xc7, 0x08, 0xbd,
+	0x93, 0x63, 0x48, 0x0d, 0x10, 0x29, 0x60, 0x46, 0x9a, 0xd0, 0x72, 0xe1, 0xf8, 0x60, 0x5a, 0x90,
+	0x2e, 0x7e, 0x2d, 0x58, 0xf0, 0x0f, 0x0f, 0xae, 0x1c, 0xb7, 0x75, 0x33, 0x4b, 0xa3, 0xca, 0xa5,
+	0x8d, 0xfb, 0x7a, 0x83, 0xee, 0xeb, 0x04, 0xb6, 0x4e, 0xed, 0x28, 0xf2, 0x2e, 0x90, 0x98, 0x49,
+	0x75, 0x57, 0xb0, 0x54, 0x9a, 0xd3, 0x77, 0x79, 0x82, 0xee, 0x52, 0xaf, 0x3e, 0x9d, 0x45, 0xf4,
+	0x09, 0x3a, 0x86, 0x8b, 0xc6, 0x14, 0xc8, 0x64, 0x15, 0x15, 0x8e, 0x22, 0x3e, 0xcc, 0x26, 0x28,
+	0x25, 0xeb, 0xa2, 0x89, 0x87, 0x79, 0x5a, 0x92, 0xc1, 0xdf, 0x3d, 0xb8, 0x7c, 0xdc, 0xfd, 0x6e,
+	0x71, 0xa9, 0xc8, 0x5b, 0x23, 0x6e, 0xd3, 0x7e, 0x3a, 0x21, 0xf5, 0xe9, 0x21, 0xa7, 0x49, 0xa0,
+	0xc5, 0x15, 0x26, 0x65, 0x8a, 0xbe, 0x3f, 0x25, 0x13, 0x52, 0x8b, 0x12, 0xfc, 0xc5, 0x83, 0x97,
+	0x8e, 0xdb, 0x73, 0x87, 0x25, 0x28, 0xb5, 0xbe, 0xf2, 0xb8, 0x10, 0x2c, 0x76, 0x96, 0x73, 0x94,
+	0x89, 0x75, 0x9e, 0x76, 0x8b, 0x98, 0x09, 0x67, 0xbd, 0x8a, 0x26, 0x2b, 0x00, 0x72, 0x2f, 0x13,
+	0xca, 0x70, 0x30, 0xef, 0xdc, 0x3c, 0xad, 0xcd, 0x68, 0x5f, 0xd8, 0xe7, 0x69, 0xe4, 0x2c, 0x60,
+	0xc6, 0x9a, 0x5f, 0xcc, 0xa5, 0x7a, 0x5b, 0xcf, 0x5b, 0x03, 0x54, 0xb4, 0xe6, 0x17, 0xea, 0x2c,
+	0x92, 0x09, 0x8e, 0xd2, 0x9f, 0xb1, 0xfc, 0xfa, 0x33, 0xc1, 0xbf, 0x66, 0x8e, 0xb7, 0x90, 0x8e,
+	0x0f, 0x72, 0x01, 0x5a, 0x5d, 0x91, 0x15, 0xb9, 0xbb, 0x83, 0x25, 0xb4, 0xc9, 0x7b, 0x03, 0xef,
+	0x75, 0x49, 0x12, 0x01, 0xad, 0xd4, 0xc9, 0xae, 0xcd, 0xf9, 0xa3, 0x29, 0x59, 0xc1, 0x68, 0x83,
+	0x5a, 0x28, 0x2d, 0xa3, 0x0c, 0xb3, 0x1c, 0x9d, 0x56, 0x2c, 0x41, 0x0e, 0x00, 0x7a, 0x2c, 0xe6,
+	0x11, 0x33, 0x89, 0xbc, 0x65, 0xc4, 0x99, 0xac, 0x53, 0xdc, 0xab, 0xd8, 0xd3, 0x1a, 0x14, 0xf9,
+	0x09, 0x2c, 0xca, 0x62, 0x57, 0xb8, 0x4d, 0xd2, 0x3c, 0x04, 0x0b, 0x1b, 0xef, 0x4c, 0x14, 0x7a,
+	0xa7, 0x06, 0x40, 0x07, 0xe0, 0xc8, 0x8f, 0x61, 0xce, 0x19, 0x43, 0xfa, 0xb3, 0x26, 0x14, 0xde,
+	0x9f, 0x92, 0x11, 0x5c, 0x65, 0x46, 0x2b, 0x3c, 0xf2, 0x3b, 0x0f, 0x7c, 0x16, 0xd9, 0xbc, 0xc5,
+	0xe2, 0x6d, 0xc1, 0x53, 0x85, 0xc2, 0xbe, 0xd1, 0xd2, 0x9f, 0x33, 0xc2, 0x4c, 0x36, 0xb5, 0x0e,
+	0xbf, 0xff, 0xf4, 0x58, 0x78, 0xed, 0x0f, 0x61, 0xf5, 0xe0, 0xfa, 0xf3, 0x53, 0xf0, 0x87, 0x5a,
+	0xed, 0x52, 0x83, 0xd2, 0x0f, 0xe7, 0xca, 0x93, 0x1f, 0x04, 0xf2, 0x53, 0xcf, 0x08, 0x67, 0x25,
+	0x97, 0xbe, 0x67, 0x34, 0xf5, 0xe1, 0x94, 0xcc, 0x56, 0xbd, 0x2c, 0xb4, 0x86, 0x49, 0x7e, 0xee,
+	0xc1, 0x69, 0x16, 0x86, 0x98, 0x2b, 0x8c, 0x6c, 0xf6, 0x69, 0x3c, 0x83, 0x08, 0x1e, 0x84, 0x24,
+	0x5f, 0x87, 0x33, 0x52, 0x65, 0x02, 0xa3, 0x7b, 0xa5, 0x07, 0xdb, 0x14, 0x38, 0x34, 0x1b, 0xfc,
+	0xaf, 0x09, 0x2f, 0x7f, 0x81, 0x57, 0x8e, 0xad, 0x04, 0xf5, 0xb3, 0xa9, 0xa5, 0x8e, 0xcc, 0xe5,
+	0xe6, 0xa8, 0xa3, 0x74, 0x3e, 0xd3, 0x08, 0xfa, 0x09, 0x6b, 0x9a, 0x85, 0x92, 0x24, 0x19, 0xcc,
+	0xd8, 0x2e, 0xc7, 0x24, 0x97, 0x29, 0x66, 0x10, 0x07, 0x33, 0x92, 0x3d, 0x5a, 0xcf, 0x36, 0x7b,
+	0x3c, 0x31, 0x82, 0x67, 0x9e, 0x6b, 0x04, 0x07, 0x7f, 0x18, 0x29, 0xff, 0x6b, 0x17, 0xd9, 0x09,
+	0x59, 0x8c, 0xe4, 0x55, 0x58, 0xd2, 0x05, 0x1d, 0xc5, 0x3c, 0xe6, 0x21, 0x93, 0xa6, 0x10, 0xb7,
+	0x0e, 0x30, 0x32, 0x4f, 0xda, 0x40, 0x6c, 0xd5, 0x34, 0xb0, 0xdb, 0xbe, 0x67, 0x63, 0x56, 0x74,
+	0xbb, 0x1a, 0xb3, 0x5d, 0x8c, 0x77, 0x30, 0xc6, 0x50, 0x65, 0xc2, 0x6c, 0xb7, 0xdd, 0xc3, 0xe8,
+	0x42, 0x70, 0x65, 0xd8, 0x43, 0xeb, 0xb2, 0xda, 0xf2, 0xef, 0x17, 0x0d, 0x58, 0x3e, 0xde, 0x30,
+	0xa4, 0x57, 0xd5, 0x78, 0xb6, 0x34, 0x7a, 0x7f, 0x5a, 0x3e, 0x30, 0x58, 0x95, 0x12, 0xa9, 0x9f,
+	0x53, 0x16, 0x97, 0x1d, 0xdd, 0x83, 0xa9, 0xc1, 0x6a, 0x10, 0x6a, 0xb1, 0x82, 0x4f, 0x47, 0xba,
+	0xa3, 0x7e, 0x6c, 0x90, 0x43, 0x38, 0x9b, 0xe5, 0x98, 0x5e, 0xdb, 0xbe, 0x79, 0xef, 0x9b, 0x3b,
+	0x36, 0x1a, 0xad, 0x4a, 0xee, 0x9c, 0x50, 0x36, 0xdd, 0x9c, 0x59, 0x86, 0xdb, 0x22, 0xcb, 0x25,
+	0x1d, 0x86, 0x09, 0xde, 0x86, 0x8b, 0xba, 0x8d, 0x17, 0x29, 0x8b, 0x6f, 0x64, 0x61, 0x91, 0x60,
+	0xaa, 0xac, 0x48, 0x43, 0x7d, 0xa2, 0x37, 0xda, 0x27, 0x2e, 0x41, 0xb3, 0x10, 0xb1, 0xf3, 0x27,
+	0x3d, 0x0c, 0x7c, 0x38, 0xa5, 0x01, 0xf5, 0x8a, 0x60, 0x07, 0xe6, 0xcc, 0x22, 0xd5, 0xc3, 0xe0,
+	0x93, 0x17, 0xe0, 0xec, 0x90, 0x2c, 0xe4, 0x0c, 0x34, 0xaa, 0xcf, 0x11, 0x0d, 0x1e, 0x99, 0xdc,
+	0x65, 0xef, 0x5e, 0x96, 0xfc, 0x36, 0x61, 0x68, 0x6e, 0xd8, 0x71, 0x8e, 0xa8, 0x87, 0x4f, 0xd1,
+	0xc3, 0x96, 0x2d, 0x45, 0x6b, 0x6c, 0x47, 0x3c, 0x33, 0xd0, 0x11, 0x5f, 0x80, 0x96, 0xe2, 0x2a,
+	0x46, 0x7f, 0xd6, 0x56, 0x57, 0x86, 0x20, 0x0f, 0x60, 0x36, 0xc2, 0x0e, 0x2b, 0x62, 0xe5, 0xcf,
+	0x19, 0x53, 0x6c, 0x4e, 0xc0, 0x14, 0xb4, 0xe4, 0x69, 0x7a, 0x0a, 0x76, 0xc8, 0x93, 0x22, 0x31,
+	0x2f, 0xb5, 0x47, 0x4b, 0x52, 0x47, 0x38, 0x1e, 0x86, 0x71, 0x21, 0x79, 0x0f, 0x6f, 0xbb, 0x2d,
+	0x60, 0x72, 0xf6, 0xc8, 0xbc, 0xe1, 0xc2, 0x53, 0xb3, 0x65, 0xc1, 0x71, 0xb1, 0xe4, 0x20, 0x17,
+	0xb7, 0x65, 0x71, 0x98, 0x8b, 0xdb, 0x7b, 0x19, 0xe6, 0x13, 0x76, 0x78, 0x0b, 0xd3, 0xae, 0xda,
+	0xf3, 0x4f, 0xaf, 0x7a, 0x6b, 0x4d, 0xda, 0x9f, 0x30, 0xab, 0x3c, 0x75, 0xab, 0x67, 0xdc, 0x6a,
+	0x39, 0xa1, 0x25, 0xc8, 0x99, 0xd2, 0x0e, 0xe4, 0x9f, 0xb5, 0x85, 0xb2, 0x23, 0x75, 0xd5, 0x9e,
+	0xb0, 0xc3, 0x9b, 0xa6, 0x63, 0x59, 0x32, 0xc7, 0x2a, 0xda, 0xac, 0xf1, 0xd4, 0xae, 0x9d, 0x73,
+	0x6b, 0x8e, 0xd6, 0xc6, 0x2d, 0x52, 0xfe, 0xa8, 0x40, 0xbb, 0x4c, 0x8c, 0xd0, 0xf5, 0x29, 0x5d,
+	0xf3, 0x27, 0x45, 0xac, 0x78, 0x1e, 0xe3, 0x56, 0xc7, 0x3f, 0x6f, 0x2e, 0x5e, 0x9b, 0x21, 0xf7,
+	0xe1, 0x14, 0xa6, 0x45, 0xe2, 0x5f, 0x30, 0xd9, 0x7c, 0x22, 0x76, 0x33, 0x0c, 0xc9, 0x2b, 0x70,
+	0x3a, 0x61, 0x87, 0xda, 0x7b, 0x51, 0x28, 0xdd, 0x6f, 0x5c, 0x34, 0xb2, 0x0f, 0x4e, 0x9a, 0x5d,
+	0x3c, 0xad, 0xed, 0xba, 0xe4, 0x76, 0xd5, 0x27, 0xb5, 0x0a, 0x04, 0x3e, 0x2a, 0xb8, 0xc0, 0xc8,
+	0x7f, 0xc1, 0xd4, 0x00, 0x15, 0x4d, 0xf6, 0xcb, 0x4e, 0xcf, 0x37, 0x9e, 0xf7, 0x83, 0xc9, 0x26,
+	0x81, 0x2d, 0x71, 0x4d, 0x08, 0x76, 0xe4, 0xfa, 0x3c, 0x12, 0x41, 0x8b, 0xc5, 0xf1, 0x56, 0xc7,
+	0x7f, 0xd1, 0xa8, 0x6b, 0xd2, 0x19, 0xc7, 0x32, 0xd7, 0x28, 0x59, 0xaa, 0xcd, 0xb5, 0x3c, 0x1d,
+	0x14, 0xc3, 0xdc, 0xdc, 0x25, 0x3d, 0xda, 0xea, 0xf8, 0x5f, 0x9d, 0xd2, 0x5d, 0x34, 0x73, 0xf2,
+	0x21, 0x34, 0xd3, 0x4c, 0xf9, 0x97, 0xa7, 0x92, 0xa1, 0x35, 0x6b, 0xf2, 0x11, 0x40, 0xde, 0xf7,
+	0x9f, 0x97, 0x26, 0xd2, 0xe4, 0x0c, 0x01, 0xb5, 0xfb, 0xbe, 0xf8, 0x66, 0xaa, 0xc4, 0x11, 0xad,
+	0x21, 0x92, 0x4f, 0x3c, 0xb8, 0x50, 0xaf, 0x52, 0x2a, 0x51, 0x56, 0xcc, 0x9d, 0xef, 0x4e, 0xda,
+	0x21, 0xaf, 0x67, 0x59, 0x4c, 0xc7, 0x22, 0x92, 0x5f, 0x7b, 0x70, 0xce, 0xa5, 0x94, 0x9a, 0x1c,
+	0x2f, 0x1b, 0x95, 0xe0, 0xa4, 0x55, 0x32, 0x8c, 0x63, 0x35, 0x33, 0x8a, 0x4f, 0x3e, 0xf6, 0x60,
+	0x31, 0xc2, 0x1c, 0xd3, 0x08, 0xd3, 0x50, 0x0b, 0xb4, 0x3a, 0x91, 0x8e, 0x66, 0x58, 0xa0, 0x1b,
+	0x35, 0x08, 0x2b, 0xcb, 0x00, 0x2a, 0xf9, 0x08, 0xce, 0xf6, 0x95, 0x66, 0xf3, 0xe5, 0x95, 0x29,
+	0x5a, 0x68, 0x18, 0x8c, 0xfc, 0xcc, 0xd3, 0x2f, 0x71, 0x59, 0xd9, 0x4a, 0x3f, 0x30, 0x5a, 0xf8,
+	0x60, 0xe2, 0x5a, 0xa8, 0x10, 0xac, 0x12, 0xea, 0x98, 0xe4, 0x10, 0x16, 0xb1, 0x5f, 0xc1, 0x48,
+	0xff, 0x6b, 0x13, 0x51, 0xc0, 0xd8, 0xa2, 0x88, 0x0e, 0x20, 0xe9, 0x12, 0x01, 0x0f, 0x59, 0x92,
+	0xc7, 0xe8, 0xbf, 0x32, 0xc1, 0x12, 0xc1, 0xf1, 0x5c, 0xfe, 0xa5, 0x07, 0x67, 0x87, 0x5c, 0x51,
+	0xd7, 0x42, 0xfb, 0x58, 0x7e, 0x41, 0xd7, 0x43, 0x9d, 0xf2, 0x7a, 0x2c, 0x2e, 0xca, 0x62, 0x76,
+	0xe2, 0x29, 0xcf, 0x30, 0xff, 0x4e, 0xe3, 0x0d, 0x6f, 0xf9, 0x53, 0x0f, 0x2e, 0x8d, 0x8f, 0x90,
+	0xe7, 0x2a, 0xd6, 0x67, 0x1e, 0x9c, 0x1b, 0x89, 0x93, 0x31, 0x12, 0x3d, 0x1a, 0x94, 0xe8, 0xbd,
+	0x49, 0x47, 0xc8, 0x8e, 0x12, 0x3c, 0xed, 0xba, 0xa7, 0xb5, 0x2f, 0xde, 0xaf, 0x3c, 0x58, 0x1a,
+	0x76, 0xe0, 0xe7, 0xa9, 0xaf, 0xe0, 0xbf, 0x1e, 0x5c, 0x1a, 0x5f, 0x11, 0x90, 0x4e, 0x55, 0x81,
+	0x4f, 0xa7, 0xfb, 0x28, 0x2b, 0xfa, 0x1c, 0x16, 0x1e, 0x56, 0x4b, 0xe5, 0xf7, 0xec, 0x49, 0x83,
+	0xd5, 0x21, 0x82, 0xdf, 0x78, 0x70, 0x71, 0x6c, 0x4e, 0xd3, 0x5d, 0x01, 0x8b, 0xe3, 0xec, 0xc0,
+	0x36, 0xa1, 0x73, 0xd4, 0x51, 0x35, 0x5d, 0x34, 0xa6, 0xa9, 0x8b, 0xe0, 0xf7, 0x1e, 0x5c, 0x7e,
+	0x92, 0x2f, 0x3d, 0x33, 0xa3, 0x98, 0xdf, 0x7e, 0x26, 0xac, 0x8f, 0x8c, 0x45, 0xe6, 0x69, 0x45,
+	0x07, 0x3f, 0x84, 0xa5, 0x1d, 0x14, 0x3d, 0x1e, 0x22, 0xc5, 0x0e, 0x0a, 0x4c, 0x43, 0xd4, 0x7d,
+	0x81, 0xf9, 0x3a, 0x9d, 0xb3, 0xb0, 0xfc, 0x06, 0xd5, 0x9f, 0xa8, 0x3e, 0x4e, 0x35, 0x06, 0x7f,
+	0x53, 0xe6, 0xfd, 0x4f, 0x0a, 0x66, 0x1c, 0xfc, 0xd1, 0x83, 0xf3, 0x63, 0xfe, 0xd0, 0x11, 0x0e,
+	0xb3, 0xd2, 0x22, 0xba, 0x6b, 0x6f, 0x9d, 0xf0, 0xda, 0xc3, 0xf2, 0xd3, 0x92, 0xbf, 0xbe, 0x78,
+	0xc8, 0xae, 0x17, 0x69, 0xe4, 0xbe, 0x08, 0x2c, 0xd2, 0x8a, 0x2e, 0x7b, 0xdc, 0x66, 0xd5, 0xe3,
+	0x5e, 0x7f, 0xf1, 0x6f, 0x8f, 0x57, 0xbc, 0xcf, 0x1f, 0xaf, 0x78, 0xff, 0x7c, 0xbc, 0xe2, 0xfd,
+	0xf6, 0xdf, 0x2b, 0x5f, 0x79, 0x77, 0xd6, 0x41, 0xfc, 0x3f, 0x00, 0x00, 0xff, 0xff, 0xc2, 0x6d,
+	0x8f, 0xe1, 0x44, 0x21, 0x00, 0x00,
 }
