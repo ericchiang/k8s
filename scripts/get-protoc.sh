@@ -6,4 +6,4 @@ if [ "$OS" == "Darwin" ]; then
 fi
 
 curl -L -o _output/protoc.zip https://github.com/google/protobuf/releases/download/v3.5.1/protoc-3.5.1-${OS}-x86_64.zip
-unzip _output/protoc.zip bin/protoc -d _output
+bsdtar -x -f _output/protoc.zip -C _output bin/protoc

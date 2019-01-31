@@ -44,7 +44,7 @@ _output/bin/protoc:
 _output/kubernetes:
 	mkdir -p _output
 	curl -o _output/kubernetes.zip -L https://github.com/kubernetes/kubernetes/archive/v$(KUBE_VERSION).zip
-	unzip _output/kubernetes.zip -d _output > /dev/null
+	bsdtar -x -f _output/kubernetes.zip -C _output > /dev/null
 	mv _output/kubernetes-$(KUBE_VERSION) _output/kubernetes
 
 .PHONY: clean

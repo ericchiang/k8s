@@ -9,6 +9,11 @@ go:
 services:
   - docker
 
+addons:
+  apt:
+    packages:
+    - bsdtar
+
 env:
   - K8S_CLIENT_TEST=1 KUBECONFIG=scripts/kubeconfig
  
