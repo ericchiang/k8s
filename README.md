@@ -35,7 +35,7 @@ func main() {
 
 ## Requirements
 
-* Go 1.7+ (this package uses "context" features added in 1.7)
+* Go 1.9+ (this package uses type alias features added in 1.9)
 * Kubernetes 1.3+ (protobuf support was added in 1.3)
 * [github.com/golang/protobuf/proto][go-proto] (protobuf serialization)
 * [golang.org/x/net/http2][go-http2] (HTTP/2 support)

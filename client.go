@@ -43,6 +43,7 @@ import (
 	"golang.org/x/net/http2"
 
 	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
+	configv1 "github.com/ericchiang/k8s/config/v1"
 )
 
 const (
@@ -134,7 +135,7 @@ func (c *Client) newRequest(ctx context.Context, verb, url string, body io.Reade
 }
 
 // NewClient initializes a client from a client config.
-func NewClient(config *Config) (*Client, error) {
+func NewClient(config *configv1.Config) (*Client, error) {
 	if len(config.Contexts) == 0 {
 		if config.CurrentContext != "" {
 			return nil, fmt.Errorf("no contexts with name %q", config.CurrentContext)
@@ -154,7 +155,7 @@ func NewClient(config *Config) (*Client, error) {
 		return newClient(config.Clusters[0].Cluster, config.AuthInfos[0].AuthInfo, namespaceDefault)
 	}
 
-	var ctx Context
+	var ctx configv1.Context
 	if config.CurrentContext == "" {
 		if n := len(config.Contexts); n == 0 {
 			return nil, errors.New("no contexts provided")
@@ -180,8 +181,8 @@ func NewClient(config *Config) (*Client, error) {
 		return nil, fmt.Errorf("context doesn't have a user")
 	}
 	var (
-		user    AuthInfo
-		cluster Cluster
+		user    configv1.AuthInfo
+		cluster configv1.Cluster
 	)
 
 	for _, u := range config.AuthInfos {
@@ -226,11 +227,11 @@ func NewInClusterClient() (*Client, error) {
 		Scheme: "https",
 		Host:   net.JoinHostPort(host, port),
 	}
-	cluster := Cluster{
+	cluster := configv1.Cluster{
 		Server:               server.String(),
 		CertificateAuthority: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
 	}
-	user := AuthInfo{TokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"}
+	user := configv1.AuthInfo{TokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"}
 	return newClient(cluster, user, string(namespace))
 }
 
@@ -241,7 +242,7 @@ func load(filepath string, data []byte) (out []byte, err error) {
 	return data, err
 }
 
-func newClient(cluster Cluster, user AuthInfo, namespace string) (*Client, error) {
+func newClient(cluster configv1.Cluster, user configv1.AuthInfo, namespace string) (*Client, error) {
 	if cluster.Server == "" {
 		// NOTE: kubectl defaults to localhost:8080, but it's probably better to just
 		// be strict.
