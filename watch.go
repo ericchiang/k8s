@@ -61,7 +61,7 @@ func (w *watcherJSON) Next(r Resource) (string, error) {
 		return "", fmt.Errorf("decode event: %v", err)
 	}
 	if event.Type == "" {
-		return "", errors.New("wwatch event had no type field")
+		return "", errors.New("watch event had no type field")
 	}
 	if err := json.Unmarshal([]byte(event.Object), r); err != nil {
 		return "", fmt.Errorf("decode resource: %v", err)
