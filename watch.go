@@ -63,6 +63,16 @@ func (w *watcherJSON) Next(r Resource) (string, error) {
 	if event.Type == "" {
 		return "", errors.New("watch event had no type field")
 	}
+	if event.Type == EventError {
+		status := &metav1.Status{}
+		if err := json.Unmarshal([]byte(event.Object), status); err != nil {
+			return "", fmt.Errorf("decoding event error: %v", err)
+		}
+		return event.Type, &APIError{
+			Status: status,
+			Code:   int(*status.Code),
+		}
+	}
 	if err := json.Unmarshal([]byte(event.Object), r); err != nil {
 		return "", fmt.Errorf("decode resource: %v", err)
 	}
@@ -84,6 +94,16 @@ func (w *watcherPB) Next(r Resource) (string, error) {
 	}
 	if event.Type == nil || *event.Type == "" {
 		return "", errors.New("watch event had no type field")
+	}
+	if *event.Type == EventError {
+		status := &metav1.Status{}
+		if err := proto.Unmarshal(unknown.Raw, status); err != nil {
+			return "", fmt.Errorf("decoding event error: %v", err)
+		}
+		return *event.Type, &APIError{
+			Status: status,
+			Code:   int(*status.Code),
+		}
 	}
 	if err := proto.Unmarshal(unknown.Raw, msg); err != nil {
 		return "", err
