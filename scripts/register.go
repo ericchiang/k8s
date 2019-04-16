@@ -191,6 +191,7 @@ var apiGroups = []APIGroup{
 				{"Secret", "", 0},
 				{"Service", "", 0},
 				{"ServiceAccount", "", 0},
+				{"Event", "", 0},
 			},
 		},
 	},
