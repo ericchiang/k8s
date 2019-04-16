@@ -17,6 +17,7 @@ func init() {
 	k8s.Register("", "v1", "secrets", true, &Secret{})
 	k8s.Register("", "v1", "services", true, &Service{})
 	k8s.Register("", "v1", "serviceaccounts", true, &ServiceAccount{})
+	k8s.Register("", "v1", "events", true, &Event{})
 
 	k8s.RegisterList("", "v1", "componentstatuses", false, &ComponentStatusList{})
 	k8s.RegisterList("", "v1", "configmaps", true, &ConfigMapList{})
@@ -32,4 +33,5 @@ func init() {
 	k8s.RegisterList("", "v1", "secrets", true, &SecretList{})
 	k8s.RegisterList("", "v1", "services", true, &ServiceList{})
 	k8s.RegisterList("", "v1", "serviceaccounts", true, &ServiceAccountList{})
+	k8s.RegisterList("", "v1", "events", true, &EventList{})
 }
