@@ -260,11 +260,25 @@ func resourceWatchURL(endpoint, namespace string, r Resource, options ...Option)
 		return "", fmt.Errorf("unregistered type %T", r)
 	}
 
+	// Hack to let watch work on individual resources
+	name := ""
+	if meta := r.GetMetadata(); meta != nil && meta.Name != nil {
+		name = *meta.Name
+		if meta.Namespace != nil {
+			// Ensure that namespaces aren't different.
+			ns := *meta.Namespace
+			if namespace != "" && ns != namespace {
+				return "", fmt.Errorf("different namespace provided on resource than to watch call")
+			}
+			namespace = ns
+		}
+	}
+
 	if !t.namespaced && namespace != "" {
 		return "", fmt.Errorf("type not namespaced")
 	}
 
-	url := urlFor(endpoint, t.apiGroup, t.apiVersion, namespace, t.name, "", options...)
+	url := urlFor(endpoint, t.apiGroup, t.apiVersion, namespace, t.name, name, options...)
 	if strings.Contains(url, "?") {
 		url = url + "&watch=true"
 	} else {
