@@ -31,6 +31,10 @@ done
 rm $( find . -type f -name '*.proto' );
 cd -
 
+mkdir -p $TEMPDIR/src/k8s.io/client-go/tools/clientcmd/api/v1
+cp $PWD/_output/kubernetes/staging/src/k8s.io/client-go/tools/clientcmd/api/v1/types.go \
+                          $TEMPDIR/src/k8s.io/client-go/tools/clientcmd/api/v1
+
 export GOPATH=$TEMPDIR
 function mvpkg {
     FROM="k8s.io/$1"
@@ -49,6 +53,7 @@ for DIR in $( ls ${TEMPDIR}/src/k8s.io/api/ ); do
     mvpkg api/$DIR apis/$DIR
 done
 mvpkg kube-aggregator/pkg/apis/apiregistration apis/apiregistration
+mvpkg client-go/tools/clientcmd/api/v1 config/v1
 
-rm -rf api apis runtime util
+rm -rf api apis runtime util config
 mv $TEMPDIR/src/github.com/ericchiang/k8s/* .
