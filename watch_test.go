@@ -8,6 +8,7 @@ import (
 	"github.com/ericchiang/k8s"
 	corev1 "github.com/ericchiang/k8s/apis/core/v1"
 	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
+	"github.com/ericchiang/k8s/util/intstr"
 )
 
 // configMapJSON is used to test the JSON serialization watch.
@@ -105,5 +106,77 @@ func TestWatchConfigMapProto(t *testing.T) {
 			(cm.(*corev1.ConfigMap)).Data = map[string]string{"hello": "world"}
 		}
 		testWatch(t, client, namespace, newCM, updateCM)
+	})
+}
+
+func TestWatchServiceAnnotations(t *testing.T) {
+	withNamespace(t, func(client *k8s.Client, namespace string) {
+		svc := &corev1.Service{
+			Metadata: &metav1.ObjectMeta{
+				Name:      k8s.String("my-service"),
+				Namespace: &namespace,
+				Annotations: map[string]string{
+					"foo": "bar",
+				},
+			},
+			Spec: &corev1.ServiceSpec{
+				Selector: map[string]string{"app": "MyApp"},
+				Ports: []*corev1.ServicePort{
+					{
+						Protocol: k8s.String("TCP"),
+						Port:     k8s.Int32(80),
+						TargetPort: &intstr.IntOrString{
+							IntVal: k8s.Int32(9376),
+						},
+					},
+				},
+			},
+		}
+
+		w, err := client.Watch(context.TODO(), namespace, new(corev1.Service))
+		if err != nil {
+			t.Errorf("watch configmaps: %v", err)
+			return
+		}
+		defer w.Close()
+
+		if err := client.Create(context.TODO(), svc); err != nil {
+			t.Errorf("creating configmap: %v", err)
+			return
+		}
+
+		got := new(corev1.Service)
+		eventType, err := w.Next(got)
+		if err != nil {
+			t.Errorf("watch failed: %v", err)
+			return
+		}
+		if eventType != k8s.EventAdded {
+			t.Errorf("expected=%v, got=%v", k8s.EventAdded, eventType)
+		}
+
+		if !reflect.DeepEqual(got, svc) {
+			t.Errorf("expected=%#v, got=%#v", svc, got)
+		}
+
+		svc.Metadata.Annotations["spam"] = "eggs"
+		if err := client.Update(context.TODO(), svc); err != nil {
+			t.Errorf("update configmap: %v", err)
+			return
+		}
+
+		got = new(corev1.Service)
+		eventType, err = w.Next(got)
+		if err != nil {
+			t.Errorf("watch failed: %v", err)
+			return
+		}
+		if eventType != k8s.EventModified {
+			t.Errorf("expected=%v, got=%v", k8s.EventAdded, eventType)
+		}
+
+		if !reflect.DeepEqual(got, svc) {
+			t.Errorf("expected=%#v, got=%#v", svc, got)
+		}
 	})
 }
