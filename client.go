@@ -30,6 +30,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -441,6 +442,50 @@ func (c *Client) List(ctx context.Context, namespace string, resp ResourceList, 
 		return err
 	}
 	return c.do(ctx, "GET", url, nil, resp)
+}
+
+func (c *Client) Apply(ctx context.Context, req Resource, options ...Option) error {
+	url, err := resourceURL(c.Endpoint, req, true, options...)
+	if err != nil {
+		return err
+	}
+
+	// TODO(sbunce): Specify our own field manager name?
+	// TODO(sbunce): Add an option for force.
+	url += "?fieldManager=kubectl&force=false"
+
+	data, err := json.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("couldn't marshal request: %v", err)
+	}
+
+	body := bytes.NewReader(data)
+	r, err := http.NewRequest("PATCH", url, body)
+	if err != nil {
+		return fmt.Errorf("new request: %v", err)
+	}
+	r.Header.Set("Content-Type", "application/apply-patch+yaml")
+	r.Header.Set("Accept", "application/json")
+	if c.SetHeaders != nil {
+		c.SetHeaders(r.Header)
+	}
+
+	re, err := c.client().Do(r)
+	if err != nil {
+		return fmt.Errorf("performing request: %v", err)
+	}
+	defer re.Body.Close()
+
+	respBody, err := ioutil.ReadAll(re.Body)
+	if err != nil {
+		return fmt.Errorf("read body: %v", err)
+	}
+
+	respCT := re.Header.Get("Content-Type")
+	if err := checkStatusCode(respCT, re.StatusCode, respBody); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) do(ctx context.Context, verb, url string, req, resp interface{}) error {
