@@ -35,10 +35,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"reflect"
 	"time"
 
 	"golang.org/x/net/http2"
@@ -449,15 +451,53 @@ func (c *Client) Apply(ctx context.Context, req Resource, options ...Option) err
 	if err != nil {
 		return err
 	}
-
 	// TODO(sbunce): Specify our own field manager name?
 	// TODO(sbunce): Add an option for force.
 	url += "?fieldManager=kubectl&force=false"
 
+	// TODO(sbunce): The resourceURL func already does this. Avoid the duplicate
+	// work of looking up the resource type twice.
+	rt := reflect.TypeOf(req)
+	t, ok := resources[rt]
+	if !ok {
+		return errors.New("couldn't find resource type")
+	}
+
+	// TODO(sbunce): Can we send the API server a protobuf for this?
 	data, err := json.Marshal(req)
 	if err != nil {
 		return fmt.Errorf("couldn't marshal request: %v", err)
 	}
+
+	// TODO(sbunce): The json encoder doesn't support any sort-of "inline" so we
+	// decode the json object to a map, add our keys, then re-encode. Do better
+	// than this. This is just a temporary hack to see if things work.
+	m := make(map[string]interface{})
+	if err := json.Unmarshal(data, &m); err != nil {
+		return fmt.Errorf("couldn't unmarshal request: %v", err)
+	}
+	// TODO(sbunce): Where do we get "apps/" from?
+	avValue := ""
+	if t.apiGroup != "" {
+		avValue = t.apiGroup + "/" + t.apiVersion
+	} else {
+		avValue = t.apiVersion
+	}
+	m["apiVersion"] = avValue
+	// TODO(sbunce): Validate the type so we know rt.Elem() won't panic.
+	m["kind"] = rt.Elem().Name()
+
+	data, err = json.Marshal(m)
+	if err != nil {
+		return fmt.Errorf("couldn't marshal request (second time): %v", err)
+	}
+
+	// TODO(sbunce): This is temporary debug stuff. Remove this.
+	var dst bytes.Buffer
+	if err := json.Indent(&dst, data, "", "  "); err != nil {
+		return fmt.Errorf("couldn't indent json for debugging: %v", err)
+	}
+	log.Print(dst.String())
 
 	body := bytes.NewReader(data)
 	r, err := http.NewRequest("PATCH", url, body)
