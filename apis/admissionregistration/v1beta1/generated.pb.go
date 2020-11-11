@@ -8,14 +8,15 @@
 		k8s.io/api/admissionregistration/v1beta1/generated.proto
 
 	It has these top-level messages:
+		MutatingWebhook
 		MutatingWebhookConfiguration
 		MutatingWebhookConfigurationList
 		Rule
 		RuleWithOperations
 		ServiceReference
+		ValidatingWebhook
 		ValidatingWebhookConfiguration
 		ValidatingWebhookConfigurationList
-		Webhook
 		WebhookClientConfig
 */
 package v1beta1
@@ -40,270 +41,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// MutatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and may change the object.
-type MutatingWebhookConfiguration struct {
-	// Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata.
-	// +optional
-	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// Webhooks is a list of webhooks and the affected resources and operations.
-	// +optional
-	// +patchMergeKey=name
-	// +patchStrategy=merge
-	Webhooks         []*Webhook `protobuf:"bytes,2,rep,name=Webhooks" json:"Webhooks,omitempty"`
-	XXX_unrecognized []byte     `json:"-"`
-}
-
-func (m *MutatingWebhookConfiguration) Reset()         { *m = MutatingWebhookConfiguration{} }
-func (m *MutatingWebhookConfiguration) String() string { return proto.CompactTextString(m) }
-func (*MutatingWebhookConfiguration) ProtoMessage()    {}
-func (*MutatingWebhookConfiguration) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{0}
-}
-
-func (m *MutatingWebhookConfiguration) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
-	if m != nil {
-		return m.Metadata
-	}
-	return nil
-}
-
-func (m *MutatingWebhookConfiguration) GetWebhooks() []*Webhook {
-	if m != nil {
-		return m.Webhooks
-	}
-	return nil
-}
-
-// MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
-type MutatingWebhookConfigurationList struct {
-	// Standard list metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
-	// +optional
-	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// List of MutatingWebhookConfiguration.
-	Items            []*MutatingWebhookConfiguration `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
-	XXX_unrecognized []byte                          `json:"-"`
-}
-
-func (m *MutatingWebhookConfigurationList) Reset()         { *m = MutatingWebhookConfigurationList{} }
-func (m *MutatingWebhookConfigurationList) String() string { return proto.CompactTextString(m) }
-func (*MutatingWebhookConfigurationList) ProtoMessage()    {}
-func (*MutatingWebhookConfigurationList) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{1}
-}
-
-func (m *MutatingWebhookConfigurationList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
-	if m != nil {
-		return m.Metadata
-	}
-	return nil
-}
-
-func (m *MutatingWebhookConfigurationList) GetItems() []*MutatingWebhookConfiguration {
-	if m != nil {
-		return m.Items
-	}
-	return nil
-}
-
-// Rule is a tuple of APIGroups, APIVersion, and Resources.It is recommended
-// to make sure that all the tuple expansions are valid.
-type Rule struct {
-	// APIGroups is the API groups the resources belong to. '*' is all groups.
-	// If '*' is present, the length of the slice must be one.
-	// Required.
-	ApiGroups []string `protobuf:"bytes,1,rep,name=apiGroups" json:"apiGroups,omitempty"`
-	// APIVersions is the API versions the resources belong to. '*' is all versions.
-	// If '*' is present, the length of the slice must be one.
-	// Required.
-	ApiVersions []string `protobuf:"bytes,2,rep,name=apiVersions" json:"apiVersions,omitempty"`
-	// Resources is a list of resources this rule applies to.
-	//
-	// For example:
-	// 'pods' means pods.
-	// 'pods/log' means the log subresource of pods.
-	// '*' means all resources, but not subresources.
-	// 'pods/*' means all subresources of pods.
-	// '*/scale' means all scale subresources.
-	// '*/*' means all resources and their subresources.
-	//
-	// If wildcard is present, the validation rule will ensure resources do not
-	// overlap with each other.
-	//
-	// Depending on the enclosing object, subresources might not be allowed.
-	// Required.
-	Resources        []string `protobuf:"bytes,3,rep,name=resources" json:"resources,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
-}
-
-func (m *Rule) Reset()                    { *m = Rule{} }
-func (m *Rule) String() string            { return proto.CompactTextString(m) }
-func (*Rule) ProtoMessage()               {}
-func (*Rule) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
-
-func (m *Rule) GetApiGroups() []string {
-	if m != nil {
-		return m.ApiGroups
-	}
-	return nil
-}
-
-func (m *Rule) GetApiVersions() []string {
-	if m != nil {
-		return m.ApiVersions
-	}
-	return nil
-}
-
-func (m *Rule) GetResources() []string {
-	if m != nil {
-		return m.Resources
-	}
-	return nil
-}
-
-// RuleWithOperations is a tuple of Operations and Resources. It is recommended to make
-// sure that all the tuple expansions are valid.
-type RuleWithOperations struct {
-	// Operations is the operations the admission hook cares about - CREATE, UPDATE, or *
-	// for all operations.
-	// If '*' is present, the length of the slice must be one.
-	// Required.
-	Operations []string `protobuf:"bytes,1,rep,name=operations" json:"operations,omitempty"`
-	// Rule is embedded, it describes other criteria of the rule, like
-	// APIGroups, APIVersions, Resources, etc.
-	Rule             *Rule  `protobuf:"bytes,2,opt,name=rule" json:"rule,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *RuleWithOperations) Reset()                    { *m = RuleWithOperations{} }
-func (m *RuleWithOperations) String() string            { return proto.CompactTextString(m) }
-func (*RuleWithOperations) ProtoMessage()               {}
-func (*RuleWithOperations) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
-
-func (m *RuleWithOperations) GetOperations() []string {
-	if m != nil {
-		return m.Operations
-	}
-	return nil
-}
-
-func (m *RuleWithOperations) GetRule() *Rule {
-	if m != nil {
-		return m.Rule
-	}
-	return nil
-}
-
-// ServiceReference holds a reference to Service.legacy.k8s.io
-type ServiceReference struct {
-	// `namespace` is the namespace of the service.
-	// Required
-	Namespace *string `protobuf:"bytes,1,opt,name=namespace" json:"namespace,omitempty"`
-	// `name` is the name of the service.
-	// Required
-	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	// `path` is an optional URL path which will be sent in any request to
-	// this service.
-	// +optional
-	Path             *string `protobuf:"bytes,3,opt,name=path" json:"path,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *ServiceReference) Reset()                    { *m = ServiceReference{} }
-func (m *ServiceReference) String() string            { return proto.CompactTextString(m) }
-func (*ServiceReference) ProtoMessage()               {}
-func (*ServiceReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
-
-func (m *ServiceReference) GetNamespace() string {
-	if m != nil && m.Namespace != nil {
-		return *m.Namespace
-	}
-	return ""
-}
-
-func (m *ServiceReference) GetName() string {
-	if m != nil && m.Name != nil {
-		return *m.Name
-	}
-	return ""
-}
-
-func (m *ServiceReference) GetPath() string {
-	if m != nil && m.Path != nil {
-		return *m.Path
-	}
-	return ""
-}
-
-// ValidatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and object without changing it.
-type ValidatingWebhookConfiguration struct {
-	// Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata.
-	// +optional
-	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// Webhooks is a list of webhooks and the affected resources and operations.
-	// +optional
-	// +patchMergeKey=name
-	// +patchStrategy=merge
-	Webhooks         []*Webhook `protobuf:"bytes,2,rep,name=Webhooks" json:"Webhooks,omitempty"`
-	XXX_unrecognized []byte     `json:"-"`
-}
-
-func (m *ValidatingWebhookConfiguration) Reset()         { *m = ValidatingWebhookConfiguration{} }
-func (m *ValidatingWebhookConfiguration) String() string { return proto.CompactTextString(m) }
-func (*ValidatingWebhookConfiguration) ProtoMessage()    {}
-func (*ValidatingWebhookConfiguration) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{5}
-}
-
-func (m *ValidatingWebhookConfiguration) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
-	if m != nil {
-		return m.Metadata
-	}
-	return nil
-}
-
-func (m *ValidatingWebhookConfiguration) GetWebhooks() []*Webhook {
-	if m != nil {
-		return m.Webhooks
-	}
-	return nil
-}
-
-// ValidatingWebhookConfigurationList is a list of ValidatingWebhookConfiguration.
-type ValidatingWebhookConfigurationList struct {
-	// Standard list metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
-	// +optional
-	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// List of ValidatingWebhookConfiguration.
-	Items            []*ValidatingWebhookConfiguration `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
-	XXX_unrecognized []byte                            `json:"-"`
-}
-
-func (m *ValidatingWebhookConfigurationList) Reset()         { *m = ValidatingWebhookConfigurationList{} }
-func (m *ValidatingWebhookConfigurationList) String() string { return proto.CompactTextString(m) }
-func (*ValidatingWebhookConfigurationList) ProtoMessage()    {}
-func (*ValidatingWebhookConfigurationList) Descriptor() ([]byte, []int) {
-	return fileDescriptorGenerated, []int{6}
-}
-
-func (m *ValidatingWebhookConfigurationList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
-	if m != nil {
-		return m.Metadata
-	}
-	return nil
-}
-
-func (m *ValidatingWebhookConfigurationList) GetItems() []*ValidatingWebhookConfiguration {
-	if m != nil {
-		return m.Items
-	}
-	return nil
-}
-
-// Webhook describes an admission webhook and the resources and operations it applies to.
-type Webhook struct {
+// MutatingWebhook describes an admission webhook and the resources and operations it applies to.
+type MutatingWebhook struct {
 	// The name of the admission webhook.
 	// Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where
 	// "imagepolicy" is the name of the webhook, and kubernetes.io is the name
@@ -324,6 +63,22 @@ type Webhook struct {
 	// allowed values are Ignore or Fail. Defaults to Ignore.
 	// +optional
 	FailurePolicy *string `protobuf:"bytes,4,opt,name=failurePolicy" json:"failurePolicy,omitempty"`
+	// matchPolicy defines how the "rules" list is used to match incoming requests.
+	// Allowed values are "Exact" or "Equivalent".
+	//
+	// - Exact: match a request only if it exactly matches a specified rule.
+	// For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1,
+	// but "rules" only included `apiGroups:["apps"], apiVersions:["v1"], resources: ["deployments"]`,
+	// a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the webhook.
+	//
+	// - Equivalent: match a request if modifies a resource listed in rules, even via another API group or version.
+	// For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1,
+	// and "rules" only included `apiGroups:["apps"], apiVersions:["v1"], resources: ["deployments"]`,
+	// a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the webhook.
+	//
+	// Defaults to "Exact"
+	// +optional
+	MatchPolicy *string `protobuf:"bytes,9,opt,name=matchPolicy" json:"matchPolicy,omitempty"`
 	// NamespaceSelector decides whether to run the webhook on an object based
 	// on whether the namespace for that object matches the selector. If the
 	// object itself is a namespace, the matching is performed on
@@ -369,62 +124,637 @@ type Webhook struct {
 	// Default to the empty LabelSelector, which matches everything.
 	// +optional
 	NamespaceSelector *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector `protobuf:"bytes,5,opt,name=namespaceSelector" json:"namespaceSelector,omitempty"`
-	// SideEffects states whether this webhookk has side effects.
+	// ObjectSelector decides whether to run the webhook based on if the
+	// object has matching labels. objectSelector is evaluated against both
+	// the oldObject and newObject that would be sent to the webhook, and
+	// is considered to match if either object matches the selector. A null
+	// object (oldObject in the case of create, or newObject in the case of
+	// delete) or an object that cannot have labels (like a
+	// DeploymentRollback or a PodProxyOptions object) is not considered to
+	// match.
+	// Use the object selector only if the webhook is opt-in, because end
+	// users may skip the admission webhook by setting the labels.
+	// Default to the empty LabelSelector, which matches everything.
+	// +optional
+	ObjectSelector *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector `protobuf:"bytes,11,opt,name=objectSelector" json:"objectSelector,omitempty"`
+	// SideEffects states whether this webhook has side effects.
 	// Acceptable values are: Unknown, None, Some, NoneOnDryRun
 	// Webhooks with side effects MUST implement a reconciliation system, since a request may be
 	// rejected by a future step in the admission change and the side effects therefore need to be undone.
 	// Requests with the dryRun attribute will be auto-rejected if they match a webhook with
 	// sideEffects == Unknown or Some. Defaults to Unknown.
 	// +optional
-	SideEffects      *string `protobuf:"bytes,6,opt,name=sideEffects" json:"sideEffects,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	SideEffects *string `protobuf:"bytes,6,opt,name=sideEffects" json:"sideEffects,omitempty"`
+	// TimeoutSeconds specifies the timeout for this webhook. After the timeout passes,
+	// the webhook call will be ignored or the API call will fail based on the
+	// failure policy.
+	// The timeout value must be between 1 and 30 seconds.
+	// Default to 30 seconds.
+	// +optional
+	TimeoutSeconds *int32 `protobuf:"varint,7,opt,name=timeoutSeconds" json:"timeoutSeconds,omitempty"`
+	// AdmissionReviewVersions is an ordered list of preferred `AdmissionReview`
+	// versions the Webhook expects. API server will try to use first version in
+	// the list which it supports. If none of the versions specified in this list
+	// supported by API server, validation will fail for this object.
+	// If a persisted webhook configuration specifies allowed versions and does not
+	// include any versions known to the API Server, calls to the webhook will fail
+	// and be subject to the failure policy.
+	// Default to `['v1beta1']`.
+	// +optional
+	AdmissionReviewVersions []string `protobuf:"bytes,8,rep,name=admissionReviewVersions" json:"admissionReviewVersions,omitempty"`
+	// reinvocationPolicy indicates whether this webhook should be called multiple times as part of a single admission evaluation.
+	// Allowed values are "Never" and "IfNeeded".
+	//
+	// Never: the webhook will not be called more than once in a single admission evaluation.
+	//
+	// IfNeeded: the webhook will be called at least one additional time as part of the admission evaluation
+	// if the object being admitted is modified by other admission plugins after the initial webhook call.
+	// Webhooks that specify this option *must* be idempotent, able to process objects they previously admitted.
+	// Note:
+	// * the number of additional invocations is not guaranteed to be exactly one.
+	// * if additional invocations result in further modifications to the object, webhooks are not guaranteed to be invoked again.
+	// * webhooks that use this option may be reordered to minimize the number of additional invocations.
+	// * to validate an object after all mutations are guaranteed complete, use a validating admission webhook instead.
+	//
+	// Defaults to "Never".
+	// +optional
+	ReinvocationPolicy *string `protobuf:"bytes,10,opt,name=reinvocationPolicy" json:"reinvocationPolicy,omitempty"`
+	XXX_unrecognized   []byte  `json:"-"`
 }
 
-func (m *Webhook) Reset()                    { *m = Webhook{} }
-func (m *Webhook) String() string            { return proto.CompactTextString(m) }
-func (*Webhook) ProtoMessage()               {}
-func (*Webhook) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{7} }
+func (m *MutatingWebhook) Reset()                    { *m = MutatingWebhook{} }
+func (m *MutatingWebhook) String() string            { return proto.CompactTextString(m) }
+func (*MutatingWebhook) ProtoMessage()               {}
+func (*MutatingWebhook) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
 
-func (m *Webhook) GetName() string {
+func (m *MutatingWebhook) GetName() string {
 	if m != nil && m.Name != nil {
 		return *m.Name
 	}
 	return ""
 }
 
-func (m *Webhook) GetClientConfig() *WebhookClientConfig {
+func (m *MutatingWebhook) GetClientConfig() *WebhookClientConfig {
 	if m != nil {
 		return m.ClientConfig
 	}
 	return nil
 }
 
-func (m *Webhook) GetRules() []*RuleWithOperations {
+func (m *MutatingWebhook) GetRules() []*RuleWithOperations {
 	if m != nil {
 		return m.Rules
 	}
 	return nil
 }
 
-func (m *Webhook) GetFailurePolicy() string {
+func (m *MutatingWebhook) GetFailurePolicy() string {
 	if m != nil && m.FailurePolicy != nil {
 		return *m.FailurePolicy
 	}
 	return ""
 }
 
-func (m *Webhook) GetNamespaceSelector() *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector {
+func (m *MutatingWebhook) GetMatchPolicy() string {
+	if m != nil && m.MatchPolicy != nil {
+		return *m.MatchPolicy
+	}
+	return ""
+}
+
+func (m *MutatingWebhook) GetNamespaceSelector() *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector {
 	if m != nil {
 		return m.NamespaceSelector
 	}
 	return nil
 }
 
-func (m *Webhook) GetSideEffects() string {
+func (m *MutatingWebhook) GetObjectSelector() *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector {
+	if m != nil {
+		return m.ObjectSelector
+	}
+	return nil
+}
+
+func (m *MutatingWebhook) GetSideEffects() string {
 	if m != nil && m.SideEffects != nil {
 		return *m.SideEffects
 	}
 	return ""
+}
+
+func (m *MutatingWebhook) GetTimeoutSeconds() int32 {
+	if m != nil && m.TimeoutSeconds != nil {
+		return *m.TimeoutSeconds
+	}
+	return 0
+}
+
+func (m *MutatingWebhook) GetAdmissionReviewVersions() []string {
+	if m != nil {
+		return m.AdmissionReviewVersions
+	}
+	return nil
+}
+
+func (m *MutatingWebhook) GetReinvocationPolicy() string {
+	if m != nil && m.ReinvocationPolicy != nil {
+		return *m.ReinvocationPolicy
+	}
+	return ""
+}
+
+// MutatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and may change the object.
+// Deprecated in v1.16, planned for removal in v1.19. Use admissionregistration.k8s.io/v1 MutatingWebhookConfiguration instead.
+type MutatingWebhookConfiguration struct {
+	// Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
+	// +optional
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// Webhooks is a list of webhooks and the affected resources and operations.
+	// +optional
+	// +patchMergeKey=name
+	// +patchStrategy=merge
+	Webhooks         []*MutatingWebhook `protobuf:"bytes,2,rep,name=Webhooks" json:"Webhooks,omitempty"`
+	XXX_unrecognized []byte             `json:"-"`
+}
+
+func (m *MutatingWebhookConfiguration) Reset()         { *m = MutatingWebhookConfiguration{} }
+func (m *MutatingWebhookConfiguration) String() string { return proto.CompactTextString(m) }
+func (*MutatingWebhookConfiguration) ProtoMessage()    {}
+func (*MutatingWebhookConfiguration) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{1}
+}
+
+func (m *MutatingWebhookConfiguration) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *MutatingWebhookConfiguration) GetWebhooks() []*MutatingWebhook {
+	if m != nil {
+		return m.Webhooks
+	}
+	return nil
+}
+
+// MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
+type MutatingWebhookConfigurationList struct {
+	// Standard list metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+	// +optional
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// List of MutatingWebhookConfiguration.
+	Items            []*MutatingWebhookConfiguration `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                          `json:"-"`
+}
+
+func (m *MutatingWebhookConfigurationList) Reset()         { *m = MutatingWebhookConfigurationList{} }
+func (m *MutatingWebhookConfigurationList) String() string { return proto.CompactTextString(m) }
+func (*MutatingWebhookConfigurationList) ProtoMessage()    {}
+func (*MutatingWebhookConfigurationList) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{2}
+}
+
+func (m *MutatingWebhookConfigurationList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *MutatingWebhookConfigurationList) GetItems() []*MutatingWebhookConfiguration {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
+// Rule is a tuple of APIGroups, APIVersion, and Resources.It is recommended
+// to make sure that all the tuple expansions are valid.
+type Rule struct {
+	// APIGroups is the API groups the resources belong to. '*' is all groups.
+	// If '*' is present, the length of the slice must be one.
+	// Required.
+	ApiGroups []string `protobuf:"bytes,1,rep,name=apiGroups" json:"apiGroups,omitempty"`
+	// APIVersions is the API versions the resources belong to. '*' is all versions.
+	// If '*' is present, the length of the slice must be one.
+	// Required.
+	ApiVersions []string `protobuf:"bytes,2,rep,name=apiVersions" json:"apiVersions,omitempty"`
+	// Resources is a list of resources this rule applies to.
+	//
+	// For example:
+	// 'pods' means pods.
+	// 'pods/log' means the log subresource of pods.
+	// '*' means all resources, but not subresources.
+	// 'pods/*' means all subresources of pods.
+	// '*/scale' means all scale subresources.
+	// '*/*' means all resources and their subresources.
+	//
+	// If wildcard is present, the validation rule will ensure resources do not
+	// overlap with each other.
+	//
+	// Depending on the enclosing object, subresources might not be allowed.
+	// Required.
+	Resources []string `protobuf:"bytes,3,rep,name=resources" json:"resources,omitempty"`
+	// scope specifies the scope of this rule.
+	// Valid values are "Cluster", "Namespaced", and "*"
+	// "Cluster" means that only cluster-scoped resources will match this rule.
+	// Namespace API objects are cluster-scoped.
+	// "Namespaced" means that only namespaced resources will match this rule.
+	// "*" means that there are no scope restrictions.
+	// Subresources match the scope of their parent resource.
+	// Default is "*".
+	//
+	// +optional
+	Scope            *string `protobuf:"bytes,4,opt,name=scope" json:"scope,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *Rule) Reset()                    { *m = Rule{} }
+func (m *Rule) String() string            { return proto.CompactTextString(m) }
+func (*Rule) ProtoMessage()               {}
+func (*Rule) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
+
+func (m *Rule) GetApiGroups() []string {
+	if m != nil {
+		return m.ApiGroups
+	}
+	return nil
+}
+
+func (m *Rule) GetApiVersions() []string {
+	if m != nil {
+		return m.ApiVersions
+	}
+	return nil
+}
+
+func (m *Rule) GetResources() []string {
+	if m != nil {
+		return m.Resources
+	}
+	return nil
+}
+
+func (m *Rule) GetScope() string {
+	if m != nil && m.Scope != nil {
+		return *m.Scope
+	}
+	return ""
+}
+
+// RuleWithOperations is a tuple of Operations and Resources. It is recommended to make
+// sure that all the tuple expansions are valid.
+type RuleWithOperations struct {
+	// Operations is the operations the admission hook cares about - CREATE, UPDATE, or *
+	// for all operations.
+	// If '*' is present, the length of the slice must be one.
+	// Required.
+	Operations []string `protobuf:"bytes,1,rep,name=operations" json:"operations,omitempty"`
+	// Rule is embedded, it describes other criteria of the rule, like
+	// APIGroups, APIVersions, Resources, etc.
+	Rule             *Rule  `protobuf:"bytes,2,opt,name=rule" json:"rule,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *RuleWithOperations) Reset()                    { *m = RuleWithOperations{} }
+func (m *RuleWithOperations) String() string            { return proto.CompactTextString(m) }
+func (*RuleWithOperations) ProtoMessage()               {}
+func (*RuleWithOperations) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
+
+func (m *RuleWithOperations) GetOperations() []string {
+	if m != nil {
+		return m.Operations
+	}
+	return nil
+}
+
+func (m *RuleWithOperations) GetRule() *Rule {
+	if m != nil {
+		return m.Rule
+	}
+	return nil
+}
+
+// ServiceReference holds a reference to Service.legacy.k8s.io
+type ServiceReference struct {
+	// `namespace` is the namespace of the service.
+	// Required
+	Namespace *string `protobuf:"bytes,1,opt,name=namespace" json:"namespace,omitempty"`
+	// `name` is the name of the service.
+	// Required
+	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	// `path` is an optional URL path which will be sent in any request to
+	// this service.
+	// +optional
+	Path *string `protobuf:"bytes,3,opt,name=path" json:"path,omitempty"`
+	// If specified, the port on the service that hosting webhook.
+	// Default to 443 for backward compatibility.
+	// `port` should be a valid port number (1-65535, inclusive).
+	// +optional
+	Port             *int32 `protobuf:"varint,4,opt,name=port" json:"port,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *ServiceReference) Reset()                    { *m = ServiceReference{} }
+func (m *ServiceReference) String() string            { return proto.CompactTextString(m) }
+func (*ServiceReference) ProtoMessage()               {}
+func (*ServiceReference) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{5} }
+
+func (m *ServiceReference) GetNamespace() string {
+	if m != nil && m.Namespace != nil {
+		return *m.Namespace
+	}
+	return ""
+}
+
+func (m *ServiceReference) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *ServiceReference) GetPath() string {
+	if m != nil && m.Path != nil {
+		return *m.Path
+	}
+	return ""
+}
+
+func (m *ServiceReference) GetPort() int32 {
+	if m != nil && m.Port != nil {
+		return *m.Port
+	}
+	return 0
+}
+
+// ValidatingWebhook describes an admission webhook and the resources and operations it applies to.
+type ValidatingWebhook struct {
+	// The name of the admission webhook.
+	// Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where
+	// "imagepolicy" is the name of the webhook, and kubernetes.io is the name
+	// of the organization.
+	// Required.
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	// ClientConfig defines how to communicate with the hook.
+	// Required
+	ClientConfig *WebhookClientConfig `protobuf:"bytes,2,opt,name=clientConfig" json:"clientConfig,omitempty"`
+	// Rules describes what operations on what resources/subresources the webhook cares about.
+	// The webhook cares about an operation if it matches _any_ Rule.
+	// However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks
+	// from putting the cluster in a state which cannot be recovered from without completely
+	// disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called
+	// on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.
+	Rules []*RuleWithOperations `protobuf:"bytes,3,rep,name=rules" json:"rules,omitempty"`
+	// FailurePolicy defines how unrecognized errors from the admission endpoint are handled -
+	// allowed values are Ignore or Fail. Defaults to Ignore.
+	// +optional
+	FailurePolicy *string `protobuf:"bytes,4,opt,name=failurePolicy" json:"failurePolicy,omitempty"`
+	// matchPolicy defines how the "rules" list is used to match incoming requests.
+	// Allowed values are "Exact" or "Equivalent".
+	//
+	// - Exact: match a request only if it exactly matches a specified rule.
+	// For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1,
+	// but "rules" only included `apiGroups:["apps"], apiVersions:["v1"], resources: ["deployments"]`,
+	// a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the webhook.
+	//
+	// - Equivalent: match a request if modifies a resource listed in rules, even via another API group or version.
+	// For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1,
+	// and "rules" only included `apiGroups:["apps"], apiVersions:["v1"], resources: ["deployments"]`,
+	// a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the webhook.
+	//
+	// Defaults to "Exact"
+	// +optional
+	MatchPolicy *string `protobuf:"bytes,9,opt,name=matchPolicy" json:"matchPolicy,omitempty"`
+	// NamespaceSelector decides whether to run the webhook on an object based
+	// on whether the namespace for that object matches the selector. If the
+	// object itself is a namespace, the matching is performed on
+	// object.metadata.labels. If the object is another cluster scoped resource,
+	// it never skips the webhook.
+	//
+	// For example, to run the webhook on any objects whose namespace is not
+	// associated with "runlevel" of "0" or "1";  you will set the selector as
+	// follows:
+	// "namespaceSelector": {
+	//   "matchExpressions": [
+	//     {
+	//       "key": "runlevel",
+	//       "operator": "NotIn",
+	//       "values": [
+	//         "0",
+	//         "1"
+	//       ]
+	//     }
+	//   ]
+	// }
+	//
+	// If instead you want to only run the webhook on any objects whose
+	// namespace is associated with the "environment" of "prod" or "staging";
+	// you will set the selector as follows:
+	// "namespaceSelector": {
+	//   "matchExpressions": [
+	//     {
+	//       "key": "environment",
+	//       "operator": "In",
+	//       "values": [
+	//         "prod",
+	//         "staging"
+	//       ]
+	//     }
+	//   ]
+	// }
+	//
+	// See
+	// https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
+	// for more examples of label selectors.
+	//
+	// Default to the empty LabelSelector, which matches everything.
+	// +optional
+	NamespaceSelector *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector `protobuf:"bytes,5,opt,name=namespaceSelector" json:"namespaceSelector,omitempty"`
+	// ObjectSelector decides whether to run the webhook based on if the
+	// object has matching labels. objectSelector is evaluated against both
+	// the oldObject and newObject that would be sent to the webhook, and
+	// is considered to match if either object matches the selector. A null
+	// object (oldObject in the case of create, or newObject in the case of
+	// delete) or an object that cannot have labels (like a
+	// DeploymentRollback or a PodProxyOptions object) is not considered to
+	// match.
+	// Use the object selector only if the webhook is opt-in, because end
+	// users may skip the admission webhook by setting the labels.
+	// Default to the empty LabelSelector, which matches everything.
+	// +optional
+	ObjectSelector *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector `protobuf:"bytes,10,opt,name=objectSelector" json:"objectSelector,omitempty"`
+	// SideEffects states whether this webhook has side effects.
+	// Acceptable values are: Unknown, None, Some, NoneOnDryRun
+	// Webhooks with side effects MUST implement a reconciliation system, since a request may be
+	// rejected by a future step in the admission change and the side effects therefore need to be undone.
+	// Requests with the dryRun attribute will be auto-rejected if they match a webhook with
+	// sideEffects == Unknown or Some. Defaults to Unknown.
+	// +optional
+	SideEffects *string `protobuf:"bytes,6,opt,name=sideEffects" json:"sideEffects,omitempty"`
+	// TimeoutSeconds specifies the timeout for this webhook. After the timeout passes,
+	// the webhook call will be ignored or the API call will fail based on the
+	// failure policy.
+	// The timeout value must be between 1 and 30 seconds.
+	// Default to 30 seconds.
+	// +optional
+	TimeoutSeconds *int32 `protobuf:"varint,7,opt,name=timeoutSeconds" json:"timeoutSeconds,omitempty"`
+	// AdmissionReviewVersions is an ordered list of preferred `AdmissionReview`
+	// versions the Webhook expects. API server will try to use first version in
+	// the list which it supports. If none of the versions specified in this list
+	// supported by API server, validation will fail for this object.
+	// If a persisted webhook configuration specifies allowed versions and does not
+	// include any versions known to the API Server, calls to the webhook will fail
+	// and be subject to the failure policy.
+	// Default to `['v1beta1']`.
+	// +optional
+	AdmissionReviewVersions []string `protobuf:"bytes,8,rep,name=admissionReviewVersions" json:"admissionReviewVersions,omitempty"`
+	XXX_unrecognized        []byte   `json:"-"`
+}
+
+func (m *ValidatingWebhook) Reset()                    { *m = ValidatingWebhook{} }
+func (m *ValidatingWebhook) String() string            { return proto.CompactTextString(m) }
+func (*ValidatingWebhook) ProtoMessage()               {}
+func (*ValidatingWebhook) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{6} }
+
+func (m *ValidatingWebhook) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *ValidatingWebhook) GetClientConfig() *WebhookClientConfig {
+	if m != nil {
+		return m.ClientConfig
+	}
+	return nil
+}
+
+func (m *ValidatingWebhook) GetRules() []*RuleWithOperations {
+	if m != nil {
+		return m.Rules
+	}
+	return nil
+}
+
+func (m *ValidatingWebhook) GetFailurePolicy() string {
+	if m != nil && m.FailurePolicy != nil {
+		return *m.FailurePolicy
+	}
+	return ""
+}
+
+func (m *ValidatingWebhook) GetMatchPolicy() string {
+	if m != nil && m.MatchPolicy != nil {
+		return *m.MatchPolicy
+	}
+	return ""
+}
+
+func (m *ValidatingWebhook) GetNamespaceSelector() *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector {
+	if m != nil {
+		return m.NamespaceSelector
+	}
+	return nil
+}
+
+func (m *ValidatingWebhook) GetObjectSelector() *k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector {
+	if m != nil {
+		return m.ObjectSelector
+	}
+	return nil
+}
+
+func (m *ValidatingWebhook) GetSideEffects() string {
+	if m != nil && m.SideEffects != nil {
+		return *m.SideEffects
+	}
+	return ""
+}
+
+func (m *ValidatingWebhook) GetTimeoutSeconds() int32 {
+	if m != nil && m.TimeoutSeconds != nil {
+		return *m.TimeoutSeconds
+	}
+	return 0
+}
+
+func (m *ValidatingWebhook) GetAdmissionReviewVersions() []string {
+	if m != nil {
+		return m.AdmissionReviewVersions
+	}
+	return nil
+}
+
+// ValidatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and object without changing it.
+// Deprecated in v1.16, planned for removal in v1.19. Use admissionregistration.k8s.io/v1 ValidatingWebhookConfiguration instead.
+type ValidatingWebhookConfiguration struct {
+	// Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
+	// +optional
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// Webhooks is a list of webhooks and the affected resources and operations.
+	// +optional
+	// +patchMergeKey=name
+	// +patchStrategy=merge
+	Webhooks         []*ValidatingWebhook `protobuf:"bytes,2,rep,name=Webhooks" json:"Webhooks,omitempty"`
+	XXX_unrecognized []byte               `json:"-"`
+}
+
+func (m *ValidatingWebhookConfiguration) Reset()         { *m = ValidatingWebhookConfiguration{} }
+func (m *ValidatingWebhookConfiguration) String() string { return proto.CompactTextString(m) }
+func (*ValidatingWebhookConfiguration) ProtoMessage()    {}
+func (*ValidatingWebhookConfiguration) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{7}
+}
+
+func (m *ValidatingWebhookConfiguration) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *ValidatingWebhookConfiguration) GetWebhooks() []*ValidatingWebhook {
+	if m != nil {
+		return m.Webhooks
+	}
+	return nil
+}
+
+// ValidatingWebhookConfigurationList is a list of ValidatingWebhookConfiguration.
+type ValidatingWebhookConfigurationList struct {
+	// Standard list metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+	// +optional
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// List of ValidatingWebhookConfiguration.
+	Items            []*ValidatingWebhookConfiguration `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte                            `json:"-"`
+}
+
+func (m *ValidatingWebhookConfigurationList) Reset()         { *m = ValidatingWebhookConfigurationList{} }
+func (m *ValidatingWebhookConfigurationList) String() string { return proto.CompactTextString(m) }
+func (*ValidatingWebhookConfigurationList) ProtoMessage()    {}
+func (*ValidatingWebhookConfigurationList) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{8}
+}
+
+func (m *ValidatingWebhookConfigurationList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *ValidatingWebhookConfigurationList) GetItems() []*ValidatingWebhookConfiguration {
+	if m != nil {
+		return m.Items
+	}
+	return nil
 }
 
 // WebhookClientConfig contains the information to make a TLS
@@ -463,8 +793,6 @@ type WebhookClientConfig struct {
 	//
 	// If the webhook is running within the cluster, then you should use `service`.
 	//
-	// Port 443 will be used if it is open, otherwise it is an error.
-	//
 	// +optional
 	Service *ServiceReference `protobuf:"bytes,1,opt,name=service" json:"service,omitempty"`
 	// `caBundle` is a PEM encoded CA bundle which will be used to validate the webhook's server certificate.
@@ -477,7 +805,7 @@ type WebhookClientConfig struct {
 func (m *WebhookClientConfig) Reset()                    { *m = WebhookClientConfig{} }
 func (m *WebhookClientConfig) String() string            { return proto.CompactTextString(m) }
 func (*WebhookClientConfig) ProtoMessage()               {}
-func (*WebhookClientConfig) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{8} }
+func (*WebhookClientConfig) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{9} }
 
 func (m *WebhookClientConfig) GetUrl() string {
 	if m != nil && m.Url != nil {
@@ -501,16 +829,130 @@ func (m *WebhookClientConfig) GetCaBundle() []byte {
 }
 
 func init() {
+	proto.RegisterType((*MutatingWebhook)(nil), "k8s.io.api.admissionregistration.v1beta1.MutatingWebhook")
 	proto.RegisterType((*MutatingWebhookConfiguration)(nil), "k8s.io.api.admissionregistration.v1beta1.MutatingWebhookConfiguration")
 	proto.RegisterType((*MutatingWebhookConfigurationList)(nil), "k8s.io.api.admissionregistration.v1beta1.MutatingWebhookConfigurationList")
 	proto.RegisterType((*Rule)(nil), "k8s.io.api.admissionregistration.v1beta1.Rule")
 	proto.RegisterType((*RuleWithOperations)(nil), "k8s.io.api.admissionregistration.v1beta1.RuleWithOperations")
 	proto.RegisterType((*ServiceReference)(nil), "k8s.io.api.admissionregistration.v1beta1.ServiceReference")
+	proto.RegisterType((*ValidatingWebhook)(nil), "k8s.io.api.admissionregistration.v1beta1.ValidatingWebhook")
 	proto.RegisterType((*ValidatingWebhookConfiguration)(nil), "k8s.io.api.admissionregistration.v1beta1.ValidatingWebhookConfiguration")
 	proto.RegisterType((*ValidatingWebhookConfigurationList)(nil), "k8s.io.api.admissionregistration.v1beta1.ValidatingWebhookConfigurationList")
-	proto.RegisterType((*Webhook)(nil), "k8s.io.api.admissionregistration.v1beta1.Webhook")
 	proto.RegisterType((*WebhookClientConfig)(nil), "k8s.io.api.admissionregistration.v1beta1.WebhookClientConfig")
 }
+func (m *MutatingWebhook) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MutatingWebhook) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.ClientConfig != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.ClientConfig.Size()))
+		n1, err := m.ClientConfig.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n1
+	}
+	if len(m.Rules) > 0 {
+		for _, msg := range m.Rules {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.FailurePolicy != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FailurePolicy)))
+		i += copy(dAtA[i:], *m.FailurePolicy)
+	}
+	if m.NamespaceSelector != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.NamespaceSelector.Size()))
+		n2, err := m.NamespaceSelector.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	if m.SideEffects != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SideEffects)))
+		i += copy(dAtA[i:], *m.SideEffects)
+	}
+	if m.TimeoutSeconds != nil {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.TimeoutSeconds))
+	}
+	if len(m.AdmissionReviewVersions) > 0 {
+		for _, s := range m.AdmissionReviewVersions {
+			dAtA[i] = 0x42
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.MatchPolicy != nil {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.MatchPolicy)))
+		i += copy(dAtA[i:], *m.MatchPolicy)
+	}
+	if m.ReinvocationPolicy != nil {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.ReinvocationPolicy)))
+		i += copy(dAtA[i:], *m.ReinvocationPolicy)
+	}
+	if m.ObjectSelector != nil {
+		dAtA[i] = 0x5a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.ObjectSelector.Size()))
+		n3, err := m.ObjectSelector.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n3
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func (m *MutatingWebhookConfiguration) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -530,11 +972,11 @@ func (m *MutatingWebhookConfiguration) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n1, err := m.Metadata.MarshalTo(dAtA[i:])
+		n4, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n1
+		i += n4
 	}
 	if len(m.Webhooks) > 0 {
 		for _, msg := range m.Webhooks {
@@ -573,11 +1015,11 @@ func (m *MutatingWebhookConfigurationList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n2, err := m.Metadata.MarshalTo(dAtA[i:])
+		n5, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n2
+		i += n5
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -657,6 +1099,12 @@ func (m *Rule) MarshalTo(dAtA []byte) (int, error) {
 			i += copy(dAtA[i:], s)
 		}
 	}
+	if m.Scope != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Scope)))
+		i += copy(dAtA[i:], *m.Scope)
+	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
@@ -697,11 +1145,11 @@ func (m *RuleWithOperations) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Rule.Size()))
-		n3, err := m.Rule.MarshalTo(dAtA[i:])
+		n6, err := m.Rule.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n3
+		i += n6
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -742,6 +1190,118 @@ func (m *ServiceReference) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Path)))
 		i += copy(dAtA[i:], *m.Path)
 	}
+	if m.Port != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Port))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *ValidatingWebhook) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ValidatingWebhook) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.ClientConfig != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.ClientConfig.Size()))
+		n7, err := m.ClientConfig.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n7
+	}
+	if len(m.Rules) > 0 {
+		for _, msg := range m.Rules {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.FailurePolicy != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FailurePolicy)))
+		i += copy(dAtA[i:], *m.FailurePolicy)
+	}
+	if m.NamespaceSelector != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.NamespaceSelector.Size()))
+		n8, err := m.NamespaceSelector.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n8
+	}
+	if m.SideEffects != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SideEffects)))
+		i += copy(dAtA[i:], *m.SideEffects)
+	}
+	if m.TimeoutSeconds != nil {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.TimeoutSeconds))
+	}
+	if len(m.AdmissionReviewVersions) > 0 {
+		for _, s := range m.AdmissionReviewVersions {
+			dAtA[i] = 0x42
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.MatchPolicy != nil {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.MatchPolicy)))
+		i += copy(dAtA[i:], *m.MatchPolicy)
+	}
+	if m.ObjectSelector != nil {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.ObjectSelector.Size()))
+		n9, err := m.ObjectSelector.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n9
+	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
@@ -767,11 +1327,11 @@ func (m *ValidatingWebhookConfiguration) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n4, err := m.Metadata.MarshalTo(dAtA[i:])
+		n10, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n4
+		i += n10
 	}
 	if len(m.Webhooks) > 0 {
 		for _, msg := range m.Webhooks {
@@ -810,11 +1370,11 @@ func (m *ValidatingWebhookConfigurationList) MarshalTo(dAtA []byte) (int, error)
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n5, err := m.Metadata.MarshalTo(dAtA[i:])
+		n11, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n5
+		i += n11
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -827,77 +1387,6 @@ func (m *ValidatingWebhookConfigurationList) MarshalTo(dAtA []byte) (int, error)
 			}
 			i += n
 		}
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
-}
-
-func (m *Webhook) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Webhook) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Name != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
-		i += copy(dAtA[i:], *m.Name)
-	}
-	if m.ClientConfig != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.ClientConfig.Size()))
-		n6, err := m.ClientConfig.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
-	}
-	if len(m.Rules) > 0 {
-		for _, msg := range m.Rules {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.FailurePolicy != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.FailurePolicy)))
-		i += copy(dAtA[i:], *m.FailurePolicy)
-	}
-	if m.NamespaceSelector != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(m.NamespaceSelector.Size()))
-		n7, err := m.NamespaceSelector.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n7
-	}
-	if m.SideEffects != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.SideEffects)))
-		i += copy(dAtA[i:], *m.SideEffects)
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -924,11 +1413,11 @@ func (m *WebhookClientConfig) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Service.Size()))
-		n8, err := m.Service.MarshalTo(dAtA[i:])
+		n12, err := m.Service.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n8
+		i += n12
 	}
 	if m.CaBundle != nil {
 		dAtA[i] = 0x12
@@ -957,6 +1446,62 @@ func encodeVarintGenerated(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
+func (m *MutatingWebhook) Size() (n int) {
+	var l int
+	_ = l
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ClientConfig != nil {
+		l = m.ClientConfig.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.Rules) > 0 {
+		for _, e := range m.Rules {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.FailurePolicy != nil {
+		l = len(*m.FailurePolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.NamespaceSelector != nil {
+		l = m.NamespaceSelector.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.SideEffects != nil {
+		l = len(*m.SideEffects)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.TimeoutSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.TimeoutSeconds))
+	}
+	if len(m.AdmissionReviewVersions) > 0 {
+		for _, s := range m.AdmissionReviewVersions {
+			l = len(s)
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.MatchPolicy != nil {
+		l = len(*m.MatchPolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ReinvocationPolicy != nil {
+		l = len(*m.ReinvocationPolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ObjectSelector != nil {
+		l = m.ObjectSelector.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *MutatingWebhookConfiguration) Size() (n int) {
 	var l int
 	_ = l
@@ -1016,6 +1561,10 @@ func (m *Rule) Size() (n int) {
 			n += 1 + l + sovGenerated(uint64(l))
 		}
 	}
+	if m.Scope != nil {
+		l = len(*m.Scope)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -1054,6 +1603,61 @@ func (m *ServiceReference) Size() (n int) {
 	}
 	if m.Path != nil {
 		l = len(*m.Path)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Port != nil {
+		n += 1 + sovGenerated(uint64(*m.Port))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ValidatingWebhook) Size() (n int) {
+	var l int
+	_ = l
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ClientConfig != nil {
+		l = m.ClientConfig.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.Rules) > 0 {
+		for _, e := range m.Rules {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.FailurePolicy != nil {
+		l = len(*m.FailurePolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.NamespaceSelector != nil {
+		l = m.NamespaceSelector.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.SideEffects != nil {
+		l = len(*m.SideEffects)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.TimeoutSeconds != nil {
+		n += 1 + sovGenerated(uint64(*m.TimeoutSeconds))
+	}
+	if len(m.AdmissionReviewVersions) > 0 {
+		for _, s := range m.AdmissionReviewVersions {
+			l = len(s)
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.MatchPolicy != nil {
+		l = len(*m.MatchPolicy)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.ObjectSelector != nil {
+		l = m.ObjectSelector.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
@@ -1100,41 +1704,6 @@ func (m *ValidatingWebhookConfigurationList) Size() (n int) {
 	return n
 }
 
-func (m *Webhook) Size() (n int) {
-	var l int
-	_ = l
-	if m.Name != nil {
-		l = len(*m.Name)
-		n += 1 + l + sovGenerated(uint64(l))
-	}
-	if m.ClientConfig != nil {
-		l = m.ClientConfig.Size()
-		n += 1 + l + sovGenerated(uint64(l))
-	}
-	if len(m.Rules) > 0 {
-		for _, e := range m.Rules {
-			l = e.Size()
-			n += 1 + l + sovGenerated(uint64(l))
-		}
-	}
-	if m.FailurePolicy != nil {
-		l = len(*m.FailurePolicy)
-		n += 1 + l + sovGenerated(uint64(l))
-	}
-	if m.NamespaceSelector != nil {
-		l = m.NamespaceSelector.Size()
-		n += 1 + l + sovGenerated(uint64(l))
-	}
-	if m.SideEffects != nil {
-		l = len(*m.SideEffects)
-		n += 1 + l + sovGenerated(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
 func (m *WebhookClientConfig) Size() (n int) {
 	var l int
 	_ = l
@@ -1168,6 +1737,386 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MutatingWebhook) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MutatingWebhook: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MutatingWebhook: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClientConfig", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ClientConfig == nil {
+				m.ClientConfig = &WebhookClientConfig{}
+			}
+			if err := m.ClientConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rules", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Rules = append(m.Rules, &RuleWithOperations{})
+			if err := m.Rules[len(m.Rules)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FailurePolicy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.FailurePolicy = &s
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NamespaceSelector", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.NamespaceSelector == nil {
+				m.NamespaceSelector = &k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector{}
+			}
+			if err := m.NamespaceSelector.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SideEffects", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.SideEffects = &s
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutSeconds", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.TimeoutSeconds = &v
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdmissionReviewVersions", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AdmissionReviewVersions = append(m.AdmissionReviewVersions, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MatchPolicy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.MatchPolicy = &s
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReinvocationPolicy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.ReinvocationPolicy = &s
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ObjectSelector", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ObjectSelector == nil {
+				m.ObjectSelector = &k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector{}
+			}
+			if err := m.ObjectSelector.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *MutatingWebhookConfiguration) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1257,7 +2206,7 @@ func (m *MutatingWebhookConfiguration) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Webhooks = append(m.Webhooks, &Webhook{})
+			m.Webhooks = append(m.Webhooks, &MutatingWebhook{})
 			if err := m.Webhooks[len(m.Webhooks)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -1515,6 +2464,36 @@ func (m *Rule) Unmarshal(dAtA []byte) error {
 			}
 			m.Resources = append(m.Resources, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Scope", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Scope = &s
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -1769,6 +2748,26 @@ func (m *ServiceReference) Unmarshal(dAtA []byte) error {
 			s := string(dAtA[iNdEx:postIndex])
 			m.Path = &s
 			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Port", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Port = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -1791,7 +2790,7 @@ func (m *ServiceReference) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ValidatingWebhookConfiguration) Unmarshal(dAtA []byte) error {
+func (m *ValidatingWebhook) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1814,240 +2813,10 @@ func (m *ValidatingWebhookConfiguration) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ValidatingWebhookConfiguration: wiretype end group for non-group")
+			return fmt.Errorf("proto: ValidatingWebhook: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ValidatingWebhookConfiguration: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Metadata == nil {
-				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta{}
-			}
-			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Webhooks", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Webhooks = append(m.Webhooks, &Webhook{})
-			if err := m.Webhooks[len(m.Webhooks)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipGenerated(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ValidatingWebhookConfigurationList) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowGenerated
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ValidatingWebhookConfigurationList: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ValidatingWebhookConfigurationList: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Metadata == nil {
-				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta{}
-			}
-			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenerated
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Items = append(m.Items, &ValidatingWebhookConfiguration{})
-			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipGenerated(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthGenerated
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Webhook) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowGenerated
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Webhook: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Webhook: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ValidatingWebhook: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2236,6 +3005,348 @@ func (m *Webhook) Unmarshal(dAtA []byte) error {
 			}
 			s := string(dAtA[iNdEx:postIndex])
 			m.SideEffects = &s
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutSeconds", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.TimeoutSeconds = &v
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdmissionReviewVersions", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AdmissionReviewVersions = append(m.AdmissionReviewVersions, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MatchPolicy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.MatchPolicy = &s
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ObjectSelector", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ObjectSelector == nil {
+				m.ObjectSelector = &k8s_io_apimachinery_pkg_apis_meta_v1.LabelSelector{}
+			}
+			if err := m.ObjectSelector.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ValidatingWebhookConfiguration) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ValidatingWebhookConfiguration: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ValidatingWebhookConfiguration: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta{}
+			}
+			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Webhooks", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Webhooks = append(m.Webhooks, &ValidatingWebhook{})
+			if err := m.Webhooks[len(m.Webhooks)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ValidatingWebhookConfigurationList) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ValidatingWebhookConfigurationList: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ValidatingWebhookConfigurationList: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta{}
+			}
+			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Items = append(m.Items, &ValidatingWebhookConfiguration{})
+			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2514,46 +3625,55 @@ func init() {
 }
 
 var fileDescriptorGenerated = []byte{
-	// 652 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
-	0x10, 0xc5, 0x4d, 0x4a, 0x9b, 0x49, 0x91, 0xca, 0x72, 0x31, 0x55, 0x15, 0x45, 0x16, 0x87, 0x9c,
-	0x6c, 0x52, 0x10, 0xaa, 0x10, 0x5c, 0x5a, 0xf1, 0x21, 0xd4, 0xaa, 0x68, 0x8b, 0x5a, 0x84, 0x10,
-	0xd2, 0xc6, 0x9e, 0x24, 0x4b, 0x6c, 0xaf, 0xb5, 0xbb, 0x8e, 0xe8, 0x3f, 0x81, 0xdf, 0x82, 0xb8,
-	0x73, 0xe0, 0xd0, 0x9f, 0x80, 0xca, 0x0f, 0x01, 0xad, 0xed, 0x38, 0x5f, 0x25, 0x4d, 0x25, 0x2e,
-	0xdc, 0x76, 0x5f, 0xf2, 0xe6, 0xbd, 0x99, 0x7d, 0x63, 0xd8, 0x1d, 0xec, 0x2a, 0x97, 0x0b, 0x8f,
-	0x25, 0xdc, 0x63, 0x41, 0xc4, 0x95, 0xe2, 0x22, 0x96, 0xd8, 0xe3, 0x4a, 0x4b, 0xa6, 0xb9, 0x88,
-	0xbd, 0x61, 0xbb, 0x83, 0x9a, 0xb5, 0xbd, 0x1e, 0xc6, 0x28, 0x99, 0xc6, 0xc0, 0x4d, 0xa4, 0xd0,
-	0x82, 0xb4, 0x72, 0xa6, 0xcb, 0x12, 0xee, 0x5e, 0xca, 0x74, 0x0b, 0xe6, 0xd6, 0xc3, 0xb1, 0x46,
-	0xc4, 0xfc, 0x3e, 0x8f, 0x51, 0x9e, 0x79, 0xc9, 0xa0, 0x67, 0x00, 0xe5, 0x45, 0xa8, 0x99, 0x37,
-	0x9c, 0xab, 0xbf, 0xe5, 0xfd, 0x8d, 0x25, 0xd3, 0x58, 0xf3, 0x08, 0xe7, 0x08, 0x8f, 0xae, 0x22,
-	0x28, 0xbf, 0x8f, 0x11, 0x9b, 0xe5, 0x39, 0x5f, 0x2d, 0xd8, 0x3e, 0x4c, 0x35, 0xd3, 0x3c, 0xee,
-	0x9d, 0x62, 0xa7, 0x2f, 0xc4, 0x60, 0x5f, 0xc4, 0x5d, 0xde, 0x4b, 0xf3, 0x3e, 0xc8, 0x01, 0xac,
-	0x1b, 0x93, 0x01, 0xd3, 0xcc, 0xb6, 0x9a, 0x56, 0xab, 0xbe, 0x73, 0xdf, 0x1d, 0x37, 0x5f, 0x6a,
-	0xb9, 0xc9, 0xa0, 0x67, 0x00, 0xe5, 0x9a, 0x7f, 0xbb, 0xc3, 0xb6, 0x7b, 0xd4, 0xf9, 0x88, 0xbe,
-	0x3e, 0x44, 0xcd, 0x68, 0x59, 0x81, 0x1c, 0xc2, 0x7a, 0xa1, 0xa2, 0xec, 0x95, 0x66, 0xa5, 0x55,
-	0xdf, 0x69, 0xbb, 0xcb, 0x8e, 0xd2, 0x2d, 0x98, 0xb4, 0x2c, 0xe1, 0xfc, 0xb0, 0xa0, 0xb9, 0xc8,
-	0xfd, 0x01, 0x57, 0x9a, 0xbc, 0x9a, 0xeb, 0xc0, 0x5d, 0xae, 0x03, 0xc3, 0x9e, 0xf1, 0xff, 0x1e,
-	0x56, 0xb9, 0xc6, 0x68, 0x64, 0xfe, 0xf9, 0xf2, 0xe6, 0x17, 0xd9, 0xa4, 0x79, 0x51, 0x27, 0x80,
-	0x2a, 0x4d, 0x43, 0x24, 0xdb, 0x50, 0x63, 0x09, 0x7f, 0x21, 0x45, 0x9a, 0x28, 0xdb, 0x6a, 0x56,
-	0x5a, 0x35, 0x3a, 0x06, 0x48, 0x13, 0xea, 0x2c, 0xe1, 0x27, 0x28, 0x8d, 0x56, 0xee, 0xa4, 0x46,
-	0x27, 0x21, 0xc3, 0x97, 0xa8, 0x44, 0x2a, 0x7d, 0x54, 0x76, 0x25, 0xe7, 0x97, 0x80, 0xf3, 0x09,
-	0x88, 0x51, 0x39, 0xe5, 0xba, 0x7f, 0x94, 0x60, 0xee, 0x40, 0x91, 0x06, 0x80, 0x28, 0x6f, 0x85,
-	0xe8, 0x04, 0x42, 0xf6, 0xa0, 0x2a, 0xd3, 0x10, 0xed, 0x95, 0xb9, 0x09, 0x5e, 0xd1, 0xb8, 0xd1,
-	0xa2, 0x19, 0xd7, 0x79, 0x0b, 0x9b, 0xc7, 0x28, 0x87, 0xdc, 0x47, 0x8a, 0x5d, 0x94, 0x18, 0xfb,
-	0x59, 0xaf, 0x31, 0x8b, 0x50, 0x25, 0xcc, 0xc7, 0xec, 0x79, 0x6a, 0x74, 0x0c, 0x10, 0x02, 0x55,
-	0x73, 0xc9, 0x54, 0x6b, 0x34, 0x3b, 0x1b, 0x2c, 0x61, 0xba, 0x6f, 0x57, 0x72, 0xcc, 0x9c, 0x9d,
-	0x6f, 0x16, 0x34, 0x4e, 0x58, 0xc8, 0x83, 0xff, 0x34, 0xc8, 0xe7, 0x16, 0x38, 0x8b, 0xfd, 0xff,
-	0xf3, 0x28, 0x7f, 0x98, 0x8e, 0xf2, 0xcb, 0xe5, 0xed, 0x2f, 0x36, 0x3a, 0x0a, 0xf3, 0xef, 0x15,
-	0x58, 0x2b, 0x7e, 0x2f, 0x9f, 0xd1, 0x9a, 0x78, 0x46, 0x06, 0x1b, 0x7e, 0xc8, 0x31, 0xd6, 0x39,
-	0xbb, 0x08, 0xd6, 0xd3, 0x6b, 0x4f, 0x71, 0x7f, 0xa2, 0x08, 0x9d, 0x2a, 0x49, 0x28, 0xac, 0x9a,
-	0xdc, 0xe5, 0x3b, 0x50, 0xdf, 0x79, 0x72, 0xbd, 0xd0, 0x4e, 0x2f, 0x08, 0xcd, 0x4b, 0x91, 0x7b,
-	0x70, 0xab, 0xcb, 0x78, 0x98, 0x4a, 0x7c, 0x2d, 0x42, 0xee, 0x9f, 0xd9, 0xd5, 0xac, 0xa7, 0x69,
-	0x90, 0x30, 0xb8, 0x5d, 0x86, 0xf8, 0x18, 0x43, 0xf4, 0xb5, 0x90, 0xf6, 0x6a, 0xd6, 0xe1, 0x83,
-	0x25, 0x5f, 0x8c, 0x75, 0x30, 0x1c, 0x51, 0xe9, 0x7c, 0x35, 0xf3, 0x19, 0x50, 0x3c, 0xc0, 0x67,
-	0xdd, 0x2e, 0xfa, 0x5a, 0xd9, 0x37, 0x33, 0x1b, 0x93, 0x90, 0xf3, 0xc5, 0x82, 0x3b, 0x97, 0x0c,
-	0x89, 0xbc, 0x81, 0x35, 0x95, 0xaf, 0x61, 0x11, 0xa2, 0xc7, 0xcb, 0x0f, 0x66, 0x76, 0x7f, 0xe9,
-	0xa8, 0x14, 0xd9, 0x82, 0x75, 0x9f, 0xed, 0xa5, 0x71, 0x50, 0x7c, 0x24, 0x36, 0x68, 0x79, 0x27,
-	0x9b, 0x50, 0x49, 0x65, 0x58, 0x6c, 0xac, 0x39, 0xee, 0xdd, 0xfd, 0x7e, 0xd1, 0xb0, 0xce, 0x2f,
-	0x1a, 0xd6, 0xcf, 0x8b, 0x86, 0xf5, 0xf9, 0x57, 0xe3, 0xc6, 0xbb, 0xb5, 0x42, 0xe2, 0x4f, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x86, 0xaa, 0x82, 0xa7, 0x96, 0x07, 0x00, 0x00,
+	// 793 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x54, 0xcd, 0x6e, 0xeb, 0x44,
+	0x14, 0xc6, 0xf9, 0xa1, 0xc9, 0xc9, 0xe5, 0x72, 0xef, 0x80, 0x84, 0xa9, 0xae, 0xa2, 0xc8, 0x42,
+	0x28, 0x2b, 0x9b, 0x16, 0x84, 0xca, 0xdf, 0xa6, 0x57, 0xfc, 0x08, 0xf5, 0xea, 0xa2, 0x29, 0xb4,
+	0x12, 0x20, 0xa4, 0xc9, 0xe4, 0x24, 0x19, 0x62, 0x7b, 0xac, 0x99, 0x71, 0xa0, 0x3c, 0x49, 0x79,
+	0x1e, 0x16, 0xb0, 0x60, 0xd1, 0x47, 0x40, 0x65, 0xc7, 0x53, 0x20, 0x8f, 0x5d, 0xc7, 0x89, 0xd3,
+	0x12, 0x4a, 0xd9, 0x75, 0x37, 0xf3, 0x8d, 0xcf, 0x77, 0xce, 0x77, 0x7c, 0xce, 0x07, 0x07, 0xf3,
+	0x03, 0xed, 0x0b, 0x19, 0xb0, 0x44, 0x04, 0x6c, 0x1c, 0x09, 0xad, 0x85, 0x8c, 0x15, 0x4e, 0x85,
+	0x36, 0x8a, 0x19, 0x21, 0xe3, 0x60, 0xb1, 0x37, 0x42, 0xc3, 0xf6, 0x82, 0x29, 0xc6, 0xa8, 0x98,
+	0xc1, 0xb1, 0x9f, 0x28, 0x69, 0x24, 0x19, 0xe6, 0x91, 0x3e, 0x4b, 0x84, 0xbf, 0x31, 0xd2, 0x2f,
+	0x22, 0x77, 0xdf, 0x59, 0xe6, 0x88, 0x18, 0x9f, 0x89, 0x18, 0xd5, 0x59, 0x90, 0xcc, 0xa7, 0x19,
+	0xa0, 0x83, 0x08, 0x0d, 0x0b, 0x16, 0x35, 0xfe, 0xdd, 0xe0, 0xba, 0x28, 0x95, 0xc6, 0x46, 0x44,
+	0x58, 0x0b, 0x78, 0xf7, 0x9f, 0x02, 0x34, 0x9f, 0x61, 0xc4, 0xd6, 0xe3, 0xbc, 0xf3, 0x36, 0xbc,
+	0xfc, 0x2c, 0x35, 0xcc, 0x88, 0x78, 0x7a, 0x8a, 0xa3, 0x99, 0x94, 0x73, 0x42, 0xa0, 0x15, 0xb3,
+	0x08, 0x5d, 0x67, 0xe0, 0x0c, 0xbb, 0xd4, 0x9e, 0x09, 0x83, 0x07, 0x3c, 0x14, 0x18, 0x9b, 0xa7,
+	0x32, 0x9e, 0x88, 0xa9, 0xdb, 0x18, 0x38, 0xc3, 0xde, 0xfe, 0x47, 0xfe, 0xb6, 0x7d, 0xf0, 0x0b,
+	0xf2, 0xa7, 0x15, 0x12, 0xba, 0x42, 0x49, 0x28, 0xb4, 0x55, 0x1a, 0xa2, 0x76, 0x9b, 0x83, 0xe6,
+	0xb0, 0xb7, 0xff, 0xe1, 0xf6, 0xdc, 0x34, 0x0d, 0xf1, 0x54, 0x98, 0xd9, 0xf3, 0x04, 0xf3, 0x17,
+	0x4d, 0x73, 0x2a, 0xf2, 0x06, 0xbc, 0x34, 0x61, 0x22, 0x4c, 0x15, 0x7e, 0x21, 0x43, 0xc1, 0xcf,
+	0xdc, 0x96, 0xd5, 0xb4, 0x0a, 0x12, 0x06, 0x8f, 0x33, 0x91, 0x3a, 0x61, 0x1c, 0x8f, 0x31, 0x44,
+	0x6e, 0xa4, 0x72, 0xdb, 0x56, 0xe1, 0xdb, 0x95, 0x2a, 0xca, 0xc6, 0xfa, 0xc9, 0x7c, 0x9a, 0x01,
+	0xda, 0xcf, 0xfe, 0x9f, 0xbf, 0xd8, 0xf3, 0x8f, 0xd8, 0x08, 0xc3, 0xab, 0x50, 0x5a, 0x67, 0x23,
+	0x03, 0xe8, 0x69, 0x31, 0xc6, 0x8f, 0x27, 0x13, 0xe4, 0x46, 0xbb, 0x2f, 0xda, 0x32, 0xaa, 0x10,
+	0x79, 0x13, 0x1e, 0x66, 0x3f, 0x4a, 0xa6, 0xe6, 0x18, 0xb9, 0x8c, 0xc7, 0xda, 0xdd, 0x19, 0x38,
+	0xc3, 0x36, 0x5d, 0x43, 0xc9, 0x01, 0xbc, 0x56, 0x76, 0x83, 0xe2, 0x42, 0xe0, 0x0f, 0x27, 0xa8,
+	0xb2, 0x8b, 0x76, 0x3b, 0x83, 0xe6, 0xb0, 0x4b, 0xaf, 0x7b, 0xce, 0x6a, 0x88, 0x98, 0xe1, 0xb3,
+	0xa2, 0x15, 0xdd, 0xbc, 0x86, 0x0a, 0x44, 0x7c, 0x20, 0x0a, 0x45, 0xbc, 0x90, 0xdc, 0xb6, 0xb1,
+	0xf8, 0x10, 0xec, 0x87, 0x1b, 0x5e, 0xc8, 0x37, 0xf0, 0x50, 0x8e, 0xbe, 0x47, 0x6e, 0xca, 0xae,
+	0xf5, 0x6e, 0xdf, 0xb5, 0x35, 0x2a, 0xef, 0x17, 0x07, 0x9e, 0xac, 0x8d, 0x66, 0x3e, 0x29, 0x69,
+	0xfe, 0x93, 0xc9, 0x11, 0x74, 0x32, 0xa6, 0x31, 0x33, 0xcc, 0xce, 0x6a, 0x6f, 0xff, 0xad, 0xed,
+	0xf2, 0x3e, 0xb7, 0x89, 0x9e, 0xa1, 0x61, 0xb4, 0x64, 0x20, 0x5f, 0x41, 0xa7, 0xc8, 0xa2, 0xdd,
+	0x86, 0x9d, 0xc0, 0xf7, 0xb6, 0x9f, 0xc0, 0xb5, 0x3a, 0x69, 0x49, 0xe5, 0xfd, 0xee, 0xc0, 0xe0,
+	0x26, 0x15, 0x47, 0x42, 0x1b, 0xf2, 0x79, 0x4d, 0x89, 0xbf, 0x65, 0x07, 0x85, 0x5e, 0xd7, 0xf1,
+	0x2d, 0xb4, 0x85, 0xc1, 0xe8, 0x4a, 0xc4, 0x27, 0xb7, 0x16, 0xb1, 0x52, 0x26, 0xcd, 0x49, 0xbd,
+	0x9f, 0xa0, 0x95, 0x6d, 0x1b, 0x79, 0x02, 0x5d, 0x96, 0x88, 0x4f, 0x95, 0x4c, 0x13, 0xed, 0x3a,
+	0x76, 0xee, 0x96, 0x40, 0x36, 0x69, 0x2c, 0x11, 0xe5, 0x5c, 0x36, 0xec, 0x7b, 0x15, 0xca, 0xe2,
+	0x15, 0x6a, 0x99, 0x2a, 0x5e, 0x2c, 0x7c, 0x97, 0x2e, 0x01, 0xf2, 0x2a, 0xb4, 0x35, 0x97, 0x09,
+	0x16, 0xeb, 0x9a, 0x5f, 0xbc, 0x1f, 0x81, 0xd4, 0x37, 0x9d, 0xf4, 0x01, 0x64, 0x79, 0x2b, 0x4a,
+	0xa9, 0x20, 0xe4, 0x10, 0x5a, 0x99, 0x17, 0x14, 0x8e, 0xe5, 0xff, 0x3b, 0x57, 0xa1, 0x36, 0xd6,
+	0x0b, 0xe1, 0xd1, 0x31, 0xaa, 0x85, 0xe0, 0x48, 0x71, 0x82, 0x0a, 0x63, 0x6e, 0x3b, 0x50, 0xae,
+	0x79, 0x61, 0x95, 0x4b, 0xa0, 0xf4, 0xd0, 0x46, 0xc5, 0x43, 0x09, 0xb4, 0x12, 0x66, 0x66, 0x6e,
+	0x33, 0xc7, 0xb2, 0xb3, 0xc5, 0xa4, 0x32, 0x56, 0x68, 0x9b, 0xda, 0xb3, 0xf7, 0x57, 0x0b, 0x1e,
+	0x9f, 0xb0, 0x50, 0x8c, 0xef, 0x5d, 0xf9, 0xde, 0x95, 0x37, 0xba, 0x2c, 0xdc, 0x9d, 0xcb, 0xfe,
+	0xea, 0x40, 0xbf, 0x36, 0x6c, 0xff, 0xa7, 0xcf, 0x9e, 0xd6, 0x7c, 0xf6, 0x83, 0xed, 0x67, 0xaa,
+	0x56, 0x69, 0xc5, 0x69, 0x2f, 0x1c, 0xf0, 0x6e, 0x56, 0x72, 0xe7, 0x5e, 0xfb, 0xdd, 0xaa, 0xd7,
+	0x7e, 0xf6, 0x1f, 0x84, 0x6c, 0x74, 0xdb, 0x9f, 0x1d, 0x78, 0x65, 0xc3, 0x8a, 0x92, 0x2f, 0x61,
+	0x47, 0xe7, 0x7e, 0x54, 0x48, 0x78, 0x7f, 0xfb, 0xcc, 0xeb, 0x46, 0x46, 0xaf, 0xa8, 0xc8, 0x2e,
+	0x74, 0x38, 0x3b, 0x4c, 0xe3, 0x71, 0xe1, 0x96, 0x0f, 0x68, 0x79, 0x27, 0x8f, 0xa0, 0x99, 0xaa,
+	0xb0, 0xb0, 0xae, 0xec, 0x78, 0xf8, 0xfa, 0x6f, 0x97, 0x7d, 0xe7, 0xe2, 0xb2, 0xef, 0xfc, 0x71,
+	0xd9, 0x77, 0xce, 0xff, 0xec, 0xbf, 0xf0, 0xf5, 0x4e, 0x91, 0xe2, 0xef, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0x2f, 0x21, 0xe8, 0x90, 0x58, 0x0b, 0x00, 0x00,
 }

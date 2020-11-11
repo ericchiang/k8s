@@ -65,11 +65,13 @@ func (m *AggregationRule) GetClusterRoleSelectors() []*k8s_io_apimachinery_pkg_a
 }
 
 // ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding or ClusterRoleBinding.
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 ClusterRole, and will no longer be served in v1.20.
 type ClusterRole struct {
 	// Standard object's metadata.
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Rules holds all the PolicyRules for this ClusterRole
+	// +optional
 	Rules []*PolicyRule `protobuf:"bytes,2,rep,name=rules" json:"rules,omitempty"`
 	// AggregationRule is an optional field that describes how to build the Rules for this ClusterRole.
 	// If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be
@@ -107,6 +109,7 @@ func (m *ClusterRole) GetAggregationRule() *AggregationRule {
 
 // ClusterRoleBinding references a ClusterRole, but not contain it.  It can reference a ClusterRole in the global namespace,
 // and adds who information via Subject.
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 ClusterRoleBinding, and will no longer be served in v1.20.
 type ClusterRoleBinding struct {
 	// Standard object's metadata.
 	// +optional
@@ -146,7 +149,8 @@ func (m *ClusterRoleBinding) GetRoleRef() *RoleRef {
 	return nil
 }
 
-// ClusterRoleBindingList is a collection of ClusterRoleBindings
+// ClusterRoleBindingList is a collection of ClusterRoleBindings.
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 ClusterRoleBindingList, and will no longer be served in v1.20.
 type ClusterRoleBindingList struct {
 	// Standard object's metadata.
 	// +optional
@@ -175,7 +179,8 @@ func (m *ClusterRoleBindingList) GetItems() []*ClusterRoleBinding {
 	return nil
 }
 
-// ClusterRoleList is a collection of ClusterRoles
+// ClusterRoleList is a collection of ClusterRoles.
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 ClusterRoles, and will no longer be served in v1.20.
 type ClusterRoleList struct {
 	// Standard object's metadata.
 	// +optional
@@ -269,11 +274,13 @@ func (m *PolicyRule) GetNonResourceURLs() []string {
 }
 
 // Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding.
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 Role, and will no longer be served in v1.20.
 type Role struct {
 	// Standard object's metadata.
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Rules holds all the PolicyRules for this Role
+	// +optional
 	Rules            []*PolicyRule `protobuf:"bytes,2,rep,name=rules" json:"rules,omitempty"`
 	XXX_unrecognized []byte        `json:"-"`
 }
@@ -300,6 +307,7 @@ func (m *Role) GetRules() []*PolicyRule {
 // RoleBinding references a role, but does not contain it.  It can reference a Role in the same namespace or a ClusterRole in the global namespace.
 // It adds who information via Subjects and namespace information by which namespace it exists in.  RoleBindings in a given
 // namespace only have effect in that namespace.
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 RoleBinding, and will no longer be served in v1.20.
 type RoleBinding struct {
 	// Standard object's metadata.
 	// +optional
@@ -340,6 +348,7 @@ func (m *RoleBinding) GetRoleRef() *RoleRef {
 }
 
 // RoleBindingList is a collection of RoleBindings
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 RoleBindingList, and will no longer be served in v1.20.
 type RoleBindingList struct {
 	// Standard object's metadata.
 	// +optional
@@ -369,6 +378,7 @@ func (m *RoleBindingList) GetItems() []*RoleBinding {
 }
 
 // RoleList is a collection of Roles
+// Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 RoleList, and will no longer be served in v1.20.
 type RoleList struct {
 	// Standard object's metadata.
 	// +optional

@@ -54,9 +54,6 @@ var apiGroups = []APIGroup{
 				{"MutatingWebhookConfiguration", "", NotNamespaced},
 				{"ValidatingWebhookConfiguration", "", NotNamespaced},
 			},
-			"v1alpha1": []Resource{
-				{"InitializerConfiguration", "", NotNamespaced},
-			},
 		},
 	},
 	{
@@ -65,6 +62,9 @@ var apiGroups = []APIGroup{
 		Versions: map[string][]Resource{
 			"v1beta1": []Resource{
 				{"CustomResourceDefinition", "", NotNamespaced},
+			},
+			"v1": []Resource{
+				{"CustomResourceDefinition","", NotNamespaced},
 			},
 		},
 	},

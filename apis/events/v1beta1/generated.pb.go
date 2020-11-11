@@ -201,7 +201,7 @@ func (m *Event) GetDeprecatedCount() int32 {
 // EventList is a list of Event objects.
 type EventList struct {
 	// Standard list metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of schema objects.
@@ -236,6 +236,7 @@ type EventSeries struct {
 	// Time when last Event from the series was seen before last heartbeat.
 	LastObservedTime *k8s_io_apimachinery_pkg_apis_meta_v1.MicroTime `protobuf:"bytes,2,opt,name=lastObservedTime" json:"lastObservedTime,omitempty"`
 	// Information whether this series is ongoing or finished.
+	// Deprecated. Planned removal for 1.18
 	State            *string `protobuf:"bytes,3,opt,name=state" json:"state,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
