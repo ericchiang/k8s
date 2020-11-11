@@ -1,4 +1,4 @@
-KUBE_VERSION=1.13.2
+KUBE_VERSION=1.18.10
 
 build:
 	go build -v ./...
@@ -26,7 +26,7 @@ _output/bin/protoc-gen-gofast:
 		https://github.com/gogo/protobuf \
 		github.com/gogo/protobuf \
 		github.com/gogo/protobuf/protoc-gen-gofast \
-		tags/v0.5
+		tags/v1.3.1
 
 _output/bin/gomvpkg:
 	GO111MODULE=off ./scripts/go-install.sh \
@@ -34,9 +34,11 @@ _output/bin/gomvpkg:
 		golang.org/x/tools \
 		golang.org/x/tools/cmd/gomvpkg \
 		fbec762f837dc349b73d1eaa820552e2ad177942
+		# we updated this as well
 
 _output/src/github.com/golang/protobuf:
-	git clone https://github.com/golang/protobuf _output/src/github.com/golang/protobuf
+	git clone --branch  v1.3.2 https://github.com/golang/protobuf _output/src/github.com/golang/protobuf
+	# use  version in kubernetes go.mod
 
 _output/bin/protoc:
 	./scripts/get-protoc.sh
@@ -46,6 +48,7 @@ _output/kubernetes:
 	curl -o _output/kubernetes.zip -L https://github.com/kubernetes/kubernetes/archive/v$(KUBE_VERSION).zip
 	bsdtar -x -f _output/kubernetes.zip -C _output > /dev/null
 	mv _output/kubernetes-$(KUBE_VERSION) _output/kubernetes
+	# use version in kubernetes go.mod
 
 .PHONY: clean
 clean:
