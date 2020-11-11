@@ -317,10 +317,12 @@ type SelfSubjectAccessReview struct {
 	XXX_unrecognized []byte                     `json:"-"`
 }
 
-func (m *SelfSubjectAccessReview) Reset()                    { *m = SelfSubjectAccessReview{} }
-func (m *SelfSubjectAccessReview) String() string            { return proto.CompactTextString(m) }
-func (*SelfSubjectAccessReview) ProtoMessage()               {}
-func (*SelfSubjectAccessReview) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{6} }
+func (m *SelfSubjectAccessReview) Reset()         { *m = SelfSubjectAccessReview{} }
+func (m *SelfSubjectAccessReview) String() string { return proto.CompactTextString(m) }
+func (*SelfSubjectAccessReview) ProtoMessage()    {}
+func (*SelfSubjectAccessReview) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{6}
+}
 
 func (m *SelfSubjectAccessReview) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
 	if m != nil {

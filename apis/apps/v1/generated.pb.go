@@ -72,7 +72,7 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 // depend on its stability. It is primarily for internal use by controllers.
 type ControllerRevision struct {
 	// Standard object's metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Data is the serialized representation of the state.
@@ -110,7 +110,7 @@ func (m *ControllerRevision) GetRevision() int64 {
 
 // ControllerRevisionList is a resource containing a list of ControllerRevision objects.
 type ControllerRevisionList struct {
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of ControllerRevisions
@@ -140,18 +140,18 @@ func (m *ControllerRevisionList) GetItems() []*ControllerRevision {
 // DaemonSet represents the configuration of a daemon set.
 type DaemonSet struct {
 	// Standard object's metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// The desired behavior of this daemon set.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
 	Spec *DaemonSetSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// The current status of this daemon set. This data may be
 	// out of date by some window of time.
 	// Populated by the system.
 	// Read-only.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
 	Status           *DaemonSetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte           `json:"-"`
@@ -244,7 +244,7 @@ func (m *DaemonSetCondition) GetMessage() string {
 // DaemonSetList is a collection of daemon sets.
 type DaemonSetList struct {
 	// Standard list metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// A list of daemon sets.
@@ -477,10 +477,12 @@ type DaemonSetUpdateStrategy struct {
 	XXX_unrecognized []byte                  `json:"-"`
 }
 
-func (m *DaemonSetUpdateStrategy) Reset()                    { *m = DaemonSetUpdateStrategy{} }
-func (m *DaemonSetUpdateStrategy) String() string            { return proto.CompactTextString(m) }
-func (*DaemonSetUpdateStrategy) ProtoMessage()               {}
-func (*DaemonSetUpdateStrategy) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{7} }
+func (m *DaemonSetUpdateStrategy) Reset()         { *m = DaemonSetUpdateStrategy{} }
+func (m *DaemonSetUpdateStrategy) String() string { return proto.CompactTextString(m) }
+func (*DaemonSetUpdateStrategy) ProtoMessage()    {}
+func (*DaemonSetUpdateStrategy) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{7}
+}
 
 func (m *DaemonSetUpdateStrategy) GetType() string {
 	if m != nil && m.Type != nil {
@@ -861,18 +863,18 @@ func (m *DeploymentStrategy) GetRollingUpdate() *RollingUpdateDeployment {
 type ReplicaSet struct {
 	// If the Labels of a ReplicaSet are empty, they are defaulted to
 	// be the same as the Pod(s) that the ReplicaSet manages.
-	// Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// Standard object's metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Spec defines the specification of the desired behavior of the ReplicaSet.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
 	Spec *ReplicaSetSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// Status is the most recently observed status of the ReplicaSet.
 	// This data may be out of date by some window of time.
 	// Populated by the system.
 	// Read-only.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
 	Status           *ReplicaSetStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte            `json:"-"`
@@ -965,7 +967,7 @@ func (m *ReplicaSetCondition) GetMessage() string {
 // ReplicaSetList is a collection of ReplicaSets.
 type ReplicaSetList struct {
 	// Standard list metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// List of ReplicaSets.
@@ -1145,10 +1147,12 @@ type RollingUpdateDaemonSet struct {
 	XXX_unrecognized []byte                                           `json:"-"`
 }
 
-func (m *RollingUpdateDaemonSet) Reset()                    { *m = RollingUpdateDaemonSet{} }
-func (m *RollingUpdateDaemonSet) String() string            { return proto.CompactTextString(m) }
-func (*RollingUpdateDaemonSet) ProtoMessage()               {}
-func (*RollingUpdateDaemonSet) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{19} }
+func (m *RollingUpdateDaemonSet) Reset()         { *m = RollingUpdateDaemonSet{} }
+func (m *RollingUpdateDaemonSet) String() string { return proto.CompactTextString(m) }
+func (*RollingUpdateDaemonSet) ProtoMessage()    {}
+func (*RollingUpdateDaemonSet) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{19}
+}
 
 func (m *RollingUpdateDaemonSet) GetMaxUnavailable() *k8s_io_apimachinery_pkg_util_intstr.IntOrString {
 	if m != nil {

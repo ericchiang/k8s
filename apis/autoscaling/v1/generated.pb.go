@@ -54,7 +54,7 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // CrossVersionObjectReference contains enough information to let you identify the referred resource.
 type CrossVersionObjectReference struct {
-	// Kind of the referent; More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+	// Kind of the referent; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds"
 	Kind *string `protobuf:"bytes,1,opt,name=kind" json:"kind,omitempty"`
 	// Name of the referent; More info: http://kubernetes.io/docs/user-guide/identifiers#names
 	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
@@ -199,10 +199,10 @@ func (m *ExternalMetricStatus) GetCurrentAverageValue() *k8s_io_apimachinery_pkg
 
 // configuration of a horizontal pod autoscaler.
 type HorizontalPodAutoscaler struct {
-	// Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// behaviour of autoscaler. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.
+	// behaviour of autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
 	// +optional
 	Spec *HorizontalPodAutoscalerSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
 	// current information about the autoscaler.
@@ -211,10 +211,12 @@ type HorizontalPodAutoscaler struct {
 	XXX_unrecognized []byte                         `json:"-"`
 }
 
-func (m *HorizontalPodAutoscaler) Reset()                    { *m = HorizontalPodAutoscaler{} }
-func (m *HorizontalPodAutoscaler) String() string            { return proto.CompactTextString(m) }
-func (*HorizontalPodAutoscaler) ProtoMessage()               {}
-func (*HorizontalPodAutoscaler) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
+func (m *HorizontalPodAutoscaler) Reset()         { *m = HorizontalPodAutoscaler{} }
+func (m *HorizontalPodAutoscaler) String() string { return proto.CompactTextString(m) }
+func (*HorizontalPodAutoscaler) ProtoMessage()    {}
+func (*HorizontalPodAutoscaler) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{3}
+}
 
 func (m *HorizontalPodAutoscaler) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
 	if m != nil {
@@ -336,7 +338,11 @@ type HorizontalPodAutoscalerSpec struct {
 	// reference to scaled resource; horizontal pod autoscaler will learn the current resource consumption
 	// and will set the desired number of pods by using its Scale subresource.
 	ScaleTargetRef *CrossVersionObjectReference `protobuf:"bytes,1,opt,name=scaleTargetRef" json:"scaleTargetRef,omitempty"`
-	// lower limit for the number of pods that can be set by the autoscaler, default 1.
+	// minReplicas is the lower limit for the number of replicas to which the autoscaler
+	// can scale down.  It defaults to 1 pod.  minReplicas is allowed to be 0 if the
+	// alpha feature gate HPAScaleToZero is enabled and at least one Object or External
+	// metric is configured.  Scaling is active as long as at least one metric value is
+	// available.
 	// +optional
 	MinReplicas *int32 `protobuf:"varint,2,opt,name=minReplicas" json:"minReplicas,omitempty"`
 	// upper limit for the number of pods that can be set by the autoscaler; cannot be smaller than MinReplicas.
@@ -896,13 +902,13 @@ func (m *ResourceMetricStatus) GetCurrentAverageValue() *k8s_io_apimachinery_pkg
 
 // Scale represents a scaling request for a resource.
 type Scale struct {
-	// Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata.
+	// Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.
+	// defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
 	// +optional
 	Spec *ScaleSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
-	// current status of the scale. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status. Read-only.
+	// current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status. Read-only.
 	// +optional
 	Status           *ScaleStatus `protobuf:"bytes,3,opt,name=status" json:"status,omitempty"`
 	XXX_unrecognized []byte       `json:"-"`

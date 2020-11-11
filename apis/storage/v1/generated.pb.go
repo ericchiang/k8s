@@ -8,6 +8,13 @@
 		k8s.io/api/storage/v1/generated.proto
 
 	It has these top-level messages:
+		CSIDriver
+		CSIDriverList
+		CSIDriverSpec
+		CSINode
+		CSINodeDriver
+		CSINodeList
+		CSINodeSpec
 		StorageClass
 		StorageClassList
 		VolumeAttachment
@@ -16,6 +23,7 @@
 		VolumeAttachmentSpec
 		VolumeAttachmentStatus
 		VolumeError
+		VolumeNodeResources
 */
 package v1
 
@@ -40,6 +48,316 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+// CSIDriver captures information about a Container Storage Interface (CSI)
+// volume driver deployed on the cluster.
+// Kubernetes attach detach controller uses this object to determine whether attach is required.
+// Kubelet uses this object to determine whether pod information needs to be passed on mount.
+// CSIDriver objects are non-namespaced.
+type CSIDriver struct {
+	// Standard object metadata.
+	// metadata.Name indicates the name of the CSI driver that this object
+	// refers to; it MUST be the same name returned by the CSI GetPluginName()
+	// call for that driver.
+	// The driver name must be 63 characters or less, beginning and ending with
+	// an alphanumeric character ([a-z0-9A-Z]) with dashes (-), dots (.), and
+	// alphanumerics between.
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// Specification of the CSI Driver.
+	Spec             *CSIDriverSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
+	XXX_unrecognized []byte         `json:"-"`
+}
+
+func (m *CSIDriver) Reset()                    { *m = CSIDriver{} }
+func (m *CSIDriver) String() string            { return proto.CompactTextString(m) }
+func (*CSIDriver) ProtoMessage()               {}
+func (*CSIDriver) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
+
+func (m *CSIDriver) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *CSIDriver) GetSpec() *CSIDriverSpec {
+	if m != nil {
+		return m.Spec
+	}
+	return nil
+}
+
+// CSIDriverList is a collection of CSIDriver objects.
+type CSIDriverList struct {
+	// Standard list metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+	// +optional
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// items is the list of CSIDriver
+	Items            []*CSIDriver `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *CSIDriverList) Reset()                    { *m = CSIDriverList{} }
+func (m *CSIDriverList) String() string            { return proto.CompactTextString(m) }
+func (*CSIDriverList) ProtoMessage()               {}
+func (*CSIDriverList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
+
+func (m *CSIDriverList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *CSIDriverList) GetItems() []*CSIDriver {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
+// CSIDriverSpec is the specification of a CSIDriver.
+type CSIDriverSpec struct {
+	// attachRequired indicates this CSI volume driver requires an attach
+	// operation (because it implements the CSI ControllerPublishVolume()
+	// method), and that the Kubernetes attach detach controller should call
+	// the attach volume interface which checks the volumeattachment status
+	// and waits until the volume is attached before proceeding to mounting.
+	// The CSI external-attacher coordinates with CSI volume driver and updates
+	// the volumeattachment status when the attach operation is complete.
+	// If the CSIDriverRegistry feature gate is enabled and the value is
+	// specified to false, the attach operation will be skipped.
+	// Otherwise the attach operation will be called.
+	// +optional
+	AttachRequired *bool `protobuf:"varint,1,opt,name=attachRequired" json:"attachRequired,omitempty"`
+	// If set to true, podInfoOnMount indicates this CSI volume driver
+	// requires additional pod information (like podName, podUID, etc.) during
+	// mount operations.
+	// If set to false, pod information will not be passed on mount.
+	// Default is false.
+	// The CSI driver specifies podInfoOnMount as part of driver deployment.
+	// If true, Kubelet will pass pod information as VolumeContext in the CSI
+	// NodePublishVolume() calls.
+	// The CSI driver is responsible for parsing and validating the information
+	// passed in as VolumeContext.
+	// The following VolumeConext will be passed if podInfoOnMount is set to true.
+	// This list might grow, but the prefix will be used.
+	// "csi.storage.k8s.io/pod.name": pod.Name
+	// "csi.storage.k8s.io/pod.namespace": pod.Namespace
+	// "csi.storage.k8s.io/pod.uid": string(pod.UID)
+	// "csi.storage.k8s.io/ephemeral": "true" iff the volume is an ephemeral inline volume
+	//                                 defined by a CSIVolumeSource, otherwise "false"
+	//
+	// "csi.storage.k8s.io/ephemeral" is a new feature in Kubernetes 1.16. It is only
+	// required for drivers which support both the "Persistent" and "Ephemeral" VolumeLifecycleMode.
+	// Other drivers can leave pod info disabled and/or ignore this field.
+	// As Kubernetes 1.15 doesn't support this field, drivers can only support one mode when
+	// deployed on such a cluster and the deployment determines which mode that is, for example
+	// via a command line parameter of the driver.
+	// +optional
+	PodInfoOnMount *bool `protobuf:"varint,2,opt,name=podInfoOnMount" json:"podInfoOnMount,omitempty"`
+	// volumeLifecycleModes defines what kind of volumes this CSI volume driver supports.
+	// The default if the list is empty is "Persistent", which is the usage
+	// defined by the CSI specification and implemented in Kubernetes via the usual
+	// PV/PVC mechanism.
+	// The other mode is "Ephemeral". In this mode, volumes are defined inline
+	// inside the pod spec with CSIVolumeSource and their lifecycle is tied to
+	// the lifecycle of that pod. A driver has to be aware of this
+	// because it is only going to get a NodePublishVolume call for such a volume.
+	// For more information about implementing this mode, see
+	// https://kubernetes-csi.github.io/docs/ephemeral-local-volumes.html
+	// A driver can support one or more of these modes and
+	// more modes may be added in the future.
+	// This field is beta.
+	// +optional
+	// +listType=set
+	VolumeLifecycleModes []string `protobuf:"bytes,3,rep,name=volumeLifecycleModes" json:"volumeLifecycleModes,omitempty"`
+	XXX_unrecognized     []byte   `json:"-"`
+}
+
+func (m *CSIDriverSpec) Reset()                    { *m = CSIDriverSpec{} }
+func (m *CSIDriverSpec) String() string            { return proto.CompactTextString(m) }
+func (*CSIDriverSpec) ProtoMessage()               {}
+func (*CSIDriverSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
+
+func (m *CSIDriverSpec) GetAttachRequired() bool {
+	if m != nil && m.AttachRequired != nil {
+		return *m.AttachRequired
+	}
+	return false
+}
+
+func (m *CSIDriverSpec) GetPodInfoOnMount() bool {
+	if m != nil && m.PodInfoOnMount != nil {
+		return *m.PodInfoOnMount
+	}
+	return false
+}
+
+func (m *CSIDriverSpec) GetVolumeLifecycleModes() []string {
+	if m != nil {
+		return m.VolumeLifecycleModes
+	}
+	return nil
+}
+
+// CSINode holds information about all CSI drivers installed on a node.
+// CSI drivers do not need to create the CSINode object directly. As long as
+// they use the node-driver-registrar sidecar container, the kubelet will
+// automatically populate the CSINode object for the CSI driver as part of
+// kubelet plugin registration.
+// CSINode has the same name as a node. If the object is missing, it means either
+// there are no CSI Drivers available on the node, or the Kubelet version is low
+// enough that it doesn't create this object.
+// CSINode has an OwnerReference that points to the corresponding node object.
+type CSINode struct {
+	// metadata.name must be the Kubernetes node name.
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// spec is the specification of CSINode
+	Spec             *CSINodeSpec `protobuf:"bytes,2,opt,name=spec" json:"spec,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *CSINode) Reset()                    { *m = CSINode{} }
+func (m *CSINode) String() string            { return proto.CompactTextString(m) }
+func (*CSINode) ProtoMessage()               {}
+func (*CSINode) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
+
+func (m *CSINode) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *CSINode) GetSpec() *CSINodeSpec {
+	if m != nil {
+		return m.Spec
+	}
+	return nil
+}
+
+// CSINodeDriver holds information about the specification of one CSI driver installed on a node
+type CSINodeDriver struct {
+	// This is the name of the CSI driver that this object refers to.
+	// This MUST be the same name returned by the CSI GetPluginName() call for
+	// that driver.
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	// nodeID of the node from the driver point of view.
+	// This field enables Kubernetes to communicate with storage systems that do
+	// not share the same nomenclature for nodes. For example, Kubernetes may
+	// refer to a given node as "node1", but the storage system may refer to
+	// the same node as "nodeA". When Kubernetes issues a command to the storage
+	// system to attach a volume to a specific node, it can use this field to
+	// refer to the node name using the ID that the storage system will
+	// understand, e.g. "nodeA" instead of "node1". This field is required.
+	NodeID *string `protobuf:"bytes,2,opt,name=nodeID" json:"nodeID,omitempty"`
+	// topologyKeys is the list of keys supported by the driver.
+	// When a driver is initialized on a cluster, it provides a set of topology
+	// keys that it understands (e.g. "company.com/zone", "company.com/region").
+	// When a driver is initialized on a node, it provides the same topology keys
+	// along with values. Kubelet will expose these topology keys as labels
+	// on its own node object.
+	// When Kubernetes does topology aware provisioning, it can use this list to
+	// determine which labels it should retrieve from the node object and pass
+	// back to the driver.
+	// It is possible for different nodes to use different topology keys.
+	// This can be empty if driver does not support topology.
+	// +optional
+	TopologyKeys []string `protobuf:"bytes,3,rep,name=topologyKeys" json:"topologyKeys,omitempty"`
+	// allocatable represents the volume resources of a node that are available for scheduling.
+	// This field is beta.
+	// +optional
+	Allocatable      *VolumeNodeResources `protobuf:"bytes,4,opt,name=allocatable" json:"allocatable,omitempty"`
+	XXX_unrecognized []byte               `json:"-"`
+}
+
+func (m *CSINodeDriver) Reset()                    { *m = CSINodeDriver{} }
+func (m *CSINodeDriver) String() string            { return proto.CompactTextString(m) }
+func (*CSINodeDriver) ProtoMessage()               {}
+func (*CSINodeDriver) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
+
+func (m *CSINodeDriver) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *CSINodeDriver) GetNodeID() string {
+	if m != nil && m.NodeID != nil {
+		return *m.NodeID
+	}
+	return ""
+}
+
+func (m *CSINodeDriver) GetTopologyKeys() []string {
+	if m != nil {
+		return m.TopologyKeys
+	}
+	return nil
+}
+
+func (m *CSINodeDriver) GetAllocatable() *VolumeNodeResources {
+	if m != nil {
+		return m.Allocatable
+	}
+	return nil
+}
+
+// CSINodeList is a collection of CSINode objects.
+type CSINodeList struct {
+	// Standard list metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+	// +optional
+	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
+	// items is the list of CSINode
+	Items            []*CSINode `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+	XXX_unrecognized []byte     `json:"-"`
+}
+
+func (m *CSINodeList) Reset()                    { *m = CSINodeList{} }
+func (m *CSINodeList) String() string            { return proto.CompactTextString(m) }
+func (*CSINodeList) ProtoMessage()               {}
+func (*CSINodeList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{5} }
+
+func (m *CSINodeList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
+func (m *CSINodeList) GetItems() []*CSINode {
+	if m != nil {
+		return m.Items
+	}
+	return nil
+}
+
+// CSINodeSpec holds information about the specification of all CSI drivers installed on a node
+type CSINodeSpec struct {
+	// drivers is a list of information of all CSI Drivers existing on a node.
+	// If all drivers in the list are uninstalled, this can become empty.
+	// +patchMergeKey=name
+	// +patchStrategy=merge
+	Drivers          []*CSINodeDriver `protobuf:"bytes,1,rep,name=drivers" json:"drivers,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
+}
+
+func (m *CSINodeSpec) Reset()                    { *m = CSINodeSpec{} }
+func (m *CSINodeSpec) String() string            { return proto.CompactTextString(m) }
+func (*CSINodeSpec) ProtoMessage()               {}
+func (*CSINodeSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{6} }
+
+func (m *CSINodeSpec) GetDrivers() []*CSINodeDriver {
+	if m != nil {
+		return m.Drivers
+	}
+	return nil
+}
+
 // StorageClass describes the parameters for a class of storage for
 // which PersistentVolumes can be dynamically provisioned.
 //
@@ -47,7 +365,7 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 // according to etcd is in ObjectMeta.Name.
 type StorageClass struct {
 	// Standard object's metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Provisioner indicates the type of the provisioner.
@@ -85,7 +403,7 @@ type StorageClass struct {
 func (m *StorageClass) Reset()                    { *m = StorageClass{} }
 func (m *StorageClass) String() string            { return proto.CompactTextString(m) }
 func (*StorageClass) ProtoMessage()               {}
-func (*StorageClass) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{0} }
+func (*StorageClass) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{7} }
 
 func (m *StorageClass) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
 	if m != nil {
@@ -146,7 +464,7 @@ func (m *StorageClass) GetAllowedTopologies() []*k8s_io_api_core_v1.TopologySele
 // StorageClassList is a collection of storage classes.
 type StorageClassList struct {
 	// Standard list metadata
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of StorageClasses
@@ -157,7 +475,7 @@ type StorageClassList struct {
 func (m *StorageClassList) Reset()                    { *m = StorageClassList{} }
 func (m *StorageClassList) String() string            { return proto.CompactTextString(m) }
 func (*StorageClassList) ProtoMessage()               {}
-func (*StorageClassList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{1} }
+func (*StorageClassList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{8} }
 
 func (m *StorageClassList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
 	if m != nil {
@@ -179,7 +497,7 @@ func (m *StorageClassList) GetItems() []*StorageClass {
 // VolumeAttachment objects are non-namespaced.
 type VolumeAttachment struct {
 	// Standard object metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Specification of the desired attach/detach volume behavior.
@@ -196,7 +514,7 @@ type VolumeAttachment struct {
 func (m *VolumeAttachment) Reset()                    { *m = VolumeAttachment{} }
 func (m *VolumeAttachment) String() string            { return proto.CompactTextString(m) }
 func (*VolumeAttachment) ProtoMessage()               {}
-func (*VolumeAttachment) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
+func (*VolumeAttachment) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{9} }
 
 func (m *VolumeAttachment) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta {
 	if m != nil {
@@ -222,7 +540,7 @@ func (m *VolumeAttachment) GetStatus() *VolumeAttachmentStatus {
 // VolumeAttachmentList is a collection of VolumeAttachment objects.
 type VolumeAttachmentList struct {
 	// Standard list metadata
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is the list of VolumeAttachments
@@ -233,7 +551,7 @@ type VolumeAttachmentList struct {
 func (m *VolumeAttachmentList) Reset()                    { *m = VolumeAttachmentList{} }
 func (m *VolumeAttachmentList) String() string            { return proto.CompactTextString(m) }
 func (*VolumeAttachmentList) ProtoMessage()               {}
-func (*VolumeAttachmentList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{3} }
+func (*VolumeAttachmentList) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{10} }
 
 func (m *VolumeAttachmentList) GetMetadata() *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta {
 	if m != nil {
@@ -257,19 +575,36 @@ type VolumeAttachmentSource struct {
 	// Name of the persistent volume to attach.
 	// +optional
 	PersistentVolumeName *string `protobuf:"bytes,1,opt,name=persistentVolumeName" json:"persistentVolumeName,omitempty"`
-	XXX_unrecognized     []byte  `json:"-"`
+	// inlineVolumeSpec contains all the information necessary to attach
+	// a persistent volume defined by a pod's inline VolumeSource. This field
+	// is populated only for the CSIMigration feature. It contains
+	// translated fields from a pod's inline VolumeSource to a
+	// PersistentVolumeSpec. This field is alpha-level and is only
+	// honored by servers that enabled the CSIMigration feature.
+	// +optional
+	InlineVolumeSpec *k8s_io_api_core_v1.PersistentVolumeSpec `protobuf:"bytes,2,opt,name=inlineVolumeSpec" json:"inlineVolumeSpec,omitempty"`
+	XXX_unrecognized []byte                                   `json:"-"`
 }
 
-func (m *VolumeAttachmentSource) Reset()                    { *m = VolumeAttachmentSource{} }
-func (m *VolumeAttachmentSource) String() string            { return proto.CompactTextString(m) }
-func (*VolumeAttachmentSource) ProtoMessage()               {}
-func (*VolumeAttachmentSource) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{4} }
+func (m *VolumeAttachmentSource) Reset()         { *m = VolumeAttachmentSource{} }
+func (m *VolumeAttachmentSource) String() string { return proto.CompactTextString(m) }
+func (*VolumeAttachmentSource) ProtoMessage()    {}
+func (*VolumeAttachmentSource) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{11}
+}
 
 func (m *VolumeAttachmentSource) GetPersistentVolumeName() string {
 	if m != nil && m.PersistentVolumeName != nil {
 		return *m.PersistentVolumeName
 	}
 	return ""
+}
+
+func (m *VolumeAttachmentSource) GetInlineVolumeSpec() *k8s_io_api_core_v1.PersistentVolumeSpec {
+	if m != nil {
+		return m.InlineVolumeSpec
+	}
+	return nil
 }
 
 // VolumeAttachmentSpec is the specification of a VolumeAttachment request.
@@ -287,7 +622,7 @@ type VolumeAttachmentSpec struct {
 func (m *VolumeAttachmentSpec) Reset()                    { *m = VolumeAttachmentSpec{} }
 func (m *VolumeAttachmentSpec) String() string            { return proto.CompactTextString(m) }
 func (*VolumeAttachmentSpec) ProtoMessage()               {}
-func (*VolumeAttachmentSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{5} }
+func (*VolumeAttachmentSpec) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{12} }
 
 func (m *VolumeAttachmentSpec) GetAttacher() string {
 	if m != nil && m.Attacher != nil {
@@ -336,10 +671,12 @@ type VolumeAttachmentStatus struct {
 	XXX_unrecognized []byte       `json:"-"`
 }
 
-func (m *VolumeAttachmentStatus) Reset()                    { *m = VolumeAttachmentStatus{} }
-func (m *VolumeAttachmentStatus) String() string            { return proto.CompactTextString(m) }
-func (*VolumeAttachmentStatus) ProtoMessage()               {}
-func (*VolumeAttachmentStatus) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{6} }
+func (m *VolumeAttachmentStatus) Reset()         { *m = VolumeAttachmentStatus{} }
+func (m *VolumeAttachmentStatus) String() string { return proto.CompactTextString(m) }
+func (*VolumeAttachmentStatus) ProtoMessage()    {}
+func (*VolumeAttachmentStatus) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{13}
+}
 
 func (m *VolumeAttachmentStatus) GetAttached() bool {
 	if m != nil && m.Attached != nil {
@@ -375,7 +712,7 @@ type VolumeError struct {
 	// +optional
 	Time *k8s_io_apimachinery_pkg_apis_meta_v1.Time `protobuf:"bytes,1,opt,name=time" json:"time,omitempty"`
 	// String detailing the error encountered during Attach or Detach operation.
-	// This string maybe logged, so it should not contain sensitive
+	// This string may be logged, so it should not contain sensitive
 	// information.
 	// +optional
 	Message          *string `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
@@ -385,7 +722,7 @@ type VolumeError struct {
 func (m *VolumeError) Reset()                    { *m = VolumeError{} }
 func (m *VolumeError) String() string            { return proto.CompactTextString(m) }
 func (*VolumeError) ProtoMessage()               {}
-func (*VolumeError) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{7} }
+func (*VolumeError) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{14} }
 
 func (m *VolumeError) GetTime() *k8s_io_apimachinery_pkg_apis_meta_v1.Time {
 	if m != nil {
@@ -401,7 +738,37 @@ func (m *VolumeError) GetMessage() string {
 	return ""
 }
 
+// VolumeNodeResources is a set of resource limits for scheduling of volumes.
+type VolumeNodeResources struct {
+	// Maximum number of unique volumes managed by the CSI driver that can be used on a node.
+	// A volume that is both attached and mounted on a node is considered to be used once, not twice.
+	// The same rule applies for a unique volume that is shared among multiple pods on the same node.
+	// If this field is not specified, then the supported number of volumes on this node is unbounded.
+	// +optional
+	Count            *int32 `protobuf:"varint,1,opt,name=count" json:"count,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *VolumeNodeResources) Reset()                    { *m = VolumeNodeResources{} }
+func (m *VolumeNodeResources) String() string            { return proto.CompactTextString(m) }
+func (*VolumeNodeResources) ProtoMessage()               {}
+func (*VolumeNodeResources) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{15} }
+
+func (m *VolumeNodeResources) GetCount() int32 {
+	if m != nil && m.Count != nil {
+		return *m.Count
+	}
+	return 0
+}
+
 func init() {
+	proto.RegisterType((*CSIDriver)(nil), "k8s.io.api.storage.v1.CSIDriver")
+	proto.RegisterType((*CSIDriverList)(nil), "k8s.io.api.storage.v1.CSIDriverList")
+	proto.RegisterType((*CSIDriverSpec)(nil), "k8s.io.api.storage.v1.CSIDriverSpec")
+	proto.RegisterType((*CSINode)(nil), "k8s.io.api.storage.v1.CSINode")
+	proto.RegisterType((*CSINodeDriver)(nil), "k8s.io.api.storage.v1.CSINodeDriver")
+	proto.RegisterType((*CSINodeList)(nil), "k8s.io.api.storage.v1.CSINodeList")
+	proto.RegisterType((*CSINodeSpec)(nil), "k8s.io.api.storage.v1.CSINodeSpec")
 	proto.RegisterType((*StorageClass)(nil), "k8s.io.api.storage.v1.StorageClass")
 	proto.RegisterType((*StorageClassList)(nil), "k8s.io.api.storage.v1.StorageClassList")
 	proto.RegisterType((*VolumeAttachment)(nil), "k8s.io.api.storage.v1.VolumeAttachment")
@@ -410,7 +777,323 @@ func init() {
 	proto.RegisterType((*VolumeAttachmentSpec)(nil), "k8s.io.api.storage.v1.VolumeAttachmentSpec")
 	proto.RegisterType((*VolumeAttachmentStatus)(nil), "k8s.io.api.storage.v1.VolumeAttachmentStatus")
 	proto.RegisterType((*VolumeError)(nil), "k8s.io.api.storage.v1.VolumeError")
+	proto.RegisterType((*VolumeNodeResources)(nil), "k8s.io.api.storage.v1.VolumeNodeResources")
 }
+func (m *CSIDriver) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CSIDriver) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
+		n1, err := m.Metadata.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n1
+	}
+	if m.Spec != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
+		n2, err := m.Spec.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CSIDriverList) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CSIDriverList) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
+		n3, err := m.Metadata.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n3
+	}
+	if len(m.Items) > 0 {
+		for _, msg := range m.Items {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CSIDriverSpec) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CSIDriverSpec) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.AttachRequired != nil {
+		dAtA[i] = 0x8
+		i++
+		if *m.AttachRequired {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.PodInfoOnMount != nil {
+		dAtA[i] = 0x10
+		i++
+		if *m.PodInfoOnMount {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.VolumeLifecycleModes) > 0 {
+		for _, s := range m.VolumeLifecycleModes {
+			dAtA[i] = 0x1a
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CSINode) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CSINode) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
+		n4, err := m.Metadata.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
+	if m.Spec != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
+		n5, err := m.Spec.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n5
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CSINodeDriver) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CSINodeDriver) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Name != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Name)))
+		i += copy(dAtA[i:], *m.Name)
+	}
+	if m.NodeID != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.NodeID)))
+		i += copy(dAtA[i:], *m.NodeID)
+	}
+	if len(m.TopologyKeys) > 0 {
+		for _, s := range m.TopologyKeys {
+			dAtA[i] = 0x1a
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.Allocatable != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Allocatable.Size()))
+		n6, err := m.Allocatable.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n6
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CSINodeList) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CSINodeList) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
+		n7, err := m.Metadata.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n7
+	}
+	if len(m.Items) > 0 {
+		for _, msg := range m.Items {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *CSINodeSpec) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CSINodeSpec) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Drivers) > 0 {
+		for _, msg := range m.Drivers {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintGenerated(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func (m *StorageClass) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -430,11 +1113,11 @@ func (m *StorageClass) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n1, err := m.Metadata.MarshalTo(dAtA[i:])
+		n8, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n1
+		i += n8
 	}
 	if m.Provisioner != nil {
 		dAtA[i] = 0x12
@@ -533,11 +1216,11 @@ func (m *StorageClassList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n2, err := m.Metadata.MarshalTo(dAtA[i:])
+		n9, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n2
+		i += n9
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -576,31 +1259,31 @@ func (m *VolumeAttachment) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n3, err := m.Metadata.MarshalTo(dAtA[i:])
+		n10, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n3
+		i += n10
 	}
 	if m.Spec != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Spec.Size()))
-		n4, err := m.Spec.MarshalTo(dAtA[i:])
+		n11, err := m.Spec.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n4
+		i += n11
 	}
 	if m.Status != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Status.Size()))
-		n5, err := m.Status.MarshalTo(dAtA[i:])
+		n12, err := m.Status.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n5
+		i += n12
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -627,11 +1310,11 @@ func (m *VolumeAttachmentList) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Metadata.Size()))
-		n6, err := m.Metadata.MarshalTo(dAtA[i:])
+		n13, err := m.Metadata.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n13
 	}
 	if len(m.Items) > 0 {
 		for _, msg := range m.Items {
@@ -672,6 +1355,16 @@ func (m *VolumeAttachmentSource) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.PersistentVolumeName)))
 		i += copy(dAtA[i:], *m.PersistentVolumeName)
 	}
+	if m.InlineVolumeSpec != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(m.InlineVolumeSpec.Size()))
+		n14, err := m.InlineVolumeSpec.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n14
+	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
@@ -703,11 +1396,11 @@ func (m *VolumeAttachmentSpec) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Source.Size()))
-		n7, err := m.Source.MarshalTo(dAtA[i:])
+		n15, err := m.Source.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n15
 	}
 	if m.NodeName != nil {
 		dAtA[i] = 0x1a
@@ -767,21 +1460,21 @@ func (m *VolumeAttachmentStatus) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.AttachError.Size()))
-		n8, err := m.AttachError.MarshalTo(dAtA[i:])
+		n16, err := m.AttachError.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n8
+		i += n16
 	}
 	if m.DetachError != nil {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.DetachError.Size()))
-		n9, err := m.DetachError.MarshalTo(dAtA[i:])
+		n17, err := m.DetachError.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n9
+		i += n17
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -808,17 +1501,43 @@ func (m *VolumeError) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(m.Time.Size()))
-		n10, err := m.Time.MarshalTo(dAtA[i:])
+		n18, err := m.Time.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n18
 	}
 	if m.Message != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintGenerated(dAtA, i, uint64(len(*m.Message)))
 		i += copy(dAtA[i:], *m.Message)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *VolumeNodeResources) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *VolumeNodeResources) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Count != nil {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintGenerated(dAtA, i, uint64(*m.Count))
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -835,6 +1554,141 @@ func encodeVarintGenerated(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
+func (m *CSIDriver) Size() (n int) {
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		l = m.Metadata.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Spec != nil {
+		l = m.Spec.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CSIDriverList) Size() (n int) {
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		l = m.Metadata.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.Items) > 0 {
+		for _, e := range m.Items {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CSIDriverSpec) Size() (n int) {
+	var l int
+	_ = l
+	if m.AttachRequired != nil {
+		n += 2
+	}
+	if m.PodInfoOnMount != nil {
+		n += 2
+	}
+	if len(m.VolumeLifecycleModes) > 0 {
+		for _, s := range m.VolumeLifecycleModes {
+			l = len(s)
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CSINode) Size() (n int) {
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		l = m.Metadata.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.Spec != nil {
+		l = m.Spec.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CSINodeDriver) Size() (n int) {
+	var l int
+	_ = l
+	if m.Name != nil {
+		l = len(*m.Name)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.NodeID != nil {
+		l = len(*m.NodeID)
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.TopologyKeys) > 0 {
+		for _, s := range m.TopologyKeys {
+			l = len(s)
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.Allocatable != nil {
+		l = m.Allocatable.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CSINodeList) Size() (n int) {
+	var l int
+	_ = l
+	if m.Metadata != nil {
+		l = m.Metadata.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
+	if len(m.Items) > 0 {
+		for _, e := range m.Items {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CSINodeSpec) Size() (n int) {
+	var l int
+	_ = l
+	if len(m.Drivers) > 0 {
+		for _, e := range m.Drivers {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *StorageClass) Size() (n int) {
 	var l int
 	_ = l
@@ -949,6 +1803,10 @@ func (m *VolumeAttachmentSource) Size() (n int) {
 		l = len(*m.PersistentVolumeName)
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if m.InlineVolumeSpec != nil {
+		l = m.InlineVolumeSpec.Size()
+		n += 1 + l + sovGenerated(uint64(l))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -1021,6 +1879,18 @@ func (m *VolumeError) Size() (n int) {
 	return n
 }
 
+func (m *VolumeNodeResources) Size() (n int) {
+	var l int
+	_ = l
+	if m.Count != nil {
+		n += 1 + sovGenerated(uint64(*m.Count))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func sovGenerated(x uint64) (n int) {
 	for {
 		n++
@@ -1033,6 +1903,847 @@ func sovGenerated(x uint64) (n int) {
 }
 func sozGenerated(x uint64) (n int) {
 	return sovGenerated(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *CSIDriver) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CSIDriver: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CSIDriver: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta{}
+			}
+			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Spec", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Spec == nil {
+				m.Spec = &CSIDriverSpec{}
+			}
+			if err := m.Spec.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CSIDriverList) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CSIDriverList: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CSIDriverList: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta{}
+			}
+			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Items = append(m.Items, &CSIDriver{})
+			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CSIDriverSpec) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CSIDriverSpec: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CSIDriverSpec: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AttachRequired", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			b := bool(v != 0)
+			m.AttachRequired = &b
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PodInfoOnMount", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			b := bool(v != 0)
+			m.PodInfoOnMount = &b
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VolumeLifecycleModes", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.VolumeLifecycleModes = append(m.VolumeLifecycleModes, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CSINode) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CSINode: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CSINode: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta{}
+			}
+			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Spec", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Spec == nil {
+				m.Spec = &CSINodeSpec{}
+			}
+			if err := m.Spec.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CSINodeDriver) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CSINodeDriver: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CSINodeDriver: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Name = &s
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NodeID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.NodeID = &s
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TopologyKeys", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TopologyKeys = append(m.TopologyKeys, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Allocatable", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Allocatable == nil {
+				m.Allocatable = &VolumeNodeResources{}
+			}
+			if err := m.Allocatable.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CSINodeList) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CSINodeList: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CSINodeList: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Metadata == nil {
+				m.Metadata = &k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta{}
+			}
+			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Items", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Items = append(m.Items, &CSINode{})
+			if err := m.Items[len(m.Items)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CSINodeSpec) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CSINodeSpec: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CSINodeSpec: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Drivers", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Drivers = append(m.Drivers, &CSINodeDriver{})
+			if err := m.Drivers[len(m.Drivers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *StorageClass) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1846,6 +3557,39 @@ func (m *VolumeAttachmentSource) Unmarshal(dAtA []byte) error {
 			s := string(dAtA[iNdEx:postIndex])
 			m.PersistentVolumeName = &s
 			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field InlineVolumeSpec", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.InlineVolumeSpec == nil {
+				m.InlineVolumeSpec = &k8s_io_api_core_v1.PersistentVolumeSpec{}
+			}
+			if err := m.InlineVolumeSpec.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -2382,6 +4126,77 @@ func (m *VolumeError) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *VolumeNodeResources) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenerated
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: VolumeNodeResources: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: VolumeNodeResources: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Count = &v
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenerated(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipGenerated(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2490,52 +4305,69 @@ var (
 func init() { proto.RegisterFile("k8s.io/api/storage/v1/generated.proto", fileDescriptorGenerated) }
 
 var fileDescriptorGenerated = []byte{
-	// 744 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0x5d, 0x6f, 0xd3, 0x48,
-	0x14, 0x5d, 0x27, 0x69, 0x9b, 0x4e, 0xba, 0xda, 0x76, 0x94, 0xdd, 0xb5, 0xf2, 0x10, 0x45, 0xde,
-	0x5d, 0x6d, 0xc4, 0xc7, 0x84, 0x04, 0x84, 0x0a, 0x52, 0x41, 0x2d, 0xe4, 0x05, 0xb5, 0xb4, 0x72,
-	0xaa, 0x3e, 0xf0, 0x36, 0xd8, 0x57, 0xee, 0x10, 0xdb, 0x63, 0xcd, 0x4c, 0x02, 0xf9, 0x21, 0x20,
-	0x78, 0xe4, 0xdf, 0xf0, 0xc8, 0x4f, 0x40, 0xe5, 0x85, 0x5f, 0x81, 0xd0, 0x8c, 0x9d, 0xd4, 0x4d,
-	0x5c, 0x48, 0xa5, 0xbe, 0x75, 0xee, 0xdc, 0x73, 0xee, 0x99, 0x73, 0x4f, 0x1d, 0xf4, 0xdf, 0x70,
-	0x5b, 0x12, 0xc6, 0x3b, 0x34, 0x61, 0x1d, 0xa9, 0xb8, 0xa0, 0x01, 0x74, 0xc6, 0xdd, 0x4e, 0x00,
-	0x31, 0x08, 0xaa, 0xc0, 0x27, 0x89, 0xe0, 0x8a, 0xe3, 0x3f, 0xd3, 0x36, 0x42, 0x13, 0x46, 0xb2,
-	0x36, 0x32, 0xee, 0x36, 0x9c, 0x1c, 0xda, 0xe3, 0xa2, 0x08, 0xda, 0xb8, 0x77, 0xde, 0x13, 0x51,
-	0xef, 0x94, 0xc5, 0x20, 0x26, 0x9d, 0x64, 0x18, 0xe8, 0x82, 0xec, 0x44, 0xa0, 0x68, 0x11, 0xaa,
-	0x73, 0x19, 0x4a, 0x8c, 0x62, 0xc5, 0x22, 0x58, 0x00, 0xdc, 0xff, 0x15, 0x40, 0x7a, 0xa7, 0x10,
-	0xd1, 0x79, 0x9c, 0xf3, 0xae, 0x82, 0x36, 0x06, 0xe9, 0x8b, 0x9e, 0x84, 0x54, 0x4a, 0xbc, 0x8f,
-	0xaa, 0x5a, 0x94, 0x4f, 0x15, 0xb5, 0xad, 0x96, 0xd5, 0xae, 0xf5, 0xee, 0x90, 0xf3, 0xd7, 0xcf,
-	0xb8, 0x49, 0x32, 0x0c, 0x74, 0x41, 0x12, 0xdd, 0x4d, 0xc6, 0x5d, 0x72, 0xf8, 0xf2, 0x15, 0x78,
-	0xea, 0x00, 0x14, 0x75, 0x67, 0x0c, 0xb8, 0x85, 0x6a, 0x89, 0xe0, 0x63, 0x26, 0x19, 0x8f, 0x41,
-	0xd8, 0xa5, 0x96, 0xd5, 0x5e, 0x77, 0xf3, 0x25, 0x3c, 0x40, 0x28, 0xa1, 0x82, 0x46, 0xa0, 0x40,
-	0x48, 0xbb, 0xdc, 0x2a, 0xb7, 0x6b, 0xbd, 0xbb, 0xa4, 0xd0, 0x6f, 0x92, 0x17, 0x4a, 0x8e, 0x66,
-	0xa8, 0x7e, 0xac, 0xc4, 0xc4, 0xcd, 0xd1, 0xe0, 0x7f, 0xd1, 0xef, 0x02, 0xbc, 0x90, 0xb2, 0xe8,
-	0x88, 0x87, 0xcc, 0x9b, 0xd8, 0x15, 0x33, 0xf8, 0x62, 0x11, 0x3b, 0x68, 0x23, 0xe2, 0xa3, 0x58,
-	0x1d, 0x26, 0x8a, 0xf1, 0x58, 0xda, 0x2b, 0xad, 0x72, 0x7b, 0xdd, 0xbd, 0x50, 0xc3, 0x3d, 0x54,
-	0xa7, 0x61, 0xc8, 0x5f, 0x9f, 0xf0, 0x70, 0x14, 0x41, 0xff, 0x4d, 0x42, 0x63, 0x2d, 0xdc, 0x5e,
-	0x6d, 0x59, 0xed, 0xaa, 0x5b, 0x78, 0x87, 0x6f, 0xa1, 0xad, 0xb1, 0x29, 0xed, 0xb1, 0xd8, 0x67,
-	0x71, 0x70, 0xc0, 0x7d, 0xb0, 0xd7, 0x8c, 0x82, 0xc5, 0x0b, 0x7c, 0x82, 0xb6, 0x0c, 0x0b, 0xf8,
-	0xc7, 0x3c, 0xe1, 0x21, 0x0f, 0x18, 0x48, 0xbb, 0x6a, 0x7c, 0x68, 0xe7, 0x7d, 0xd0, 0x01, 0xd3,
-	0x26, 0x64, 0x5d, 0x93, 0x01, 0x84, 0xe0, 0x29, 0x2e, 0x8e, 0x41, 0x44, 0xee, 0x22, 0x45, 0x63,
-	0x07, 0xfd, 0x31, 0x67, 0x11, 0xde, 0x44, 0xe5, 0x21, 0x4c, 0xcc, 0x5a, 0xd7, 0x5d, 0xfd, 0x27,
-	0xae, 0xa3, 0x95, 0x31, 0x0d, 0x47, 0x90, 0x6d, 0x26, 0x3d, 0x3c, 0x2c, 0x6d, 0x5b, 0xce, 0x07,
-	0x0b, 0x6d, 0xe6, 0xfd, 0xde, 0x67, 0x52, 0xe1, 0x67, 0x0b, 0xe1, 0x20, 0xcb, 0x85, 0x43, 0xa3,
-	0xe7, 0xa2, 0xf1, 0x00, 0xad, 0x30, 0x05, 0x91, 0xb4, 0x4b, 0xe6, 0xad, 0xff, 0x2c, 0xb1, 0x73,
-	0x37, 0x45, 0x38, 0xdf, 0x2c, 0xb4, 0x99, 0x9a, 0xbe, 0xab, 0x14, 0xf5, 0x4e, 0x23, 0x88, 0xd5,
-	0x35, 0x07, 0xf7, 0x31, 0xaa, 0xc8, 0x04, 0x3c, 0xe3, 0x4b, 0xad, 0x77, 0xf3, 0x12, 0x71, 0xf3,
-	0x22, 0x06, 0x09, 0x78, 0xae, 0x01, 0xe2, 0x3e, 0x5a, 0x95, 0x8a, 0xaa, 0x91, 0xce, 0xb4, 0xa6,
-	0xb8, 0xbd, 0x2c, 0x85, 0x01, 0xb9, 0x19, 0xd8, 0xf9, 0x68, 0xa1, 0xfa, 0x7c, 0xcb, 0xb5, 0xaf,
-	0x62, 0xe7, 0xe2, 0x2a, 0xfe, 0x5f, 0x52, 0xea, 0x74, 0x1d, 0xfb, 0xe8, 0xaf, 0x85, 0x57, 0xf0,
-	0x91, 0xf0, 0x40, 0xff, 0xf7, 0x24, 0x20, 0x24, 0x93, 0x0a, 0x62, 0x95, 0xf6, 0x3c, 0xa7, 0x11,
-	0x64, 0x09, 0x2c, 0xbc, 0x73, 0xde, 0x16, 0xbc, 0x58, 0xfb, 0x8a, 0x1b, 0xa8, 0x4a, 0x4d, 0x05,
-	0x44, 0x46, 0x30, 0x3b, 0x1b, 0xb7, 0xcd, 0xc8, 0x6c, 0x61, 0x4b, 0xbb, 0x6d, 0x40, 0x6e, 0x06,
-	0xd6, 0x23, 0x62, 0xee, 0xa7, 0x1a, 0xcb, 0xe9, 0x88, 0xe9, 0xd9, 0xf9, 0x5e, 0x2a, 0x78, 0xa6,
-	0x59, 0x52, 0x4e, 0x99, 0x6f, 0x94, 0x55, 0x67, 0xca, 0x7c, 0x3c, 0x42, 0x98, 0xce, 0xfa, 0x0f,
-	0xa6, 0x1b, 0x4b, 0x8d, 0xee, 0x5f, 0x29, 0x13, 0x64, 0x77, 0x81, 0x27, 0xfd, 0xf2, 0x15, 0x0c,
-	0xc0, 0x4f, 0x51, 0x2d, 0xad, 0xf6, 0x85, 0xe0, 0x22, 0xcb, 0xa0, 0xf3, 0xd3, 0x79, 0xa6, 0xd3,
-	0xcd, 0xc3, 0x34, 0x8b, 0x0f, 0xe7, 0x2c, 0x95, 0xe5, 0x59, 0x72, 0xb0, 0x46, 0x1f, 0xfd, 0x7d,
-	0x89, 0xf4, 0x2b, 0x7d, 0x91, 0x02, 0x54, 0xcb, 0x8d, 0xc0, 0x8f, 0x50, 0x45, 0xff, 0xb0, 0x65,
-	0xe1, 0xbf, 0xb1, 0x5c, 0xf8, 0x8f, 0x59, 0x04, 0xae, 0xc1, 0x61, 0x1b, 0xad, 0x45, 0x20, 0x25,
-	0x0d, 0xa6, 0xa3, 0xa6, 0xc7, 0xbd, 0xfa, 0xa7, 0xb3, 0xa6, 0xf5, 0xf9, 0xac, 0x69, 0x7d, 0x39,
-	0x6b, 0x5a, 0xef, 0xbf, 0x36, 0x7f, 0x7b, 0x51, 0x1a, 0x77, 0x7f, 0x04, 0x00, 0x00, 0xff, 0xff,
-	0x7f, 0x7c, 0xc4, 0xe8, 0x2b, 0x08, 0x00, 0x00,
+	// 1017 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0xcf, 0x6e, 0x23, 0xc5,
+	0x13, 0xfe, 0x8d, 0xed, 0x24, 0x76, 0x7b, 0xf7, 0x47, 0xb6, 0x09, 0xcb, 0xc8, 0x07, 0xcb, 0x1a,
+	0x02, 0x44, 0xbb, 0x30, 0x26, 0x61, 0x15, 0x05, 0xa4, 0x5d, 0xb4, 0x9b, 0xf8, 0x10, 0x88, 0x49,
+	0xd4, 0x8e, 0xf6, 0xc0, 0xad, 0x77, 0xa6, 0xd6, 0x69, 0x32, 0x33, 0x3d, 0x74, 0xb7, 0x0d, 0x7e,
+	0x0a, 0x0e, 0x08, 0x04, 0x47, 0xb8, 0xf3, 0x1e, 0x1c, 0x79, 0x04, 0x14, 0x2e, 0x3c, 0x05, 0x42,
+	0xdd, 0xf3, 0xc7, 0x63, 0x7b, 0x9c, 0xf5, 0x4a, 0xbe, 0x4d, 0xd7, 0xd4, 0x57, 0xf5, 0x75, 0xd5,
+	0x57, 0x35, 0x83, 0xde, 0xbd, 0x3e, 0x92, 0x2e, 0xe3, 0x5d, 0x1a, 0xb3, 0xae, 0x54, 0x5c, 0xd0,
+	0x21, 0x74, 0xc7, 0xfb, 0xdd, 0x21, 0x44, 0x20, 0xa8, 0x02, 0xdf, 0x8d, 0x05, 0x57, 0x1c, 0xbf,
+	0x95, 0xb8, 0xb9, 0x34, 0x66, 0x6e, 0xea, 0xe6, 0x8e, 0xf7, 0x5b, 0x4e, 0x01, 0xed, 0x71, 0x51,
+	0x06, 0x6d, 0x3d, 0x9a, 0xfa, 0x84, 0xd4, 0xbb, 0x62, 0x11, 0x88, 0x49, 0x37, 0xbe, 0x1e, 0x6a,
+	0x83, 0xec, 0x86, 0xa0, 0x68, 0x19, 0xaa, 0xbb, 0x0c, 0x25, 0x46, 0x91, 0x62, 0x21, 0x2c, 0x00,
+	0x0e, 0x5f, 0x05, 0x90, 0xde, 0x15, 0x84, 0x74, 0x1e, 0xe7, 0xfc, 0x60, 0xa1, 0xc6, 0xf1, 0xe0,
+	0xf4, 0x44, 0xb0, 0x31, 0x08, 0x7c, 0x86, 0xea, 0x9a, 0x91, 0x4f, 0x15, 0xb5, 0xad, 0x8e, 0xb5,
+	0xd7, 0x3c, 0xf8, 0xc8, 0x9d, 0x5e, 0x3d, 0x0f, 0xec, 0xc6, 0xd7, 0x43, 0x6d, 0x90, 0xae, 0xf6,
+	0x76, 0xc7, 0xfb, 0xee, 0xf9, 0x8b, 0xaf, 0xc1, 0x53, 0x7d, 0x50, 0x94, 0xe4, 0x11, 0xf0, 0x11,
+	0xaa, 0xc9, 0x18, 0x3c, 0xbb, 0x62, 0x22, 0xed, 0xba, 0xa5, 0x45, 0x74, 0xf3, 0xec, 0x83, 0x18,
+	0x3c, 0x62, 0x10, 0x9a, 0xd5, 0xdd, 0xdc, 0x7e, 0xc6, 0xa4, 0xc2, 0x9f, 0x2f, 0x30, 0x73, 0x57,
+	0x63, 0xa6, 0xd1, 0x73, 0xbc, 0x0e, 0xd1, 0x06, 0x53, 0x10, 0x4a, 0xbb, 0xd2, 0xa9, 0xee, 0x35,
+	0x0f, 0x3a, 0xaf, 0x22, 0x46, 0x12, 0xf7, 0x59, 0x56, 0x9a, 0x2d, 0x7e, 0x0f, 0xfd, 0x9f, 0x2a,
+	0x45, 0xbd, 0x2b, 0x02, 0xdf, 0x8c, 0x98, 0x00, 0xdf, 0x70, 0xab, 0x93, 0x39, 0xab, 0xf6, 0x8b,
+	0xb9, 0x7f, 0x1a, 0xbd, 0xe4, 0xe7, 0x51, 0x9f, 0x8f, 0x22, 0x65, 0x6a, 0x52, 0x27, 0x73, 0x56,
+	0x7c, 0x80, 0x76, 0xc6, 0x3c, 0x18, 0x85, 0x70, 0xc6, 0x5e, 0x82, 0x37, 0xf1, 0x02, 0xe8, 0x73,
+	0x1f, 0xa4, 0x5d, 0xed, 0x54, 0xf7, 0x1a, 0xa4, 0xf4, 0x9d, 0xf3, 0xbd, 0x85, 0xb6, 0x8e, 0x07,
+	0xa7, 0x5f, 0x72, 0x1f, 0xd6, 0xdc, 0xbf, 0xc3, 0x99, 0xfe, 0x39, 0xcb, 0xcb, 0xa4, 0x73, 0x17,
+	0xba, 0xf7, 0x7b, 0x52, 0x27, 0x6d, 0x4d, 0x75, 0x85, 0x51, 0x2d, 0xa2, 0x21, 0x18, 0x4e, 0x0d,
+	0x62, 0x9e, 0xf1, 0x7d, 0xb4, 0x19, 0x71, 0x1f, 0x4e, 0x4f, 0x4c, 0xfc, 0x06, 0x49, 0x4f, 0xd8,
+	0x41, 0x77, 0x14, 0x8f, 0x79, 0xc0, 0x87, 0x93, 0x2f, 0x60, 0x92, 0xdd, 0x7d, 0xc6, 0x86, 0xcf,
+	0x50, 0x93, 0x06, 0x01, 0xf7, 0xa8, 0xa2, 0x2f, 0x02, 0xb0, 0x6b, 0x86, 0xe0, 0x83, 0x25, 0x04,
+	0x9f, 0x9b, 0xaa, 0x69, 0x36, 0x04, 0x24, 0x1f, 0x09, 0x0f, 0x24, 0x29, 0xc2, 0x75, 0x05, 0x9b,
+	0x29, 0xdf, 0xb5, 0x6b, 0xed, 0xd1, 0xac, 0xd6, 0xda, 0xb7, 0x17, 0x31, 0x53, 0x5a, 0x3f, 0x27,
+	0x64, 0x64, 0xf6, 0x04, 0x6d, 0xf9, 0xa6, 0x90, 0xd2, 0xb6, 0x4c, 0x98, 0xdd, 0xdb, 0xc3, 0xa4,
+	0xb2, 0xcd, 0x40, 0xce, 0x4f, 0x35, 0x74, 0x67, 0x90, 0x78, 0x1d, 0x07, 0x54, 0xca, 0x35, 0xeb,
+	0xa4, 0x83, 0x9a, 0xb1, 0xe0, 0x63, 0x26, 0x19, 0x8f, 0x40, 0xa4, 0xed, 0x2c, 0x9a, 0xf0, 0x00,
+	0xa1, 0x98, 0x0a, 0x1a, 0x82, 0xd2, 0x77, 0xa8, 0x9a, 0x3b, 0x7c, 0xbc, 0xe4, 0x0e, 0x45, 0xa2,
+	0xee, 0x45, 0x8e, 0xea, 0x45, 0x4a, 0x4c, 0x48, 0x21, 0x0c, 0xde, 0x45, 0x77, 0x05, 0x78, 0x01,
+	0x65, 0xe1, 0x05, 0x0f, 0x98, 0x37, 0x31, 0x32, 0x68, 0x90, 0x59, 0xa3, 0x96, 0x53, 0xa8, 0x67,
+	0xeb, 0x3c, 0x56, 0x8c, 0x47, 0xd2, 0xde, 0x48, 0xe4, 0x54, 0xb4, 0xe9, 0xb1, 0xd3, 0x7a, 0xf8,
+	0x36, 0x51, 0x4a, 0xef, 0xbb, 0x98, 0x46, 0x9a, 0xb8, 0xbd, 0x69, 0x86, 0xb4, 0xf4, 0x1d, 0xfe,
+	0x00, 0xdd, 0x4b, 0xc6, 0xf1, 0x19, 0x8b, 0x7c, 0x16, 0x0d, 0xf5, 0x30, 0xda, 0x5b, 0x86, 0xc1,
+	0xe2, 0x0b, 0xfc, 0x1c, 0xdd, 0x33, 0x51, 0xc0, 0xbf, 0x4c, 0x74, 0xcc, 0x40, 0xda, 0x75, 0x53,
+	0x87, 0xbd, 0x62, 0x1d, 0xf4, 0x57, 0x44, 0x17, 0x21, 0xf5, 0x9a, 0x0c, 0x20, 0x00, 0x4f, 0x71,
+	0x71, 0x09, 0x22, 0x24, 0x8b, 0x21, 0x5a, 0x8f, 0xd1, 0x1b, 0x73, 0x25, 0xc2, 0xdb, 0xa8, 0x7a,
+	0x0d, 0x93, 0x74, 0xd4, 0xf4, 0x23, 0xde, 0x41, 0x1b, 0x63, 0x1a, 0x8c, 0x20, 0xed, 0x4c, 0x72,
+	0xf8, 0xb4, 0x72, 0x64, 0x39, 0xbf, 0x58, 0x68, 0xbb, 0x58, 0xef, 0xb5, 0xcb, 0xff, 0x93, 0x59,
+	0xf9, 0xbf, 0xb3, 0x42, 0xcf, 0xb3, 0x19, 0xf8, 0xc7, 0x42, 0xdb, 0x49, 0xd1, 0x9f, 0x9a, 0x65,
+	0x1a, 0x42, 0xa4, 0xd6, 0x2c, 0xdc, 0xcf, 0x66, 0x16, 0xdc, 0xc3, 0x5b, 0xf7, 0xc7, 0x94, 0xc4,
+	0x74, 0xd3, 0xe1, 0x1e, 0xda, 0x94, 0x8a, 0xaa, 0x91, 0xd6, 0xb4, 0x0e, 0xf1, 0xe1, 0xaa, 0x21,
+	0x0c, 0x88, 0xa4, 0x60, 0xe7, 0x57, 0x0b, 0xed, 0xcc, 0xbb, 0xac, 0xbd, 0x15, 0x8f, 0x67, 0x5b,
+	0xf1, 0xfe, 0x8a, 0x54, 0xb3, 0x76, 0xfc, 0x66, 0xa1, 0xfb, 0x0b, 0xd7, 0x30, 0xdb, 0x54, 0x8f,
+	0x4f, 0x0c, 0x42, 0x32, 0xa9, 0x20, 0x52, 0xe9, 0xb6, 0x9d, 0x6e, 0xfb, 0xd2, 0x77, 0xf8, 0x12,
+	0x6d, 0xb3, 0x28, 0x60, 0x11, 0x24, 0xb6, 0xc1, 0xb4, 0x0d, 0xa5, 0xf3, 0x70, 0x31, 0x17, 0xc3,
+	0xf4, 0x60, 0x21, 0x82, 0xf3, 0x63, 0x49, 0x21, 0xcd, 0x06, 0x6d, 0xa1, 0x7a, 0xf2, 0x49, 0x06,
+	0x91, 0xd2, 0xca, 0xcf, 0xa6, 0x89, 0xe6, 0x22, 0x29, 0x81, 0x95, 0x9b, 0x68, 0x40, 0x24, 0x05,
+	0xeb, 0x14, 0xfa, 0x0b, 0x66, 0x6e, 0x5e, 0x4d, 0x52, 0x64, 0x67, 0xe7, 0xdf, 0x4a, 0x49, 0xf1,
+	0x4c, 0xef, 0x0b, 0xcc, 0xb2, 0x9f, 0x87, 0xfc, 0x8c, 0x47, 0x08, 0xd3, 0xdc, 0xbf, 0x9f, 0x09,
+	0x21, 0xe9, 0x5f, 0xef, 0xb5, 0xa4, 0xe6, 0x3e, 0x5d, 0x88, 0x93, 0x2c, 0xd4, 0x92, 0x04, 0xf8,
+	0x04, 0x35, 0x13, 0x6b, 0x4f, 0x08, 0x2e, 0x52, 0x69, 0x3b, 0xb7, 0xe6, 0x33, 0x9e, 0xa4, 0x08,
+	0xd3, 0x51, 0x7c, 0x98, 0x46, 0xa9, 0xad, 0x1e, 0xa5, 0x00, 0x6b, 0xf5, 0xd0, 0xdb, 0x4b, 0xa8,
+	0xbf, 0xd6, 0xa2, 0x1b, 0xa2, 0x66, 0x21, 0x05, 0x7e, 0x82, 0x6a, 0xfa, 0xa7, 0x38, 0x9d, 0xa9,
+	0x07, 0xab, 0xcd, 0xd4, 0x25, 0x0b, 0x81, 0x18, 0x1c, 0xb6, 0xd1, 0x56, 0x08, 0x52, 0xd2, 0x61,
+	0x96, 0x2a, 0x3b, 0x3a, 0x0f, 0xd1, 0x9b, 0x25, 0xff, 0x1b, 0x9a, 0x99, 0x67, 0xfe, 0xfb, 0x74,
+	0xc6, 0x0d, 0x92, 0x1c, 0x9e, 0xed, 0xfc, 0x71, 0xd3, 0xb6, 0xfe, 0xbc, 0x69, 0x5b, 0x7f, 0xdd,
+	0xb4, 0xad, 0x9f, 0xff, 0x6e, 0xff, 0xef, 0xab, 0xca, 0x78, 0xff, 0xbf, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0x2c, 0xe9, 0xbd, 0xfc, 0x94, 0x0c, 0x00, 0x00,
 }

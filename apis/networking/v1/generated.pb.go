@@ -41,15 +41,15 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// IPBlock describes a particular CIDR (Ex. "192.168.1.1/24") that is allowed to the pods
-// matched by a NetworkPolicySpec's podSelector. The except entry describes CIDRs that should
-// not be included within this rule.
+// IPBlock describes a particular CIDR (Ex. "192.168.1.1/24","2001:db9::/64") that is allowed
+// to the pods matched by a NetworkPolicySpec's podSelector. The except entry describes CIDRs
+// that should not be included within this rule.
 type IPBlock struct {
 	// CIDR is a string representing the IP Block
-	// Valid examples are "192.168.1.1/24"
+	// Valid examples are "192.168.1.1/24" or "2001:db9::/64"
 	Cidr *string `protobuf:"bytes,1,opt,name=cidr" json:"cidr,omitempty"`
 	// Except is a slice of CIDRs that should not be included within an IP Block
-	// Valid examples are "192.168.1.1/24"
+	// Valid examples are "192.168.1.1/24" or "2001:db9::/64"
 	// Except values will be rejected if they are outside the CIDR range
 	// +optional
 	Except           []string `protobuf:"bytes,2,rep,name=except" json:"except,omitempty"`
@@ -78,7 +78,7 @@ func (m *IPBlock) GetExcept() []string {
 // NetworkPolicy describes what network traffic is allowed for a set of Pods
 type NetworkPolicy struct {
 	// Standard object's metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Specification of the desired behavior for this NetworkPolicy.
@@ -127,10 +127,12 @@ type NetworkPolicyEgressRule struct {
 	XXX_unrecognized []byte               `json:"-"`
 }
 
-func (m *NetworkPolicyEgressRule) Reset()                    { *m = NetworkPolicyEgressRule{} }
-func (m *NetworkPolicyEgressRule) String() string            { return proto.CompactTextString(m) }
-func (*NetworkPolicyEgressRule) ProtoMessage()               {}
-func (*NetworkPolicyEgressRule) Descriptor() ([]byte, []int) { return fileDescriptorGenerated, []int{2} }
+func (m *NetworkPolicyEgressRule) Reset()         { *m = NetworkPolicyEgressRule{} }
+func (m *NetworkPolicyEgressRule) String() string { return proto.CompactTextString(m) }
+func (*NetworkPolicyEgressRule) ProtoMessage()    {}
+func (*NetworkPolicyEgressRule) Descriptor() ([]byte, []int) {
+	return fileDescriptorGenerated, []int{2}
+}
 
 func (m *NetworkPolicyEgressRule) GetPorts() []*NetworkPolicyPort {
 	if m != nil {
@@ -159,7 +161,7 @@ type NetworkPolicyIngressRule struct {
 	// List of sources which should be able to access the pods selected for this rule.
 	// Items in this list are combined using a logical OR operation. If this field is
 	// empty or missing, this rule matches all sources (traffic not restricted by
-	// source). If this field is present and contains at least on item, this rule
+	// source). If this field is present and contains at least one item, this rule
 	// allows traffic only if the traffic matches at least one item in the from list.
 	// +optional
 	From             []*NetworkPolicyPeer `protobuf:"bytes,2,rep,name=from" json:"from,omitempty"`
@@ -190,7 +192,7 @@ func (m *NetworkPolicyIngressRule) GetFrom() []*NetworkPolicyPeer {
 // NetworkPolicyList is a list of NetworkPolicy objects.
 type NetworkPolicyList struct {
 	// Standard list metadata.
-	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ListMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Items is a list of schema objects.
@@ -329,7 +331,7 @@ type NetworkPolicySpec struct {
 	// +optional
 	Egress []*NetworkPolicyEgressRule `protobuf:"bytes,3,rep,name=egress" json:"egress,omitempty"`
 	// List of rule types that the NetworkPolicy relates to.
-	// Valid options are Ingress, Egress, or Ingress,Egress.
+	// Valid options are "Ingress", "Egress", or "Ingress,Egress".
 	// If this field is not specified, it will default based on the existence of Ingress or Egress rules;
 	// policies that contain an Egress section are assumed to affect Egress, and all policies
 	// (whether or not they contain an Ingress section) are assumed to affect Ingress.

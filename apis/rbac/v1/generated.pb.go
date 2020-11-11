@@ -70,6 +70,7 @@ type ClusterRole struct {
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Rules holds all the PolicyRules for this ClusterRole
+	// +optional
 	Rules []*PolicyRule `protobuf:"bytes,2,rep,name=rules" json:"rules,omitempty"`
 	// AggregationRule is an optional field that describes how to build the Rules for this ClusterRole.
 	// If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be
@@ -273,6 +274,7 @@ type Role struct {
 	// +optional
 	Metadata *k8s_io_apimachinery_pkg_apis_meta_v1.ObjectMeta `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
 	// Rules holds all the PolicyRules for this Role
+	// +optional
 	Rules            []*PolicyRule `protobuf:"bytes,2,rep,name=rules" json:"rules,omitempty"`
 	XXX_unrecognized []byte        `json:"-"`
 }

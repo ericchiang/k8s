@@ -161,7 +161,10 @@ type TokenRequestSpec struct {
 	// +optional
 	ExpirationSeconds *int64 `protobuf:"varint,4,opt,name=expirationSeconds" json:"expirationSeconds,omitempty"`
 	// BoundObjectRef is a reference to an object that the token will be bound to.
-	// The token will only be valid for as long as the bound objet exists.
+	// The token will only be valid for as long as the bound object exists.
+	// NOTE: The API server's TokenReview endpoint will validate the
+	// BoundObjectRef, but other audiences may not. Keep ExpirationSeconds
+	// small if you want prompt revocation.
 	// +optional
 	BoundObjectRef   *BoundObjectReference `protobuf:"bytes,3,opt,name=boundObjectRef" json:"boundObjectRef,omitempty"`
 	XXX_unrecognized []byte                `json:"-"`
